@@ -75,60 +75,60 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver {
     return true;
   }
 
-  function executeBuy(
-    address seller,
-    address buyer,
-    bytes calldata data
-  ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
-    // Pair[] memory pairs = decode(data);
-    // for (uint256 i = 0; i < pairs.length; i++) {
-    //     Pair memory p = pairs[i];
-    //     p.token.safeTransferFrom(seller, buyer, p.tokenId);
-    // }
-    return true;
-  }
+  // function executeBuy(
+  //   address seller,
+  //   address buyer,
+  //   bytes calldata data
+  // ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
+  //   // Pair[] memory pairs = decode(data);
+  //   // for (uint256 i = 0; i < pairs.length; i++) {
+  //   //     Pair memory p = pairs[i];
+  //   //     p.token.safeTransferFrom(seller, buyer, p.tokenId);
+  //   // }
+  //   return true;
+  // }
 
-  function executeBid(
-    address seller,
-    address previousBidder,
-    address, // bidder,
-    bytes calldata data
-  ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
-    // if (previousBidder == address(0)) {
-    //     Pair[] memory pairs = decode(data);
-    //     for (uint256 i = 0; i < pairs.length; i++) {
-    //         Pair memory p = pairs[i];
-    //         p.token.safeTransferFrom(seller, address(this), p.tokenId);
-    //     }
-    // }
-    return true;
-  }
+  // function executeBid(
+  //   address seller,
+  //   address previousBidder,
+  //   address, // bidder,
+  //   bytes calldata data
+  // ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
+  //   // if (previousBidder == address(0)) {
+  //   //     Pair[] memory pairs = decode(data);
+  //   //     for (uint256 i = 0; i < pairs.length; i++) {
+  //   //         Pair memory p = pairs[i];
+  //   //         p.token.safeTransferFrom(seller, address(this), p.tokenId);
+  //   //     }
+  //   // }
+  //   return true;
+  // }
 
-  function executeAuctionComplete(
-    address, // seller,
-    address buyer,
-    bytes calldata data
-  ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
-    // Pair[] memory pairs = decode(data);
-    // for (uint256 i = 0; i < pairs.length; i++) {
-    //     Pair memory p = pairs[i];
-    //     p.token.safeTransferFrom(address(this), buyer, p.tokenId);
-    // }
-    return true;
-  }
+  // function executeAuctionComplete(
+  //   address, // seller,
+  //   address buyer,
+  //   bytes calldata data
+  // ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
+  //   // Pair[] memory pairs = decode(data);
+  //   // for (uint256 i = 0; i < pairs.length; i++) {
+  //   //     Pair memory p = pairs[i];
+  //   //     p.token.safeTransferFrom(address(this), buyer, p.tokenId);
+  //   // }
+  //   return true;
+  // }
 
-  function executeAuctionRefund(
-    address seller,
-    address, // lastBidder,
-    bytes calldata data
-  ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
-    // Pair[] memory pairs = decode(data);
-    // for (uint256 i = 0; i < pairs.length; i++) {
-    //     Pair memory p = pairs[i];
-    //     p.token.safeTransferFrom(address(this), seller, p.tokenId);
-    // }
-    return true;
-  }
+  // function executeAuctionRefund(
+  //   address seller,
+  //   address, // lastBidder,
+  //   bytes calldata data
+  // ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
+  //   // Pair[] memory pairs = decode(data);
+  //   // for (uint256 i = 0; i < pairs.length; i++) {
+  //   //     Pair memory p = pairs[i];
+  //   //     p.token.safeTransferFrom(address(this), seller, p.tokenId);
+  //   // }
+  //   return true;
+  // }
 
   // function transferBatch(Pair[] memory pairs, address to) public {
   //     for (uint256 i = 0; i < pairs.length; i++) {
