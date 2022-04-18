@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import './P12AssetFactoryUpgradable.sol';
+import '../sft-factory/P12AssetFactoryUpgradable.sol';
 
 contract P12AssetFactoryUpgradableAlternative is P12AssetFactoryUpgradable {
   string public name;
