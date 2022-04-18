@@ -39,7 +39,7 @@ export async function deployUniswapV2Router(
 
 // deploy p12
 export async function deployP12coin(): Promise<Contract> {
-  const p12COIN = await ethers.getContractFactory('ERC20FixedSupply');
+  const p12COIN = await ethers.getContractFactory('P12Token');
   const p12 = await p12COIN.deploy('ProjectTwelve', 'P12', 100000000n * 10n ** 18n);
   console.log('p12coin contract deploy success');
   return p12;

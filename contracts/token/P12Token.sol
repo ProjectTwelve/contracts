@@ -7,7 +7,13 @@ import './IP12Token.sol';
 // temporary contract, not corresponding to real token model
 
 contract P12Token is IP12Token, ERC20, Ownable {
-  constructor() ERC20('Project Twelve', 'P12') {}
+  constructor(
+    string memory name,
+    string memory symbol,
+    uint256 totalSupply
+  ) ERC20(name, symbol) {
+    _mint(msg.sender, totalSupply);
+  }
 
   function mint(address recipient, uint256 amount) public override onlyOwner {
     _mint(recipient, amount);

@@ -2,7 +2,7 @@ import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import {
-  ERC20FixedSupply,
+  P12Token,
   P12V0ERC20,
   P12V0FactoryUpgradeable,
   P12V0FactoryUpgradeable2,
@@ -62,7 +62,7 @@ describe('P12Factory', function () {
   let developer: SignerWithAddress;
   let user: SignerWithAddress;
   let router: UniswapV2Router02;
-  let p12: ERC20FixedSupply;
+  let p12: P12Token;
   let UniswapV2Factory: UniswapV2Factory;
   let p12Factory1: Contract;
   let p12Factory2: Contract;
@@ -94,7 +94,7 @@ describe('P12Factory', function () {
   });
   it('Should show p12 token deploy successfully!', async function () {
     // deploy p12token
-    const ERC20 = await ethers.getContractFactory('ERC20FixedSupply');
+    const ERC20 = await ethers.getContractFactory('P12Token');
     p12 = await ERC20.connect(admin).deploy('ProjectTwelve', 'P12', 1000n * 10n ** 18n);
     // console.log('P12 token deploy successfully!');
     // console.log('p12 token owner balance: ', await p12.balanceOf(admin.address));

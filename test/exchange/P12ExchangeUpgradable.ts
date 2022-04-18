@@ -46,7 +46,7 @@ describe('P12ExchangeUpgradable', function () {
 
     // deploy p12 coin
     const P12CoinF = await ethers.getContractFactory('P12Token');
-    p12coin = await P12CoinF.deploy();
+    p12coin = await P12CoinF.deploy('Project Twelve', 'P12', 0n);
 
     // mint p12 Coin
     await p12coin.mint(user1.address, 100n * 10n ** 18n);

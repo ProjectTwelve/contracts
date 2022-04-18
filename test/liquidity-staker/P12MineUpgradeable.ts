@@ -31,7 +31,7 @@ describe('lpToken stake ', function () {
 
   // deploy reward token contract
   it('show rewards token deploy successfully', async function () {
-    const Reward = await ethers.getContractFactory('ERC20FixedSupply');
+    const Reward = await ethers.getContractFactory('P12Token');
     reward = await Reward.deploy('rewards token', 'RT', 1000000000n * 10n ** 18n);
     expect(await reward.balanceOf(admin.address)).to.equal(1000000000n * 10n ** 18n);
     await reward.transfer(user.address, 10n * 10n ** 18n);
