@@ -1,0 +1,60 @@
+{
+  "name": "hardhat-project",
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "compile": "hardhat compile",
+    "flat": "hardhat flat",
+    "prettier": "prettier -w .",
+    "test": "hardhat test",
+    "test:analysis": "REPORT_GAS=true hardhat test",
+    "coverage": "hardhat coverage",
+    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint ."
+  },
+  "devDependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.0.3",
+    "@nomiclabs/hardhat-etherscan": "^2.1.8",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/hardhat-upgrades": "^1.13.0",
+    "@typechain/ethers-v5": "^7.2.0",
+    "@typechain/hardhat": "^2.3.1",
+    "@types/chai": "^4.3.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^12.20.40",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
+    "@uniswap/lib": "4.0.1-alpha",
+    "chai": "^4.3.4",
+    "cspell": "^5.15.1",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-promise": "^5.2.0",
+    "ethereum-waffle": "^3.4.0",
+    "ethers": "^5.5.2",
+    "fs-extra": "^10.0.1",
+    "hardhat": "^2.9.1",
+    "hardhat-gas-reporter": "^1.0.6",
+    "husky": "^7.0.4",
+    "prettier": "^2.5.1",
+    "prettier-plugin-sh": "^0.8.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.13",
+    "solhint": "^3.3.6",
+    "solidity-coverage": "^0.7.17",
+    "ts-node": "^10.4.0",
+    "tsort": "^0.0.1",
+    "typechain": "^5.2.0",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.4.1",
+    "@openzeppelin/contracts-upgradeable": "^4.4.2"
+  }
+}
