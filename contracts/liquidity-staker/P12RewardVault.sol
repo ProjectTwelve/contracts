@@ -1,9 +1,9 @@
-pragma solidity 0.8.2;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import { Ownable } from './lib/Ownable.sol';
-import { SafeERC20 } from './lib/SafeERC20.sol';
-import { IERC20 } from './interfaces/IERC20.sol';
+import { Ownable } from '../libraries/Ownable.sol';
+import { SafeERC20 } from '../libraries/SafeERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
 interface IP12RewardVault {
   function reward(address to, uint256 amount) external;

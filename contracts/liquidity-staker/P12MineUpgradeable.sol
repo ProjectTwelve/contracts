@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity 0.8.2;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-//import {Ownable} from "./lib/Ownable.sol";
-import { DecimalMath } from './lib/DecimalMath.sol';
-import { SafeERC20 } from './lib/SafeERC20.sol';
-import { SafeMath } from './lib/SafeMath.sol';
-import { IERC20 } from './interfaces/IERC20.sol';
+//import {Ownable} from "../libraries/Ownable.sol";
+import { DecimalMath } from '../libraries/DecimalMath.sol';
+import { SafeERC20 } from '../libraries/SafeERC20.sol';
+import { SafeMath } from '../libraries/SafeMath.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
