@@ -57,7 +57,7 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     address _p12,
     address _uniswapFactory,
     address _uniswapRouter,
-    uint256 _EffectiveTime
+    uint256 _effectiveTime
   ) public initializer {
     __Ownable_init();
     p12 = _p12;
@@ -65,7 +65,7 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     uniswapRouter = _uniswapRouter;
     init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
     unlocked = 1;
-    addLiquidityEffectiveTime = _EffectiveTime;
+    addLiquidityEffectiveTime = _effectiveTime;
     IERC20(p12).approve(uniswapRouter, type(uint256).max);
   }
 

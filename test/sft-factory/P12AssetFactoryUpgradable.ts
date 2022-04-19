@@ -4,7 +4,7 @@ import { P12AssetFactoryUpgradable, P12V0FactoryUpgradeable, P12Asset } from '..
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract } from 'ethers';
 
-describe('P12ExchangeUpgradable', function () {
+describe('P12AssetFactoryUpgradable', function () {
   // admin: Who deploy factory contract
   let admin: SignerWithAddress;
   // developer1: Who have register a gameId on P12Factory
@@ -33,9 +33,9 @@ describe('P12ExchangeUpgradable', function () {
     developer2 = accounts[2];
     user1 = accounts[3];
 
-    // // deploy p12 coin
-    // const P12CoinF = await ethers.getContractFactory("P12Coin");
-    // p12coin = await P12CoinF.deploy();
+    // deploy p12 coin
+    const P12TokenF = await ethers.getContractFactory('P12Token');
+    const p12Token = await P12TokenF.deploy('Project Twelve', 'P12', 0n);
 
     // // mint p12 Coin
     // await p12coin.mint(user1.address, 100n * 10n ** 18n);
@@ -51,7 +51,7 @@ describe('P12ExchangeUpgradable', function () {
     const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
 
     // not fully use, so set random address args
-    p12factory = await upgrades.deployProxy(P12FACTORY, [admin.address, admin.address, admin.address], {
+    p12factory = await upgrades.deployProxy(P12FACTORY, [p12Token.address, p12Token.address, p12Token.address, 0n], {
       kind: 'uups',
     });
 
