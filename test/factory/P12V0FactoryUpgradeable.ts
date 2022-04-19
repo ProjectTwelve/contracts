@@ -143,12 +143,18 @@ describe('P12Factory', function () {
   });
 
   it('Should show execute mint successfully!', async function () {
-    await new Promise((resolve) => setTimeout(() => resolve(true), 5000));
+    const blockNumBefore = await ethers.provider.getBlockNumber();
+    const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+    const timestampBefore = blockBefore.timestamp;
+    await ethers.provider.send("evm_mine", [timestampBefore + 5000]);
     await p12Factory.executeMint(gameCoinAddress, mintId);
   });
 
   it('Should show duplicate mint fail!', async function () {
-    await new Promise((resolve) => setTimeout(() => resolve(true), 5000));
+    const blockNumBefore = await ethers.provider.getBlockNumber();
+    const blockBefore = await ethers.provider.getBlock(blockNumBefore);
+    const timestampBefore = blockBefore.timestamp;
+    await ethers.provider.send("evm_mine", [timestampBefore + 5000]);
     await expect(p12Factory.executeMint(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
   });
 
