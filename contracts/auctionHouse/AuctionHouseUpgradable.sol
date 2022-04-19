@@ -141,32 +141,32 @@ contract AuctionHouseUpgradable is
     }
   }
 
-  /**
-   * @dev cancel order
-   * @dev why deadline: if tx's gas price is not high enough, this tx will be pending forever.
-   */
-  function cancel(
-    bytes32[] memory itemHashes,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public virtual nonReentrant whenNotPaused {
-    require(deadline > block.timestamp, 'AuctionHouse: deadline reached');
-    // bytes32 hash = keccak256(
-    //     abi.encode(itemHashes.length, itemHashes, deadline)
-    // );
-    // address signer = ECDSA.recover(hash, v, r, s);
-    // require(signers[signer], "Input signature error");
+  // /**
+  //  * @dev cancel order
+  //  * @dev why deadline: if tx's gas price is not high enough, this tx will be pending forever.
+  //  */
+  // function cancel(
+  //   bytes32[] memory itemHashes,
+  //   uint256 deadline,
+  //   uint8 v,
+  //   bytes32 r,
+  //   bytes32 s
+  // ) public virtual nonReentrant whenNotPaused {
+  //   require(deadline > block.timestamp, 'AuctionHouse: deadline reached');
+  //   // bytes32 hash = keccak256(
+  //   //     abi.encode(itemHashes.length, itemHashes, deadline)
+  //   // );
+  //   // address signer = ECDSA.recover(hash, v, r, s);
+  //   // require(signers[signer], "Input signature error");
 
-    for (uint256 i = 0; i < itemHashes.length; i++) {
-      bytes32 h = itemHashes[i];
-      if (inventoryStatus[h] == Market.InvStatus.NEW) {
-        inventoryStatus[h] = Market.InvStatus.CANCELLED;
-        emit EvCancel(h);
-      }
-    }
-  }
+  //   for (uint256 i = 0; i < itemHashes.length; i++) {
+  //     bytes32 h = itemHashes[i];
+  //     if (inventoryStatus[h] == Market.InvStatus.NEW) {
+  //       inventoryStatus[h] = Market.InvStatus.CANCELLED;
+  //       emit EvCancel(h);
+  //     }
+  //   }
+  // }
 
   function run(Market.RunInput memory input) public payable virtual nonReentrant whenNotPaused {
     require(input.shared.deadline > block.timestamp, 'input deadline reached');
@@ -514,7 +514,7 @@ contract AuctionHouseUpgradable is
     //     delete ongoingAuctions[itemHash];
     // }
     else {
-      revert('unknown op');
+      revert('AuctionHouse: unknown op');
     }
 
     _emitInventory(itemHash, order, item, shared, detail);
@@ -529,32 +529,32 @@ contract AuctionHouseUpgradable is
   }
 
   // modifies `src`
-  function _arrayReplace(
-    bytes memory src,
-    bytes memory replacement,
-    bytes memory mask
-  ) internal view virtual {
-    require(src.length == replacement.length);
-    require(src.length == mask.length);
+  // function _arrayReplace(
+  //   bytes memory src,
+  //   bytes memory replacement,
+  //   bytes memory mask
+  // ) internal view virtual {
+  //   require(src.length == replacement.length);
+  //   require(src.length == mask.length);
 
-    for (uint256 i = 0; i < src.length; i++) {
-      if (mask[i] != 0) {
-        src[i] = replacement[i];
-      }
-    }
-  }
+  //   for (uint256 i = 0; i < src.length; i++) {
+  //     if (mask[i] != 0) {
+  //       src[i] = replacement[i];
+  //     }
+  //   }
+  // }
 
   /**
    * @dev allow some address to trade, may be these who sign in nft market
    * not necessary to verify at v1
    */
   function _verifyInputSignature(Market.RunInput memory input) internal view virtual {
-    bytes32 hash = keccak256(abi.encode(input.shared, input.details.length, input.details));
-    address signer = ECDSA.recover(hash, input.v, input.r, input.s);
+    bytes32 hashValue = keccak256(abi.encode(input.shared, input.details.length, input.details));
+    address signer = ECDSA.recover(hashValue, input.v, input.r, input.s);
     require(signers[signer], 'Input signature error');
   }
 
-  function hash(Market.Order memory order) private view returns (bytes32) {
+  function hash(Market.Order memory order) private pure returns (bytes32) {
     return
       keccak256(
         abi.encode(
@@ -598,10 +598,10 @@ contract AuctionHouseUpgradable is
       bytes32 DataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, hash(order));
       orderSigner = ECDSA.recover(DataHash, order.v, order.r, order.s);
     } else {
-      revert('unknown signature version');
+      revert('AuctionHouse: unknown sig version');
     }
 
-    require(orderSigner == order.user, 'Order signature does not match');
+    require(orderSigner == order.user, 'AuctionHouse: sig not match');
   }
 
   /**
