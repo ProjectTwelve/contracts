@@ -6,7 +6,6 @@ interface IP12Mine {
 
     function addLpTokenInfoForGameCreator(
         address _lpToken,
-        address gameCoinCreator,
-        uint256 _amount
+        address gameCoinCreator
     ) external;
 }

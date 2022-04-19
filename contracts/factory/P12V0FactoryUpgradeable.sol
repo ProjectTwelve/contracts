@@ -162,8 +162,7 @@ contract P12V0FactoryUpgradeableV2 is
         // 
         IP12Mine(p12mine).addLpTokenInfoForGameCreator(
             pair,
-            msg.sender,
-            liquidity0
+            msg.sender
         );
 
         allGameCoins[gameCoinAddress] = gameId;
