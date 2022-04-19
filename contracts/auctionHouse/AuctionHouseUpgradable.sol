@@ -558,7 +558,7 @@ contract AuctionHouseUpgradable is
   //   require(signers[signer], 'AuctionHouse: Input sig error');
   // }
 
-  function hash(Market.Order memory order) private pure returns (bytes32) {
+  function _hash(Market.Order memory order) private pure returns (bytes32) {
     return
       keccak256(
         abi.encode(
@@ -574,21 +574,21 @@ contract AuctionHouseUpgradable is
           order.currency,
           keccak256(order.dataMask),
           order.items.length,
-          hash(order.items)
+          _hash(order.items)
         )
       );
   }
 
-  function hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
+  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
     bytes memory h;
     for (uint256 i = 0; i < orderItems.length; i++) {
-      h = abi.encodePacked(h, hash(orderItems[i]));
+      h = abi.encodePacked(h, _hash(orderItems[i]));
     }
     // return keccak256(abi.encode(hash(orderItems[0])));
     return keccak256(h);
   }
 
-  function hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
+  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
     return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
   }
 
@@ -600,7 +600,7 @@ contract AuctionHouseUpgradable is
     address orderSigner;
 
     if (order.signVersion == Market.SIGN_V1) {
-      bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, hash(order));
+      bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, _hash(order));
       orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
     } else {
       revert('AuctionHouse: wrong sig version');
