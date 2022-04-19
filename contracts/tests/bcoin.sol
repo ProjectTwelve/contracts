@@ -1,12 +1,9 @@
-pragma solidity ^0.8.0;
-
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
-import './IP12Token.sol';
 
-// temporary contract, not corresponding to real token model
+pragma solidity ^0.8.0;
 
-contract P12Token is IP12Token, ERC20, Ownable {
+contract BitCoin is ERC20, Ownable {
   constructor(
     string memory name,
     string memory symbol,
@@ -15,7 +12,8 @@ contract P12Token is IP12Token, ERC20, Ownable {
     _mint(msg.sender, totalSupply);
   }
 
-  function mint(address recipient, uint256 amount) public override onlyOwner {
-    _mint(recipient, amount);
+  function mint(address account, uint256 amount) public onlyOwner returns (bool) {
+    _mint(account, amount);
+    return true;
   }
 }

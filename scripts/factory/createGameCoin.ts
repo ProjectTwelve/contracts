@@ -11,7 +11,7 @@ async function main() {
 
   // P12 0x2844B158Bcffc0aD7d881a982D464c0ce38d8086
   // p12 0x7154f7219F5E0F1EbF8C2dbBA1bCF8Fb36f2c5f3 p12TestNet
-  const ERC20 = await ethers.getContractFactory('ERC20FixedSupply');
+  const ERC20 = await ethers.getContractFactory('P12Token');
   const P12 = await ERC20.attach('0xd1190C53dFF162242EE5145cFb1C28dA75B921f3');
 
   const name = 'GameCoinTest001';

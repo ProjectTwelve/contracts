@@ -9,7 +9,7 @@ async function main() {
   const P12Factory = await P12FACTORY.attach('0x87b43f48009AC4E59d4bb520d510aD89fb8eA86a');
 
   // P12 0x2844B158Bcffc0aD7d881a982D464c0ce38d8086
-  const ERC20 = await ethers.getContractFactory('ERC20FixedSupply');
+  const ERC20 = await ethers.getContractFactory('P12Token');
   const P12 = await ERC20.attach('0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
 
   await P12Factory.register('1101', '0xfeD03676c595DD1F1c6716a446cD44B4C90AD290');

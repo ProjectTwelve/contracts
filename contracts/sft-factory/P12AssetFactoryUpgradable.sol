@@ -9,7 +9,7 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
-import './P12V0FactoryStorage.sol';
+import '../factory/P12V0FactoryUpgradeable.sol';
 
 // import "hardhat/console.sol";
 
@@ -51,12 +51,12 @@ contract P12AssetFactoryUpgradable is
   }
 
   modifier onlyDeveloper(string memory gameId) {
-    require(P12V0FactoryStorage(p12factory).allGames(gameId) == msg.sender, 'P12Asset: not game developer');
+    require(P12V0FactoryUpgradeable(p12factory).allGames(gameId) == msg.sender, 'P12Asset: not game developer');
     _;
   }
 
   modifier onlyCollectionDeveloper(address collection) {
-    require(P12V0FactoryStorage(p12factory).allGames(registry[collection]) == msg.sender, 'P12Asset: not game developer');
+    require(P12V0FactoryUpgradeable(p12factory).allGames(registry[collection]) == msg.sender, 'P12Asset: not game developer');
     _;
   }
 

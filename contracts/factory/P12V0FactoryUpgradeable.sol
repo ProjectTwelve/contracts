@@ -5,7 +5,7 @@ import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IP12V0FactoryUpgradeable.sol';
 import './interfaces/IUniswapV2Pair.sol';
 import './interfaces/IUniswapV2Factory.sol';
-import './libraries/FullMath.sol';
+import '../libraries/FullMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './P12V0ERC20.sol';
 
@@ -58,7 +58,7 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     p12 = _p12;
     uniswapFactory = _uniswapFactory;
     uniswapRouter = _uniswapRouter;
-    init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
+    init_hash = 0x3dd153ef4c863089b7c828a2fee5644fa90fec71249908d0189c25ca23f0f985;
     unlocked = 1;
   }
 
