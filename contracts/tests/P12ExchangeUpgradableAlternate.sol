@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import './P12ExchangeUpgradable.sol';
+import '../auctionHouse/P12ExchangeUpgradable.sol';
 
 contract P12ExchangeUpgradableAlternative is P12ExchangeUpgradable {
   string public name;

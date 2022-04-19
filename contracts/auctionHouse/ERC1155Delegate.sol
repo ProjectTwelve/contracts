@@ -5,9 +5,9 @@ pragma solidity ^0.8.0;
 import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 import '@openzeppelin/contracts/access/AccessControl.sol';
-import './library/MarketConsts.sol';
+import './MarketConsts.sol';
 import './interface/IDelegate.sol';
-import './library/Utils.sol';
+import '../libraries/Utils.sol';
 
 contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver {
   bytes32 public constant DELEGATION_CALLER = keccak256('DELEGATION_CALLER');
