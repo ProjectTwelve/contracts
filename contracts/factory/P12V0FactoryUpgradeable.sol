@@ -9,6 +9,7 @@ import '../libraries/FullMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './P12V0ERC20.sol';
 
+import "./interfaces/IP12Mine.sol";
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
@@ -28,6 +29,9 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     uint256 unlockTimestamp;
     bool executed;
   }
+
+  uint256 internal addLiquidityEffectiveTime;
+  address public p12mine;
 
   // gameId => developer address
   mapping(string => address) public allGames;
@@ -52,17 +56,27 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
   function initialize(
     address _p12,
     address _uniswapFactory,
-    address _uniswapRouter
+    address _uniswapRouter,
+    uint256 _effectiveTime
   ) public initializer {
     __Ownable_init();
     p12 = _p12;
     uniswapFactory = _uniswapFactory;
     uniswapRouter = _uniswapRouter;
-    init_hash = 0x3dd153ef4c863089b7c828a2fee5644fa90fec71249908d0189c25ca23f0f985;
+    init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
     unlocked = 1;
+    addLiquidityEffectiveTime = _effectiveTime;
+    IERC20(p12).approve(uniswapRouter, type(uint256).max);
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  // set p12mine contract address
+  function setInfo(address _p12mine) public virtual onlyOwner {
+    require(_p12mine != address(0), 'address cannot be zero');
+
+    p12mine = _p12mine;
+  }
 
   function register(string memory gameId, address developer) external virtual override onlyOwner {
     allGames[gameId] = developer;
@@ -84,20 +98,34 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
 
     IERC20(p12).transferFrom(msg.sender, address(this), amountP12);
 
-    IERC20(p12).approve(uniswapRouter, amountP12);
-
     P12V0ERC20(gameCoinAddress).approve(uniswapRouter, amountGameCoinDesired);
 
-    IUniswapV2Router02(uniswapRouter).addLiquidity(
+    uint256 liquidity0;
+    (, , liquidity0) = IUniswapV2Router02(uniswapRouter).addLiquidity(
       p12,
       gameCoinAddress,
       amountP12,
       amountGameCoinDesired,
       amountP12,
       amountGameCoinDesired,
-      msg.sender,
-      2641387311
+      address(p12mine),
+      getBlockTimestamp() + addLiquidityEffectiveTime
     );
+    //get pair contract address
+    address pair = IUniswapV2Factory(uniswapFactory).getPair(p12, gameCoinAddress);
+
+    // check address
+    require(pair != address(0), 'P12V0FactoryUpgradeableV2::pair address error');
+
+    // get lpToken value
+    uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12mine));
+    require(liquidity0 == liquidity1, 'P12V0FactoryUpgradeableV2::liquidity0 should equal liquidity1');
+
+    // new staking pool
+    IP12Mine(p12mine).createPool(pair, false);
+
+    //
+    IP12Mine(p12mine).addLpTokenInfoForGameCreator(pair, msg.sender);
 
     allGameCoins[gameCoinAddress] = gameId;
     emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
