@@ -9,166 +9,128 @@ import '../libraries/FullMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './P12V0ERC20.sol';
 
+import "./interfaces/IP12Mine.sol";
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 // import "hardhat/console.sol";
 
-contract P12V0FactoryUpgradeableV2 is
-    Initializable,
-    UUPSUpgradeable,
-    IP12V0FactoryUpgradeable,
-    OwnableUpgradeable
-{
-    address public p12;
-    address public uniswapRouter;
-    address public uniswapFactory;
-    uint256 public delayK;
-    uint256 public delayB;
-    bytes32 internal init_hash;
+contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0FactoryUpgradeable, OwnableUpgradeable {
+  address public p12;
+  address public uniswapRouter;
+  address public uniswapFactory;
+  uint256 public delayK;
+  uint256 public delayB;
+  bytes32 internal init_hash;
 
-    struct MintCoinInfo {
-        uint256 amount;
-        uint256 unlockTimestamp;
-        bool executed;
-    }
+  struct MintCoinInfo {
+    uint256 amount;
+    uint256 unlockTimestamp;
+    bool executed;
+  }
 
-    uint256 internal addLiquidityEffectiveTime;
-    address public p12mine;
+  uint256 internal addLiquidityEffectiveTime;
+  address public p12mine;
 
-    // gameId => developer address
-    mapping(string => address) public allGames;
-    // gameCoinAddress => gameId
-    mapping(address => string) public allGameCoins;
-    // gameCoinAddress => bool
-    mapping(address => bool) public executeMintLock;
-    // gameCoinAddress => declareMintId => MintCoinInfo
-    mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
-    // gameCoinAddress => declareMintId
-    mapping(address => bytes32) public preMintIds;
+  // gameId => developer address
+  mapping(string => address) public allGames;
+  // gameCoinAddress => gameId
+  mapping(address => string) public allGameCoins;
+  // gameCoinAddress => bool
+  mapping(address => bool) public executeMintLock;
+  // gameCoinAddress => declareMintId => MintCoinInfo
+  mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
+  // gameCoinAddress => declareMintId
+  mapping(address => bytes32) public preMintIds;
 
-    uint256 private unlocked;
+  uint256 private unlocked;
 
-    modifier lock() {
-        require(unlocked == 1, "P12Factory: LOCKED");
-        unlocked = 0;
-        _;
-        unlocked = 1;
-    }
+  modifier lock() {
+    require(unlocked == 1, 'P12Factory: LOCKED');
+    unlocked = 0;
+    _;
+    unlocked = 1;
+  }
 
-    function initialize(
-        address _p12,
-        address _uniswapFactory,
-        address _uniswapRouter,
-        uint256 _EffectiveTime
-    ) public initializer {
-        __Ownable_init();
-        p12 = _p12;
-        uniswapFactory = _uniswapFactory;
-        uniswapRouter = _uniswapRouter;
-        init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-        unlocked = 1;
-        addLiquidityEffectiveTime = _EffectiveTime;
-        IERC20(p12).approve(uniswapRouter, type(uint256).max);
-    }
+  function initialize(
+    address _p12,
+    address _uniswapFactory,
+    address _uniswapRouter,
+    uint256 _EffectiveTime
+  ) public initializer {
+    __Ownable_init();
+    p12 = _p12;
+    uniswapFactory = _uniswapFactory;
+    uniswapRouter = _uniswapRouter;
+    init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
+    unlocked = 1;
+    addLiquidityEffectiveTime = _EffectiveTime;
+    IERC20(p12).approve(uniswapRouter, type(uint256).max);
+  }
 
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-    function _authorizeUpgrade(address newImplementation)
-        internal
-        override
-        onlyOwner
-    {}
+  // set p12mine contract address
+  function setInfo(address _p12mine) public virtual onlyOwner {
+    require(_p12mine != address(0), 'address cannot be zero');
 
-    // set p12mine contract address
-    function setInfo(address _p12mine) public virtual onlyOwner {
-        require(_p12mine != address(0), "address cannot be zero");
+    p12mine = _p12mine;
+  }
 
-        p12mine = _p12mine;
-    }
+  function register(string memory gameId, address developer) external virtual override onlyOwner {
+    allGames[gameId] = developer;
+    emit RegisterGame(gameId, developer);
+  }
 
-    function register(string memory gameId, address developer)
-        external
-        virtual
-        override
-        onlyOwner
-    {
-        allGames[gameId] = developer;
-        emit RegisterGame(gameId, developer);
-    }
+  function create(
+    string memory name_,
+    string memory symbol_,
+    string memory gameId,
+    string memory gameCoinIconUrl,
+    uint256 amountGameCoin,
+    uint256 amountP12
+  ) public virtual override lock returns (address gameCoinAddress) {
+    require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permit to create game coin');
+    require(amountP12 > 0, 'FORBIDDEN: not enough p12');
+    gameCoinAddress = _create(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
+    uint256 amountGameCoinDesired = amountGameCoin / 2;
 
-    function create(
-        string memory name_,
-        string memory symbol_,
-        string memory gameId,
-        string memory gameCoinIconUrl,
-        uint256 amountGameCoin,
-        uint256 amountP12
-    ) public virtual override lock returns (address gameCoinAddress) {
-        require(
-            msg.sender == allGames[gameId],
-            "FORBIDDEN: have no permit to create game coin"
-        );
-        require(amountP12 > 0, "FORBIDDEN: not enough p12");
-        gameCoinAddress = _create(
-            name_,
-            symbol_,
-            gameId,
-            gameCoinIconUrl,
-            amountGameCoin
-        );
-        uint256 amountGameCoinDesired = amountGameCoin / 2;
+    IERC20(p12).transferFrom(msg.sender, address(this), amountP12);
 
-        IERC20(p12).transferFrom(msg.sender, address(this), amountP12);
+    P12V0ERC20(gameCoinAddress).approve(uniswapRouter, amountGameCoinDesired);
 
-        P12V0ERC20(gameCoinAddress).approve(
-            uniswapRouter,
-            amountGameCoinDesired
-        );
+    uint256 liquidity0;
+    (, , liquidity0) = IUniswapV2Router02(uniswapRouter).addLiquidity(
+      p12,
+      gameCoinAddress,
+      amountP12,
+      amountGameCoinDesired,
+      amountP12,
+      amountGameCoinDesired,
+      address(p12mine),
+      getBlockTimestamp() + addLiquidityEffectiveTime
+    );
+    //get pair contract address
+    address pair = IUniswapV2Factory(uniswapFactory).getPair(p12, gameCoinAddress);
 
-        uint256 liquidity0;
-        (, , liquidity0) = IUniswapV2Router02(uniswapRouter).addLiquidity(
-            p12,
-            gameCoinAddress,
-            amountP12,
-            amountGameCoinDesired,
-            amountP12,
-            amountGameCoinDesired,
-            address(p12mine),
-            getBlockTimestamp() + addLiquidityEffectiveTime
-        );
-        //get pair contract address
-        address pair = IUniswapV2Factory(uniswapFactory).getPair(
-            p12,
-            gameCoinAddress
-        );
+    // check address
+    require(pair != address(0), 'P12V0FactoryUpgradeableV2::pair address error');
 
-        // check address 
-        require(
-            pair != address(0),
-            "P12V0FactoryUpgradeableV2::pair address error"
-        );
+    // get lpToken value
+    uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12mine));
+    require(liquidity0 == liquidity1, 'P12V0FactoryUpgradeableV2::liquidity0 should equal liquidity1');
 
-        // get lpToken value
-        uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12mine));
-        require(
-            liquidity0 == liquidity1,
-            "P12V0FactoryUpgradeableV2::liquidity0 should equal liquidity1"
-        );
+    // new staking pool
+    IP12Mine(p12mine).createPool(pair, false);
 
-        // new staking pool
-        IP12Mine(p12mine).createPool(pair, false);
+    //
+    IP12Mine(p12mine).addLpTokenInfoForGameCreator(pair, msg.sender);
 
-        // 
-        IP12Mine(p12mine).addLpTokenInfoForGameCreator(
-            pair,
-            msg.sender
-        );
-
-        allGameCoins[gameCoinAddress] = gameId;
-        emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
-        return gameCoinAddress;
-    }
+    allGameCoins[gameCoinAddress] = gameId;
+    emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
+    return gameCoinAddress;
+  }
 
   function _create(
     string memory name_,
