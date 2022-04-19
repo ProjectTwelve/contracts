@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { P12AssetFactoryUpgradable, P12V0Factory, P12Asset } from '../../typechain';
+import { P12AssetFactoryUpgradable, P12V0FactoryUpgradeable, P12Asset } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract } from 'ethers';
 
@@ -14,7 +14,7 @@ describe('P12ExchangeUpgradable', function () {
   // user1: not Used Now
   let user1: SignerWithAddress;
   // p12factory: Register Game and create GameCoin
-  let p12factory: P12V0Factory;
+  let p12factory: Contract;
   //
   let p12AssetFactoryAddr: Contract;
   let p12AssetFactory: P12AssetFactoryUpgradable;
@@ -48,10 +48,12 @@ describe('P12ExchangeUpgradable', function () {
     // );
 
     // deploy p12factory
-    const p12factoryF = await ethers.getContractFactory('P12V0Factory');
+    const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
 
     // not fully use, so set random address args
-    p12factory = await p12factoryF.deploy(admin.address, admin.address, admin.address, admin.address, admin.address);
+    p12factory = await upgrades.deployProxy(P12FACTORY, [admin.address, admin.address, admin.address], {
+      kind: 'uups',
+    });
 
     // register game
     await p12factory.register('gameId1', developer1.address);
