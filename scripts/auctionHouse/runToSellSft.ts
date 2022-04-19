@@ -29,7 +29,7 @@ async function main() {
   ];
 
   const domain = {
-    name: 'P12 Exchange',
+    name: 'P12 AuctionHouse',
     version: '1.0.0',
     chainId: 44010,
     verifyingContract: p12exchange.address,

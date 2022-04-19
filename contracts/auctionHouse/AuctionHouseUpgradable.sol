@@ -89,10 +89,11 @@ contract AuctionHouseUpgradable is
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
 
+    // if changed, not compatible with old version
     DOMAIN_SEPARATOR = keccak256(
       abi.encode(
         EIP712DOMAIN_TYPEHASH,
-        keccak256(bytes('P12 Exchange')),
+        keccak256(bytes('P12 AuctionHouse')),
         keccak256(bytes('1.0.0')),
         block.chainid,
         address(this)
