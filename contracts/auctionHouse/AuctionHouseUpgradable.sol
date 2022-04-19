@@ -323,6 +323,9 @@ contract AuctionHouseUpgradable is
       require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
       require(detail.price >= item.price, 'AuctionHouse: underpaid');
 
+      /**
+       * note no native token until now
+       */
       nativeAmount = _takePayment(itemHash, order.currency, shared.user, detail.price);
       require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'AuctionHouse: delegation error');
 
@@ -544,15 +547,15 @@ contract AuctionHouseUpgradable is
   //   }
   // }
 
-  /**
-   * @dev allow some address to trade, may be these who sign in nft market
-   * not necessary to verify at v1
-   */
-  function _verifyInputSignature(Market.RunInput memory input) internal view virtual {
-    bytes32 hashValue = keccak256(abi.encode(input.shared, input.details.length, input.details));
-    address signer = ECDSA.recover(hashValue, input.v, input.r, input.s);
-    require(signers[signer], 'Input signature error');
-  }
+  // /**
+  //  * @dev allow some address to trade, may be these who sign in nft market
+  //  * not necessary to verify at v1
+  //  */
+  // function _verifyInputSignature(Market.RunInput memory input) internal view virtual {
+  //   bytes32 hashValue = keccak256(abi.encode(input.shared, input.details.length, input.details));
+  //   address signer = ECDSA.recover(hashValue, input.v, input.r, input.s);
+  //   require(signers[signer], 'AuctionHouse: Input sig error');
+  // }
 
   function hash(Market.Order memory order) private pure returns (bytes32) {
     return
@@ -598,7 +601,7 @@ contract AuctionHouseUpgradable is
       bytes32 DataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, hash(order));
       orderSigner = ECDSA.recover(DataHash, order.v, order.r, order.s);
     } else {
-      revert('AuctionHouse: unknown sig version');
+      revert('AuctionHouse: wrong sig version');
     }
 
     require(orderSigner == order.user, 'AuctionHouse: sig not match');
