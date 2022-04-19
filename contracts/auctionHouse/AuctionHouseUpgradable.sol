@@ -580,11 +580,12 @@ contract AuctionHouseUpgradable is
   }
 
   function hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
-    // bytes memory h;
-    // for (uint256 i = 0; i < orderItems.length; i++) {
-    //     h = abi.encode(h, hash(orderItems[i]));
-    // }
-    return keccak256(abi.encode(hash(orderItems[0])));
+    bytes memory h;
+    for (uint256 i = 0; i < orderItems.length; i++) {
+      h = abi.encodePacked(h, hash(orderItems[i]));
+    }
+    // return keccak256(abi.encode(hash(orderItems[0])));
+    return keccak256(h);
   }
 
   function hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
