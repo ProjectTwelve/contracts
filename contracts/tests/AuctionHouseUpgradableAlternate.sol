@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import '../auctionHouse/P12ExchangeUpgradable.sol';
+import '../auctionHouse/AuctionHouseUpgradable.sol';
 
-contract P12ExchangeUpgradableAlternative is P12ExchangeUpgradable {
+contract AuctionHouseUpgradableAlternative is AuctionHouseUpgradable {
   string public name;
 
   function setName(string memory _name) public {

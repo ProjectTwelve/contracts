@@ -14,7 +14,7 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
 // import "hardhat/console.sol";
 
-interface P12ExchangeRun {
+interface AuctionHouseRun {
   function run1(
     Market.Order memory order,
     Market.SettleShared memory shared,
@@ -22,12 +22,12 @@ interface P12ExchangeRun {
   ) external returns (uint256);
 }
 
-contract P12ExchangeUpgradable is
+contract AuctionHouseUpgradable is
   Initializable,
   ReentrancyGuardUpgradeable,
   OwnableUpgradeable,
   PausableUpgradeable,
-  P12ExchangeRun,
+  AuctionHouseRun,
   UUPSUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -152,7 +152,7 @@ contract P12ExchangeUpgradable is
     bytes32 r,
     bytes32 s
   ) public virtual nonReentrant whenNotPaused {
-    require(deadline > block.timestamp, 'P12Exchange: deadline reached');
+    require(deadline > block.timestamp, 'AuctionHouse: deadline reached');
     // bytes32 hash = keccak256(
     //     abi.encode(itemHashes.length, itemHashes, deadline)
     // );
@@ -212,7 +212,7 @@ contract P12ExchangeUpgradable is
       Market.SettleDetail memory detail = input.details[i];
       Market.Order memory order = input.orders[detail.orderIdx];
       if (input.shared.canFail) {
-        try P12ExchangeRun(address(this)).run1(order, input.shared, detail) returns (uint256 ethPayment) {
+        try AuctionHouseRun(address(this)).run1(order, input.shared, detail) returns (uint256 ethPayment) {
           amountEth -= ethPayment;
         } catch Error(string memory _err) {
           emit EvFailure(i, bytes(_err));
@@ -236,7 +236,7 @@ contract P12ExchangeUpgradable is
     Market.SettleShared memory shared,
     Market.SettleDetail memory detail
   ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'P12Exchange: unsafe call');
+    require(msg.sender == address(this), 'AuctionHouse: unsafe call');
 
     return _run(order, shared, detail);
   }
@@ -296,11 +296,11 @@ contract P12ExchangeUpgradable is
     bytes32 itemHash = _hashItem(order, item);
 
     {
-      require(itemHash == detail.itemHash, 'P12Exchange: item hash does not match');
-      require(order.network == block.chainid, 'P12Exchange: wrong network');
+      require(itemHash == detail.itemHash, 'AuctionHouse: item hash not match');
+      require(order.network == block.chainid, 'AuctionHouse: wrong network');
       require(
         address(detail.executionDelegate) != address(0) && delegates[address(detail.executionDelegate)],
-        'P12Exchange: unknown delegate'
+        'AuctionHouse: unknown delegate'
       );
     }
 
@@ -317,14 +317,14 @@ contract P12ExchangeUpgradable is
     // }
 
     if (detail.op == Market.Op.COMPLETE_SELL_OFFER) {
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'P12Exchange: this item sold or canceled');
-      require(order.intent == Market.INTENT_SELL, 'P12Exchange: intent != sell');
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: sold or canceled');
+      require(order.intent == Market.INTENT_SELL, 'AuctionHouse: intent != sell');
       _assertDelegation(order, detail);
-      require(order.deadline > block.timestamp, 'P12Exchange: deadline reached');
-      require(detail.price >= item.price, 'P12Exchange: underpaid');
+      require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
+      require(detail.price >= item.price, 'AuctionHouse: underpaid');
 
       nativeAmount = _takePayment(itemHash, order.currency, shared.user, detail.price);
-      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'P12Exchange: delegation error');
+      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'AuctionHouse: delegation error');
 
       _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price, detail.price);
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
@@ -365,9 +365,9 @@ contract P12ExchangeUpgradable is
     //     inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
     // }
     else if (detail.op == Market.Op.CANCEL_OFFER) {
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'p12Exchange: unable to cancel');
-      require(order.user == msg.sender, 'P12Exchange: no permit to cancel');
-      require(order.deadline > block.timestamp, 'deadline reached');
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: unable to cancel');
+      require(order.user == msg.sender, 'AuctionHouse: no permit to cancel');
+      require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
       inventoryStatus[itemHash] = Market.InvStatus.CANCELLED;
       emit EvCancel(itemHash);
     }
@@ -525,7 +525,7 @@ contract P12ExchangeUpgradable is
    * @dev judge delegate type
    */
   function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'delegation type error');
+    require(detail.executionDelegate.delegateType() == order.delegateType, 'AuctionHouse: delegation error');
   }
 
   // modifies `src`

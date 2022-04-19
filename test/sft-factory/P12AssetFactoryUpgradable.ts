@@ -4,7 +4,7 @@ import { P12AssetFactoryUpgradable, P12V0FactoryUpgradeable, P12Asset } from '..
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract } from 'ethers';
 
-describe('P12ExchangeUpgradable', function () {
+describe('AuctionHouseUpgradable', function () {
   // admin: Who deploy factory contract
   let admin: SignerWithAddress;
   // developer1: Who have register a gameId on P12Factory

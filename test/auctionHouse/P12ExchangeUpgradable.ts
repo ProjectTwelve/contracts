@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { P12ExchangeUpgradable, WETH9, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
+import { AuctionHouseUpgradable, WETH9, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract, utils } from 'ethers';
 
-describe('P12ExchangeUpgradable', function () {
+describe('AuctionHouseUpgradable', function () {
   let p12exchange: Contract;
   let developer: SignerWithAddress;
   let user1: SignerWithAddress;
@@ -63,9 +63,9 @@ describe('P12ExchangeUpgradable', function () {
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
   });
 
-  it('Should P12ExchangeUpgradable Deploy successfully', async function () {
-    const P12ExchangeUpgradableF = await ethers.getContractFactory('P12ExchangeUpgradable');
-    p12exchange = await upgrades.deployProxy(P12ExchangeUpgradableF, [0, weth.address], {
+  it('Should AuctionHouseUpgradable Deploy successfully', async function () {
+    const AuctionHouseUpgradableF = await ethers.getContractFactory('AuctionHouseUpgradable');
+    p12exchange = await upgrades.deployProxy(AuctionHouseUpgradableF, [0, weth.address], {
       kind: 'uups',
     });
   });
@@ -80,7 +80,7 @@ describe('P12ExchangeUpgradable', function () {
 
     // Add delegate
     await (
-      await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)
+      await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)
     ).updateDelegates([erc1155delegate.address], []);
   });
   it('Should Delegator transfer token successfully', async function () {
@@ -213,7 +213,7 @@ describe('P12ExchangeUpgradable', function () {
     // seller approve
     await p12asset.connect(user2).setApprovalForAll(erc1155delegate.address, true);
 
-    await (await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)).connect(user1).run({
+    await (await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)).connect(user1).run({
       orders: [Order],
       details: [SettleDetail],
       shared: SettleShared,
@@ -338,7 +338,7 @@ describe('P12ExchangeUpgradable', function () {
 
     // other cancel
     expect(
-      (await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)).connect(user2).run({
+      (await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)).connect(user2).run({
         orders: [Order],
         details: [{ ...SettleDetail, op: 3n }],
         shared: { ...SettleShared, user: user2.address },
@@ -346,10 +346,10 @@ describe('P12ExchangeUpgradable', function () {
         s: '0x0000000000000000000000000000000000000000000000000000000000000000',
         v: '0x00',
       }),
-    ).to.be.revertedWith('P12Exchange: no permit to cancel');
+    ).to.be.revertedWith('AuctionHouse: no permit to cancel');
 
     // seller cancel
-    await (await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)).connect(user1).run({
+    await (await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)).connect(user1).run({
       orders: [Order],
       details: [{ ...SettleDetail, op: 3n }],
       shared: { ...SettleShared, user: user1.address },
@@ -359,7 +359,7 @@ describe('P12ExchangeUpgradable', function () {
     });
 
     expect(
-      (await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)).connect(user2).run({
+      (await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)).connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
@@ -367,7 +367,7 @@ describe('P12ExchangeUpgradable', function () {
         s: '0x0000000000000000000000000000000000000000000000000000000000000000',
         v: '0x00',
       }),
-    ).to.be.revertedWith('P12Exchange: this item sold or canceled');
+    ).to.be.revertedWith('AuctionHouse: this item sold or canceled');
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);
@@ -376,9 +376,9 @@ describe('P12ExchangeUpgradable', function () {
   });
 
   it('Should upgrade successfully', async () => {
-    const P12ExchangeAlter = await ethers.getContractFactory('P12ExchangeUpgradableAlternative');
+    const AuctionHouseAlter = await ethers.getContractFactory('AuctionHouseUpgradableAlternative');
 
-    const p12ExchangeAlter = await upgrades.upgradeProxy(p12exchange.address, P12ExchangeAlter);
+    const p12ExchangeAlter = await upgrades.upgradeProxy(p12exchange.address, AuctionHouseAlter);
 
     await p12ExchangeAlter.setName('Project Twelve');
     expect(await p12ExchangeAlter.getName()).to.be.equal('Project Twelve');
