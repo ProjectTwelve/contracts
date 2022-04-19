@@ -48,7 +48,7 @@ contract AuctionHouseUpgradable is
     Market.OrderItem item,
     Market.SettleDetail detail
   );
-  event EvSigner(address signer, bool isRemoval);
+  // event EvSigner(address signer, bool isRemoval);
   event EvDelegate(address delegate, bool isRemoval);
   event EvFeeCapUpdate(uint256 newValue);
   event EvCancel(bytes32 indexed itemHash);
@@ -169,8 +169,8 @@ contract AuctionHouseUpgradable is
   // }
 
   function run(Market.RunInput memory input) public payable virtual nonReentrant whenNotPaused {
-    require(input.shared.deadline > block.timestamp, 'input deadline reached');
-    require(msg.sender == input.shared.user, 'sender does not match');
+    require(input.shared.deadline > block.timestamp, 'AuctionHouse: deadline reached');
+    require(msg.sender == input.shared.user, 'AuctionHouse: sender not match');
 
     /**
             not necessary to limit signer at v1
@@ -296,7 +296,7 @@ contract AuctionHouseUpgradable is
     bytes32 itemHash = _hashItem(order, item);
 
     {
-      require(itemHash == detail.itemHash, 'AuctionHouse: item hash not match');
+      require(itemHash == detail.itemHash, 'AuctionHouse: hash not match');
       require(order.network == block.chainid, 'AuctionHouse: wrong network');
       require(
         address(detail.executionDelegate) != address(0) && delegates[address(detail.executionDelegate)],
@@ -369,7 +369,7 @@ contract AuctionHouseUpgradable is
     // }
     else if (detail.op == Market.Op.CANCEL_OFFER) {
       require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: unable to cancel');
-      require(order.user == msg.sender, 'AuctionHouse: no permit to cancel');
+      require(order.user == msg.sender, 'AuctionHouse: no permit cancel');
       require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
       inventoryStatus[itemHash] = Market.InvStatus.CANCELLED;
       emit EvCancel(itemHash);
@@ -598,8 +598,8 @@ contract AuctionHouseUpgradable is
     address orderSigner;
 
     if (order.signVersion == Market.SIGN_V1) {
-      bytes32 DataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, hash(order));
-      orderSigner = ECDSA.recover(DataHash, order.v, order.r, order.s);
+      bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, hash(order));
+      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
     } else {
       revert('AuctionHouse: wrong sig version');
     }
