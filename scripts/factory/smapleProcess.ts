@@ -15,7 +15,7 @@ async function main() {
   const P12FactoryProxy = await P12V0FactoryUpgradeable.attach('0x395FAbef71433280f85f79ad43f99E3cC040af5C');
 
   // connect P12
-  const P12 = await ethers.getContractFactory('ERC20FixedSupply');
+  const P12 = await ethers.getContractFactory('P12Token');
   const P12Instance = await P12.attach('0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
 
   // connect uniFactory

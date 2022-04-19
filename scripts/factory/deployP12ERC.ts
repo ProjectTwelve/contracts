@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 
 async function main() {
-  const ERC20 = await ethers.getContractFactory('ERC20FixedSupply');
+  const ERC20 = await ethers.getContractFactory('P12Token');
   const P12 = await ERC20.deploy('ProjectTwelve', 'P12', 100000000n * 10n ** 18n);
 
   // p12 address 0x2844B158Bcffc0aD7d881a982D464c0ce38d8086
