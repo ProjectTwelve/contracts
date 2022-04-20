@@ -12,7 +12,7 @@ async function main() {
 
   const p12asset = await ethers.getContractAt('P12AssetDemo', '0x4944655508A93A6Be7FfF9e6eF82cFb36630052F');
 
-  const p12exchange = await ethers.getContractAt('P12ExchangeUpgradable', '0x2B1525d4BaBC614A4F309b1256650aB7602d780A');
+  const p12exchange = await ethers.getContractAt('AuctionHouseUpgradable', '0x2B1525d4BaBC614A4F309b1256650aB7602d780A');
 
   const erc1155delegate = await ethers.getContractAt('ERC1155Delegate', '0x2004560E5ad60298640F7Fe20Fabe4B82A622592');
 
@@ -29,7 +29,7 @@ async function main() {
   ];
 
   const domain = {
-    name: 'P12 Exchange',
+    name: 'P12 AuctionHouse',
     version: '1.0.0',
     chainId: 44010,
     verifyingContract: p12exchange.address,
@@ -146,7 +146,7 @@ async function main() {
   // seller approve
   await p12asset.connect(user1).setApprovalForAll(erc1155delegate.address, true);
 
-  await (await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)).connect(user2).run({
+  await (await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)).connect(user2).run({
     orders: [Order],
     details: [SettleDetail],
     shared: SettleShared,

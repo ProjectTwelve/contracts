@@ -13,9 +13,9 @@ async function main() {
   const p12coin = await ethers.getContractAt('P12Coin', '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
   const weth = await ethers.getContractAt('WETH9', '0xDf032Bc4B9dC2782Bb09352007D4C57B75160B15');
 
-  const P12ExchangeUpgradableF = await ethers.getContractFactory('P12ExchangeUpgradable');
+  const AuctionHouseUpgradableF = await ethers.getContractFactory('AuctionHouseUpgradable');
 
-  const p12exchange = await upgrades.deployProxy(P12ExchangeUpgradableF, [0, weth.address], {
+  const p12exchange = await upgrades.deployProxy(AuctionHouseUpgradableF, [0, weth.address], {
     kind: 'uups',
   });
   const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
@@ -30,7 +30,7 @@ async function main() {
 
   // Add delegate
   await (
-    await ethers.getContractAt('P12ExchangeUpgradable', p12exchange.address)
+    await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)
   ).updateDelegates([erc1155delegate.address], []);
 }
 

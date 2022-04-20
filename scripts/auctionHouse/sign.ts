@@ -10,7 +10,7 @@ import { TypedDataEncoder } from '@ethersproject/hash/src.ts/typed-data';
 import { recoverTypedSignature, SignTypedDataVersion, signTypedData } from '@metamask/eth-sig-util';
 async function main() {
   const domain = {
-    name: 'P12 Exchange',
+    name: 'P12 AuctionHouse',
     version: '1.0.0',
     chainId: 44010,
     verifyingContract: '0x2B1525d4BaBC614A4F309b1256650aB7602d780A',

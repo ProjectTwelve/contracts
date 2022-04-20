@@ -14,7 +14,7 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
 // import "hardhat/console.sol";
 
-interface P12ExchangeRun {
+interface AuctionHouseRun {
   function run1(
     Market.Order memory order,
     Market.SettleShared memory shared,
@@ -22,12 +22,12 @@ interface P12ExchangeRun {
   ) external returns (uint256);
 }
 
-contract P12ExchangeUpgradable is
+contract AuctionHouseUpgradable is
   Initializable,
   ReentrancyGuardUpgradeable,
   OwnableUpgradeable,
   PausableUpgradeable,
-  P12ExchangeRun,
+  AuctionHouseRun,
   UUPSUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -48,7 +48,7 @@ contract P12ExchangeUpgradable is
     Market.OrderItem item,
     Market.SettleDetail detail
   );
-  event EvSigner(address signer, bool isRemoval);
+  // event EvSigner(address signer, bool isRemoval);
   event EvDelegate(address delegate, bool isRemoval);
   event EvFeeCapUpdate(uint256 newValue);
   event EvCancel(bytes32 indexed itemHash);
@@ -89,10 +89,11 @@ contract P12ExchangeUpgradable is
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
 
+    // if changed, not compatible with old version
     DOMAIN_SEPARATOR = keccak256(
       abi.encode(
         EIP712DOMAIN_TYPEHASH,
-        keccak256(bytes('P12 Exchange')),
+        keccak256(bytes('P12 AuctionHouse')),
         keccak256(bytes('1.0.0')),
         block.chainid,
         address(this)
@@ -141,36 +142,36 @@ contract P12ExchangeUpgradable is
     }
   }
 
-  /**
-   * @dev cancel order
-   * @dev why deadline: if tx's gas price is not high enough, this tx will be pending forever.
-   */
-  function cancel(
-    bytes32[] memory itemHashes,
-    uint256 deadline,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public virtual nonReentrant whenNotPaused {
-    require(deadline > block.timestamp, 'P12Exchange: deadline reached');
-    // bytes32 hash = keccak256(
-    //     abi.encode(itemHashes.length, itemHashes, deadline)
-    // );
-    // address signer = ECDSA.recover(hash, v, r, s);
-    // require(signers[signer], "Input signature error");
+  // /**
+  //  * @dev cancel order
+  //  * @dev why deadline: if tx's gas price is not high enough, this tx will be pending forever.
+  //  */
+  // function cancel(
+  //   bytes32[] memory itemHashes,
+  //   uint256 deadline,
+  //   uint8 v,
+  //   bytes32 r,
+  //   bytes32 s
+  // ) public virtual nonReentrant whenNotPaused {
+  //   require(deadline > block.timestamp, 'AuctionHouse: deadline reached');
+  //   // bytes32 hash = keccak256(
+  //   //     abi.encode(itemHashes.length, itemHashes, deadline)
+  //   // );
+  //   // address signer = ECDSA.recover(hash, v, r, s);
+  //   // require(signers[signer], "Input signature error");
 
-    for (uint256 i = 0; i < itemHashes.length; i++) {
-      bytes32 h = itemHashes[i];
-      if (inventoryStatus[h] == Market.InvStatus.NEW) {
-        inventoryStatus[h] = Market.InvStatus.CANCELLED;
-        emit EvCancel(h);
-      }
-    }
-  }
+  //   for (uint256 i = 0; i < itemHashes.length; i++) {
+  //     bytes32 h = itemHashes[i];
+  //     if (inventoryStatus[h] == Market.InvStatus.NEW) {
+  //       inventoryStatus[h] = Market.InvStatus.CANCELLED;
+  //       emit EvCancel(h);
+  //     }
+  //   }
+  // }
 
   function run(Market.RunInput memory input) public payable virtual nonReentrant whenNotPaused {
-    require(input.shared.deadline > block.timestamp, 'input deadline reached');
-    require(msg.sender == input.shared.user, 'sender does not match');
+    require(input.shared.deadline > block.timestamp, 'AuctionHouse: deadline reached');
+    require(msg.sender == input.shared.user, 'AuctionHouse: sender not match');
 
     /**
             not necessary to limit signer at v1
@@ -212,7 +213,7 @@ contract P12ExchangeUpgradable is
       Market.SettleDetail memory detail = input.details[i];
       Market.Order memory order = input.orders[detail.orderIdx];
       if (input.shared.canFail) {
-        try P12ExchangeRun(address(this)).run1(order, input.shared, detail) returns (uint256 ethPayment) {
+        try AuctionHouseRun(address(this)).run1(order, input.shared, detail) returns (uint256 ethPayment) {
           amountEth -= ethPayment;
         } catch Error(string memory _err) {
           emit EvFailure(i, bytes(_err));
@@ -236,7 +237,7 @@ contract P12ExchangeUpgradable is
     Market.SettleShared memory shared,
     Market.SettleDetail memory detail
   ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'P12Exchange: unsafe call');
+    require(msg.sender == address(this), 'AuctionHouse: unsafe call');
 
     return _run(order, shared, detail);
   }
@@ -296,11 +297,11 @@ contract P12ExchangeUpgradable is
     bytes32 itemHash = _hashItem(order, item);
 
     {
-      require(itemHash == detail.itemHash, 'P12Exchange: item hash does not match');
-      require(order.network == block.chainid, 'P12Exchange: wrong network');
+      require(itemHash == detail.itemHash, 'AuctionHouse: hash not match');
+      require(order.network == block.chainid, 'AuctionHouse: wrong network');
       require(
         address(detail.executionDelegate) != address(0) && delegates[address(detail.executionDelegate)],
-        'P12Exchange: unknown delegate'
+        'AuctionHouse: unknown delegate'
       );
     }
 
@@ -317,14 +318,18 @@ contract P12ExchangeUpgradable is
     // }
 
     if (detail.op == Market.Op.COMPLETE_SELL_OFFER) {
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'P12Exchange: this item sold or canceled');
-      require(order.intent == Market.INTENT_SELL, 'P12Exchange: intent != sell');
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: sold or canceled');
+      require(order.intent == Market.INTENT_SELL, 'AuctionHouse: intent != sell');
       _assertDelegation(order, detail);
-      require(order.deadline > block.timestamp, 'P12Exchange: deadline reached');
-      require(detail.price >= item.price, 'P12Exchange: underpaid');
+      require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
+      require(detail.price >= item.price, 'AuctionHouse: underpaid');
 
+      /**
+       * @dev transfer token from buyer address to this contract
+       * note no native token until now
+       */
       nativeAmount = _takePayment(itemHash, order.currency, shared.user, detail.price);
-      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'P12Exchange: delegation error');
+      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'AuctionHouse: delegation error');
 
       _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price, detail.price);
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
@@ -365,9 +370,9 @@ contract P12ExchangeUpgradable is
     //     inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
     // }
     else if (detail.op == Market.Op.CANCEL_OFFER) {
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'p12Exchange: unable to cancel');
-      require(order.user == msg.sender, 'P12Exchange: no permit to cancel');
-      require(order.deadline > block.timestamp, 'deadline reached');
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: unable to cancel');
+      require(order.user == msg.sender, 'AuctionHouse: no permit cancel');
+      require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
       inventoryStatus[itemHash] = Market.InvStatus.CANCELLED;
       emit EvCancel(itemHash);
     }
@@ -514,7 +519,7 @@ contract P12ExchangeUpgradable is
     //     delete ongoingAuctions[itemHash];
     // }
     else {
-      revert('unknown op');
+      revert('AuctionHouse: unknown op');
     }
 
     _emitInventory(itemHash, order, item, shared, detail);
@@ -525,36 +530,36 @@ contract P12ExchangeUpgradable is
    * @dev judge delegate type
    */
   function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'delegation type error');
+    require(detail.executionDelegate.delegateType() == order.delegateType, 'AuctionHouse: delegation error');
   }
 
   // modifies `src`
-  function _arrayReplace(
-    bytes memory src,
-    bytes memory replacement,
-    bytes memory mask
-  ) internal view virtual {
-    require(src.length == replacement.length);
-    require(src.length == mask.length);
+  // function _arrayReplace(
+  //   bytes memory src,
+  //   bytes memory replacement,
+  //   bytes memory mask
+  // ) internal view virtual {
+  //   require(src.length == replacement.length);
+  //   require(src.length == mask.length);
 
-    for (uint256 i = 0; i < src.length; i++) {
-      if (mask[i] != 0) {
-        src[i] = replacement[i];
-      }
-    }
-  }
+  //   for (uint256 i = 0; i < src.length; i++) {
+  //     if (mask[i] != 0) {
+  //       src[i] = replacement[i];
+  //     }
+  //   }
+  // }
 
-  /**
-   * @dev allow some address to trade, may be these who sign in nft market
-   * not necessary to verify at v1
-   */
-  function _verifyInputSignature(Market.RunInput memory input) internal view virtual {
-    bytes32 hash = keccak256(abi.encode(input.shared, input.details.length, input.details));
-    address signer = ECDSA.recover(hash, input.v, input.r, input.s);
-    require(signers[signer], 'Input signature error');
-  }
+  // /**
+  //  * @dev allow some address to trade, may be these who sign in nft market
+  //  * not necessary to verify at v1
+  //  */
+  // function _verifyInputSignature(Market.RunInput memory input) internal view virtual {
+  //   bytes32 hashValue = keccak256(abi.encode(input.shared, input.details.length, input.details));
+  //   address signer = ECDSA.recover(hashValue, input.v, input.r, input.s);
+  //   require(signers[signer], 'AuctionHouse: Input sig error');
+  // }
 
-  function hash(Market.Order memory order) private view returns (bytes32) {
+  function _hash(Market.Order memory order) private pure returns (bytes32) {
     return
       keccak256(
         abi.encode(
@@ -570,20 +575,21 @@ contract P12ExchangeUpgradable is
           order.currency,
           keccak256(order.dataMask),
           order.items.length,
-          hash(order.items)
+          _hash(order.items)
         )
       );
   }
 
-  function hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
-    // bytes memory h;
-    // for (uint256 i = 0; i < orderItems.length; i++) {
-    //     h = abi.encode(h, hash(orderItems[i]));
-    // }
-    return keccak256(abi.encode(hash(orderItems[0])));
+  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
+    bytes memory h;
+    for (uint256 i = 0; i < orderItems.length; i++) {
+      h = abi.encodePacked(h, _hash(orderItems[i]));
+    }
+    // return keccak256(abi.encode(hash(orderItems[0])));
+    return keccak256(h);
   }
 
-  function hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
+  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
     return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
   }
 
@@ -595,13 +601,13 @@ contract P12ExchangeUpgradable is
     address orderSigner;
 
     if (order.signVersion == Market.SIGN_V1) {
-      bytes32 DataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, hash(order));
-      orderSigner = ECDSA.recover(DataHash, order.v, order.r, order.s);
+      bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, _hash(order));
+      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
     } else {
-      revert('unknown signature version');
+      revert('AuctionHouse: wrong sig version');
     }
 
-    require(orderSigner == order.user, 'Order signature does not match');
+    require(orderSigner == order.user, 'AuctionHouse: sig not match');
   }
 
   /**
@@ -649,7 +655,7 @@ contract P12ExchangeUpgradable is
   }
 
   /**
-   * @dev
+   * @dev distribute fees and give extra to seller
    */
   function _distributeFeeAndProfit(
     bytes32 itemHash,
@@ -664,6 +670,9 @@ contract P12ExchangeUpgradable is
     uint256 payment = netPrice;
     uint256 totalFeePct;
 
+    /**
+     * @dev distribute fees
+     */
     for (uint256 i = 0; i < sd.fees.length; i++) {
       Market.Fee memory fee = sd.fees[i];
       totalFeePct += fee.percentage;
@@ -674,6 +683,9 @@ contract P12ExchangeUpgradable is
 
     require(feeCapPct >= totalFeePct, 'total fee cap exceeded');
 
+    /**
+     * @dev give extra to seller
+     */
     _transferTo(currency, seller, payment);
     emit EvProfit(itemHash, address(currency), seller, payment);
   }

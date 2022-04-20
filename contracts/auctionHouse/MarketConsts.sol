@@ -8,11 +8,11 @@ import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 
 library Market {
   uint256 constant INTENT_SELL = 1;
-  uint256 constant INTENT_AUCTION = 2;
-  uint256 constant INTENT_BUY = 3;
+  // uint256 constant INTENT_AUCTION = 2;
+  // uint256 constant INTENT_BUY = 3;
 
   uint8 constant SIGN_V1 = 1;
-  uint8 constant SIGN_V3 = 3;
+  // uint8 constant SIGN_V3 = 3;
 
   struct OrderItem {
     uint256 price;
@@ -47,8 +47,8 @@ library Market {
          */
     OrderItem[] items;
     /**
-            signature, eip 2098 would be better
-            */
+      signature for Order, eip 2098 would be better
+    */
     bytes32 r;
     bytes32 s;
     uint8 v;
@@ -106,18 +106,18 @@ library Market {
     Order[] orders;
     SettleDetail[] details;
     SettleShared shared;
-    // signature
-    bytes32 r;
-    bytes32 s;
-    uint8 v;
+    // signature for registered, but not used now
+    // bytes32 r;
+    // bytes32 s;
+    // uint8 v;
   }
 
-  struct OngoingAuction {
-    uint256 price;
-    uint256 netPrice;
-    uint256 endAt;
-    address bidder;
-  }
+  // struct OngoingAuction {
+  //   uint256 price;
+  //   uint256 netPrice;
+  //   uint256 endAt;
+  //   address bidder;
+  // }
 
   enum InvStatus {
     NEW,

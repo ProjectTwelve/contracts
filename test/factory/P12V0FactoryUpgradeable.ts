@@ -146,7 +146,7 @@ describe('P12Factory', function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
-    await ethers.provider.send("evm_mine", [timestampBefore + 5000]);
+    await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
     await p12Factory.executeMint(gameCoinAddress, mintId);
   });
 
@@ -154,7 +154,7 @@ describe('P12Factory', function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
-    await ethers.provider.send("evm_mine", [timestampBefore + 5000]);
+    await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
     await expect(p12Factory.executeMint(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
   });
 
