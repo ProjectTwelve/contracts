@@ -217,9 +217,6 @@ describe('AuctionHouseUpgradable', function () {
       orders: [Order],
       details: [SettleDetail],
       shared: SettleShared,
-      r: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      s: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      v: '0x00',
     });
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
@@ -342,9 +339,6 @@ describe('AuctionHouseUpgradable', function () {
         orders: [Order],
         details: [{ ...SettleDetail, op: 3n }],
         shared: { ...SettleShared, user: user2.address },
-        r: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        s: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        v: '0x00',
       }),
     ).to.be.revertedWith('AuctionHouse: no permit to cancel');
 
@@ -353,9 +347,6 @@ describe('AuctionHouseUpgradable', function () {
       orders: [Order],
       details: [{ ...SettleDetail, op: 3n }],
       shared: { ...SettleShared, user: user1.address },
-      r: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      s: '0x0000000000000000000000000000000000000000000000000000000000000000',
-      v: '0x00',
     });
 
     expect(
@@ -363,9 +354,6 @@ describe('AuctionHouseUpgradable', function () {
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
-        r: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        s: '0x0000000000000000000000000000000000000000000000000000000000000000',
-        v: '0x00',
       }),
     ).to.be.revertedWith('AuctionHouse: this item sold or canceled');
 

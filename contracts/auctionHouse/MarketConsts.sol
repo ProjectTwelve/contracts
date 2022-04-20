@@ -47,8 +47,8 @@ library Market {
          */
     OrderItem[] items;
     /**
-            signature, eip 2098 would be better
-            */
+      signature for Order, eip 2098 would be better
+    */
     bytes32 r;
     bytes32 s;
     uint8 v;
@@ -106,10 +106,10 @@ library Market {
     Order[] orders;
     SettleDetail[] details;
     SettleShared shared;
-    // signature
-    bytes32 r;
-    bytes32 s;
-    uint8 v;
+    // signature for registered, but not used now
+    // bytes32 r;
+    // bytes32 s;
+    // uint8 v;
   }
 
   struct OngoingAuction {
