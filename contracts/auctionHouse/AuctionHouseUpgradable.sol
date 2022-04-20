@@ -325,6 +325,7 @@ contract AuctionHouseUpgradable is
       require(detail.price >= item.price, 'AuctionHouse: underpaid');
 
       /**
+       * @dev transfer token from buyer address to this contract
        * note no native token until now
        */
       nativeAmount = _takePayment(itemHash, order.currency, shared.user, detail.price);
@@ -654,7 +655,7 @@ contract AuctionHouseUpgradable is
   }
 
   /**
-   * @dev
+   * @dev distribute fees and give extra to seller
    */
   function _distributeFeeAndProfit(
     bytes32 itemHash,
@@ -669,6 +670,9 @@ contract AuctionHouseUpgradable is
     uint256 payment = netPrice;
     uint256 totalFeePct;
 
+    /**
+     * @dev distribute fees
+     */
     for (uint256 i = 0; i < sd.fees.length; i++) {
       Market.Fee memory fee = sd.fees[i];
       totalFeePct += fee.percentage;
@@ -679,6 +683,9 @@ contract AuctionHouseUpgradable is
 
     require(feeCapPct >= totalFeePct, 'total fee cap exceeded');
 
+    /**
+     * @dev give extra to seller
+     */
     _transferTo(currency, seller, payment);
     emit EvProfit(itemHash, address(currency), seller, payment);
   }
