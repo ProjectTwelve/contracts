@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import './interface/IDelegate.sol';
-import './interface/IWETHUpgradable.sol';
+// import './interface/IWETHUpgradable.sol';
 import './MarketConsts.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -32,8 +32,14 @@ contract AuctionHouseUpgradable is
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
+  /**
+   * @dev event to record how much seller earns
+   */
   event EvProfit(bytes32 itemHash, address currency, address to, uint256 amount);
-  event EvAuctionRefund(bytes32 indexed itemHash, address currency, address to, uint256 amount, uint256 incentive);
+  // event EvAuctionRefund(bytes32 indexed itemHash, address currency, address to, uint256 amount, uint256 incentive);
+  /**
+   * @dev event to record a item order matched
+   */
   event EvInventory(
     bytes32 indexed itemHash,
     address maker,
@@ -49,19 +55,44 @@ contract AuctionHouseUpgradable is
     Market.SettleDetail detail
   );
   // event EvSigner(address signer, bool isRemoval);
+  /**
+   * @dev event to record delegator contract change
+   */
   event EvDelegate(address delegate, bool isRemoval);
+  /**
+   * @dev event to record fee update
+   */
   event EvFeeCapUpdate(uint256 newValue);
+  /**
+   * @dev event to record a order canceled
+   */
   event EvCancel(bytes32 indexed itemHash);
+  /**
+   * @dev event to record a order failing
+   */
   event EvFailure(uint256 index, bytes error);
 
+  /**
+   * @dev store delegator contract status
+   */
   mapping(address => bool) public delegates;
-  mapping(address => bool) public signers;
+  // mapping(address => bool) public signers;
 
+  /**
+   * @dev store itemHash status
+   */
   mapping(bytes32 => Market.InvStatus) public inventoryStatus;
   // mapping(bytes32 => Market.OngoingAuction) public ongoingAuctions;
 
+  /** @dev precision of the parameters */
   uint256 public constant RATE_BASE = 1e6;
+  /**
+   * @dev fee Cap
+   */
   uint256 public feeCapPct;
+  /**
+   * @dev DOMAIN_SEPARATOR for EIP712
+   */
   bytes32 public DOMAIN_SEPARATOR;
   IWETHUpgradable public weth;
 
@@ -169,6 +200,9 @@ contract AuctionHouseUpgradable is
   //   }
   // }
 
+  /**
+   * @dev Entry of a contract call
+   */
   function run(Market.RunInput memory input) public payable virtual nonReentrant whenNotPaused {
     require(input.shared.deadline > block.timestamp, 'AuctionHouse: deadline reached');
     require(msg.sender == input.shared.user, 'AuctionHouse: sender not match');
@@ -205,10 +239,16 @@ contract AuctionHouseUpgradable is
     //     amountEth += amt;
     // }
 
+    /**
+     * @dev Iterate over multiple orders and verify signatures
+     */
     for (uint256 i = 0; i < input.orders.length; i++) {
       _verifyOrderSignature(input.orders[i]);
     }
 
+    /**
+     * @dev try to execute after verify
+     */
     for (uint256 i = 0; i < input.details.length; i++) {
       Market.SettleDetail memory detail = input.details[i];
       Market.Order memory order = input.orders[detail.orderIdx];
@@ -232,6 +272,9 @@ contract AuctionHouseUpgradable is
     // }
   }
 
+  /**
+   * @dev run a single order
+   */
   function run1(
     Market.Order memory order,
     Market.SettleShared memory shared,
@@ -242,6 +285,9 @@ contract AuctionHouseUpgradable is
     return _run(order, shared, detail);
   }
 
+  /**
+   * @dev hash an item Data to calculate itemHash
+   */
   function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
     return
       keccak256(
@@ -318,6 +364,7 @@ contract AuctionHouseUpgradable is
     // }
 
     if (detail.op == Market.Op.COMPLETE_SELL_OFFER) {
+      /** @dev COMPLETE_SELL_OFFER */
       require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: sold or canceled');
       require(order.intent == Market.INTENT_SELL, 'AuctionHouse: intent != sell');
       _assertDelegation(order, detail);
@@ -370,6 +417,7 @@ contract AuctionHouseUpgradable is
     //     inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
     // }
     else if (detail.op == Market.Op.CANCEL_OFFER) {
+      /** CANCEL_OFFER */
       require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: unable to cancel');
       require(order.user == msg.sender, 'AuctionHouse: no permit cancel');
       require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
@@ -559,6 +607,9 @@ contract AuctionHouseUpgradable is
   //   require(signers[signer], 'AuctionHouse: Input sig error');
   // }
 
+  /**
+   * @dev hash typed data of an Order
+   */
   function _hash(Market.Order memory order) private pure returns (bytes32) {
     return
       keccak256(
@@ -580,6 +631,9 @@ contract AuctionHouseUpgradable is
       );
   }
 
+  /**
+   * @dev hash typed data of a array of OderItem
+   */
   function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
     bytes memory h;
     for (uint256 i = 0; i < orderItems.length; i++) {
@@ -588,6 +642,10 @@ contract AuctionHouseUpgradable is
     // return keccak256(abi.encode(hash(orderItems[0])));
     return keccak256(h);
   }
+
+  /**
+   * @dev hash typed data of an OrderItem
+   */
 
   function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
     return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
