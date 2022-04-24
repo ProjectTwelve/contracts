@@ -3,10 +3,10 @@
 pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import { DecimalMath } from '../libraries/DecimalMath.sol';
-import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import { SafeMath } from '../libraries/SafeMath.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+//import { DecimalMath } from '../libraries/DecimalMath.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -15,7 +15,9 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
 contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable {
   using SafeMath for uint256;
-  using SafeERC20 for IERC20;
+  using SafeERC20Upgradeable for IERC20Upgradeable;
+
+  uint256 constant ONE = 10**18;
 
   // Info of each user.
   struct UserInfo {
@@ -175,7 +177,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public virtual onlyP12Factory {
     uint256 pid = getPid(_lpToken);
     uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
-    uint256 totalLpStaked = IERC20(_lpToken).balanceOf(address(this));
+    uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
     uint256 _amount = totalLpStaked.sub(_totalLpStaked);
     require(_amount > 0, 'P12Mine: _amount should greater than zero ');
     PoolInfo storage pool = poolInfos[pid];
@@ -194,15 +196,16 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     // Update the value of p12 in the total pool
     totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
 
-    user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    //user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(gameCoinCreator, pid, _amount);
   }
 
   // Calculate the value of p12 corresponding to lpToken
   function calculateP12AmountByLpToken(address _lpToken, uint256 _amount) public virtual returns (uint256) {
     getPid(_lpToken);
-    uint256 balance0 = IERC20(p12Token).balanceOf(_lpToken);
-    uint256 _totalSupply = IERC20(_lpToken).totalSupply();
+    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(_lpToken);
+    uint256 _totalSupply = IERC20Upgradeable(_lpToken).totalSupply();
     uint256 amount0 = _amount.mul(balance0) / _totalSupply;
 
     return amount0;
@@ -253,7 +256,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   //     PoolInfo storage pool = poolInfos[pid];
   //     UserInfo storage user = userInfo[pid][_user];
   //     uint256 accP12PerShare = pool.accP12PerShare;
-  //     uint256 totalLpStaked = IERC20(pool.lpToken).balanceOf(address(this));
+  //     uint256 totalLpStaked = IERC20Upgradeable(pool.lpToken).balanceOf(address(this));
   //     if (block.number > pool.lastRewardBlock && totalLpStaked != 0) {
   //         uint256 P12Reward = block
   //             .number
@@ -289,7 +292,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   //         PoolInfo storage pool = poolInfos[pid];
   //         UserInfo storage user = userInfo[pid][_user];
   //         uint256 accP12PerShare = pool.accP12PerShare;
-  //         uint256 totalLpStaked = IERC20(pool.lpToken).balanceOf(
+  //         uint256 totalLpStaked = IERC20Upgradeable(pool.lpToken).balanceOf(
   //             address(this)
   //         );
   //         if (block.number > pool.lastRewardBlock && totalLpStaked != 0) {
@@ -343,13 +346,14 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     if (block.number <= pool.lastRewardBlock) {
       return;
     }
-    uint256 totalLpStaked = IERC20(pool.lpToken).balanceOf(address(this));
+    uint256 totalLpStaked = IERC20Upgradeable(pool.lpToken).balanceOf(address(this));
     if (totalLpStaked == 0) {
       pool.lastRewardBlock = block.number;
       return;
     }
     uint256 P12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
-    pool.accP12PerShare = pool.accP12PerShare.add(DecimalMath.divFloor(P12Reward, pool.p12Total));
+    //pool.accP12PerShare = pool.accP12PerShare.add(DecimalMath.divFloor(P12Reward, pool.p12Total));
+    pool.accP12PerShare = pool.accP12PerShare.add(P12Reward.mul(ONE).div(pool.p12Total));
     pool.lastRewardBlock = block.number;
   }
 
@@ -364,17 +368,19 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     UserInfo storage user = userInfo[pid][msg.sender];
     updatePool(pid);
     if (user.amountOfLpToken > 0) {
-      uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+      //uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+      uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
       safeP12Transfer(msg.sender, pending);
     }
-    IERC20(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), _amount);
+    IERC20Upgradeable(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), _amount);
     totalLpStakedOfEachPool[_lpToken] += _amount;
     user.amountOfLpToken = user.amountOfLpToken.add(_amount);
     uint256 _amountOfP12 = calculateP12AmountByLpToken(_lpToken, _amount);
     pool.p12Total = pool.p12Total.add(_amountOfP12);
     user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
     totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
-    user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    //user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(msg.sender, pid, _amount);
   }
 
@@ -386,7 +392,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     require(user.amountOfLpToken >= _amount, 'P12Mine: withdraw too much');
     updatePool(pid);
     if (user.amountOfLpToken > 0) {
-      uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+      //uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+      uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
       safeP12Transfer(msg.sender, pending);
     }
     uint256 time;
@@ -395,12 +402,13 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     uint256 lastUnlockTimestamp = withdrawInfos[_lpToken][_preWithdrawId].unlockTimestamp;
 
     time = currentTimestamp >= lastUnlockTimestamp ? currentTimestamp : lastUnlockTimestamp;
-    uint256 delay = _amount.mul(delayK).div(IERC20(pool.lpToken).totalSupply()) + delayB;
+    uint256 delay = _amount.mul(delayK).div(IERC20Upgradeable(pool.lpToken).totalSupply()) + delayB;
     uint256 unlockTimestamp = delay + time;
 
     bytes32 newWithdrawId = createWithdrawId(_lpToken, _amount, msg.sender);
     withdrawInfos[_lpToken][newWithdrawId] = WithdrawInfo(_amount, unlockTimestamp, false);
-    user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    //user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit WithdrawDelay(msg.sender, pid, _amount, newWithdrawId);
   }
 
@@ -414,7 +422,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   //     uint256 pid = getPid(_lpToken);
   //     PoolInfo storage pool = poolInfos[pid];
   //     UserInfo storage user = userInfo[pid][msg.sender];
-  //     IERC20(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
+  //     IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
   //     user.amount = 0;
   //     user.rewardDebt = 0;
   // }
@@ -429,8 +437,10 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     updatePool(pid);
-    uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
-    user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    // uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+    uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
+    //user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     safeP12Transfer(msg.sender, pending);
   }
 
@@ -445,8 +455,10 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
       PoolInfo storage pool = poolInfos[pid];
       UserInfo storage user = userInfo[pid][msg.sender];
       updatePool(pid);
-      pending = pending.add(DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt));
-      user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+      //pending = pending.add(DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt));
+      pending = pending.add(user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt));
+      //user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+      user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     }
     safeP12Transfer(msg.sender, pending);
   }
@@ -475,7 +487,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     );
     withdrawInfos[_lpToken][id].executed = true;
     updatePool(pid);
-    uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+    //uint256 pending = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare).sub(user.rewardDebt);
+    uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
     safeP12Transfer(pledger, pending);
     uint256 _amount = withdrawInfos[_lpToken][id].amount;
     user.amountOfLpToken = user.amountOfLpToken.sub(_amount);
@@ -485,9 +498,10 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     user.amountOfP12 = user.amountOfP12.sub(_amountOfP12);
     totalBalanceOfP12 = totalBalanceOfP12.sub(_amountOfP12);
 
-    user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    //user.rewardDebt = DecimalMath.mul(user.amountOfP12, pool.accP12PerShare);
+    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     totalLpStakedOfEachPool[_lpToken] -= _amount;
-    IERC20(pool.lpToken).safeTransfer(address(pledger), _amount);
+    IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), _amount);
     emit Withdraw(pledger, pid, _amount);
   }
 }
