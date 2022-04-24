@@ -5,7 +5,7 @@ pragma experimental ABIEncoderV2;
 
 //import { DecimalMath } from '../libraries/DecimalMath.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
-import { SafeMath } from '../libraries/SafeMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 
