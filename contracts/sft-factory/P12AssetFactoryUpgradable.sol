@@ -20,15 +20,24 @@ contract P12AssetFactoryUpgradable is
   PausableUpgradeable,
   UUPSUpgradeable
 {
+  /**
+   * @dev record a new Collection Created
+   */
   event CollectionCreated(address indexed collection, address indexed developer);
+
+  /**
+   * @dev record a new Sft created, sft is semi-fungible token, as it's in a ERC1155 contract
+   */
   event SftCreated(address indexed collection, uint256 indexed tokenId, uint256 amount);
 
   /**
-        @dev collection => gameId
-     */
+    @dev collection address => gameId
+  */
   mapping(address => string) public registry;
 
-  // for reading game and developer relationship
+  /**
+   * p12factory address, for reading game and developer relationship
+   */
   address public p12factory;
 
   /** upgrade function */
@@ -93,6 +102,9 @@ contract P12AssetFactoryUpgradable is
     return tokenId;
   }
 
+  /**
+   * @dev update Collection Uri
+   */
   function updateCollectionUri(address collection, string calldata uri_) public onlyCollectionDeveloper(collection) {
     P12Asset(collection).setContractURI(uri_);
   }

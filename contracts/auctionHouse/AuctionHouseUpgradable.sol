@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 import './interface/IDelegate.sol';
-// import './interface/IWETHUpgradable.sol';
+import './interface/IWETHUpgradable.sol';
 import './MarketConsts.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
@@ -653,7 +653,7 @@ contract AuctionHouseUpgradable is
 
   /**
    * @dev verify whether the order data is real
-   * necessary for secure
+   * @dev necessary for security
    */
   function _verifyOrderSignature(Market.Order memory order) internal view virtual {
     address orderSigner;
