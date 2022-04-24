@@ -83,7 +83,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount); // deposit lpToken log
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount); // withdraw lpToken log
-  event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unstaking mining log
+  event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unStaking mining log
   event Claim(address indexed user, uint256 amount); // get rewards
 
 
@@ -109,12 +109,12 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   // ============ Modifiers ============
 
-  // check if lptoken exists
+  // check if lpToken exists
   modifier lpTokenExist(address lpToken) {
     require(lpTokenRegistry[lpToken] > 0, 'P12Mine: LP Token Not Exist');
     _;
   }
-   // check if lptoken exists
+   // check if lpToken exists
   modifier lpTokenNotExist(address lpToken) {
     require(lpTokenRegistry[lpToken] == 0, 'P12Mine: LP Token Already Exist');
     _;
@@ -131,7 +131,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     require(msg.sender == p12Factory, 'P12Mine: caller must be p12factory');
     _;
   }
-  // reentrant executeBuylock
+  // reentrant lock
   modifier lock() {
     require(unlocked == 1, 'P12Mine: LOCKED');
     unlocked = 0;
@@ -157,7 +157,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     return userInfo[pid][_user].amountOfLpToken;
   }
   
-  // craete withdraw id
+  // crate withdraw id
   function createWithdrawId(
     address lpToken,
     uint256 amount,
@@ -211,7 +211,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // ============ Ownable ============
 
 
-  // craete a new pool
+  // crate a new pool
   function createPool(address _lpToken, bool _withUpdate) public virtual lpTokenNotExist(_lpToken) P12FactoryOrOwner {
     if (_withUpdate) {
       massUpdatePools();
