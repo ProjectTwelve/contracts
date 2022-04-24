@@ -10,11 +10,30 @@ Learn More:
 - Telegram: <http://t.me/project_twelve>
 - Mirror: <https://mirror.xyz/p12.eth>
 
-# Features
-
-
 # Get Started
 
+Requirement:
+
+- Node >= 14
+- yarn(recommend)
+
+Clone the repository
+
+```shell
+$ git clone https://github.com/ProjectTwelve/contracts
+```
+
+Install dependencies
+
+```shell
+$ yarn -D
+```
+
+Run all test
+
+```shell
+$ yarn test
+```
 
 # License
 
