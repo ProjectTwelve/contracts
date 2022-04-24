@@ -43,7 +43,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     uint256 accP12PerShare; // Accumulated P12s per share, times 1e18. See below.
   }
   // withdraw info
-
   struct WithdrawInfo {
     uint256 amount;
     uint256 unlockTimestamp;
@@ -82,11 +81,13 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   uint256 private unlocked;
 
-  event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
-  event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
-  event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId);
-  event Claim(address indexed user, uint256 amount);
+  event Deposit(address indexed user, uint256 indexed pid, uint256 amount); // deposit lpToken log
+  event Withdraw(address indexed user, uint256 indexed pid, uint256 amount); // withdraw lpToken log
+  event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unstaking mining log
+  event Claim(address indexed user, uint256 amount); // get rewards
 
+
+  // init 
   function initialize(
     address _p12Token,
     address _p12Factory,
@@ -108,26 +109,29 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   // ============ Modifiers ============
 
+  // check if lptoken exists
   modifier lpTokenExist(address lpToken) {
     require(lpTokenRegistry[lpToken] > 0, 'P12Mine: LP Token Not Exist');
     _;
   }
-
+   // check if lptoken exists
   modifier lpTokenNotExist(address lpToken) {
     require(lpTokenRegistry[lpToken] == 0, 'P12Mine: LP Token Already Exist');
     _;
   }
 
+  // check the caller 
   modifier P12FactoryOrOwner() {
     require(msg.sender == p12Factory || msg.sender == owner(), 'P12Mine: caller must be p12factory or owner');
     _;
   }
 
+  // check the caller 
   modifier onlyP12Factory() {
     require(msg.sender == p12Factory, 'P12Mine: caller must be p12factory');
     _;
   }
-
+  // reentrant executeBuylock
   modifier lock() {
     require(unlocked == 1, 'P12Mine: LOCKED');
     unlocked = 0;
@@ -137,19 +141,23 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   // ============ Helper ============
 
+  // get pool len
   function poolLength() external view virtual returns (uint256) {
     return poolInfos.length;
   }
 
+  // get pool id
   function getPid(address _lpToken) public view virtual lpTokenExist(_lpToken) returns (uint256) {
     return lpTokenRegistry[_lpToken] - 1;
   }
 
+  // get user lpToken balance
   function getUserLpBalance(address _lpToken, address _user) public view virtual returns (uint256) {
     uint256 pid = getPid(_lpToken);
     return userInfo[pid][_user].amountOfLpToken;
   }
-
+  
+  // craete withdraw id
   function createWithdrawId(
     address lpToken,
     uint256 amount,
@@ -202,6 +210,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   // ============ Ownable ============
 
+
+  // craete a new pool
   function createPool(address _lpToken, bool _withUpdate) public virtual lpTokenNotExist(_lpToken) P12FactoryOrOwner {
     if (_withUpdate) {
       massUpdatePools();
@@ -211,6 +221,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     lpTokenRegistry[_lpToken] = poolInfos.length;
   }
 
+
+  // set reward value for per block
   function setReward(uint256 _p12PerBlock, bool _withUpdate) external virtual onlyOwner {
     if (_withUpdate) {
       massUpdatePools();
@@ -218,6 +230,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     p12PerBlock = _p12PerBlock;
   }
 
+  
   function setDelayK(uint256 _delayK) public virtual onlyOwner returns (bool) {
     delayK = _delayK;
     return true;
@@ -343,6 +356,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // ============ Deposit & Withdraw & Claim ============
   // Deposit & withdraw will also trigger claim
 
+
+  // deposit lpToken
   function deposit(address _lpToken, uint256 _amount) public virtual lock {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
@@ -363,6 +378,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     emit Deposit(msg.sender, pid, _amount);
   }
 
+  // withdraw lpToken delay
   function withdrawDelay(address _lpToken, uint256 _amount) public virtual lock {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
@@ -403,6 +419,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   //     user.rewardDebt = 0;
   // }
 
+
+  // get pending rewards
   function claim(address _lpToken) public virtual lock {
     uint256 pid = getPid(_lpToken);
     if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
@@ -416,6 +434,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     safeP12Transfer(msg.sender, pending);
   }
 
+  // get all pending rewards
   function claimAll() public virtual lock {
     uint256 length = poolInfos.length;
     uint256 pending = 0;
@@ -439,7 +458,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     emit Claim(_to, _amount);
   }
 
-  //  get back lpToken
+  // withdraw lpToken
   function withdraw(
     address pledger,
     address _lpToken,
