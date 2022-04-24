@@ -6,7 +6,14 @@ import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract P12Asset is ERC1155(''), Ownable {
+  /**
+   * @dev contract-level metadata uri, refer to https://docs.opensea.io/docs/contract-level-metadata
+   */
   string private _contractURI;
+
+  /**
+   * @dev token id index, which will increase one by one
+   */
   uint256 private idx = 0;
 
   // Mapping from token ID to account balances
@@ -15,10 +22,14 @@ contract P12Asset is ERC1155(''), Ownable {
   // metadata uri
   mapping(uint256 => string) private _uri;
 
-  // current supply
+  /**
+   * @dev current supply, how many a id are minted not.
+   */
   mapping(uint256 => uint256) public supply;
 
-  // max supply
+  /**
+   * @dev max supply, a token id has a max supply cap
+   */
   mapping(uint256 => uint256) public maxSupply;
 
   constructor(string memory contractURI_) {
@@ -71,12 +82,15 @@ contract P12Asset is ERC1155(''), Ownable {
   }
 
   /**
-        @dev read contract-level MetaData URI
-     */
+   *  @dev read contract-level MetaData URI
+   */
   function contractURI() public view returns (string memory) {
     return _contractURI;
   }
 
+  /**
+   * @dev set contract-level MetaData
+   */
   function setContractURI(string memory newContractURI_) public onlyOwner {
     _contractURI = newContractURI_;
   }
