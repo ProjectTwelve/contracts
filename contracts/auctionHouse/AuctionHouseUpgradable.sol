@@ -653,7 +653,7 @@ contract AuctionHouseUpgradable is
 
   /**
    * @dev verify whether the order data is real
-   * necessary for secure
+   * @dev necessary for security
    */
   function _verifyOrderSignature(Market.Order memory order) internal view virtual {
     address orderSigner;
