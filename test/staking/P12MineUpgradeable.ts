@@ -4,21 +4,25 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { time } from 'console';
 import { BigNumber, Contract, } from 'ethers';
 import { resolve } from 'dns';
+import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
+import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
+import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
+import * as compiledUniswapPair from '@uniswap/v2-core/build/UniswapV2Pair.json';
 
 describe('lpToken stake ', function () {
   let admin: SignerWithAddress;
   let user: SignerWithAddress;
+  let user2: SignerWithAddress;
   const startBlock = 1;
   let reward: any;
   let p12Mine: any;
   let id: any;
-  let weth: any;
-  let uniswapV2Factory: any;
-  let router: any;
+  let weth: Contract;
+  let uniswapV2Factory: Contract;
+  let uniswapV2Router02: Contract;
   let bitCoin: any;
-  let pair: any;
-  let pairAddress: any;
-  let user2: any;
+  let pair: Contract;
+  let pairAddress: string;
   let liquidity: any;
   let liquidity2: any;
   let rewardAmount: any;
@@ -50,25 +54,30 @@ describe('lpToken stake ', function () {
 
   // deploy weth
   it('show weth deploy successfully', async function () {
-    const WETH = await ethers.getContractFactory('WETH9');
+    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
     weth = await WETH.deploy();
   });
   // deploy factory
   it('show uniFactory deploy successfully', async function () {
-    const UniswapV2Factory = await ethers.getContractFactory('UniswapV2Factory');
-    uniswapV2Factory = await UniswapV2Factory.deploy(admin.address);
-    //console.log('init-code', await uniswapV2Factory.INIT_CODE_PAIR_HASH());
+    const UNISWAPV2FACTORY = new ethers.ContractFactory(
+      compiledUniswapFactory.interface,
+      compiledUniswapFactory.bytecode,
+      admin,
+    );
+    uniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
+    /// / console.log("init-code", await uniswapV2Factory.INIT_CODE_PAIR_HASH());
+
   });
   // deploy uniRouter
   it('show uniRouter deploy successfully', async function () {
-    const Router = await ethers.getContractFactory('UniswapV2Router02');
-    router = await Router.deploy(uniswapV2Factory.address, weth.address);
+    const UNISWAPV2ROUTER = new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
+    uniswapV2Router02 = await UNISWAPV2ROUTER.connect(admin).deploy(uniswapV2Factory.address, weth.address);
   });
   // add liquidity
   it('show add liquidity successfully', async function () {
-    await bitCoin.connect(user).approve(router.address, 100n * 10n ** 18n);
-    await reward.connect(user).approve(router.address, 10n * 10n ** 18n);
-    await router
+    await bitCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await reward.connect(user).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
+    await uniswapV2Router02
       .connect(user)
       .addLiquidity(
         reward.address,
@@ -83,14 +92,14 @@ describe('lpToken stake ', function () {
 
     pairAddress = await uniswapV2Factory.getPair(reward.address, bitCoin.address);
 
-    const Pair = await ethers.getContractFactory('UniswapV2Pair');
-    pair = await Pair.attach(pairAddress);
+    const Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
+    pair = Pair.attach(pairAddress);
     liquidity = await pair.balanceOf(user.address);
 
-    await bitCoin.connect(user2).approve(router.address, 100n * 10n ** 18n);
-    await reward.connect(user2).approve(router.address, 10n * 10n ** 18n);
+    await bitCoin.connect(user2).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await reward.connect(user2).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
 
-    await router
+    await uniswapV2Router02
       .connect(user2)
       .addLiquidity(
         reward.address,
