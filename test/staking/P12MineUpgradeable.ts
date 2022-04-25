@@ -265,9 +265,9 @@ describe('lpToken stake ', function () {
 
   // staking more lpToken
   it('show stake more lpToken successfully', async function () {
-    await bitCoin.connect(user).approve(router.address, 100n * 10n ** 18n);
-    await reward.connect(user).approve(router.address, 10n * 10n ** 18n);
-    await router
+    await bitCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await reward.connect(user).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
+    await uniswapV2Router02
       .connect(user)
       .addLiquidity(
         reward.address,
