@@ -53,12 +53,12 @@ describe('lpToken stake ', function () {
 
   // deploy weth
   it('show weth deploy successfully', async function () {
-    const WETH = await new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
+    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
     weth = await WETH.deploy();
   });
   // deploy factory
   it('show uniFactory deploy successfully', async function () {
-    const UNISWAPV2FACTORY = await new ethers.ContractFactory(
+    const UNISWAPV2FACTORY = new ethers.ContractFactory(
       compiledUniswapFactory.interface,
       compiledUniswapFactory.bytecode,
       admin,
@@ -68,7 +68,7 @@ describe('lpToken stake ', function () {
   });
   // deploy uniRouter
   it('show uniRouter deploy successfully', async function () {
-    const UNISWAPV2ROUTER = await new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
+    const UNISWAPV2ROUTER = new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
     uniswapV2Router02 = await UNISWAPV2ROUTER.connect(admin).deploy(uniswapV2Factory.address, weth.address);
   });
   // add liquidity
@@ -90,8 +90,8 @@ describe('lpToken stake ', function () {
 
     pairAddress = await uniswapV2Factory.getPair(reward.address, bitCoin.address);
 
-    const Pair = await await new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
-    pair = await Pair.attach(pairAddress);
+    const Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
+    pair = Pair.attach(pairAddress);
     liquidity = await pair.balanceOf(user.address);
 
     await bitCoin.connect(user2).approve(uniswapV2Router02.address, 100n * 10n ** 18n);

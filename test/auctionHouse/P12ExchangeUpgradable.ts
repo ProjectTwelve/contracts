@@ -42,7 +42,7 @@ describe('AuctionHouseUpgradable', function () {
     user2 = accounts[2];
 
     // deploy WETH
-    const WETH = await new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, developer);
+    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, developer);
     weth = await WETH.deploy();
 
     // deploy p12 coin

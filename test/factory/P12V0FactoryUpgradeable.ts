@@ -29,13 +29,13 @@ describe('P12Factory', function () {
     user = accounts[2];
 
     // deploy uniswap
-    const UNISWAPV2ROUTER = await new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
-    const UNISWAPV2FACTORY = await new ethers.ContractFactory(
+    const UNISWAPV2ROUTER = new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
+    const UNISWAPV2FACTORY = new ethers.ContractFactory(
       compiledUniswapFactory.interface,
       compiledUniswapFactory.bytecode,
       admin,
     );
-    const WETH = await new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
+    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
     uniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
 
     const weth = await WETH.deploy();
