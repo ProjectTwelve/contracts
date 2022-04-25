@@ -1,15 +1,16 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { AuctionHouseUpgradable, WETH9, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
+import { AuctionHouseUpgradable, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract, utils } from 'ethers';
+import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
 
 describe('AuctionHouseUpgradable', function () {
   let p12exchange: Contract;
   let developer: SignerWithAddress;
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
-  let weth: WETH9;
+  let weth: Contract;
   let p12coin: P12Token;
   let p12asset: P12AssetDemo;
   let erc1155delegate: ERC1155Delegate;
@@ -41,7 +42,7 @@ describe('AuctionHouseUpgradable', function () {
     user2 = accounts[2];
 
     // deploy WETH
-    const WETH = await ethers.getContractFactory('WETH9');
+    const WETH = await new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, developer);
     weth = await WETH.deploy();
 
     // deploy p12 coin
