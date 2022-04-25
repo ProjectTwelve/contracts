@@ -1,24 +1,23 @@
 import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import {
-  P12Token,
-  UniswapV2Factory,
-  UniswapV2Router02,
-  // eslint-disable-next-line node/no-missing-import
-} from '../../typechain';
+import { P12Token } from '../../typechain';
+import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
+import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
+import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
 import { Contract } from 'ethers';
 
 describe('P12Factory', function () {
   let admin: SignerWithAddress;
   let developer: SignerWithAddress;
   let user: SignerWithAddress;
-  let router: UniswapV2Router02;
+  let uniswapV2Router02: Contract;
   let p12: P12Token;
-  let UniswapV2Factory: UniswapV2Factory;
+  let uniswapV2Factory: Contract;
   let p12Factory: Contract;
   let gameCoinAddress: string;
   let mintId: string;
+  // eslint-disable-next-line no-unused-vars
   let mintId2: string;
   let p12MineUpgradeable: any;
 
@@ -30,14 +29,18 @@ describe('P12Factory', function () {
     user = accounts[2];
 
     // deploy uniswap
-    const UNISWAPV2ROUTER = await ethers.getContractFactory('UniswapV2Router02');
-    const UNISWAPV2FACTORY = await ethers.getContractFactory('UniswapV2Factory');
-    const WETH = await ethers.getContractFactory('WETH9');
-    UniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
+    const UNISWAPV2ROUTER = new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
+    const UNISWAPV2FACTORY = new ethers.ContractFactory(
+      compiledUniswapFactory.interface,
+      compiledUniswapFactory.bytecode,
+      admin,
+    );
+    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
+    uniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
 
     const weth = await WETH.deploy();
 
-    router = await UNISWAPV2ROUTER.connect(admin).deploy(UniswapV2Factory.address, weth.address);
+    uniswapV2Router02 = await UNISWAPV2ROUTER.connect(admin).deploy(uniswapV2Factory.address, weth.address);
   });
   it('Should show p12 token deploy successfully!', async function () {
     // deploy p12token
@@ -48,9 +51,13 @@ describe('P12Factory', function () {
 
   it('Should show P12Factory contract deploy successful!', async function () {
     const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
-    p12Factory = await upgrades.deployProxy(P12FACTORY, [p12.address, UniswapV2Factory.address, router.address, 3600], {
-      kind: 'uups',
-    });
+    p12Factory = await upgrades.deployProxy(
+      P12FACTORY,
+      [p12.address, uniswapV2Factory.address, uniswapV2Router02.address, 3600],
+      {
+        kind: 'uups',
+      },
+    );
     expect(await p12Factory.owner()).to.be.equal(admin.address);
   });
 
