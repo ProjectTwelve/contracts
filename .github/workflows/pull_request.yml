@@ -1,10 +1,9 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: CI
+name: on_pr
 
-on:
-  push:
+on: [pull_request]
 
 jobs:
   test:
@@ -18,5 +17,9 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: npm run compile
-      - run: npm run lint
-      - run: npm run test
+      - run: npm run coverage
+      - name: monitor coverage
+        uses: slavcodev/coverage-monitor-action@1.5.0
+        with:
+          coverage_path: 'coverage/clover.xml'
+          github_token: ${{ github.token }}
