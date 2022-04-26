@@ -88,8 +88,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unStaking mining log
   event Claim(address indexed user, uint256 amount); // get rewards
 
-
-  // init 
+  // init
   function initialize(
     address _p12Token,
     address _p12Factory,
@@ -116,19 +115,19 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     require(lpTokenRegistry[lpToken] > 0, 'P12Mine: LP Token Not Exist');
     _;
   }
-   // check if lpToken exists
+  // check if lpToken exists
   modifier lpTokenNotExist(address lpToken) {
     require(lpTokenRegistry[lpToken] == 0, 'P12Mine: LP Token Already Exist');
     _;
   }
 
-  // check the caller 
+  // check the caller
   modifier P12FactoryOrOwner() {
     require(msg.sender == p12Factory || msg.sender == owner(), 'P12Mine: caller must be p12factory or owner');
     _;
   }
 
-  // check the caller 
+  // check the caller
   modifier onlyP12Factory() {
     require(msg.sender == p12Factory, 'P12Mine: caller must be p12factory');
     _;
@@ -158,7 +157,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     uint256 pid = getPid(_lpToken);
     return userInfo[pid][_user].amountOfLpToken;
   }
-  
+
   // crate withdraw id
   function createWithdrawId(
     address lpToken,
@@ -213,7 +212,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   // ============ Ownable ============
 
-
   // crate a new pool
   function createPool(address _lpToken, bool _withUpdate) public virtual lpTokenNotExist(_lpToken) P12FactoryOrOwner {
     if (_withUpdate) {
@@ -224,7 +222,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     lpTokenRegistry[_lpToken] = poolInfos.length;
   }
 
-
   // set reward value for per block
   function setReward(uint256 _p12PerBlock, bool _withUpdate) external virtual onlyOwner {
     if (_withUpdate) {
@@ -233,7 +230,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     p12PerBlock = _p12PerBlock;
   }
 
-  
   function setDelayK(uint256 _delayK) public virtual onlyOwner returns (bool) {
     delayK = _delayK;
     return true;
@@ -360,7 +356,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // ============ Deposit & Withdraw & Claim ============
   // Deposit & withdraw will also trigger claim
 
-
   // deposit lpToken
   function deposit(address _lpToken, uint256 _amount) public virtual lock {
     uint256 pid = getPid(_lpToken);
@@ -426,7 +421,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   //     user.amount = 0;
   //     user.rewardDebt = 0;
   // }
-
 
   // get pending rewards
   function claim(address _lpToken) public virtual lock {

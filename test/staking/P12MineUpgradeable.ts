@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { time } from 'console';
-import { BigNumber, Contract, } from 'ethers';
+import { BigNumber, Contract } from 'ethers';
 import { resolve } from 'dns';
 import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
@@ -66,7 +66,6 @@ describe('lpToken stake ', function () {
     );
     uniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
     /// / console.log("init-code", await uniswapV2Factory.INIT_CODE_PAIR_HASH());
-
   });
   // deploy uniRouter
   it('show uniRouter deploy successfully', async function () {
