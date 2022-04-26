@@ -13,4 +13,19 @@ contract AuctionHouseUpgradableAlternative is AuctionHouseUpgradable {
   function getName() public view returns (string memory) {
     return name;
   }
+
+  /**
+   * @dev override to trigger error
+   */
+  function run1(
+    Market.Order memory order,
+    Market.SettleShared memory shared,
+    Market.SettleDetail memory detail
+  ) external virtual override returns (uint256) {
+    require(msg.sender == address(this), 'AuctionHouse: unsafe call');
+    // force to revert
+    revert();
+
+    // return _run(order, shared, detail);
+  }
 }
