@@ -20,6 +20,11 @@ describe('P12V0ERC20', function () {
     [owner, address1] = await ethers.getSigners();
   });
 
+  it('should view successfully', async () => {
+    expect(await gameCoin.gameId()).to.be.equal('1101');
+    expect(await gameCoin.gameCoinIconUrl()).to.be.equal(gameCoinIconUrl);
+  });
+
   it('Should deploy success', async function () {
     // console.log('success!');
   });
