@@ -20,10 +20,10 @@ jobs:
       - run: npm run compile
       - run: npm run lint
       - run: npm run coverage
-      - name: show coverage
-        uses: devmasx/coverage-check-action@v1.2.0
-        with:
-          type: lcov
-          result_path: coverage/lcov.info
-          min_coverage: 90
-          token: ${{ github.token }}
+      # - name: show coverage
+      #   uses: devmasx/coverage-check-action@v1.2.0
+      #   with:
+      #     type: lcov
+      #     result_path: coverage/lcov.info
+      #     min_coverage: 90
+      #     token: ${{ github.token }}
