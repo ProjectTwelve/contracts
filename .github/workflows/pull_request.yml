@@ -22,5 +22,5 @@ jobs:
       - name: monitor coverage
         uses: slavcodev/coverage-monitor-action@v1
         with:
-          coverage_path: 'coverage/lcov.info'
+          coverage_path: 'coverage/coverage-final.json'
           github_token: ${{ github.token }}
