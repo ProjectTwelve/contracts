@@ -19,7 +19,7 @@ jobs:
       - run: npm run compile
       - run: npm run coverage
       - name: monitor coverage
-        uses: slavcodev/coverage-monitor-action@v1.5.0
+        uses: slavcodev/coverage-monitor-action@1.5.0
         with:
           coverage_path: 'coverage/clover.xml'
           github_token: ${{ github.token }}
