@@ -78,6 +78,12 @@ describe('P12AssetFactoryUpgradable', function () {
     expect(collectionAddr).to.lengthOf(42);
 
     collection = await ethers.getContractAt('P12Asset', collectionAddr);
+    expect(await collection.contractURI()).to.be.equal('ipfs://');
+  });
+
+  it('Should change contract uri successfully', async () => {
+    await p12AssetFactory.connect(developer1).updateCollectionUri(collection.address, 'ar://');
+    expect(await collection.contractURI()).to.be.equal('ar://');
   });
 
   it('Should developer2 create collection fail', async () => {
@@ -97,6 +103,8 @@ describe('P12AssetFactoryUpgradable', function () {
     expect(tokenId1).to.be.equal(0);
     expect(amount1).to.be.equal(10);
     expect(await collection.balanceOf(developer1.address, 0)).to.be.equal(10);
+
+    expect(await collection.uri(0)).to.be.equal('ipfs://');
   });
 
   it('Should developer1 create asset again successfully', async () => {
