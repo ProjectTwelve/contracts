@@ -1,3 +1,3 @@
 module.exports = {
-  istanbulReporter: ['clover', 'lcov'],
+  istanbulReporter: ['clover', 'lcov', 'text'],
 };
