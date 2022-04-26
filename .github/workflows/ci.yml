@@ -20,3 +20,9 @@ jobs:
       - run: npm run compile
       - run: npm run lint
       - run: npm run test
+      - run: npm run coverage
+      - name: show coverage
+        uses: romeovs/lcov-reporter-action@v0.2.11
+        with:
+          lcov-file: ./coverage/lcov.info
+          delete-old-comments: true
