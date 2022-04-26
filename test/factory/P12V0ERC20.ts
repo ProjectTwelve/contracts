@@ -20,6 +20,11 @@ describe('P12V0ERC20', function () {
     [owner, address1] = await ethers.getSigners();
   });
 
+  it('should view successfully', async () => {
+    expect(await gameCoin.gameId()).to.be.equal('1101');
+    expect(await gameCoin.gameCoinIconUrl()).to.be.equal(gameCoinIconUrl);
+  });
+
   it('Should deploy success', async function () {
     // console.log('success!');
   });
@@ -32,7 +37,7 @@ describe('P12V0ERC20', function () {
   it('transfer with game account', async function () {
     const userId = '123';
     const amount = 100n * 10n ** 18n;
-    expect(await gameCoin.connect(owner).transferWithAccount(address1.address, userId, amount))
+    await expect(await gameCoin.connect(owner).transferWithAccount(address1.address, userId, amount))
       .to.emit(gameCoin, 'TransferWithAccount')
       .withArgs(address1.address, userId, amount);
     expect(await gameCoin.balanceOf(address1.address)).to.eq(amount);

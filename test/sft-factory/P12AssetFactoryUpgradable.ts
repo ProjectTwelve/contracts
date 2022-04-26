@@ -20,10 +20,6 @@ describe('P12AssetFactoryUpgradable', function () {
   let p12AssetFactory: P12AssetFactoryUpgradable;
   let collectionAddr: string;
   let collection: P12Asset;
-  let tokenId1: BigInt;
-  let amount1: BigInt;
-  let tokenId2: BigInt;
-  let amount2: BigInt;
 
   this.beforeAll(async () => {
     // distribute account
@@ -69,6 +65,11 @@ describe('P12AssetFactoryUpgradable', function () {
 
   it('Should developer1 create collection successfully', async function () {
     const tx = await p12AssetFactory.connect(developer1).createCollection('gameId1', 'ipfs://');
+
+    // await expect(p12AssetFactory.connect(developer1).createCollection('gameId1', 'ipfs://'))
+    //   .to.emit(p12AssetFactory.address, 'CollectionCreated')
+    //   .withArgs(collection.address, developer1.address);
+
     (await tx.wait()).events?.forEach((x) => {
       if (x.event === 'CollectionCreated') {
         collectionAddr = x.args?.collection;
@@ -78,6 +79,12 @@ describe('P12AssetFactoryUpgradable', function () {
     expect(collectionAddr).to.lengthOf(42);
 
     collection = await ethers.getContractAt('P12Asset', collectionAddr);
+    expect(await collection.contractURI()).to.be.equal('ipfs://');
+  });
+
+  it('Should change contract uri successfully', async () => {
+    await p12AssetFactory.connect(developer1).updateCollectionUri(collection.address, 'ar://');
+    expect(await collection.contractURI()).to.be.equal('ar://');
   });
 
   it('Should developer2 create collection fail', async () => {
@@ -87,28 +94,24 @@ describe('P12AssetFactoryUpgradable', function () {
   });
 
   it('Should developer1 create asset successfully', async () => {
-    const tx = await p12AssetFactory.connect(developer1).createAssetAndMint(collection.address, 10, 'ipfs://');
+    await expect(p12AssetFactory.connect(developer1).createAssetAndMint(collection.address, 10, 'ipfs://'))
+      .to.emit(p12AssetFactory, 'SftCreated')
+      .withArgs(collection.address, 0, 10);
 
-    const event = (await tx.wait()).events?.find((event) => event.event === 'SftCreated')!;
-
-    tokenId1 = event.args?.tokenId;
-    amount1 = event.args?.amount;
-
-    expect(tokenId1).to.be.equal(0);
-    expect(amount1).to.be.equal(10);
     expect(await collection.balanceOf(developer1.address, 0)).to.be.equal(10);
+    expect(await collection.uri(0)).to.be.equal('ipfs://');
   });
 
   it('Should developer1 create asset again successfully', async () => {
-    const tx = await p12AssetFactory.connect(developer1).createAssetAndMint(collection.address, 10, 'ipfs://');
+    await p12AssetFactory.connect(admin).pause();
+    await expect(p12AssetFactory.connect(developer1).createAssetAndMint(collection.address, 10, 'ipfs://')).to.be.revertedWith(
+      'Pausable: paused',
+    );
 
-    const event = (await tx.wait()).events?.find((event) => event.event === 'SftCreated')!;
-
-    tokenId2 = event.args?.tokenId;
-    amount2 = event.args?.amount;
-
-    expect(tokenId2).to.be.equal(1);
-    expect(amount2).to.be.equal(10);
+    await p12AssetFactory.connect(admin).unpause();
+    await expect(p12AssetFactory.connect(developer1).createAssetAndMint(collection.address, 10, 'ipfs://'))
+      .to.emit(p12AssetFactory, 'SftCreated')
+      .withArgs(collection.address, 1, 10);
   });
 
   it('Should upgrade successfully', async () => {
