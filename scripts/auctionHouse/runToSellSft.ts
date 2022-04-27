@@ -9,6 +9,7 @@ import { utils } from 'ethers';
 async function main() {
   const p12coin = await ethers.getContractAt('P12Coin', '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0');
   const weth = await ethers.getContractAt('WETH9', '0x0EE3F0848cA07E6342390C34FcC7Ea9D0217a47d');
+  console.log('weth: ', weth.address);
 
   const p12asset = await ethers.getContractAt('P12AssetDemo', '0x4944655508A93A6Be7FfF9e6eF82cFb36630052F');
 
