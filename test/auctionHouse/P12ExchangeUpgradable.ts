@@ -31,7 +31,6 @@ describe('AuctionHouseUpgradable', function () {
       { name: 'delegateType', type: 'uint256' },
       { name: 'deadline', type: 'uint256' },
       { name: 'currency', type: 'address' },
-      { name: 'dataMask', type: 'bytes' },
       { name: 'length', type: 'uint256' },
       { name: 'items', type: 'OrderItem[]' },
     ],
@@ -172,7 +171,6 @@ describe('AuctionHouseUpgradable', function () {
       delegateType: BigInt(1),
       deadline: BigInt(new Date().getTime() + 100),
       currency: p12coin.address,
-      dataMask: '0x0000000000000000000000000000000000000000000000000000000000000000',
     };
 
     const items = [
@@ -213,7 +211,6 @@ describe('AuctionHouseUpgradable', function () {
                   { name: 'delegateType', type: 'uint256' },
                   { name: 'deadline', type: 'uint256' },
                   { name: 'currency', type: 'address' },
-                  { name: 'dataMask', type: 'bytes' },
                   {
                     name: 'item',
                     type: 'tuple',
@@ -235,7 +232,6 @@ describe('AuctionHouseUpgradable', function () {
       user: user1.address,
       deadline: BigInt(new Date().getTime() + 100),
       amountToEth: 0n,
-      amountToWeth: 0n,
       canFail: false,
     };
 
@@ -246,7 +242,6 @@ describe('AuctionHouseUpgradable', function () {
       price: 10n * 10n ** 18n,
       itemHash: itemHash,
       executionDelegate: erc1155delegate.address,
-      dataReplacement: '0x0000000000000000000000000000000000000000000000000000000000000000',
       fees: [{ percentage: 10000n, to: recipient.address }],
     };
 
@@ -321,7 +316,6 @@ describe('AuctionHouseUpgradable', function () {
       deadline: BigInt(new Date().getTime() + 100),
       // use eth
       currency: ethers.constants.AddressZero,
-      dataMask: '0x0000000000000000000000000000000000000000000000000000000000000000',
     };
 
     const items = [
@@ -362,7 +356,6 @@ describe('AuctionHouseUpgradable', function () {
                   { name: 'delegateType', type: 'uint256' },
                   { name: 'deadline', type: 'uint256' },
                   { name: 'currency', type: 'address' },
-                  { name: 'dataMask', type: 'bytes' },
                   {
                     name: 'item',
                     type: 'tuple',
@@ -384,7 +377,6 @@ describe('AuctionHouseUpgradable', function () {
       user: user2.address,
       deadline: BigInt(new Date().getTime() + 100),
       amountToEth: 2n,
-      amountToWeth: 0n,
       canFail: true,
     };
 
@@ -395,7 +387,6 @@ describe('AuctionHouseUpgradable', function () {
       price: 1n * 10n ** 18n,
       itemHash: itemHash,
       executionDelegate: erc1155delegate.address,
-      dataReplacement: '0x0000000000000000000000000000000000000000000000000000000000000000',
       fees: [],
     };
 
@@ -458,7 +449,6 @@ describe('AuctionHouseUpgradable', function () {
       delegateType: BigInt(1),
       deadline: BigInt(new Date().getTime() + 100),
       currency: p12coin.address,
-      dataMask: '0x0000000000000000000000000000000000000000000000000000000000000000',
     };
 
     const items = [
@@ -499,7 +489,6 @@ describe('AuctionHouseUpgradable', function () {
                   { name: 'delegateType', type: 'uint256' },
                   { name: 'deadline', type: 'uint256' },
                   { name: 'currency', type: 'address' },
-                  { name: 'dataMask', type: 'bytes' },
                   {
                     name: 'item',
                     type: 'tuple',
@@ -521,7 +510,6 @@ describe('AuctionHouseUpgradable', function () {
       user: user2.address,
       deadline: BigInt(new Date().getTime() + 100),
       amountToEth: 0n,
-      amountToWeth: 0n,
       canFail: false,
     };
 
@@ -532,7 +520,6 @@ describe('AuctionHouseUpgradable', function () {
       price: 10n * 10n ** 18n,
       itemHash: itemHash,
       executionDelegate: erc1155delegate.address,
-      dataReplacement: '0x0000000000000000000000000000000000000000000000000000000000000000',
       fees: [],
     };
 
