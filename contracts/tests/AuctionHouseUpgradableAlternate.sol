@@ -18,14 +18,12 @@ contract AuctionHouseUpgradableAlternative is AuctionHouseUpgradable {
    * @dev override to trigger error
    */
   function run1(
-    Market.Order memory order,
-    Market.SettleShared memory shared,
-    Market.SettleDetail memory detail
+    Market.Order memory,
+    Market.SettleShared memory,
+    Market.SettleDetail memory
   ) external virtual override returns (uint256) {
     require(msg.sender == address(this), 'AuctionHouse: unsafe call');
     // force to revert
     revert();
-
-    // return _run(order, shared, detail);
   }
 }
