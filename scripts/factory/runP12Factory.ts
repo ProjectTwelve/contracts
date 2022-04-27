@@ -10,7 +10,7 @@ async function main() {
 
   // P12 0x2844B158Bcffc0aD7d881a982D464c0ce38d8086
   const ERC20 = await ethers.getContractFactory('P12Token');
-  const P12 = await ERC20.attach('0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
+  const P12 = ERC20.attach('0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
 
   await P12Factory.register('1101', '0xfeD03676c595DD1F1c6716a446cD44B4C90AD290');
 
@@ -22,8 +22,8 @@ async function main() {
   const amountGameCoin = BigInt(2000) * BigInt(10) ** 18n;
   const amountP12 = BigInt(100) * BigInt(10) ** 18n;
 
-  // await P12.approve(P12Factory.address, amountP12);
-  // await P12Factory.create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
+  await P12.approve(P12Factory.address, amountP12);
+  await P12Factory.create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
 }
 
 main().catch((error) => {

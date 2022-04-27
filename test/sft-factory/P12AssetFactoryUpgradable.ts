@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { P12AssetFactoryUpgradable, P12V0FactoryUpgradeable, P12Asset } from '../../typechain';
+import { P12AssetFactoryUpgradable, P12Asset } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract } from 'ethers';
 
@@ -12,7 +12,7 @@ describe('P12AssetFactoryUpgradable', function () {
   // developer2: Who don't register a gameId on P12Factory
   let developer2: SignerWithAddress;
   // user1: not Used Now
-  let user1: SignerWithAddress;
+  // let user1: SignerWithAddress;
   // p12factory: Register Game and create GameCoin
   let p12factory: Contract;
   //
@@ -27,7 +27,7 @@ describe('P12AssetFactoryUpgradable', function () {
     admin = accounts[0];
     developer1 = accounts[1];
     developer2 = accounts[2];
-    user1 = accounts[3];
+    // user1 = accounts[3];
 
     // deploy p12 coin
     const P12TokenF = await ethers.getContractFactory('P12Token');

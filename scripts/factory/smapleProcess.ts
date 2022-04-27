@@ -1,11 +1,7 @@
 import { ethers } from 'hardhat';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { string } from 'hardhat/internal/core/params/argumentTypes';
 
 async function main() {
-  let admin: SignerWithAddress;
-  let user: SignerWithAddress;
-  [admin, user] = await ethers.getSigners();
+  const [admin, user] = await ethers.getSigners();
   let gameCoinAddress;
 
   console.log(admin.address, user.address);
@@ -24,7 +20,8 @@ async function main() {
 
   // connect router
   const UniRouter = await ethers.getContractFactory('UniswapV2Router02');
-  const uniswapV2Router = await UniRouter.attach('0x7320C150D5fd661Fb1fB7af19a6337F3d099b41f');
+  const uniswapV2Router = UniRouter.attach('0x7320C150D5fd661Fb1fB7af19a6337F3d099b41f');
+  console.log('uniswapV2Router: ', uniswapV2Router.address);
 
   // register
   const gameId = '1101';
@@ -62,7 +59,7 @@ async function main() {
   const gameCoin = await P12V0ERC20.attach(String(gameCoinAddress));
   const pairAddress = await UniswapV2Factory.getPair(String(gameCoinAddress), P12Instance.address);
   const UNISWAPV2PAIR = await ethers.getContractFactory('UniswapV2Pair');
-  const pool = await UNISWAPV2PAIR.attach(pairAddress);
+  const pool = UNISWAPV2PAIR.attach(pairAddress);
 
   console.log('gameCoin address: ', gameCoinAddress);
   console.log('gameCoin name: ', await gameCoin.name());

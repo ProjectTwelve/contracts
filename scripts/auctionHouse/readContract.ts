@@ -1,4 +1,4 @@
-import { ethers, upgrades } from 'hardhat';
+import { ethers } from 'hardhat';
 
 async function main() {
   const p12exchange = await ethers.getContractAt('AuctionHouseUpgradable', '0x2B1525d4BaBC614A4F309b1256650aB7602d780A');
