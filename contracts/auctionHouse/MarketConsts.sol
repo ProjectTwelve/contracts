@@ -8,8 +8,6 @@ import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 
 library Market {
   uint256 constant INTENT_SELL = 1;
-  // uint256 constant INTENT_BUY = 2;
-  uint256 constant INTENT_CANCEL = 3;
 
   uint8 constant SIGN_V1 = 1;
 
