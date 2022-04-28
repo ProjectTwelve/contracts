@@ -231,7 +231,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     return true;
   }
 
-
   function getDlpMiningSpeed(address _lpToken) external view virtual returns (uint256) {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
