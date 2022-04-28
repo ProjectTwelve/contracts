@@ -6,15 +6,17 @@ import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
+import '@openzeppelin/contracts/security/Pausable.sol';
 import './MarketConsts.sol';
 import './interface/IDelegate.sol';
 import '../libraries/Utils.sol';
 
-contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, ReentrancyGuard {
+contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, ReentrancyGuard, Pausable {
   bytes32 public constant DELEGATION_CALLER = keccak256('DELEGATION_CALLER');
+  bytes32 public constant PAUSABLE_CALLER = keccak256('PAUSABLE_CALLER');
 
   /**
-   * @dev single item data  Pair[1]
+   * @dev single item data
    */
   struct Pair {
     IERC1155 token;
@@ -25,6 +27,14 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
 
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+  }
+
+  function pause() public onlyRole(PAUSABLE_CALLER) {
+    _pause();
+  }
+
+  function unpause() public onlyRole(PAUSABLE_CALLER) {
+    _unpause();
   }
 
   function onERC1155Received(
@@ -60,7 +70,7 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     address seller,
     address buyer,
     bytes calldata data
-  ) public override nonReentrant onlyRole(DELEGATION_CALLER) returns (bool) {
+  ) public override nonReentrant onlyRole(DELEGATION_CALLER) whenNotPaused returns (bool) {
     // TODO: no need for loop, just transferBatch
     Pair[] memory pairs = decode(data);
     for (uint256 i = 0; i < pairs.length; i++) {
