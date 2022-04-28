@@ -5,7 +5,7 @@ import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IP12V0FactoryUpgradeable.sol';
 import './interfaces/IUniswapV2Pair.sol';
 import './interfaces/IUniswapV2Factory.sol';
-import '../libraries/FullMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './P12V0ERC20.sol';
 
@@ -17,6 +17,7 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 // import "hardhat/console.sol";
 
 contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0FactoryUpgradeable, OwnableUpgradeable {
+  using SafeMath for uint256;
   /**
    * @dev p12 ERC20 address
    */
@@ -203,7 +204,8 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
 
     // transfer the p12 to this contract
     ERC20(p12).transferFrom(msg.sender, address(this), p12Fee);
-    uint256 delayD = FullMath.mulDiv(amountGameCoin, delayK, P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
+
+    uint256 delayD = getMintDelay(gameCoinAddress, amountGameCoin);
 
     bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, init_hash);
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
@@ -299,15 +301,16 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
       (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
         .getReserves();
     }
-    amountP12 = FullMath.mulDiv(p12Reserved, amountGameCoin, (gameCoinReserved * 100));
+    amountP12 = p12Reserved.mul(amountGameCoin).div((gameCoinReserved * 100));
+
     return amountP12;
   }
 
   /**
    * @dev linear function to calculate the delay time
    */
-  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view virtual override returns (uint256 time) {
-    time = FullMath.mulDiv(amountGameCoin, delayK, P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
+    time = amountGameCoin.mul(delayK).div(P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
     return time;
   }
 
