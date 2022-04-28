@@ -5,11 +5,12 @@ pragma solidity ^0.8.0;
 import '@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 import '@openzeppelin/contracts/access/AccessControl.sol';
+import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import './MarketConsts.sol';
 import './interface/IDelegate.sol';
 import '../libraries/Utils.sol';
 
-contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver {
+contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, ReentrancyGuard {
   bytes32 public constant DELEGATION_CALLER = keccak256('DELEGATION_CALLER');
 
   /**
@@ -59,7 +60,7 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver {
     address seller,
     address buyer,
     bytes calldata data
-  ) public override onlyRole(DELEGATION_CALLER) returns (bool) {
+  ) public override nonReentrant onlyRole(DELEGATION_CALLER) returns (bool) {
     // TODO: no need for loop, just transferBatch
     Pair[] memory pairs = decode(data);
     for (uint256 i = 0; i < pairs.length; i++) {

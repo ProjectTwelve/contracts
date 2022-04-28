@@ -19,7 +19,7 @@ describe('P12Factory', function () {
   let mintId: string;
   // eslint-disable-next-line no-unused-vars
   let mintId2: string;
-  let p12MineUpgradeable: any;
+  let p12MineUpgradeable: Contract;
 
   this.beforeAll(async function () {
     // hardhat test accounts

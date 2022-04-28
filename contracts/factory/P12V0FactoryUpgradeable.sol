@@ -5,7 +5,7 @@ import './interfaces/IUniswapV2Router02.sol';
 import './interfaces/IP12V0FactoryUpgradeable.sol';
 import './interfaces/IUniswapV2Pair.sol';
 import './interfaces/IUniswapV2Factory.sol';
-import '../libraries/FullMath.sol';
+import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './P12V0ERC20.sol';
 
@@ -13,9 +13,17 @@ import './interfaces/IP12Mine.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 
 
-contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0FactoryUpgradeable, OwnableUpgradeable {
+contract P12V0FactoryUpgradeable is
+  Initializable,
+  UUPSUpgradeable,
+  IP12V0FactoryUpgradeable,
+  OwnableUpgradeable,
+  ReentrancyGuardUpgradeable
+{
+  using SafeMath for uint256;
   /**
    * @dev p12 ERC20 address
    */
@@ -60,21 +68,10 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
   mapping(string => address) public allGames;
   // gameCoinAddress => gameId
   mapping(address => string) public allGameCoins;
-  // gameCoinAddress => bool
-  mapping(address => bool) public executeMintLock;
   // gameCoinAddress => declareMintId => MintCoinInfo
   mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
   // gameCoinAddress => declareMintId
   mapping(address => bytes32) public preMintIds;
-
-  uint256 private unlocked;
-
-  modifier lock() {
-    require(unlocked == 1, 'P12Factory: LOCKED');
-    unlocked = 0;
-    _;
-    unlocked = 1;
-  }
 
   function initialize(
     address _p12,
@@ -87,9 +84,9 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     uniswapFactory = _uniswapFactory;
     uniswapRouter = _uniswapRouter;
     init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-    unlocked = 1;
     addLiquidityEffectiveTime = _effectiveTime;
     IERC20(p12).approve(uniswapRouter, type(uint256).max);
+    __ReentrancyGuard_init_unchained();
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -119,7 +116,7 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
     uint256 amountP12
-  ) public virtual override lock returns (address gameCoinAddress) {
+  ) public virtual override nonReentrant returns (address gameCoinAddress) {
     require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permit to create game coin');
     require(amountP12 > 0, 'FORBIDDEN: not enough p12');
     gameCoinAddress = _create(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
@@ -182,7 +179,7 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     string memory gameId,
     address gameCoinAddress,
     uint256 amountGameCoin
-  ) public virtual override lock returns (bool success) {
+  ) public virtual override nonReentrant returns (bool success) {
     require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permission');
     require(compareStrings(allGameCoins[gameCoinAddress], gameId), 'FORBIDDEN');
     // Set the correct unlock time
@@ -202,7 +199,8 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
 
     // transfer the p12 to this contract
     ERC20(p12).transferFrom(msg.sender, address(this), p12Fee);
-    uint256 delayD = FullMath.mulDiv(amountGameCoin, delayK, P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
+
+    uint256 delayD = getMintDelay(gameCoinAddress, amountGameCoin);
 
     bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, init_hash);
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
@@ -239,13 +237,7 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
   /**
    * @dev when time is up, anyone can call this function to make the mint executed
    */
-  function executeMint(address gameCoinAddress, bytes32 mintId) external virtual override returns (bool) {
-    // check lock
-
-    require(executeMintLock[gameCoinAddress] == false, 'achieve this coin locked');
-
-    executeMintLock[gameCoinAddress] == true;
-
+  function executeMint(address gameCoinAddress, bytes32 mintId) external virtual override nonReentrant returns (bool) {
     // check if it has been executed
     require(coinMintRecords[gameCoinAddress][mintId].executed == false, 'this mint has been executed');
 
@@ -260,9 +252,6 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
     // transfer the gameCoin to this contract first
 
     P12V0ERC20(gameCoinAddress).mint(address(this), coinMintRecords[gameCoinAddress][mintId].amount);
-
-    // release lock
-    executeMintLock[gameCoinAddress] == false;
 
     emit ExecuteMint(mintId, gameCoinAddress, msg.sender);
 
@@ -298,15 +287,18 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
       (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
         .getReserves();
     }
-    amountP12 = FullMath.mulDiv(p12Reserved, amountGameCoin, (gameCoinReserved * 100));
+
+    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
+    amountP12 = p12Reserved.mul(amountGameCoin).div((gameCoinReserved * 100));
+
     return amountP12;
   }
 
   /**
    * @dev linear function to calculate the delay time
    */
-  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view virtual override returns (uint256 time) {
-    time = FullMath.mulDiv(amountGameCoin, delayK, P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
+    time = amountGameCoin.mul(delayK).div(P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
     return time;
   }
 

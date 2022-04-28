@@ -95,7 +95,7 @@ contract P12AssetFactoryUpgradable is
     address collection,
     uint256 amount_,
     string calldata uri_
-  ) public onlyCollectionDeveloper(collection) whenNotPaused returns (uint256) {
+  ) public onlyCollectionDeveloper(collection) whenNotPaused nonReentrant returns (uint256) {
     // create
     uint256 tokenId = P12Asset(collection).create(amount_, uri_);
     // mint to developer address
