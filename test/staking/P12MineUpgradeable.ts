@@ -1,9 +1,6 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { time } from 'console';
-import { BigNumber, Contract } from 'ethers';
-import { resolve } from 'dns';
 import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
 import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
@@ -17,15 +14,14 @@ describe('lpToken stake ', function () {
   let reward: any;
   let p12Mine: any;
   let id: any;
-  let weth: Contract;
-  let uniswapV2Factory: Contract;
-  let uniswapV2Router02: Contract;
+  let weth: any;
+  let uniswapV2Factory: any;
+  let uniswapV2Router02: any;
   let bitCoin: any;
-  let pair: Contract;
+  let pair: any;
   let pairAddress: string;
   let liquidity: any;
   let liquidity2: any;
-  let rewardAmount: any;
   let total: any;
   // accounts info
   it('should use the correct account ', async function () {

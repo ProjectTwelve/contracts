@@ -14,7 +14,6 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 
-// import "hardhat/console.sol";
 
 contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0FactoryUpgradeable, OwnableUpgradeable {
   /**
