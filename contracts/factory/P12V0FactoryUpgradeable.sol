@@ -14,6 +14,7 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
 // import "hardhat/console.sol";
 
@@ -22,7 +23,8 @@ contract P12V0FactoryUpgradeable is
   UUPSUpgradeable,
   IP12V0FactoryUpgradeable,
   OwnableUpgradeable,
-  ReentrancyGuardUpgradeable
+  ReentrancyGuardUpgradeable,
+  PausableUpgradeable
 {
   using SafeMath for uint256;
   /**
@@ -74,26 +76,36 @@ contract P12V0FactoryUpgradeable is
   // gameCoinAddress => declareMintId
   mapping(address => bytes32) public preMintIds;
 
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
   function initialize(
     address _p12,
     address _uniswapFactory,
     address _uniswapRouter,
     uint256 _effectiveTime
   ) public initializer {
-    __Ownable_init();
     p12 = _p12;
     uniswapFactory = _uniswapFactory;
     uniswapRouter = _uniswapRouter;
     init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
     addLiquidityEffectiveTime = _effectiveTime;
     IERC20(p12).approve(uniswapRouter, type(uint256).max);
+
     __ReentrancyGuard_init_unchained();
+    __Pausable_init_unchained();
+    __Ownable_init_unchained();
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   // set p12mine contract address
-  function setInfo(address _p12mine) public virtual onlyOwner {
+  function setInfo(address _p12mine) external virtual onlyOwner {
     require(_p12mine != address(0), 'address cannot be zero');
 
     p12mine = _p12mine;
@@ -117,7 +129,7 @@ contract P12V0FactoryUpgradeable is
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
     uint256 amountP12
-  ) public virtual override nonReentrant returns (address gameCoinAddress) {
+  ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permit to create game coin');
     require(amountP12 > 0, 'FORBIDDEN: not enough p12');
     gameCoinAddress = _create(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
@@ -180,7 +192,7 @@ contract P12V0FactoryUpgradeable is
     string memory gameId,
     address gameCoinAddress,
     uint256 amountGameCoin
-  ) public virtual override nonReentrant returns (bool success) {
+  ) external virtual override nonReentrant whenNotPaused returns (bool success) {
     require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permission');
     require(compareStrings(allGameCoins[gameCoinAddress], gameId), 'FORBIDDEN');
     // Set the correct unlock time
@@ -238,7 +250,14 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev when time is up, anyone can call this function to make the mint executed
    */
-  function executeMint(address gameCoinAddress, bytes32 mintId) external virtual override nonReentrant returns (bool) {
+  function executeMint(address gameCoinAddress, bytes32 mintId)
+    external
+    virtual
+    override
+    nonReentrant
+    whenNotPaused
+    returns (bool)
+  {
     // check if it has been executed
     require(coinMintRecords[gameCoinAddress][mintId].executed == false, 'this mint has been executed');
 
