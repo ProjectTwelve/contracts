@@ -106,7 +106,6 @@ library Market {
   /**
     Operation
   */
-
   enum Op {
     INVALID,
     COMPLETE_SELL_OFFER,
