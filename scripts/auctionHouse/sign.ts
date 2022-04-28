@@ -4,10 +4,8 @@
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
 import { ethers } from 'hardhat';
-import { utils } from 'ethers';
-import { TypedDataEncoder } from '@ethersproject/hash/src.ts/typed-data';
 
-import { recoverTypedSignature, SignTypedDataVersion, signTypedData } from '@metamask/eth-sig-util';
+import { SignTypedDataVersion, signTypedData } from '@metamask/eth-sig-util';
 async function main() {
   const domain = {
     name: 'P12 AuctionHouse',
@@ -32,6 +30,7 @@ async function main() {
       },
     ],
   };
+  console.log(msg);
   const types = {
     Order: [
       { name: 'salt', type: 'uint256' },
@@ -51,6 +50,7 @@ async function main() {
     ],
   };
 
+  console.log(types);
   const simpleType = {
     Simple: [{ name: 'k', type: 'uint256' }],
   };

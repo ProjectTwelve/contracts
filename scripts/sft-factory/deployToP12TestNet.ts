@@ -7,6 +7,7 @@ import { ethers, upgrades } from 'hardhat';
 
 async function main() {
   const developer = (await ethers.getSigners())[0];
+  console.log('developer: ', developer.address);
 
   const p12factoryAddr = '0x395FAbef71433280f85f79ad43f99E3cC040af5C';
 
@@ -15,6 +16,7 @@ async function main() {
     kind: 'uups',
   });
   const p12AssetFactory = await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactoryAddr.address);
+  console.log('p12AssetFactory: ', p12AssetFactory.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

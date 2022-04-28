@@ -11,6 +11,7 @@ async function main() {
   console.log(developer.address);
 
   const p12coin = await ethers.getContractAt('P12Coin', '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0');
+  console.log('P12 Coin: ', p12coin.address);
   const weth = await ethers.getContractAt('WETH9', '0x0EE3F0848cA07E6342390C34FcC7Ea9D0217a47d');
 
   const AuctionHouseUpgradableF = await ethers.getContractFactory('AuctionHouseUpgradable');

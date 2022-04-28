@@ -11,9 +11,11 @@
     "test": "hardhat test",
     "test:analysis": "REPORT_GAS=true hardhat test",
     "coverage": "hardhat coverage",
-    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint ."
+    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix"
   },
   "devDependencies": {
+    "@ethersproject/abi": "^5.6.1",
+    "@metamask/eth-sig-util": "^4.0.1",
     "@nomiclabs/hardhat-ethers": "^2.0.3",
     "@nomiclabs/hardhat-etherscan": "^2.1.8",
     "@nomiclabs/hardhat-waffle": "^2.0.1",

@@ -7,6 +7,7 @@ import { ethers, upgrades } from 'hardhat';
 
 async function main() {
   const developer = (await ethers.getSigners())[0];
+  console.log('developer: ', developer);
 
   const p12factoryAddr = '0x395FAbef71433280f85f79ad43f99E3cC040af5C';
 

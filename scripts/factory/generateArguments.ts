@@ -1,14 +1,6 @@
-import { ethers, upgrades } from 'hardhat';
+import { ethers } from 'hardhat';
 import { Interface } from '@ethersproject/abi';
-import {
-  DeployProxyOptions,
-  deploy,
-  getProxyFactory,
-  getTransparentUpgradeableProxyFactory,
-  getProxyAdminFactory,
-  DeployTransaction,
-  deployProxyImpl,
-} from '@openzeppelin/hardhat-upgrades/src/utils';
+import { DeployProxyOptions } from '@openzeppelin/hardhat-upgrades/src/utils';
 
 async function main() {
   const P12V0FactoryUpgradeable = await ethers.getContractFactory('P12V0FactoryUpgradeable');
@@ -18,7 +10,7 @@ async function main() {
 
   // const opts = { kind: "uups" };
 
-  let opts: DeployProxyOptions = { kind: 'uups' };
+  const opts: DeployProxyOptions = { kind: 'uups' };
   console.log('opts.initializer', opts.initializer);
   console.log('opts kind', opts.kind);
   const data = getInitializerData(

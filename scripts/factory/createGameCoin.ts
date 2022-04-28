@@ -1,18 +1,16 @@
 import { ethers } from 'hardhat';
-import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 
 async function main() {
-  let admin: SignerWithAddress;
-  let user: SignerWithAddress;
-  [admin, user] = await ethers.getSigners();
+  const [admin, user] = await ethers.getSigners();
+  console.log('admin: ', admin.address, 'user: ', user.address);
 
   const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
-  const P12Factory = await P12FACTORY.attach('0xF7fd4112CFf5da535BBFa3811D40fE9Aa61FA722');
+  const P12Factory = P12FACTORY.attach('0xF7fd4112CFf5da535BBFa3811D40fE9Aa61FA722');
 
   // P12 0x2844B158Bcffc0aD7d881a982D464c0ce38d8086
   // p12 0x7154f7219F5E0F1EbF8C2dbBA1bCF8Fb36f2c5f3 p12TestNet
   const ERC20 = await ethers.getContractFactory('P12Token');
-  const P12 = await ERC20.attach('0xd1190C53dFF162242EE5145cFb1C28dA75B921f3');
+  const P12 = ERC20.attach('0xd1190C53dFF162242EE5145cFb1C28dA75B921f3');
 
   const name = 'GameCoinTest001';
   const symbol = 'GC001';

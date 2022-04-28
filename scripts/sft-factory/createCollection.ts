@@ -3,7 +3,7 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { ethers, upgrades } from 'hardhat';
+import { ethers } from 'hardhat';
 
 async function main() {
   const developer = (await ethers.getSigners())[1];

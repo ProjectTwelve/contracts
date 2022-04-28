@@ -23,6 +23,7 @@ describe('lpToken stake ', function () {
   let liquidity: any;
   let liquidity2: any;
   let total: any;
+  
   // accounts info
   it('should use the correct account ', async function () {
     [admin, user, user2] = await ethers.getSigners();
