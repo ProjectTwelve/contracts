@@ -12,8 +12,9 @@ import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 
-contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable {
+contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
   using SafeMath for uint256;
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -103,7 +104,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     startBlock = _startBlock;
     delayK = _delayK;
     delayB = _delayB;
-    unlocked = 1;
+
+    __ReentrancyGuard_init_unchained();
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -131,13 +133,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   modifier onlyP12Factory() {
     require(msg.sender == p12Factory, 'P12Mine: caller must be p12factory');
     _;
-  }
-  // reentrant lock
-  modifier lock() {
-    require(unlocked == 1, 'P12Mine: LOCKED');
-    unlocked = 0;
-    _;
-    unlocked = 1;
   }
 
   // ============ Helper ============
@@ -357,7 +352,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // Deposit & withdraw will also trigger claim
 
   // deposit lpToken
-  function deposit(address _lpToken, uint256 _amount) public virtual lock {
+  function deposit(address _lpToken, uint256 _amount) public virtual nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -380,7 +375,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // withdraw lpToken delay
-  function withdrawDelay(address _lpToken, uint256 _amount) public virtual lock {
+  function withdrawDelay(address _lpToken, uint256 _amount) public virtual nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -423,7 +418,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // }
 
   // get pending rewards
-  function claim(address _lpToken) public virtual lock {
+  function claim(address _lpToken) public virtual nonReentrant {
     uint256 pid = getPid(_lpToken);
     if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
       return; // save gas
@@ -439,7 +434,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // get all pending rewards
-  function claimAll() public virtual lock {
+  function claimAll() public virtual nonReentrant {
     uint256 length = poolInfos.length;
     uint256 pending = 0;
     for (uint256 pid = 0; pid < length; ++pid) {
@@ -469,7 +464,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     address pledger,
     address _lpToken,
     bytes32 id
-  ) public virtual lock {
+  ) public virtual nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][pledger];
