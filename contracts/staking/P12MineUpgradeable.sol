@@ -13,8 +13,15 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
-contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract P12MineUpgradeable is
+  Initializable,
+  UUPSUpgradeable,
+  OwnableUpgradeable,
+  ReentrancyGuardUpgradeable,
+  PausableUpgradeable
+{
   using SafeMath for uint256;
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
@@ -89,6 +96,14 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unStaking mining log
   event Claim(address indexed user, uint256 amount); // get rewards
 
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
   // init
   function initialize(
     address _p12Token,
@@ -97,7 +112,6 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     uint256 _delayK,
     uint256 _delayB
   ) public initializer {
-    __Ownable_init();
     p12Token = _p12Token;
     p12Factory = _p12Factory;
     p12RewardVault = address(new P12RewardVault(_p12Token));
@@ -106,6 +120,8 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     delayB = _delayB;
 
     __ReentrancyGuard_init_unchained();
+    __Pausable_init_unchained();
+    __Ownable_init_unchained();
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -168,7 +184,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // This method is only used when creating game coin in p12factory
-  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public virtual onlyP12Factory {
+  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public whenNotPaused virtual onlyP12Factory {
     uint256 pid = getPid(_lpToken);
     uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
     uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
@@ -196,7 +212,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // Calculate the value of p12 corresponding to lpToken
-  function calculateP12AmountByLpToken(address _lpToken, uint256 _amount) public virtual returns (uint256) {
+  function calculateP12AmountByLpToken(address _lpToken, uint256 _amount) public view virtual returns (uint256) {
     getPid(_lpToken);
     uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(_lpToken);
     uint256 _totalSupply = IERC20Upgradeable(_lpToken).totalSupply();
@@ -207,8 +223,14 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
 
   // ============ Ownable ============
 
-  // crate a new pool
-  function createPool(address _lpToken, bool _withUpdate) public virtual lpTokenNotExist(_lpToken) P12FactoryOrOwner {
+  // create a new pool
+  function createPool(address _lpToken, bool _withUpdate)
+    public
+    virtual
+    lpTokenNotExist(_lpToken)
+    whenNotPaused
+    P12FactoryOrOwner
+  {
     if (_withUpdate) {
       massUpdatePools();
     }
@@ -324,7 +346,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // ============ Update Pools ============
 
   // Update reward variables for all pools. Be careful of gas spending!
-  function massUpdatePools() public virtual {
+  function massUpdatePools() public whenNotPaused virtual {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; ++pid) {
       updatePool(pid);
@@ -332,7 +354,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // Update reward variables of the given pool to be up-to-date.
-  function updatePool(uint256 _pid) public virtual {
+  function updatePool(uint256 _pid) public whenNotPaused virtual {
     PoolInfo storage pool = poolInfos[_pid];
     if (block.number <= pool.lastRewardBlock) {
       return;
@@ -352,7 +374,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // Deposit & withdraw will also trigger claim
 
   // deposit lpToken
-  function deposit(address _lpToken, uint256 _amount) public virtual nonReentrant {
+  function deposit(address _lpToken, uint256 _amount) public virtual whenNotPaused nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -375,7 +397,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // withdraw lpToken delay
-  function withdrawDelay(address _lpToken, uint256 _amount) public virtual nonReentrant {
+  function withdrawDelay(address _lpToken, uint256 _amount) public virtual whenNotPaused nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -418,7 +440,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   // }
 
   // get pending rewards
-  function claim(address _lpToken) public virtual nonReentrant {
+  function claim(address _lpToken) public virtual nonReentrant whenNotPaused {
     uint256 pid = getPid(_lpToken);
     if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
       return; // save gas
@@ -434,7 +456,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
   }
 
   // get all pending rewards
-  function claimAll() public virtual nonReentrant {
+  function claimAll() public virtual nonReentrant whenNotPaused {
     uint256 length = poolInfos.length;
     uint256 pending = 0;
     for (uint256 pid = 0; pid < length; ++pid) {
@@ -464,7 +486,7 @@ contract P12MineUpgradeable is Initializable, UUPSUpgradeable, OwnableUpgradeabl
     address pledger,
     address _lpToken,
     bytes32 id
-  ) public virtual nonReentrant {
+  ) public virtual nonReentrant whenNotPaused {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][pledger];
