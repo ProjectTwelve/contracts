@@ -184,7 +184,7 @@ contract P12MineUpgradeable is
   }
 
   // This method is only used when creating game coin in p12factory
-  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public whenNotPaused virtual onlyP12Factory {
+  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public virtual whenNotPaused onlyP12Factory {
     uint256 pid = getPid(_lpToken);
     uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
     uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
@@ -346,7 +346,7 @@ contract P12MineUpgradeable is
   // ============ Update Pools ============
 
   // Update reward variables for all pools. Be careful of gas spending!
-  function massUpdatePools() public whenNotPaused virtual {
+  function massUpdatePools() public virtual whenNotPaused {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; ++pid) {
       updatePool(pid);
@@ -354,7 +354,7 @@ contract P12MineUpgradeable is
   }
 
   // Update reward variables of the given pool to be up-to-date.
-  function updatePool(uint256 _pid) public whenNotPaused virtual {
+  function updatePool(uint256 _pid) public virtual whenNotPaused {
     PoolInfo storage pool = poolInfos[_pid];
     if (block.number <= pool.lastRewardBlock) {
       return;
