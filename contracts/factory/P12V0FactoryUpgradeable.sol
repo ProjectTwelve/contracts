@@ -301,6 +301,8 @@ contract P12V0FactoryUpgradeable is Initializable, UUPSUpgradeable, IP12V0Factor
       (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
         .getReserves();
     }
+
+    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
     amountP12 = p12Reserved.mul(amountGameCoin).div((gameCoinReserved * 100));
 
     return amountP12;
