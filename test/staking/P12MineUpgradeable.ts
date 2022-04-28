@@ -7,7 +7,7 @@ import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Rou
 import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
 import * as compiledUniswapPair from '@uniswap/v2-core/build/UniswapV2Pair.json';
 
-import { P12Token,BitCoin } from '../../typechain';
+import { P12Token, GameCoin } from '../../typechain';
 
 describe('lpToken stake ', function () {
   let admin: SignerWithAddress;
@@ -20,7 +20,7 @@ describe('lpToken stake ', function () {
   let weth: Contract;
   let uniswapV2Factory: Contract;
   let uniswapV2Router02: Contract;
-  let bitCoin: BitCoin;
+  let gameCoin: GameCoin;
   let pair: Contract;
   let pairAddress: string;
   let liquidity: BigNumber;
@@ -42,13 +42,13 @@ describe('lpToken stake ', function () {
     await reward.transfer(user2.address, 100n * 10n ** 18n);
   });
 
-  // deploy bitCoin
-  it('show bitCoin token deploy successfully', async function () {
-    const BitCoin = await ethers.getContractFactory('BitCoin');
-    bitCoin = await BitCoin.deploy('bitcoin', 'BC', 100000000n * 10n ** 18n);
-    expect(await bitCoin.balanceOf(admin.address)).to.equal(100000000n * 10n ** 18n);
-    await bitCoin.transfer(user.address, 1000n * 10n ** 18n);
-    await bitCoin.transfer(user2.address, 1000n * 10n ** 18n);
+  // deploy gameCoin
+  it('show gameCoin token deploy successfully', async function () {
+    const GameCoin = await ethers.getContractFactory('GameCoin');
+    gameCoin = await GameCoin.deploy('gameCoin', 'GC', 100000000n * 10n ** 18n);
+    expect(await gameCoin.balanceOf(admin.address)).to.equal(100000000n * 10n ** 18n);
+    await gameCoin.transfer(user.address, 1000n * 10n ** 18n);
+    await gameCoin.transfer(user2.address, 1000n * 10n ** 18n);
   });
 
   // deploy weth
@@ -73,13 +73,13 @@ describe('lpToken stake ', function () {
   });
   // add liquidity
   it('show add liquidity successfully', async function () {
-    await bitCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await gameCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
     await reward.connect(user).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
     await uniswapV2Router02
       .connect(user)
       .addLiquidity(
         reward.address,
-        bitCoin.address,
+        gameCoin.address,
         10n * 10n ** 18n,
         100n * 10n ** 18n,
         10n * 10n ** 18n,
@@ -88,20 +88,20 @@ describe('lpToken stake ', function () {
         2647583680,
       );
 
-    pairAddress = await uniswapV2Factory.getPair(reward.address, bitCoin.address);
+    pairAddress = await uniswapV2Factory.getPair(reward.address, gameCoin.address);
 
     const Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
     pair = Pair.attach(pairAddress);
     liquidity = await pair.balanceOf(user.address);
 
-    await bitCoin.connect(user2).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await gameCoin.connect(user2).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
     await reward.connect(user2).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
 
     await uniswapV2Router02
       .connect(user2)
       .addLiquidity(
         reward.address,
-        bitCoin.address,
+        gameCoin.address,
         10n * 10n ** 18n,
         100n * 10n ** 18n,
         10n * 10n ** 18n,
@@ -145,7 +145,7 @@ describe('lpToken stake ', function () {
 
   //  try crate a new pool by no permission account
   it('show create a new pool fail', async function () {
-    await expect(p12Mine.connect(user).createPool(bitCoin.address, true)).to.be.revertedWith(
+    await expect(p12Mine.connect(user).createPool(gameCoin.address, true)).to.be.revertedWith(
       'P12Mine: caller must be p12factory or owner',
     );
   });
@@ -263,13 +263,13 @@ describe('lpToken stake ', function () {
 
   // staking more lpToken
   it('show stake more lpToken successfully', async function () {
-    await bitCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await gameCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
     await reward.connect(user).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
     await uniswapV2Router02
       .connect(user)
       .addLiquidity(
         reward.address,
-        bitCoin.address,
+        gameCoin.address,
         10n * 10n ** 18n,
         100n * 10n ** 18n,
         10n * 10n ** 18n,
