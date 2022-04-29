@@ -17,10 +17,10 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
    * @dev single item data
    */
   struct Pair {
+    uint256 salt;
     IERC1155 token;
     uint256 tokenId;
     uint256 amount;
-    uint256 salt;
   }
 
   constructor() {

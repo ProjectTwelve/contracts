@@ -116,14 +116,14 @@ describe('AuctionHouseUpgradable', function () {
 
     const data = [
       {
+        salt: new Salt().value,
         token: p12asset.address,
         tokenId: BigInt(0),
         amount: BigInt(1),
-        salt: new Salt().value,
       },
     ];
 
-    const dd = utils.defaultAbiCoder.encode(['tuple(address token, uint256 tokenId, uint256 amount, uint256 salt)[]'], [data]);
+    const dd = utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]);
 
     await erc1155delegate.executeSell(user1.address, user2.address, dd);
 
@@ -158,10 +158,10 @@ describe('AuctionHouseUpgradable', function () {
     // prepare for tx data
     const data = [
       {
+        salt: new Salt().value,
         token: p12asset.address,
         tokenId: BigInt(0),
         amount: BigInt(1),
-        salt: new Salt().value,
       },
     ];
 
@@ -178,7 +178,7 @@ describe('AuctionHouseUpgradable', function () {
     const items = [
       {
         price: 10n * 10n ** 18n,
-        data: utils.defaultAbiCoder.encode(['tuple(address token, uint256 tokenId, uint256 amount, uint256 salt)[]'], [data]),
+        data: utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]),
       },
     ];
 
@@ -302,10 +302,10 @@ describe('AuctionHouseUpgradable', function () {
     // prepare for tx data
     const data = [
       {
+        salt: new Salt().value,
         token: p12asset.address,
         tokenId: BigInt(0),
         amount: BigInt(1),
-        salt: new Salt().value,
       },
     ];
 
@@ -323,7 +323,7 @@ describe('AuctionHouseUpgradable', function () {
     const items = [
       {
         price: 1n * 10n ** 18n,
-        data: utils.defaultAbiCoder.encode(['tuple(address token, uint256 tokenId, uint256 amount, uint256 salt)[]'], [data]),
+        data: utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]),
       },
     ];
 
@@ -429,10 +429,10 @@ describe('AuctionHouseUpgradable', function () {
   it('should cancel order successfully', async () => {
     const data = [
       {
+        salt: new Salt().value,
         token: p12asset.address,
         tokenId: BigInt(0),
         amount: BigInt(1),
-        salt: new Salt().value,
       },
     ];
 
@@ -456,7 +456,7 @@ describe('AuctionHouseUpgradable', function () {
     const items = [
       {
         price: 10n * 10n ** 18n,
-        data: utils.defaultAbiCoder.encode(['tuple(address token, uint256 tokenId, uint256 amount, uint256 salt)[]'], [data]),
+        data: utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]),
       },
     ];
 
