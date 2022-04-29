@@ -3,7 +3,7 @@ import '@openzeppelin/contracts/access/Ownable.sol';
 
 pragma solidity ^0.8.0;
 
-contract BitCoin is ERC20, Ownable {
+contract GameCoin is ERC20, Ownable {
   constructor(
     string memory name,
     string memory symbol,

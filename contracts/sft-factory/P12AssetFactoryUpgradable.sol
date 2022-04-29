@@ -11,8 +11,6 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
 import '../factory/P12V0FactoryUpgradeable.sol';
 
-// import "hardhat/console.sol";
-
 contract P12AssetFactoryUpgradable is
   Initializable,
   ReentrancyGuardUpgradeable,

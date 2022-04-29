@@ -16,8 +16,6 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
-// import "hardhat/console.sol";
-
 contract P12V0FactoryUpgradeable is
   Initializable,
   UUPSUpgradeable,
