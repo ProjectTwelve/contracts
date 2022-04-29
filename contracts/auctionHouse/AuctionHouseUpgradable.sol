@@ -12,8 +12,6 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
-// import "hardhat/console.sol";
-
 interface AuctionHouseRun {
   function run1(
     Market.Order memory order,
@@ -36,7 +34,7 @@ contract AuctionHouseUpgradable is
    * @dev event to record how much seller earns
    */
   event EvProfit(bytes32 itemHash, address currency, address to, uint256 amount);
-  // event EvAuctionRefund(bytes32 indexed itemHash, address currency, address to, uint256 amount, uint256 incentive);
+
   /**
    * @dev event to record a item order matched
    */
@@ -50,11 +48,10 @@ contract AuctionHouseUpgradable is
     uint256 delegateType,
     uint256 deadline,
     IERC20Upgradeable currency,
-    bytes dataMask,
     Market.OrderItem item,
     Market.SettleDetail detail
   );
-  // event EvSigner(address signer, bool isRemoval);
+
   /**
    * @dev event to record delegator contract change
    */
@@ -76,13 +73,11 @@ contract AuctionHouseUpgradable is
    * @dev store delegator contract status
    */
   mapping(address => bool) public delegates;
-  // mapping(address => bool) public signers;
 
   /**
    * @dev store itemHash status
    */
   mapping(bytes32 => Market.InvStatus) public inventoryStatus;
-  // mapping(bytes32 => Market.OngoingAuction) public ongoingAuctions;
 
   /** @dev precision of the parameters */
   uint256 public constant RATE_BASE = 1e6;
@@ -94,6 +89,7 @@ contract AuctionHouseUpgradable is
    * @dev DOMAIN_SEPARATOR for EIP712
    */
   bytes32 public DOMAIN_SEPARATOR;
+
   IWETHUpgradable public weth;
 
   /** upgrade function */
@@ -141,24 +137,6 @@ contract AuctionHouseUpgradable is
     emit EvFeeCapUpdate(val);
   }
 
-  // /**
-  //  * @dev not necessary at v1
-  //  */
-  // function updateSigners(address[] memory toAdd, address[] memory toRemove)
-  //     public
-  //     virtual
-  //     onlyOwner
-  // {
-  //     for (uint256 i = 0; i < toAdd.length; i++) {
-  //         signers[toAdd[i]] = true;
-  //         emit EvSigner(toAdd[i], false);
-  //     }
-  //     for (uint256 i = 0; i < toRemove.length; i++) {
-  //         delete signers[toRemove[i]];
-  //         emit EvSigner(toRemove[i], true);
-  //     }
-  // }
-
   /**
    * @dev update Delegates address
    */
@@ -173,33 +151,6 @@ contract AuctionHouseUpgradable is
     }
   }
 
-  // /**
-  //  * @dev cancel order
-  //  * @dev why deadline: if tx's gas price is not high enough, this tx will be pending forever.
-  //  */
-  // function cancel(
-  //   bytes32[] memory itemHashes,
-  //   uint256 deadline,
-  //   uint8 v,
-  //   bytes32 r,
-  //   bytes32 s
-  // ) public virtual nonReentrant whenNotPaused {
-  //   require(deadline > block.timestamp, 'AuctionHouse: deadline reached');
-  //   // bytes32 hash = keccak256(
-  //   //     abi.encode(itemHashes.length, itemHashes, deadline)
-  //   // );
-  //   // address signer = ECDSA.recover(hash, v, r, s);
-  //   // require(signers[signer], "Input signature error");
-
-  //   for (uint256 i = 0; i < itemHashes.length; i++) {
-  //     bytes32 h = itemHashes[i];
-  //     if (inventoryStatus[h] == Market.InvStatus.NEW) {
-  //       inventoryStatus[h] = Market.InvStatus.CANCELLED;
-  //       emit EvCancel(h);
-  //     }
-  //   }
-  // }
-
   /**
    * @dev Entry of a contract call
    */
@@ -207,37 +158,7 @@ contract AuctionHouseUpgradable is
     require(input.shared.deadline > block.timestamp, 'AuctionHouse: deadline reached');
     require(msg.sender == input.shared.user, 'AuctionHouse: sender not match');
 
-    /**
-            not necessary to limit signer at v1
-         */
-    // _verifyInputSignature(input);
-
     uint256 amountEth = msg.value;
-
-    /**
-     * no weth at v1
-     */
-    // if (input.shared.amountToWeth > 0) {
-    //     uint256 amt = input.shared.amountToWeth;
-    //     weth.deposit{value: amt}();
-    //     SafeERC20Upgradeable.safeTransfer(weth, msg.sender, amt);
-    //     amountEth -= amt;
-    // }
-
-    /**
-     * @dev not necessary to send eth now
-     */
-    // if (input.shared.amountToEth > 0) {
-    //     uint256 amt = input.shared.amountToEth;
-    //     SafeERC20Upgradeable.safeTransferFrom(
-    //         weth,
-    //         msg.sender,
-    //         address(this),
-    //         amt
-    //     );
-    //     weth.withdraw(amt);
-    //     amountEth += amt;
-    // }
 
     /**
      * @dev Iterate over multiple orders and verify signatures
@@ -264,12 +185,6 @@ contract AuctionHouseUpgradable is
         amountEth -= _run(order, input.shared, detail);
       }
     }
-    // /**
-    //  * @dev if more eth, transfer back
-    //  */
-    // if (amountEth > 0) {
-    //     payable(msg.sender).transfer(amountEth);
-    // }
   }
 
   /**
@@ -299,7 +214,6 @@ contract AuctionHouseUpgradable is
           order.delegateType,
           order.deadline,
           order.currency,
-          order.dataMask,
           item
         )
       );
@@ -322,7 +236,6 @@ contract AuctionHouseUpgradable is
       order.delegateType,
       order.deadline,
       order.currency,
-      order.dataMask,
       item,
       detail
     );
@@ -352,16 +265,6 @@ contract AuctionHouseUpgradable is
     }
 
     bytes memory data = item.data;
-    /**
-     * @dev recover masked data, not necessary at v1
-     */
-    // {
-    //     if (
-    //         order.dataMask.length > 0 && detail.dataReplacement.length > 0
-    //     ) {
-    //         _arrayReplace(data, detail.dataReplacement, order.dataMask);
-    //     }
-    // }
 
     if (detail.op == Market.Op.COMPLETE_SELL_OFFER) {
       /** @dev COMPLETE_SELL_OFFER */
@@ -373,200 +276,20 @@ contract AuctionHouseUpgradable is
 
       /**
        * @dev transfer token from buyer address to this contract
-       * note no native token until now
        */
-      nativeAmount = _takePayment(itemHash, order.currency, shared.user, detail.price);
+      nativeAmount = _takePayment(order.currency, shared.user, detail.price);
       require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'AuctionHouse: delegation error');
 
       _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price, detail.price);
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
-    }
-    /** no need to deal with buy offer now */
-    // else if (detail.op == Market.Op.COMPLETE_BUY_OFFER) {
-    //     require(
-    //         inventoryStatus[itemHash] == Market.InvStatus.NEW,
-    //         "order already exists"
-    //     );
-    //     require(order.intent == Market.INTENT_BUY, "intent != buy");
-    //     _assertDelegation(order, detail);
-    //     require(order.deadline > block.timestamp, "deadline reached");
-    //     require(item.price == detail.price, "price not match");
-    //     require(!_isNative(order.currency), "native token not supported");
-    //     nativeAmount = _takePayment(
-    //         itemHash,
-    //         order.currency,
-    //         order.user,
-    //         detail.price
-    //     );
-    //     require(
-    //         detail.executionDelegate.executeBuy(
-    //             shared.user,
-    //             order.user,
-    //             data
-    //         ),
-    //         "delegation error"
-    //     );
-    //     _distributeFeeAndProfit(
-    //         itemHash,
-    //         shared.user,
-    //         order.currency,
-    //         detail,
-    //         detail.price,
-    //         detail.price
-    //     );
-    //     inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
-    // }
-    else if (detail.op == Market.Op.CANCEL_OFFER) {
+    } else if (detail.op == Market.Op.CANCEL_OFFER) {
       /** CANCEL_OFFER */
       require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: unable to cancel');
       require(order.user == msg.sender, 'AuctionHouse: no permit cancel');
       require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
       inventoryStatus[itemHash] = Market.InvStatus.CANCELLED;
       emit EvCancel(itemHash);
-    }
-    /**
-     * not necessary to deal with bid
-     */
-    // else if (detail.op == Market.Op.BID) {
-    //     require(order.intent == Market.INTENT_AUCTION, "intent != auction");
-    //     _assertDelegation(order, detail);
-    //     bool firstBid = false;
-    //     if (ongoingAuctions[itemHash].bidder == address(0)) {
-    //         require(
-    //             inventoryStatus[itemHash] == Market.InvStatus.NEW,
-    //             "order already exists"
-    //         );
-    //         require(order.deadline > block.timestamp, "auction ended");
-    //         require(detail.price >= item.price, "underpaid");
-    //         firstBid = true;
-    //         ongoingAuctions[itemHash] = Market.OngoingAuction({
-    //             price: detail.price,
-    //             netPrice: detail.price,
-    //             bidder: shared.user,
-    //             endAt: order.deadline
-    //         });
-    //         inventoryStatus[itemHash] = Market.InvStatus.AUCTION;
-    //         require(
-    //             detail.executionDelegate.executeBid(
-    //                 order.user,
-    //                 address(0),
-    //                 shared.user,
-    //                 data
-    //             ),
-    //             "delegation error"
-    //         );
-    //     }
-    //     Market.OngoingAuction storage auc = ongoingAuctions[itemHash];
-    //     require(auc.endAt > block.timestamp, "auction ended");
-    //     nativeAmount = _takePayment(
-    //         itemHash,
-    //         order.currency,
-    //         shared.user,
-    //         detail.price
-    //     );
-    //     if (!firstBid) {
-    //         require(
-    //             inventoryStatus[itemHash] == Market.InvStatus.AUCTION,
-    //             "order is not auction"
-    //         );
-    //         require(
-    //             detail.price - auc.price >=
-    //                 (auc.price * detail.aucMinIncrementPct) / RATE_BASE,
-    //             "underbid"
-    //         );
-    //         uint256 bidRefund = auc.netPrice;
-    //         uint256 incentive = (detail.price * detail.bidIncentivePct) /
-    //             RATE_BASE;
-    //         if (bidRefund + incentive > 0) {
-    //             _transferTo(
-    //                 order.currency,
-    //                 auc.bidder,
-    //                 bidRefund + incentive
-    //             );
-    //             emit EvAuctionRefund(
-    //                 itemHash,
-    //                 address(order.currency),
-    //                 auc.bidder,
-    //                 bidRefund,
-    //                 incentive
-    //             );
-    //         }
-    //         require(
-    //             detail.executionDelegate.executeBid(
-    //                 order.user,
-    //                 auc.bidder,
-    //                 shared.user,
-    //                 data
-    //             ),
-    //             "delegation error"
-    //         );
-    //         auc.price = detail.price;
-    //         auc.netPrice = detail.price - incentive;
-    //         auc.bidder = shared.user;
-    //     }
-    //     if (block.timestamp + detail.aucIncDurationSecs > auc.endAt) {
-    //         auc.endAt += detail.aucIncDurationSecs;
-    //     }
-    // } else if (
-    //     detail.op == Market.Op.REFUND_AUCTION ||
-    //     detail.op == Market.Op.REFUND_AUCTION_STUCK_ITEM
-    // ) {
-    //     require(
-    //         inventoryStatus[itemHash] == Market.InvStatus.AUCTION,
-    //         "cannot cancel non-auction order"
-    //     );
-    //     Market.OngoingAuction storage auc = ongoingAuctions[itemHash];
-    //     if (auc.netPrice > 0) {
-    //         _transferTo(order.currency, auc.bidder, auc.netPrice);
-    //         emit EvAuctionRefund(
-    //             itemHash,
-    //             address(order.currency),
-    //             auc.bidder,
-    //             auc.netPrice,
-    //             0
-    //         );
-    //     }
-    //     _assertDelegation(order, detail);
-    //     if (detail.op == Market.Op.REFUND_AUCTION) {
-    //         require(
-    //             detail.executionDelegate.executeAuctionRefund(
-    //                 order.user,
-    //                 auc.bidder,
-    //                 data
-    //             ),
-    //             "delegation error"
-    //         );
-    //     }
-    //     delete ongoingAuctions[itemHash];
-    //     inventoryStatus[itemHash] = Market.InvStatus.REFUNDED;
-    // } else if (detail.op == Market.Op.COMPLETE_AUCTION) {
-    //     require(
-    //         inventoryStatus[itemHash] == Market.InvStatus.AUCTION,
-    //         "cannot complete non-auction order"
-    //     );
-    //     _assertDelegation(order, detail);
-    //     Market.OngoingAuction storage auc = ongoingAuctions[itemHash];
-    //     require(block.timestamp >= auc.endAt, "auction not finished yet");
-    //     require(
-    //         detail.executionDelegate.executeAuctionComplete(
-    //             order.user,
-    //             auc.bidder,
-    //             data
-    //         ),
-    //         "delegation error"
-    //     );
-    //     _distributeFeeAndProfit(
-    //         itemHash,
-    //         order.user,
-    //         order.currency,
-    //         detail,
-    //         auc.price,
-    //         auc.netPrice
-    //     );
-    //     inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
-    //     delete ongoingAuctions[itemHash];
-    // }
-    else {
+    } else {
       revert('AuctionHouse: unknown op');
     }
 
@@ -581,32 +304,6 @@ contract AuctionHouseUpgradable is
     require(detail.executionDelegate.delegateType() == order.delegateType, 'AuctionHouse: delegation error');
   }
 
-  // modifies `src`
-  // function _arrayReplace(
-  //   bytes memory src,
-  //   bytes memory replacement,
-  //   bytes memory mask
-  // ) internal view virtual {
-  //   require(src.length == replacement.length);
-  //   require(src.length == mask.length);
-
-  //   for (uint256 i = 0; i < src.length; i++) {
-  //     if (mask[i] != 0) {
-  //       src[i] = replacement[i];
-  //     }
-  //   }
-  // }
-
-  // /**
-  //  * @dev allow some address to trade, may be these who sign in nft market
-  //  * not necessary to verify at v1
-  //  */
-  // function _verifyInputSignature(Market.RunInput memory input) internal view virtual {
-  //   bytes32 hashValue = keccak256(abi.encode(input.shared, input.details.length, input.details));
-  //   address signer = ECDSA.recover(hashValue, input.v, input.r, input.s);
-  //   require(signers[signer], 'AuctionHouse: Input sig error');
-  // }
-
   /**
    * @dev hash typed data of an Order
    */
@@ -615,7 +312,7 @@ contract AuctionHouseUpgradable is
       keccak256(
         abi.encode(
           keccak256(
-            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,bytes dataMask,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
+            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
           ),
           order.salt,
           order.user,
@@ -624,7 +321,6 @@ contract AuctionHouseUpgradable is
           order.delegateType,
           order.deadline,
           order.currency,
-          keccak256(order.dataMask),
           order.items.length,
           _hash(order.items)
         )
@@ -639,7 +335,6 @@ contract AuctionHouseUpgradable is
     for (uint256 i = 0; i < orderItems.length; i++) {
       h = abi.encodePacked(h, _hash(orderItems[i]));
     }
-    // return keccak256(abi.encode(hash(orderItems[0])));
     return keccak256(h);
   }
 
@@ -680,7 +375,6 @@ contract AuctionHouseUpgradable is
    */
 
   function _takePayment(
-    bytes32 itemHash,
     IERC20Upgradeable currency,
     address from,
     uint256 amount

@@ -8,11 +8,8 @@ import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 
 library Market {
   uint256 constant INTENT_SELL = 1;
-  // uint256 constant INTENT_AUCTION = 2;
-  // uint256 constant INTENT_BUY = 3;
 
   uint8 constant SIGN_V1 = 1;
-  // uint8 constant SIGN_V3 = 3;
 
   struct OrderItem {
     uint256 price;
@@ -35,16 +32,12 @@ library Market {
     /** order end ddl */
     uint256 deadline;
     /**
-          address of the ERC20 coin to trade
-         */
+      address of the ERC20 coin to trade
+    */
     IERC20Upgradeable currency;
     /**
-     * mast sensitive data, null bytes at v1
-     */
-    bytes dataMask;
-    /**
-          items in an Order
-         */
+      items in an Order
+    */
     OrderItem[] items;
     /**
       signature for Order, eip 2098 would be better
@@ -53,8 +46,8 @@ library Market {
     bytes32 s;
     uint8 v;
     /**
-          could be 1 now
-         */
+      could be 1 now
+    */
     uint8 signVersion;
   }
 
@@ -76,11 +69,6 @@ library Market {
     bytes32 itemHash;
     // delegate which address to transfer token
     IDelegate executionDelegate;
-    bytes dataReplacement;
-    // bid and auction not necessary at v1
-    // uint256 bidIncentivePct;
-    // uint256 aucMinIncrementPct;
-    // uint256 aucIncDurationSecs;
     Fee[] fees;
   }
 
@@ -91,7 +79,6 @@ library Market {
     uint256 salt;
     uint256 deadline;
     uint256 amountToEth;
-    uint256 amountToWeth;
     address user;
     /**
      * can one order fail
@@ -106,47 +93,26 @@ library Market {
     Order[] orders;
     SettleDetail[] details;
     SettleShared shared;
-    // signature for registered, but not used now
-    // bytes32 r;
-    // bytes32 s;
-    // uint8 v;
   }
-
-  // struct OngoingAuction {
-  //   uint256 price;
-  //   uint256 netPrice;
-  //   uint256 endAt;
-  //   address bidder;
-  // }
 
   enum InvStatus {
     NEW,
-    AUCTION,
     COMPLETE,
-    CANCELLED,
-    REFUNDED
+    CANCELLED
   }
 
   /**
-        Operation
-     */
-
+    Operation
+  */
   enum Op {
     INVALID,
-    // off-chain
     COMPLETE_SELL_OFFER,
     COMPLETE_BUY_OFFER,
-    CANCEL_OFFER,
-    // auction
-    BID,
-    COMPLETE_AUCTION,
-    REFUND_AUCTION,
-    REFUND_AUCTION_STUCK_ITEM
+    CANCEL_OFFER
   }
 
   enum DelegationType {
     INVALID,
-    ERC721,
     ERC1155
   }
 }
