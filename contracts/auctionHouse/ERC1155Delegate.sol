@@ -60,17 +60,10 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     address buyer,
     bytes calldata data
   ) public override nonReentrant onlyRole(DELEGATION_CALLER) returns (bool) {
-    // TODO: no need for loop, just transferBatch
     Pair[] memory pairs = decode(data);
     for (uint256 i = 0; i < pairs.length; i++) {
       Pair memory p = pairs[i];
-      p.token.safeBatchTransferFrom(
-        seller,
-        buyer,
-        Utils._asSingletonArray(p.tokenId),
-        Utils._asSingletonArray(p.amount),
-        new bytes(1)
-      );
+      p.token.safeTransferFrom(seller, buyer, p.tokenId, p.amount, new bytes(0));
     }
     return true;
   }

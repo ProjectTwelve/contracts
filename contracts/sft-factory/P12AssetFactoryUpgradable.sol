@@ -69,40 +69,29 @@ contract P12AssetFactoryUpgradable is
 
   /**
    * @dev create Collection
-   * TODO: return value can be delete later
    */
-  function createCollection(string memory gameId, string calldata contractURI_)
-    public
-    onlyDeveloper(gameId)
-    whenNotPaused
-    returns (address)
-  {
+  function createCollection(string memory gameId, string calldata contractURI_) public onlyDeveloper(gameId) whenNotPaused {
     P12Asset collection = new P12Asset(contractURI_);
     // record creator
     registry[address(collection)] = gameId;
 
     emit CollectionCreated(address(collection), msg.sender);
-
-    return address(collection);
   }
 
   /**
    * @dev create asset and mint to msg.sender address
-   * @return uint256  asset tokenId
-   * TODO: return value can be delete later
    */
   function createAssetAndMint(
     address collection,
     uint256 amount_,
     string calldata uri_
-  ) public onlyCollectionDeveloper(collection) whenNotPaused nonReentrant returns (uint256) {
+  ) public onlyCollectionDeveloper(collection) whenNotPaused nonReentrant {
     // create
     uint256 tokenId = P12Asset(collection).create(amount_, uri_);
     // mint to developer address
     P12Asset(collection).mint(msg.sender, tokenId, amount_, new bytes(0));
 
     emit SftCreated(address(collection), tokenId, amount_);
-    return tokenId;
   }
 
   /**
