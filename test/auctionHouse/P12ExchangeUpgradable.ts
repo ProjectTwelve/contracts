@@ -95,6 +95,8 @@ describe('AuctionHouseUpgradable', function () {
     const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
     erc1155delegate = await ERC1155DelegateF.deploy();
 
+    expect(await erc1155delegate.delegateType()).to.be.equal(1);
+
     // trigger on received
     await p12asset.connect(user1).safeTransferFrom(user1.address, erc1155delegate.address, 1, 1, []);
     await p12asset.connect(user1).safeBatchTransferFrom(user1.address, erc1155delegate.address, [1], [1], []);

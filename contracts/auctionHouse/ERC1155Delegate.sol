@@ -14,7 +14,7 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
   bytes32 public constant DELEGATION_CALLER = keccak256('DELEGATION_CALLER');
 
   /**
-   * @dev single item data  Pair[1]
+   * @dev single item data
    */
   struct Pair {
     IERC1155 token;
@@ -52,8 +52,7 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
   }
 
   function delegateType() external pure override returns (uint256) {
-    // return uint256(Market.DelegationType.ERC1155);
-    return 1;
+    return uint256(Market.DelegationType.ERC1155);
   }
 
   function executeSell(

@@ -335,7 +335,6 @@ contract AuctionHouseUpgradable is
     for (uint256 i = 0; i < orderItems.length; i++) {
       h = abi.encodePacked(h, _hash(orderItems[i]));
     }
-    // return keccak256(abi.encode(hash(orderItems[0])));
     return keccak256(h);
   }
 
