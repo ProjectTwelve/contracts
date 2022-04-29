@@ -56,6 +56,12 @@ contract AuctionHouseUpgradable is
    * @dev event to record delegator contract change
    */
   event EvDelegate(address delegate, bool isRemoval);
+
+  /**
+   * @dev event to record currency supported change
+   */
+  event EvCurrency(IERC20Upgradeable currency, bool isRemoval);
+
   /**
    * @dev event to record fee update
    */
@@ -73,6 +79,11 @@ contract AuctionHouseUpgradable is
    * @dev store delegator contract status
    */
   mapping(address => bool) public delegates;
+
+  /**
+   * @dev store currency supported
+   */
+  mapping(IERC20Upgradeable => bool) public currencies;
 
   /**
    * @dev store itemHash status
@@ -148,6 +159,20 @@ contract AuctionHouseUpgradable is
     for (uint256 i = 0; i < toRemove.length; i++) {
       delete delegates[toRemove[i]];
       emit EvDelegate(toRemove[i], true);
+    }
+  }
+
+  /**
+   * @dev update Delegates address
+   */
+  function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public virtual onlyOwner {
+    for (uint256 i = 0; i < toAdd.length; i++) {
+      currencies[toAdd[i]] = true;
+      emit EvCurrency(toAdd[i], false);
+    }
+    for (uint256 i = 0; i < toRemove.length; i++) {
+      delete currencies[toRemove[i]];
+      emit EvCurrency(toRemove[i], true);
     }
   }
 
@@ -262,6 +287,7 @@ contract AuctionHouseUpgradable is
         address(detail.executionDelegate) != address(0) && delegates[address(detail.executionDelegate)],
         'AuctionHouse: unknown delegate'
       );
+      require(currencies[order.currency], 'AuctionHouse: wrong currency');
     }
 
     bytes memory data = item.data;

@@ -253,6 +253,17 @@ describe('AuctionHouseUpgradable', function () {
     // seller approve
     await p12asset.connect(user2).setApprovalForAll(erc1155delegate.address, true);
 
+    // not allow currency should fail
+    await expect(
+      auctionHouse.connect(user1).run({
+        orders: [Order],
+        details: [SettleDetail],
+        shared: SettleShared,
+      }),
+    ).to.be.revertedWith('AuctionHouse: wrong currency');
+
+    await auctionHouse.connect(developer).updateCurrencies([p12coin.address, ethers.constants.AddressZero], []);
+
     // wrong op should fail
     await expect(
       auctionHouse.connect(user1).run({
@@ -288,8 +299,6 @@ describe('AuctionHouseUpgradable', function () {
     )
       .to.emit(auctionHouse, 'EvFailure')
       .withArgs(0, utils.hexValue(utils.toUtf8Bytes('AuctionHouse: sold or canceled')));
-
-    // console.log(1);
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);
@@ -421,6 +430,21 @@ describe('AuctionHouseUpgradable', function () {
     )
       .to.emit(auctionHouse, 'EvFailure')
       .withArgs(0, utils.hexValue(utils.toUtf8Bytes('AuctionHouse: sold or canceled')));
+
+    // disallow native token, which cause a failure
+    await auctionHouse.updateCurrencies([], [ethers.constants.AddressZero]);
+    await expect(
+      auctionHouse.connect(user2).run(
+        {
+          orders: [Order],
+          details: [SettleDetail],
+          shared: { ...SettleShared, canFail: true },
+        },
+        { value: ethers.utils.parseEther('2.0') },
+      ),
+    )
+      .to.emit(auctionHouse, 'EvFailure')
+      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('AuctionHouse: wrong currency')));
 
     expect(await user1.getBalance()).to.be.equal(user1BalanceBefore.add(ethers.utils.parseEther('1')));
     expect(await user2.getBalance()).to.be.lte(user2BalanceBefore.sub(ethers.utils.parseEther('1'))); // due to gas
