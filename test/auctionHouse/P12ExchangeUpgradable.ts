@@ -253,7 +253,7 @@ describe('AuctionHouseUpgradable', function () {
     // seller approve
     await p12asset.connect(user2).setApprovalForAll(erc1155delegate.address, true);
 
-    // not allow currency should fail
+    // not allowed currency should fail
     await expect(
       auctionHouse.connect(user1).run({
         orders: [Order],
