@@ -16,7 +16,7 @@ contract P12RewardVault is Ownable {
 
   address public P12Token;
 
-  constructor(address _P12Token) public {
+  constructor(address _P12Token) {
     P12Token = _P12Token;
   }
 
