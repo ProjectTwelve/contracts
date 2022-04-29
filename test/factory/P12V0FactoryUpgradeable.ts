@@ -1,7 +1,7 @@
 import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { P12Token } from '../../typechain';
+import { P12Token, P12V0FactoryUpgradeable } from '../../typechain';
 import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
 import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
@@ -14,7 +14,7 @@ describe('P12Factory', function () {
   let uniswapV2Router02: Contract;
   let p12: P12Token;
   let uniswapV2Factory: Contract;
-  let p12Factory: Contract;
+  let p12Factory: P12V0FactoryUpgradeable;
   let gameCoinAddress: string;
   let mintId: string;
   // eslint-disable-next-line no-unused-vars
@@ -51,13 +51,14 @@ describe('P12Factory', function () {
 
   it('Should show P12Factory contract deploy successful!', async function () {
     const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
-    p12Factory = await upgrades.deployProxy(
+    const p12FactoryAddr = await upgrades.deployProxy(
       P12FACTORY,
       [p12.address, uniswapV2Factory.address, uniswapV2Router02.address, 3600],
       {
         kind: 'uups',
       },
     );
+    p12Factory = await ethers.getContractAt('P12V0FactoryUpgradeable', p12FactoryAddr.address);
     expect(await p12Factory.owner()).to.be.equal(admin.address);
   });
 
@@ -77,6 +78,17 @@ describe('P12Factory', function () {
     await p12Factory.setInfo(p12MineUpgradeable.address);
     expect(await p12Factory.p12mine()).to.be.equal(p12MineUpgradeable.address);
   });
+
+  it('Should pausable effective', async () => {
+    await p12Factory.pause();
+
+    expect(p12Factory.create('', '', '', '', 0n, 0n)).to.be.revertedWith('Pausable: paused');
+    expect(p12Factory.declareMintCoin('', '', 0n)).to.be.revertedWith('Pausable: paused');
+    expect(p12Factory.executeMint('', '')).to.be.revertedWith('Pausable: paused');
+
+    await p12Factory.unpause();
+  });
+
   it('Should show developer register successfully', async function () {
     const gameId = '1101';
     await p12Factory.connect(admin).register(gameId, developer.address);
@@ -101,7 +113,7 @@ describe('P12Factory', function () {
       .connect(developer)
       .create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
 
-    (await createInfo.wait()).events!.forEach((x: { event: string; args: any }) => {
+    (await createInfo.wait()).events!.forEach((x) => {
       if (x.event === 'CreateGameCoin') {
         gameCoinAddress = x.args!.gameCoinAddress;
       }
@@ -130,7 +142,7 @@ describe('P12Factory', function () {
     const amountP12 = BigInt(6) * BigInt(10) ** 17n;
     await p12.connect(developer).approve(p12Factory.address, amountP12);
     const tx = await p12Factory.connect(developer).declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
-    (await tx.wait()).events!.forEach((x: { event: string; args: any }) => {
+    (await tx.wait()).events!.forEach((x) => {
       if (x.event === 'DeclareMint') {
         mintId = x.args!.mintId;
       }
@@ -142,7 +154,7 @@ describe('P12Factory', function () {
 
     await p12.connect(developer).approve(p12Factory.address, amountP12);
     const tx = await p12Factory.connect(developer).declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
-    (await tx.wait()).events!.forEach((x: { event: string; args: any }) => {
+    (await tx.wait()).events!.forEach((x) => {
       if (x.event === 'DeclareMint') {
         mintId2 = x.args!.mintId;
       }
