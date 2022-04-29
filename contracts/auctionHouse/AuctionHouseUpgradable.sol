@@ -163,7 +163,7 @@ contract AuctionHouseUpgradable is
   }
 
   /**
-   * @dev update Delegates address
+   * @dev update Currencies address
    */
   function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public virtual onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
