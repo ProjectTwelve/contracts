@@ -1,13 +1,13 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { BigNumber, Contract } from 'ethers';
+import { BigNumber, Contract, utils } from 'ethers';
 import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
 import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
 import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
 import * as compiledUniswapPair from '@uniswap/v2-core/build/UniswapV2Pair.json';
 
-import { P12Token, GameCoin } from '../../typechain';
+import { P12Token, GameCoin, P12MineUpgradeable } from '../../typechain';
 
 describe('lpToken stake ', function () {
   let admin: SignerWithAddress;
@@ -15,7 +15,7 @@ describe('lpToken stake ', function () {
   let user2: SignerWithAddress;
   const startBlock = 1;
   let reward: P12Token;
-  let p12Mine: Contract;
+  let p12Mine: P12MineUpgradeable;
   let id: string;
   let weth: Contract;
   let uniswapV2Factory: Contract;
@@ -118,13 +118,35 @@ describe('lpToken stake ', function () {
     const delayK = 5;
     const delayB = 5;
     const P12Mine = await ethers.getContractFactory('P12MineUpgradeable');
-    p12Mine = await upgrades.deployProxy(P12Mine, [reward.address, p12factory, startBlock, delayK, delayB], { kind: 'uups' });
+    const p12MineAddr = await upgrades.deployProxy(P12Mine, [reward.address, p12factory, startBlock, delayK, delayB], {
+      kind: 'uups',
+    });
+    p12Mine = await ethers.getContractAt('P12MineUpgradeable', p12MineAddr.address);
+  });
+
+  it('should pausable effective', async () => {
+    await p12Mine.pause();
+    await expect(
+      p12Mine.addLpTokenInfoForGameCreator(ethers.constants.AddressZero, ethers.constants.AddressZero),
+    ).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.createPool(ethers.constants.AddressZero, true)).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.massUpdatePools()).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.updatePool(0n)).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.deposit(ethers.constants.AddressZero, 0n)).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.withdrawDelay(ethers.constants.AddressZero, 0n)).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.claim(ethers.constants.AddressZero)).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.claimAll()).to.be.revertedWith('Pausable: paused');
+    await expect(
+      p12Mine.withdraw(ethers.constants.AddressZero, ethers.constants.AddressZero, utils.randomBytes(32)),
+    ).to.be.revertedWith('Pausable: paused');
+
+    await p12Mine.unpause();
   });
 
   // transfer reward token to the P12RewardVault
   it('show transfer reward successfully', async function () {
     const P12RewardVault = await ethers.getContractFactory('P12RewardVault');
-    const p12RewardVault = await P12RewardVault.attach(await p12Mine.p12RewardVault());
+    const p12RewardVault = P12RewardVault.attach(await p12Mine.p12RewardVault());
     await reward.transfer(p12RewardVault.address, 100000000n * 10n ** 18n);
 
     expect(await reward.balanceOf(p12RewardVault.address)).to.be.equal(100000000n * 10n ** 18n);
@@ -200,7 +222,7 @@ describe('lpToken stake ', function () {
     const tx = await p12Mine.connect(user).withdrawDelay(pairAddress, liquidity);
     expect(await p12Mine.getUserLpBalance(pairAddress, user.address)).to.be.equal(liquidity);
 
-    (await tx.wait()).events!.forEach((x: { event: string; args: any }) => {
+    (await tx.wait()).events!.forEach((x) => {
       if (x.event === 'WithdrawDelay') {
         id = x.args!.newWithdrawId;
       }
@@ -297,7 +319,7 @@ describe('lpToken stake ', function () {
     const tx = await p12Mine.connect(user).withdrawDelay(pairAddress, total);
     expect(await p12Mine.getUserLpBalance(pairAddress, user.address)).to.be.equal(total);
 
-    (await tx.wait()).events!.forEach((x: { event: string; args: any }) => {
+    (await tx.wait()).events!.forEach((x) => {
       if (x.event === 'WithdrawDelay') {
         id = x.args!.newWithdrawId;
       }
@@ -367,7 +389,7 @@ describe('lpToken stake ', function () {
     const len = await p12Mine.poolLength();
     expect(len).to.equal(1);
     const pid = await p12Mine.getPid(pairAddress);
-    expect(pid).to.be.equal(len - 1);
+    expect(pid).to.be.equal(len.sub(1));
   });
   // get pending reward with fake account
   it('show claim nothing', async function () {
