@@ -108,6 +108,7 @@ describe('AuctionHouseUpgradable', function () {
 
     // Give Role to developer
     await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), developer.address);
+    await erc1155delegate.grantRole(await erc1155delegate.PAUSABLE_CALLER(), developer.address);
   });
 
   it('Should Delegator transfer token successfully', async function () {
@@ -125,8 +126,13 @@ describe('AuctionHouseUpgradable', function () {
 
     const dd = utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]);
 
-    await erc1155delegate.executeSell(user1.address, user2.address, dd);
+    // should Pausable effective
 
+    await erc1155delegate.pause();
+    await expect(erc1155delegate.executeSell(user1.address, user2.address, dd)).to.be.revertedWith('Pausable: paused');
+    await erc1155delegate.unpause();
+
+    await erc1155delegate.executeSell(user1.address, user2.address, dd);
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(0);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
   });
