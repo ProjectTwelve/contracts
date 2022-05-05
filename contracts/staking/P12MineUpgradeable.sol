@@ -7,13 +7,17 @@ import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 
+import './interfaces/IP12MineUpgradeable.sol';
+
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
+
 contract P12MineUpgradeable is
+  IP12MineUpgradeable,
   Initializable,
   UUPSUpgradeable,
   OwnableUpgradeable,
@@ -89,11 +93,6 @@ contract P12MineUpgradeable is
 
   uint256 private unlocked;
 
-  event Deposit(address indexed user, uint256 indexed pid, uint256 amount); // deposit lpToken log
-  event Withdraw(address indexed user, uint256 indexed pid, uint256 amount); // withdraw lpToken log
-  event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unStaking mining log
-  event Claim(address indexed user, uint256 amount); // get rewards
-
   function pause() public onlyOwner {
     _pause();
   }
@@ -167,22 +166,9 @@ contract P12MineUpgradeable is
     return userInfo[pid][_user].amountOfLpToken;
   }
 
-  // crate withdraw id
-  function createWithdrawId(
-    address lpToken,
-    uint256 amount,
-    address to
-  ) internal virtual returns (bytes32 hash) {
-    bytes32 preWithdrawId = preWithdrawIds[lpToken];
-    bytes32 withdrawId = keccak256(abi.encode(lpToken, amount, to, preWithdrawId));
-
-    preWithdrawIds[lpToken] = withdrawId;
-
-    return withdrawId;
-  }
 
   // This method is only used when creating game coin in p12factory
-  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public virtual whenNotPaused onlyP12Factory {
+  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public virtual override whenNotPaused onlyP12Factory {
     uint256 pid = getPid(_lpToken);
     uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
     uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
@@ -207,15 +193,6 @@ contract P12MineUpgradeable is
     emit Deposit(gameCoinCreator, pid, _amount);
   }
 
-  // Calculate the value of p12 corresponding to lpToken
-  function calculateP12AmountByLpToken(address _lpToken, uint256 _amount) public view virtual returns (uint256) {
-    getPid(_lpToken);
-    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(_lpToken);
-    uint256 _totalSupply = IERC20Upgradeable(_lpToken).totalSupply();
-    uint256 amount0 = _amount.mul(balance0) / _totalSupply;
-
-    return amount0;
-  }
 
   // ============ Ownable ============
 
@@ -223,6 +200,7 @@ contract P12MineUpgradeable is
   function createPool(address _lpToken, bool _withUpdate)
     public
     virtual
+    override
     lpTokenNotExist(_lpToken)
     whenNotPaused
     onlyP12FactoryOrOwner
@@ -236,24 +214,24 @@ contract P12MineUpgradeable is
   }
 
   // set reward value for per block
-  function setReward(uint256 _p12PerBlock, bool _withUpdate) external virtual onlyOwner {
+  function setReward(uint256 _p12PerBlock, bool _withUpdate) external virtual override onlyOwner {
     if (_withUpdate) {
       massUpdatePools();
     }
     p12PerBlock = _p12PerBlock;
   }
 
-  function setDelayK(uint256 _delayK) public virtual onlyOwner returns (bool) {
+  function setDelayK(uint256 _delayK) public virtual override onlyOwner returns (bool) {
     delayK = _delayK;
     return true;
   }
 
-  function setDelayB(uint256 _delayB) public virtual onlyOwner returns (bool) {
+  function setDelayB(uint256 _delayB) public virtual override onlyOwner returns (bool) {
     delayB = _delayB;
     return true;
   }
 
-  function getDlpMiningSpeed(address _lpToken) external view virtual returns (uint256) {
+  function getDlpMiningSpeed(address _lpToken) external view virtual override returns (uint256) {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
@@ -262,7 +240,7 @@ contract P12MineUpgradeable is
   // ============ Update Pools ============
 
   // Update reward variables for all pools. Be careful of gas spending!
-  function massUpdatePools() public virtual whenNotPaused {
+  function massUpdatePools() public virtual override whenNotPaused {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; ++pid) {
       updatePool(pid);
@@ -270,7 +248,7 @@ contract P12MineUpgradeable is
   }
 
   // Update reward variables of the given pool to be up-to-date.
-  function updatePool(uint256 _pid) public virtual whenNotPaused {
+  function updatePool(uint256 _pid) public virtual override whenNotPaused {
     PoolInfo storage pool = poolInfos[_pid];
     if (block.number <= pool.lastRewardBlock) {
       return;
@@ -289,7 +267,7 @@ contract P12MineUpgradeable is
   // Deposit & withdraw will also trigger claim
 
   // deposit lpToken
-  function deposit(address _lpToken, uint256 _amount) public virtual whenNotPaused nonReentrant {
+  function deposit(address _lpToken, uint256 _amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -310,7 +288,7 @@ contract P12MineUpgradeable is
   }
 
   // withdraw lpToken delay
-  function withdrawDelay(address _lpToken, uint256 _amount) public virtual whenNotPaused nonReentrant {
+  function withdrawDelay(address _lpToken, uint256 _amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -336,7 +314,7 @@ contract P12MineUpgradeable is
   }
 
   // get pending rewards
-  function claim(address _lpToken) public virtual nonReentrant whenNotPaused {
+  function claim(address _lpToken) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(_lpToken);
     if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
       return; // save gas
@@ -350,7 +328,7 @@ contract P12MineUpgradeable is
   }
 
   // get all pending rewards
-  function claimAll() public virtual nonReentrant whenNotPaused {
+  function claimAll() public virtual override nonReentrant whenNotPaused {
     uint256 length = poolInfos.length;
     uint256 pending = 0;
     for (uint256 pid = 0; pid < length; ++pid) {
@@ -366,19 +344,12 @@ contract P12MineUpgradeable is
     safeP12Transfer(msg.sender, pending);
   }
 
-  // Safe P12 transfer function
-  function safeP12Transfer(address _to, uint256 _amount) internal virtual {
-    IP12RewardVault(p12RewardVault).reward(_to, _amount);
-    realizedReward[_to] = realizedReward[_to].add(_amount);
-    emit Claim(_to, _amount);
-  }
-
   // withdraw lpToken
   function withdraw(
     address pledger,
     address _lpToken,
     bytes32 id
-  ) public virtual nonReentrant whenNotPaused {
+  ) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(_lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][pledger];
@@ -403,5 +374,38 @@ contract P12MineUpgradeable is
     totalLpStakedOfEachPool[_lpToken] -= _amount;
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), _amount);
     emit Withdraw(pledger, pid, _amount);
+  }
+
+  // ============ Internal ============
+
+  // Safe P12 transfer function
+  function safeP12Transfer(address _to, uint256 _amount) internal virtual {
+    IP12RewardVault(p12RewardVault).reward(_to, _amount);
+    realizedReward[_to] = realizedReward[_to].add(_amount);
+    emit Claim(_to, _amount);
+  }
+
+  // crate withdraw id
+  function createWithdrawId(
+    address lpToken,
+    uint256 amount,
+    address to
+  ) internal virtual returns (bytes32 hash) {
+    bytes32 preWithdrawId = preWithdrawIds[lpToken];
+    bytes32 withdrawId = keccak256(abi.encode(lpToken, amount, to, preWithdrawId));
+
+    preWithdrawIds[lpToken] = withdrawId;
+
+    return withdrawId;
+  }
+
+  // Calculate the value of p12 corresponding to lpToken
+  function calculateP12AmountByLpToken(address _lpToken, uint256 _amount) internal view virtual returns (uint256) {
+    getPid(_lpToken);
+    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(_lpToken);
+    uint256 _totalSupply = IERC20Upgradeable(_lpToken).totalSupply();
+    uint256 amount0 = _amount.mul(balance0) / _totalSupply;
+
+    return amount0;
   }
 }
