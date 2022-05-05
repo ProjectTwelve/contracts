@@ -128,7 +128,7 @@ contract P12V0FactoryUpgradeable is
     uint256 amountGameCoin,
     uint256 amountP12
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
-    require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permit to create game coin');
+    require(msg.sender == allGames[gameId], 'FORBIDDEN: no permit to create');
     require(amountP12 > 0, 'FORBIDDEN: not enough p12');
     gameCoinAddress = _create(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
@@ -152,11 +152,11 @@ contract P12V0FactoryUpgradeable is
     address pair = IUniswapV2Factory(uniswapFactory).getPair(p12, gameCoinAddress);
 
     // check address
-    require(pair != address(0), 'P12V0FactoryUpgradeableV2::pair address error');
+    require(pair != address(0), 'P12Factory::pair address error');
 
     // get lpToken value
     uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12mine));
-    require(liquidity0 == liquidity1, 'P12V0FactoryUpgradeableV2::liquidity0 should equal liquidity1');
+    require(liquidity0 == liquidity1, 'P12Factory: liquidities not =');
 
     // new staking pool
     IP12Mine(p12mine).createPool(pair, false);

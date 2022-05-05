@@ -7,9 +7,9 @@ import './interface/IWETHUpgradable.sol';
 import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 
 library Market {
-  uint256 constant INTENT_SELL = 1;
+  uint256 public constant INTENT_SELL = 1;
 
-  uint8 constant SIGN_V1 = 1;
+  uint8 public constant SIGN_V1 = 1;
 
   struct OrderItem {
     uint256 price;
