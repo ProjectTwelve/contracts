@@ -138,14 +138,14 @@ contract P12MineUpgradeable is
   }
 
   // check the caller
-  modifier P12FactoryOrOwner() {
-    require(msg.sender == p12Factory || msg.sender == owner(), 'P12Mine: caller must be p12factory or owner');
+  modifier onlyP12FactoryOrOwner() {
+    require(msg.sender == p12Factory || msg.sender == owner(), 'P12Mine: not p12factory or owner');
     _;
   }
 
   // check the caller
   modifier onlyP12Factory() {
-    require(msg.sender == p12Factory, 'P12Mine: caller must be p12factory');
+    require(msg.sender == p12Factory, 'P12Mine: caller not p12factory');
     _;
   }
 
@@ -187,7 +187,7 @@ contract P12MineUpgradeable is
     uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
     uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
     uint256 _amount = totalLpStaked.sub(_totalLpStaked);
-    require(_amount > 0, 'P12Mine: _amount should greater than zero ');
+    require(_amount > 0, 'P12Mine: _amount should > 0');
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][gameCoinCreator];
     updatePool(pid);
@@ -225,7 +225,7 @@ contract P12MineUpgradeable is
     virtual
     lpTokenNotExist(_lpToken)
     whenNotPaused
-    P12FactoryOrOwner
+    onlyP12FactoryOrOwner
   {
     if (_withUpdate) {
       massUpdatePools();
@@ -386,7 +386,7 @@ contract P12MineUpgradeable is
       withdrawInfos[_lpToken][id].amount <= user.amountOfLpToken &&
         block.timestamp >= withdrawInfos[_lpToken][id].unlockTimestamp &&
         withdrawInfos[_lpToken][id].executed == false,
-      'P12Mine: Withdraw condition not met'
+      'P12Mine: can not withdraw'
     );
     withdrawInfos[_lpToken][id].executed = true;
     updatePool(pid);

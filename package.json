@@ -11,7 +11,7 @@
     "test": "hardhat test",
     "test:analysis": "REPORT_GAS=true hardhat test",
     "coverage": "hardhat coverage",
-    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix"
+    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\""
   },
   "devDependencies": {
     "@ethersproject/abi": "^5.6.1",
