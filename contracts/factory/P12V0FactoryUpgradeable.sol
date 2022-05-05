@@ -103,7 +103,7 @@ contract P12V0FactoryUpgradeable is
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   // set p12mine contract address
-  function setInfo(address _p12mine) external virtual onlyOwner {
+  function setP12Mine(address _p12mine) external virtual onlyOwner {
     require(_p12mine != address(0), 'address cannot be zero');
     address oldP12Mine = p12mine;
     p12mine = _p12mine;
