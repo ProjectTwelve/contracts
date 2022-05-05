@@ -262,7 +262,7 @@ contract P12V0FactoryUpgradeable is
     uint256 time = getBlockTimestamp();
 
     // check that the current time is greater than the unlock time
-    require(time > coinMintRecords[gameCoinAddress][mintId].unlockTimestamp, "It's not time to Mint");
+    require(time > coinMintRecords[gameCoinAddress][mintId].unlockTimestamp, 'Not time to Mint');
 
     // Modify status
     coinMintRecords[gameCoinAddress][mintId].executed = true;
