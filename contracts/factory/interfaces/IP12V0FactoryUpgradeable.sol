@@ -72,5 +72,5 @@ interface IP12V0FactoryUpgradeable {
   event Withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin);
 
   // p12Mine address change log
-  event SetInfo(address oldP12Mine, address newP12Mine);
+  event SetP12Mine(address oldP12Mine, address newP12Mine);
 }

@@ -107,7 +107,7 @@ contract P12V0FactoryUpgradeable is
     require(_p12mine != address(0), 'address cannot be zero');
     address oldP12Mine = p12mine;
     p12mine = _p12mine;
-    emit SetInfo(oldP12Mine,p12mine);
+    emit SetP12Mine(oldP12Mine, p12mine);
   }
 
   /**
