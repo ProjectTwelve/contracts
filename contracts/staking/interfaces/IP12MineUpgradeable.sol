@@ -34,6 +34,7 @@ interface IP12MineUpgradeable {
 
   function claimAll() external; // get all pending rewards
 
-  function updatePool(uint256 _pid)external;
+  function updatePool(uint256 _pid) external;
+
   function massUpdatePools() external;
 }
