@@ -615,21 +615,21 @@ describe('SecretShopUpgradable', function () {
     // Should upgrade successfully
     const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlternative');
 
-    const SecretShopAlter = await upgrades.upgradeProxy(secretShop.address, SecretShopAlterF);
+    const secretShopAlter = await upgrades.upgradeProxy(secretShop.address, SecretShopAlterF);
 
-    await SecretShopAlter.setName('Project Twelve');
-    expect(await SecretShopAlter.getName()).to.be.equal('Project Twelve');
+    await secretShopAlter.setName('Project Twelve');
+    expect(await secretShopAlter.getName()).to.be.equal('Project Twelve');
 
     // trigger revert failure log
     // run order but allow failure
     await expect(
-      SecretShopAlter.connect(user2).run({
+      secretShopAlter.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: { ...SettleShared, canFail: true },
       }),
     )
-      .to.emit(SecretShopAlter, 'EvFailure')
+      .to.emit(secretShopAlter, 'EvFailure')
       .withArgs(0, '0x');
   });
 });
