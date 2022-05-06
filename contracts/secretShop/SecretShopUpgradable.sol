@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import './interface/IDelegate.sol';
-import './interface/IWETHUpgradable.sol';
+import './interfaces/IDelegate.sol';
+import './interfaces/IWETHUpgradable.sol';
 
-import './interface/ISecretShopUpgradable.sol';
+import './interfaces/ISecretShopUpgradable.sol';
 import './MarketConsts.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
