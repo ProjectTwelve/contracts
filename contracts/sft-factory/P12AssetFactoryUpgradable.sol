@@ -10,8 +10,10 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
 import '../factory/P12V0FactoryUpgradeable.sol';
+import './interfaces/IP12AssetFactoryUpgradable.sol';
 
 contract P12AssetFactoryUpgradable is
+  IP12AssetFactoryUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
   OwnableUpgradeable,
@@ -70,7 +72,12 @@ contract P12AssetFactoryUpgradable is
   /**
    * @dev create Collection
    */
-  function createCollection(string memory gameId, string calldata contractURI_) public onlyDeveloper(gameId) whenNotPaused {
+  function createCollection(string calldata gameId, string calldata contractURI_)
+    public
+    override
+    onlyDeveloper(gameId)
+    whenNotPaused
+  {
     P12Asset collection = new P12Asset(contractURI_);
     // record creator
     registry[address(collection)] = gameId;
