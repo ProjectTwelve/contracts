@@ -10,24 +10,16 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
 import '../factory/P12V0FactoryUpgradeable.sol';
+import './interfaces/IP12AssetFactoryUpgradable.sol';
 
 contract P12AssetFactoryUpgradable is
+  IP12AssetFactoryUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
   OwnableUpgradeable,
   PausableUpgradeable,
   UUPSUpgradeable
 {
-  /**
-   * @dev record a new Collection Created
-   */
-  event CollectionCreated(address indexed collection, address indexed developer);
-
-  /**
-   * @dev record a new Sft created, sft is semi-fungible token, as it's in a ERC1155 contract
-   */
-  event SftCreated(address indexed collection, uint256 indexed tokenId, uint256 amount);
-
   /**
     @dev collection address => gameId
   */
@@ -70,7 +62,12 @@ contract P12AssetFactoryUpgradable is
   /**
    * @dev create Collection
    */
-  function createCollection(string memory gameId, string calldata contractURI_) public onlyDeveloper(gameId) whenNotPaused {
+  function createCollection(string calldata gameId, string calldata contractURI_)
+    public
+    override
+    onlyDeveloper(gameId)
+    whenNotPaused
+  {
     P12Asset collection = new P12Asset(contractURI_);
     // record creator
     registry[address(collection)] = gameId;
@@ -85,7 +82,7 @@ contract P12AssetFactoryUpgradable is
     address collection,
     uint256 amount_,
     string calldata uri_
-  ) public onlyCollectionDeveloper(collection) whenNotPaused nonReentrant {
+  ) public override onlyCollectionDeveloper(collection) whenNotPaused nonReentrant {
     // create
     uint256 tokenId = P12Asset(collection).create(amount_, uri_);
     // mint to developer address
@@ -99,6 +96,7 @@ contract P12AssetFactoryUpgradable is
    */
   function updateCollectionUri(address collection, string calldata uri_)
     public
+    override
     onlyCollectionDeveloper(collection)
     whenNotPaused
   {

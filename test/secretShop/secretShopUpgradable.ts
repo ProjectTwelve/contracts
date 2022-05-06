@@ -1,14 +1,14 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { AuctionHouseUpgradable, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
+import { SecretShopUpgradable, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { Contract, utils } from 'ethers';
 import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
 import { Salt } from './utils';
 
-describe('AuctionHouseUpgradable', function () {
-  let auctionHouseForDeploy: Contract;
-  let auctionHouse: AuctionHouseUpgradable;
+describe('SecretShopUpgradable', function () {
+  let secretShopForDeploy: Contract;
+  let secretShop: SecretShopUpgradable;
   let developer: SignerWithAddress;
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
@@ -38,7 +38,7 @@ describe('AuctionHouseUpgradable', function () {
 
   // EIP-712 domain
   const domain = {
-    name: 'P12 AuctionHouse',
+    name: 'P12 SecretShop',
     version: '1.0.0',
     chainId: 44102,
     verifyingContract: '',
@@ -79,16 +79,16 @@ describe('AuctionHouseUpgradable', function () {
     expect(await p12asset.balanceOf(user1.address, 1)).to.be.equal(2);
   });
 
-  it('Should AuctionHouseUpgradable Deploy successfully', async function () {
-    const AuctionHouseUpgradableF = await ethers.getContractFactory('AuctionHouseUpgradable');
-    auctionHouseForDeploy = await upgrades.deployProxy(AuctionHouseUpgradableF, [10n ** 5n, weth.address], {
+  it('Should SecretShopUpgradable Deploy successfully', async function () {
+    const SecretShopUpgradableF = await ethers.getContractFactory('SecretShopUpgradable');
+    secretShopForDeploy = await upgrades.deployProxy(SecretShopUpgradableF, [10n ** 5n, weth.address], {
       kind: 'uups',
     });
 
-    auctionHouse = await ethers.getContractAt('AuctionHouseUpgradable', auctionHouseForDeploy.address);
+    secretShop = await ethers.getContractAt('SecretShopUpgradable', secretShopForDeploy.address);
 
     // update EIP-712 verifyingContract address
-    domain.verifyingContract = auctionHouse.address;
+    domain.verifyingContract = secretShop.address;
   });
 
   it('Should ERC1155 Delegate Deploy successfully', async function () {
@@ -104,7 +104,7 @@ describe('AuctionHouseUpgradable', function () {
     expect(await p12asset.balanceOf(erc1155delegate.address, 1)).to.be.equal(2);
 
     // Give Role to exchange contract
-    await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), auctionHouse.address);
+    await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), secretShop.address);
 
     // Give Role to developer
     await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), developer.address);
@@ -138,26 +138,26 @@ describe('AuctionHouseUpgradable', function () {
   });
 
   it('should update fee cap successfully', async function () {
-    expect(await auctionHouse.feeCapPct()).to.equal(10n ** 5n);
+    expect(await secretShop.feeCapPct()).to.equal(10n ** 5n);
 
     // update feeCap
-    await auctionHouse.connect(developer).updateFeeCap(11n ** 5n);
+    await secretShop.connect(developer).updateFeeCap(11n ** 5n);
 
-    expect(await auctionHouse.feeCapPct()).to.equal(11n ** 5n);
+    expect(await secretShop.feeCapPct()).to.equal(11n ** 5n);
   });
 
   it('should change delegates successfully', async function () {
-    expect(await auctionHouse.delegates(erc1155delegate.address)).to.equal(false);
+    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(false);
 
     // Add delegate
-    await auctionHouse.updateDelegates([erc1155delegate.address], []);
-    expect(await auctionHouse.delegates(erc1155delegate.address)).to.equal(true);
+    await secretShop.updateDelegates([erc1155delegate.address], []);
+    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(true);
 
     // delete and then add
-    await auctionHouse.updateDelegates([], [erc1155delegate.address]);
-    expect(await auctionHouse.delegates(erc1155delegate.address)).to.equal(false);
-    await auctionHouse.updateDelegates([erc1155delegate.address], []);
-    expect(await auctionHouse.delegates(erc1155delegate.address)).to.equal(true);
+    await secretShop.updateDelegates([], [erc1155delegate.address]);
+    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(false);
+    await secretShop.updateDelegates([erc1155delegate.address], []);
+    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(true);
   });
 
   it('Should sell successfully', async function () {
@@ -254,42 +254,42 @@ describe('AuctionHouseUpgradable', function () {
     };
 
     // Buyer approve coin
-    await p12coin.connect(user1).approve(auctionHouse.address, SettleDetail.price);
+    await p12coin.connect(user1).approve(secretShop.address, SettleDetail.price);
 
     // seller approve
     await p12asset.connect(user2).setApprovalForAll(erc1155delegate.address, true);
 
     // not allowed currency should fail
     await expect(
-      auctionHouse.connect(user1).run({
+      secretShop.connect(user1).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('AuctionHouse: wrong currency');
+    ).to.be.revertedWith('SecretShop: wrong currency');
 
-    await auctionHouse.connect(developer).updateCurrencies([p12coin.address, ethers.constants.AddressZero], []);
+    await secretShop.connect(developer).updateCurrencies([p12coin.address, ethers.constants.AddressZero], []);
 
     // wrong op should fail
     await expect(
-      auctionHouse.connect(user1).run({
+      secretShop.connect(user1).run({
         orders: [Order],
         details: [{ ...SettleDetail, op: 2n }],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('AuctionHouse: unknown op');
+    ).to.be.revertedWith('SecretShop: unknown op');
 
     // wrong sig version should fail
     await expect(
-      auctionHouse.connect(user1).run({
+      secretShop.connect(user1).run({
         orders: [{ ...Order, signVersion: '0x02' }],
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('AuctionHouse: wrong sig version');
+    ).to.be.revertedWith('SecretShop: wrong sig version');
 
     // run order
-    await auctionHouse.connect(user1).run({
+    await secretShop.connect(user1).run({
       orders: [Order],
       details: [SettleDetail],
       shared: SettleShared,
@@ -297,14 +297,14 @@ describe('AuctionHouseUpgradable', function () {
 
     // run order but allow failure
     await expect(
-      auctionHouse.connect(user1).run({
+      secretShop.connect(user1).run({
         orders: [Order],
         details: [SettleDetail],
         shared: { ...SettleShared, canFail: true },
       }),
     )
-      .to.emit(auctionHouse, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('AuctionHouse: sold or canceled')));
+      .to.emit(secretShop, 'EvFailure')
+      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled')));
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);
@@ -414,7 +414,7 @@ describe('AuctionHouseUpgradable', function () {
     const user2BalanceBefore = await user2.getBalance();
 
     // run order
-    await auctionHouse.connect(user2).run(
+    await secretShop.connect(user2).run(
       {
         orders: [Order],
         details: [SettleDetail],
@@ -425,7 +425,7 @@ describe('AuctionHouseUpgradable', function () {
 
     // run order but allow failure
     await expect(
-      auctionHouse.connect(user2).run(
+      secretShop.connect(user2).run(
         {
           orders: [Order],
           details: [SettleDetail],
@@ -434,13 +434,13 @@ describe('AuctionHouseUpgradable', function () {
         { value: ethers.utils.parseEther('2.0') },
       ),
     )
-      .to.emit(auctionHouse, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('AuctionHouse: sold or canceled')));
+      .to.emit(secretShop, 'EvFailure')
+      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled')));
 
     // disallow native token, which cause a failure
-    await auctionHouse.updateCurrencies([], [ethers.constants.AddressZero]);
+    await secretShop.updateCurrencies([], [ethers.constants.AddressZero]);
     await expect(
-      auctionHouse.connect(user2).run(
+      secretShop.connect(user2).run(
         {
           orders: [Order],
           details: [SettleDetail],
@@ -449,8 +449,8 @@ describe('AuctionHouseUpgradable', function () {
         { value: ethers.utils.parseEther('2.0') },
       ),
     )
-      .to.emit(auctionHouse, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('AuctionHouse: wrong currency')));
+      .to.emit(secretShop, 'EvFailure')
+      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: wrong currency')));
 
     expect(await user1.getBalance()).to.be.equal(user1BalanceBefore.add(ethers.utils.parseEther('1')));
     expect(await user2.getBalance()).to.be.lte(user2BalanceBefore.sub(ethers.utils.parseEther('1'))); // due to gas
@@ -467,10 +467,10 @@ describe('AuctionHouseUpgradable', function () {
     ];
 
     const domain = {
-      name: 'P12 AuctionHouse',
+      name: 'P12 SecretShop',
       version: '1.0.0',
       chainId: 44102,
-      verifyingContract: auctionHouse.address,
+      verifyingContract: secretShop.address,
     };
 
     const orderPreInfo = {
@@ -556,34 +556,34 @@ describe('AuctionHouseUpgradable', function () {
     };
 
     // Buyer approve coin
-    await p12coin.connect(user2).approve(auctionHouse.address, SettleDetail.price);
+    await p12coin.connect(user2).approve(secretShop.address, SettleDetail.price);
 
     // seller approve
     await p12asset.connect(user1).setApprovalForAll(erc1155delegate.address, true);
 
     // other cancel
     await expect(
-      auctionHouse.connect(user2).run({
+      secretShop.connect(user2).run({
         orders: [Order],
         details: [{ ...SettleDetail, op: 3n }],
         shared: { ...SettleShared, user: user2.address },
       }),
-    ).to.be.revertedWith('AuctionHouse: no permit cancel');
+    ).to.be.revertedWith('SecretShop: no permit cancel');
 
     // seller cancel
-    await (await ethers.getContractAt('AuctionHouseUpgradable', auctionHouse.address)).connect(user1).run({
+    await (await ethers.getContractAt('SecretShopUpgradable', secretShop.address)).connect(user1).run({
       orders: [Order],
       details: [{ ...SettleDetail, op: 3n }],
       shared: { ...SettleShared, user: user1.address },
     });
 
     await expect(
-      auctionHouse.connect(user2).run({
+      secretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('AuctionHouse: sold or canceled');
+    ).to.be.revertedWith('SecretShop: sold or canceled');
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(0);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
@@ -592,44 +592,44 @@ describe('AuctionHouseUpgradable', function () {
     expect(await p12coin.balanceOf(recipient.address)).to.be.equal(1n * 10n ** 17n);
 
     // check pauseable
-    await auctionHouse.connect(developer).pause();
+    await secretShop.connect(developer).pause();
 
     await expect(
-      auctionHouse.connect(user2).run({
+      secretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
       }),
     ).to.be.revertedWith('Pausable: paused');
 
-    await auctionHouse.connect(developer).unpause();
+    await secretShop.connect(developer).unpause();
 
     await expect(
-      auctionHouse.connect(user2).run({
+      secretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('AuctionHouse: sold or canceled');
+    ).to.be.revertedWith('SecretShop: sold or canceled');
 
     // Should upgrade successfully
-    const AuctionHouseAlter = await ethers.getContractFactory('AuctionHouseUpgradableAlternative');
+    const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlternative');
 
-    const auctionHouseAlter = await upgrades.upgradeProxy(auctionHouse.address, AuctionHouseAlter);
+    const secretShopAlter = await upgrades.upgradeProxy(secretShop.address, SecretShopAlterF);
 
-    await auctionHouseAlter.setName('Project Twelve');
-    expect(await auctionHouseAlter.getName()).to.be.equal('Project Twelve');
+    await secretShopAlter.setName('Project Twelve');
+    expect(await secretShopAlter.getName()).to.be.equal('Project Twelve');
 
     // trigger revert failure log
     // run order but allow failure
     await expect(
-      auctionHouseAlter.connect(user2).run({
+      secretShopAlter.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: { ...SettleShared, canFail: true },
       }),
     )
-      .to.emit(auctionHouseAlter, 'EvFailure')
+      .to.emit(secretShopAlter, 'EvFailure')
       .withArgs(0, '0x');
   });
 });

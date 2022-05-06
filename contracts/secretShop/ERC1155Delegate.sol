@@ -8,7 +8,7 @@ import '@openzeppelin/contracts/access/AccessControl.sol';
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/security/Pausable.sol';
 import './MarketConsts.sol';
-import './interface/IDelegate.sol';
+import './interfaces/IDelegate.sol';
 import '../libraries/Utils.sol';
 
 contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, ReentrancyGuard, Pausable {

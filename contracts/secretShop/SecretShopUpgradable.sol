@@ -1,79 +1,29 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import './interface/IDelegate.sol';
-import './interface/IWETHUpgradable.sol';
+import './interfaces/IDelegate.sol';
+import './interfaces/IWETHUpgradable.sol';
+
+import './interfaces/ISecretShopUpgradable.sol';
 import './MarketConsts.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
-interface AuctionHouseRun {
-  function run1(
-    Market.Order memory order,
-    Market.SettleShared memory shared,
-    Market.SettleDetail memory detail
-  ) external returns (uint256);
-}
-
-contract AuctionHouseUpgradable is
+contract SecretShopUpgradable is
+  ISecretShopUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
   OwnableUpgradeable,
   PausableUpgradeable,
-  AuctionHouseRun,
   UUPSUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
-
-  /**
-   * @dev event to record how much seller earns
-   */
-  event EvProfit(bytes32 itemHash, address currency, address to, uint256 amount);
-
-  /**
-   * @dev event to record a item order matched
-   */
-  event EvInventory(
-    bytes32 indexed itemHash,
-    address maker,
-    address taker,
-    uint256 orderSalt,
-    uint256 settleSalt,
-    uint256 intent,
-    uint256 delegateType,
-    uint256 deadline,
-    IERC20Upgradeable currency,
-    Market.OrderItem item,
-    Market.SettleDetail detail
-  );
-
-  /**
-   * @dev event to record delegator contract change
-   */
-  event EvDelegate(address delegate, bool isRemoval);
-
-  /**
-   * @dev event to record currency supported change
-   */
-  event EvCurrency(IERC20Upgradeable currency, bool isRemoval);
-
-  /**
-   * @dev event to record fee update
-   */
-  event EvFeeCapUpdate(uint256 newValue);
-  /**
-   * @dev event to record a order canceled
-   */
-  event EvCancel(bytes32 indexed itemHash);
-  /**
-   * @dev event to record a order failing
-   */
-  event EvFailure(uint256 index, bytes error);
 
   /**
    * @dev store delegator contract status
@@ -131,7 +81,7 @@ contract AuctionHouseUpgradable is
     DOMAIN_SEPARATOR = keccak256(
       abi.encode(
         EIP712DOMAIN_TYPEHASH,
-        keccak256(bytes('P12 AuctionHouse')),
+        keccak256(bytes('P12 SecretShop')),
         keccak256(bytes('1.0.0')),
         block.chainid,
         address(this)
@@ -143,7 +93,7 @@ contract AuctionHouseUpgradable is
     __Ownable_init_unchained();
   }
 
-  function updateFeeCap(uint256 val) public virtual onlyOwner {
+  function updateFeeCap(uint256 val) public virtual override onlyOwner {
     feeCapPct = val;
     emit EvFeeCapUpdate(val);
   }
@@ -151,7 +101,7 @@ contract AuctionHouseUpgradable is
   /**
    * @dev update Delegates address
    */
-  function updateDelegates(address[] memory toAdd, address[] memory toRemove) public virtual onlyOwner {
+  function updateDelegates(address[] calldata toAdd, address[] calldata toRemove) public virtual override onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
       delegates[toAdd[i]] = true;
       emit EvDelegate(toAdd[i], false);
@@ -165,7 +115,7 @@ contract AuctionHouseUpgradable is
   /**
    * @dev update Currencies address
    */
-  function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public virtual onlyOwner {
+  function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public override onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
       currencies[toAdd[i]] = true;
       emit EvCurrency(toAdd[i], false);
@@ -179,9 +129,9 @@ contract AuctionHouseUpgradable is
   /**
    * @dev Entry of a contract call
    */
-  function run(Market.RunInput memory input) public payable virtual nonReentrant whenNotPaused {
-    require(input.shared.deadline > block.timestamp, 'AuctionHouse: deadline reached');
-    require(msg.sender == input.shared.user, 'AuctionHouse: sender not match');
+  function run(Market.RunInput memory input) public payable virtual override nonReentrant whenNotPaused {
+    require(input.shared.deadline > block.timestamp, 'SecretShop: deadline reached');
+    require(msg.sender == input.shared.user, 'SecretShop: sender not match');
 
     uint256 amountEth = msg.value;
 
@@ -199,7 +149,7 @@ contract AuctionHouseUpgradable is
       Market.SettleDetail memory detail = input.details[i];
       Market.Order memory order = input.orders[detail.orderIdx];
       if (input.shared.canFail) {
-        try AuctionHouseRun(address(this)).run1(order, input.shared, detail) returns (uint256 ethPayment) {
+        try ISecretShopUpgradable(address(this)).runSingle(order, input.shared, detail) returns (uint256 ethPayment) {
           amountEth -= ethPayment;
         } catch Error(string memory _err) {
           emit EvFailure(i, bytes(_err));
@@ -215,12 +165,12 @@ contract AuctionHouseUpgradable is
   /**
    * @dev run a single order
    */
-  function run1(
+  function runSingle(
     Market.Order memory order,
     Market.SettleShared memory shared,
     Market.SettleDetail memory detail
   ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'AuctionHouse: unsafe call');
+    require(msg.sender == address(this), 'SecretShop: unsafe call');
 
     return _run(order, shared, detail);
   }
@@ -281,42 +231,42 @@ contract AuctionHouseUpgradable is
     bytes32 itemHash = _hashItem(order, item);
 
     {
-      require(itemHash == detail.itemHash, 'AuctionHouse: hash not match');
-      require(order.network == block.chainid, 'AuctionHouse: wrong network');
+      require(itemHash == detail.itemHash, 'SecretShop: hash not match');
+      require(order.network == block.chainid, 'SecretShop: wrong network');
       require(
         address(detail.executionDelegate) != address(0) && delegates[address(detail.executionDelegate)],
-        'AuctionHouse: unknown delegate'
+        'SecretShop: unknown delegate'
       );
-      require(currencies[order.currency], 'AuctionHouse: wrong currency');
+      require(currencies[order.currency], 'SecretShop: wrong currency');
     }
 
     bytes memory data = item.data;
 
     if (detail.op == Market.Op.COMPLETE_SELL_OFFER) {
       /** @dev COMPLETE_SELL_OFFER */
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: sold or canceled');
-      require(order.intent == Market.INTENT_SELL, 'AuctionHouse: intent != sell');
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: sold or canceled');
+      require(order.intent == Market.INTENT_SELL, 'SecretShop: intent != sell');
       _assertDelegation(order, detail);
-      require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
-      require(detail.price >= item.price, 'AuctionHouse: underpaid');
+      require(order.deadline > block.timestamp, 'SecretShop: deadline reached');
+      require(detail.price >= item.price, 'SecretShop: underpaid');
 
       /**
        * @dev transfer token from buyer address to this contract
        */
       nativeAmount = _takePayment(order.currency, shared.user, detail.price);
-      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'AuctionHouse: delegation error');
+      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'SecretShop: delegation error');
 
       _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price, detail.price);
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
     } else if (detail.op == Market.Op.CANCEL_OFFER) {
       /** CANCEL_OFFER */
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'AuctionHouse: unable to cancel');
-      require(order.user == msg.sender, 'AuctionHouse: no permit cancel');
-      require(order.deadline > block.timestamp, 'AuctionHouse: deadline reached');
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: unable to cancel');
+      require(order.user == msg.sender, 'SecretShop: no permit cancel');
+      require(order.deadline > block.timestamp, 'SecretShop: deadline reached');
       inventoryStatus[itemHash] = Market.InvStatus.CANCELLED;
       emit EvCancel(itemHash);
     } else {
-      revert('AuctionHouse: unknown op');
+      revert('SecretShop: unknown op');
     }
 
     _emitInventory(itemHash, order, item, shared, detail);
@@ -327,7 +277,7 @@ contract AuctionHouseUpgradable is
    * @dev judge delegate type
    */
   function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'AuctionHouse: delegation error');
+    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
   }
 
   /**
@@ -383,10 +333,10 @@ contract AuctionHouseUpgradable is
       bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, _hash(order));
       orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
     } else {
-      revert('AuctionHouse: wrong sig version');
+      revert('SecretShop: wrong sig version');
     }
 
-    require(orderSigner == order.user, 'AuctionHouse: sig not match');
+    require(orderSigner == order.user, 'SecretShop: sig not match');
   }
 
   /**
