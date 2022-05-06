@@ -17,11 +17,6 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
    */
   string private _gameCoinIconUrl;
 
-  /**
-   * @dev record the event that transfer coin with a off-chain account, which will be used when someone want to deposit his coin to off-chain game.
-   */
-  event TransferWithAccount(address recipient, string account, uint256 amount);
-
   constructor(
     string memory name_,
     string memory symbol_,

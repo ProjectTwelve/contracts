@@ -1,7 +1,7 @@
 import { ethers } from 'hardhat';
 
 async function main() {
-  const p12exchange = await ethers.getContractAt('AuctionHouseUpgradable', '0x2B1525d4BaBC614A4F309b1256650aB7602d780A');
+  const p12exchange = await ethers.getContractAt('SecretShopUpgradable', '0x2B1525d4BaBC614A4F309b1256650aB7602d780A');
 
   console.log(
     await p12exchange.inventoryStatus('0x8a6f8cbaec95b73225b6715d3901f8bdcbe072dcaa5a440215388597c1a8cf9e'),

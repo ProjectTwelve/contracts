@@ -8,7 +8,7 @@ import { ethers } from 'hardhat';
 import { SignTypedDataVersion, signTypedData } from '@metamask/eth-sig-util';
 async function main() {
   const domain = {
-    name: 'P12 AuctionHouse',
+    name: 'P12 SecretShop',
     version: '1.0.0',
     chainId: 44010,
     verifyingContract: '0x2B1525d4BaBC614A4F309b1256650aB7602d780A',
