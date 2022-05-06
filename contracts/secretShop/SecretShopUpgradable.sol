@@ -3,29 +3,24 @@ pragma solidity ^0.8.0;
 
 import './interface/IDelegate.sol';
 import './interface/IWETHUpgradable.sol';
+
+import './interface/ISecretShopUpgradable.sol';
 import './MarketConsts.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 
-interface SecretShopRun {
-  function run1(
-    Market.Order memory order,
-    Market.SettleShared memory shared,
-    Market.SettleDetail memory detail
-  ) external returns (uint256);
-}
-
 contract SecretShopUpgradable is
+  ISecretShopUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
   OwnableUpgradeable,
   PausableUpgradeable,
-  SecretShopRun,
   UUPSUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
@@ -143,7 +138,7 @@ contract SecretShopUpgradable is
     __Ownable_init_unchained();
   }
 
-  function updateFeeCap(uint256 val) public virtual onlyOwner {
+  function updateFeeCap(uint256 val) public virtual override onlyOwner {
     feeCapPct = val;
     emit EvFeeCapUpdate(val);
   }
@@ -151,7 +146,7 @@ contract SecretShopUpgradable is
   /**
    * @dev update Delegates address
    */
-  function updateDelegates(address[] memory toAdd, address[] memory toRemove) public virtual onlyOwner {
+  function updateDelegates(address[] calldata toAdd, address[] calldata toRemove) public virtual override onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
       delegates[toAdd[i]] = true;
       emit EvDelegate(toAdd[i], false);
@@ -165,7 +160,7 @@ contract SecretShopUpgradable is
   /**
    * @dev update Currencies address
    */
-  function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public virtual onlyOwner {
+  function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public override onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
       currencies[toAdd[i]] = true;
       emit EvCurrency(toAdd[i], false);
@@ -179,7 +174,7 @@ contract SecretShopUpgradable is
   /**
    * @dev Entry of a contract call
    */
-  function run(Market.RunInput memory input) public payable virtual nonReentrant whenNotPaused {
+  function run(Market.RunInput memory input) public payable virtual override nonReentrant whenNotPaused {
     require(input.shared.deadline > block.timestamp, 'SecretShop: deadline reached');
     require(msg.sender == input.shared.user, 'SecretShop: sender not match');
 
@@ -199,7 +194,7 @@ contract SecretShopUpgradable is
       Market.SettleDetail memory detail = input.details[i];
       Market.Order memory order = input.orders[detail.orderIdx];
       if (input.shared.canFail) {
-        try SecretShopRun(address(this)).run1(order, input.shared, detail) returns (uint256 ethPayment) {
+        try ISecretShopUpgradable(address(this)).runSingle(order, input.shared, detail) returns (uint256 ethPayment) {
           amountEth -= ethPayment;
         } catch Error(string memory _err) {
           emit EvFailure(i, bytes(_err));
@@ -215,7 +210,7 @@ contract SecretShopUpgradable is
   /**
    * @dev run a single order
    */
-  function run1(
+  function runSingle(
     Market.Order memory order,
     Market.SettleShared memory shared,
     Market.SettleDetail memory detail

@@ -17,7 +17,7 @@ contract SecretShopUpgradableAlternative is SecretShopUpgradable {
   /**
    * @dev override to trigger error
    */
-  function run1(
+  function runSingle(
     Market.Order memory,
     Market.SettleShared memory,
     Market.SettleDetail memory
