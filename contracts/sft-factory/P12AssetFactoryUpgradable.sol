@@ -21,16 +21,6 @@ contract P12AssetFactoryUpgradable is
   UUPSUpgradeable
 {
   /**
-   * @dev record a new Collection Created
-   */
-  event CollectionCreated(address indexed collection, address indexed developer);
-
-  /**
-   * @dev record a new Sft created, sft is semi-fungible token, as it's in a ERC1155 contract
-   */
-  event SftCreated(address indexed collection, uint256 indexed tokenId, uint256 amount);
-
-  /**
     @dev collection address => gameId
   */
   mapping(address => string) public registry;
