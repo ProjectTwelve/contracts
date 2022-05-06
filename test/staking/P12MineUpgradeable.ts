@@ -161,14 +161,14 @@ describe('lpToken stake ', function () {
   // try crate a new pool by no permission account
   it('show create a new pool fail', async function () {
     await expect(p12Mine.connect(user).addLpTokenInfoForGameCreator(pairAddress, user.address)).to.be.revertedWith(
-      'P12Mine: caller must be p12factory',
+      'P12Mine: caller not p12factory',
     );
   });
 
   //  try crate a new pool by no permission account
   it('show create a new pool fail', async function () {
     await expect(p12Mine.connect(user).createPool(gameCoin.address, true)).to.be.revertedWith(
-      'P12Mine: caller must be p12factory or owner',
+      'P12Mine: not p12factory or owner',
     );
   });
 
@@ -212,7 +212,7 @@ describe('lpToken stake ', function () {
       p12Mine
         .connect(user)
         .withdraw(user.address, pairAddress, '0x686a653b3b000000000000000000000000000000000000000000000000000000'),
-    ).to.be.revertedWith('P12Mine: Withdraw condition not met');
+    ).to.be.revertedWith('P12Mine: can not withdraw');
     expect(await reward.balanceOf(admin.address)).to.be.equal(balanceOfReward);
     expect(await p12Mine.getUserLpBalance(pairAddress, admin.address)).to.be.equal(balanceOfLpToken);
   });
@@ -237,9 +237,7 @@ describe('lpToken stake ', function () {
   it('show withdraw fail', async function () {
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 1]);
-    await expect(p12Mine.connect(user).withdraw(user.address, pairAddress, id)).to.be.revertedWith(
-      'P12Mine: Withdraw condition not met',
-    );
+    await expect(p12Mine.connect(user).withdraw(user.address, pairAddress, id)).to.be.revertedWith('P12Mine: can not withdraw');
   });
 
   it('show withdraw successfully', async function () {
@@ -309,9 +307,7 @@ describe('lpToken stake ', function () {
 
   // try withdraw
   it('show withdraw fail', async function () {
-    await expect(p12Mine.connect(user).withdraw(user.address, pairAddress, id)).to.be.revertedWith(
-      'P12Mine: Withdraw condition not met',
-    );
+    await expect(p12Mine.connect(user).withdraw(user.address, pairAddress, id)).to.be.revertedWith('P12Mine: can not withdraw');
   });
 
   // delay unStaking mining
