@@ -2,14 +2,15 @@
 
 pragma solidity ^0.8.0;
 
+import './interfaces/IP12Asset.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract P12Asset is ERC1155(''), Ownable {
+contract P12Asset is IP12Asset, ERC1155(''), Ownable {
   /**
    * @dev contract-level metadata uri, refer to https://docs.opensea.io/docs/contract-level-metadata
    */
-  string private _contractURI;
+  string public contractURI;
 
   /**
    * @dev token id index, which will increase one by one
@@ -33,7 +34,7 @@ contract P12Asset is ERC1155(''), Ownable {
   mapping(uint256 => uint256) public maxSupply;
 
   constructor(string memory contractURI_) {
-    _contractURI = contractURI_;
+    contractURI = contractURI_;
   }
 
   /**
@@ -41,7 +42,7 @@ contract P12Asset is ERC1155(''), Ownable {
    * @return uint256 new asset's tokenId
    */
 
-  function create(uint256 amount_, string calldata uri_) public onlyOwner returns (uint256) {
+  function create(uint256 amount_, string calldata uri_) public override onlyOwner returns (uint256) {
     // set tokenId totalSupply
     maxSupply[idx] = amount_;
     // set metadata Uri
@@ -59,7 +60,7 @@ contract P12Asset is ERC1155(''), Ownable {
     uint256 id,
     uint256 amount,
     bytes memory data
-  ) public onlyOwner {
+  ) public override onlyOwner {
     require(amount + supply[id] <= maxSupply[id], 'P12Asset: exceed max supply');
     _mint(to, id, amount, data);
     supply[id] += amount;
@@ -82,16 +83,9 @@ contract P12Asset is ERC1155(''), Ownable {
   }
 
   /**
-   *  @dev read contract-level MetaData URI
-   */
-  function contractURI() public view returns (string memory) {
-    return _contractURI;
-  }
-
-  /**
    * @dev set contract-level MetaData
    */
-  function setContractURI(string memory newContractURI_) public onlyOwner {
-    _contractURI = newContractURI_;
+  function setContractURI(string calldata newContractURI_) public override onlyOwner {
+    contractURI = newContractURI_;
   }
 }
