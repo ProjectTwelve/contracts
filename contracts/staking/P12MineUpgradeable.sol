@@ -15,7 +15,6 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
-
 contract P12MineUpgradeable is
   IP12MineUpgradeable,
   Initializable,
@@ -166,9 +165,14 @@ contract P12MineUpgradeable is
     return userInfo[pid][_user].amountOfLpToken;
   }
 
-
   // This method is only used when creating game coin in p12factory
-  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator) public virtual override whenNotPaused onlyP12Factory {
+  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator)
+    public
+    virtual
+    override
+    whenNotPaused
+    onlyP12Factory
+  {
     uint256 pid = getPid(_lpToken);
     uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
     uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
@@ -192,7 +196,6 @@ contract P12MineUpgradeable is
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(gameCoinCreator, pid, _amount);
   }
-
 
   // ============ Ownable ============
 
@@ -265,6 +268,7 @@ contract P12MineUpgradeable is
     uint256 P12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
     pool.accP12PerShare = pool.accP12PerShare.add(P12Reward.mul(ONE).div(pool.p12Total));
     pool.lastRewardBlock = block.number;
+    emit UpdatePool(_pid, pool.lpToken, pool.accP12PerShare);
   }
 
   // ============ Deposit & Withdraw & Claim ============
