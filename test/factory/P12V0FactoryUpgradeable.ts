@@ -75,7 +75,7 @@ describe('P12Factory', function () {
     );
   });
   it('set some info to p12Factory', async function () {
-    await p12Factory.setInfo(p12MineUpgradeable.address);
+    await p12Factory.setP12Mine(p12MineUpgradeable.address);
     expect(await p12Factory.p12mine()).to.be.equal(p12MineUpgradeable.address);
   });
 

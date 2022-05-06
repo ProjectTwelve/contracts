@@ -70,4 +70,13 @@ interface IP12V0FactoryUpgradeable {
 
   // game player withdraw gameCoin
   event Withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin);
+
+  // p12Mine address change log
+  event SetP12Mine(address oldP12Mine, address newP12Mine);
+
+  // change delayB log
+  event SetDelayB(uint256 oldDelayB ,uint256 newDelayB);
+
+  // change delayK log
+  event SetDelayK(uint256 oldDelayK ,uint256 newDelayK);
 }

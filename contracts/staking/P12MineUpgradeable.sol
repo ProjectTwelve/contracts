@@ -225,12 +225,16 @@ contract P12MineUpgradeable is
   }
 
   function setDelayK(uint256 _delayK) public virtual override onlyOwner returns (bool) {
+    uint256 oldDelayK = delayK;
     delayK = _delayK;
+    emit SetDelayK(oldDelayK, delayK);
     return true;
   }
 
   function setDelayB(uint256 _delayB) public virtual override onlyOwner returns (bool) {
+    uint256 oldDelayB = delayB;
     delayB = _delayB;
+    emit SetDelayB(oldDelayB, delayB);
     return true;
   }
 
@@ -264,6 +268,7 @@ contract P12MineUpgradeable is
     uint256 P12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
     pool.accP12PerShare = pool.accP12PerShare.add(P12Reward.mul(ONE).div(pool.p12Total));
     pool.lastRewardBlock = block.number;
+    emit UpdatePool(_pid, pool.lpToken, pool.accP12PerShare);
   }
 
   // ============ Deposit & Withdraw & Claim ============

@@ -72,6 +72,7 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
   function _setUri(uint256 id, string calldata uri_) private {
     require(bytes(_uri[id]).length == 0, 'P12Asset: uri already set');
     _uri[id] = uri_;
+    emit SetUri(id, uri_);
   }
 
   /**
@@ -86,6 +87,8 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
    * @dev set contract-level MetaData
    */
   function setContractURI(string calldata newContractURI_) public override onlyOwner {
+    string memory oldContractURI = contractURI;
     contractURI = newContractURI_;
+    emit SetContractURI(oldContractURI, contractURI);
   }
 }
