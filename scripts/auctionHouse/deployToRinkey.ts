@@ -15,9 +15,9 @@ async function main() {
 
   const weth = await ethers.getContractAt('WETH9', '0xDf032Bc4B9dC2782Bb09352007D4C57B75160B15');
 
-  const AuctionHouseUpgradableF = await ethers.getContractFactory('AuctionHouseUpgradable');
+  const SecretShopUpgradableF = await ethers.getContractFactory('SecretShopUpgradable');
 
-  const p12exchange = await upgrades.deployProxy(AuctionHouseUpgradableF, [0, weth.address], {
+  const p12exchange = await upgrades.deployProxy(SecretShopUpgradableF, [0, weth.address], {
     kind: 'uups',
   });
   const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
@@ -32,7 +32,7 @@ async function main() {
 
   // Add delegate
   await (
-    await ethers.getContractAt('AuctionHouseUpgradable', p12exchange.address)
+    await ethers.getContractAt('SecretShopUpgradable', p12exchange.address)
   ).updateDelegates([erc1155delegate.address], []);
 }
 

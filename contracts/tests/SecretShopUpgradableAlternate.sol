@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-import '../auctionHouse/AuctionHouseUpgradable.sol';
+import '../secretShop/SecretShopUpgradable.sol';
 
-contract AuctionHouseUpgradableAlternative is AuctionHouseUpgradable {
+contract SecretShopUpgradableAlternative is SecretShopUpgradable {
   string public name;
 
   function setName(string memory _name) public {
@@ -22,7 +22,7 @@ contract AuctionHouseUpgradableAlternative is AuctionHouseUpgradable {
     Market.SettleShared memory,
     Market.SettleDetail memory
   ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'AuctionHouse: unsafe call');
+    require(msg.sender == address(this), 'SecretShop: unsafe call');
     // force to revert
     revert();
   }
