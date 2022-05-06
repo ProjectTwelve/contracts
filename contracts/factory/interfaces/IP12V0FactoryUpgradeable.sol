@@ -73,4 +73,10 @@ interface IP12V0FactoryUpgradeable {
 
   // p12Mine address change log
   event SetP12Mine(address oldP12Mine, address newP12Mine);
+
+  // change delayB log
+  event SetDelayB(uint256 oldDelayB ,uint256 newDelayB);
+
+  // change delayK log
+  event SetDelayK(uint256 oldDelayK ,uint256 newDelayK);
 }

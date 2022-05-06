@@ -222,12 +222,16 @@ contract P12MineUpgradeable is
   }
 
   function setDelayK(uint256 _delayK) public virtual override onlyOwner returns (bool) {
+    uint256 oldDelayK = delayK;
     delayK = _delayK;
+    emit SetDelayK(oldDelayK, delayK);
     return true;
   }
 
   function setDelayB(uint256 _delayB) public virtual override onlyOwner returns (bool) {
+    uint256 oldDelayB = delayB;
     delayB = _delayB;
+    emit SetDelayB(oldDelayB, delayB);
     return true;
   }
 

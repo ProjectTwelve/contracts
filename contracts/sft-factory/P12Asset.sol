@@ -6,6 +6,18 @@ import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
 contract P12Asset is ERC1155(''), Ownable {
+
+  /**
+   * @dev Update log of contract-level MetaData
+   */
+  event SetContractURI(string  oldContractURI, string  newContractURI_);
+
+
+  /**
+   * @dev log of token metadata uri
+   */
+  event SetUri(uint256 id,string uri_);
+
   /**
    * @dev contract-level metadata uri, refer to https://docs.opensea.io/docs/contract-level-metadata
    */
@@ -71,6 +83,7 @@ contract P12Asset is ERC1155(''), Ownable {
   function _setUri(uint256 id, string calldata uri_) private {
     require(bytes(_uri[id]).length == 0, 'P12Asset: uri already set');
     _uri[id] = uri_;
+    emit SetUri(id, uri_);
   }
 
   /**
@@ -92,6 +105,8 @@ contract P12Asset is ERC1155(''), Ownable {
    * @dev set contract-level MetaData
    */
   function setContractURI(string memory newContractURI_) public onlyOwner {
+    string memory oldContractURI = _contractURI;
     _contractURI = newContractURI_;
+    emit SetContractURI(oldContractURI,_contractURI);
   }
 }
