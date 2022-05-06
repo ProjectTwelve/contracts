@@ -364,7 +364,7 @@ contract P12MineUpgradeable is
     require(
       withdrawInfos[_lpToken][id].amount <= user.amountOfLpToken &&
         block.timestamp >= withdrawInfos[_lpToken][id].unlockTimestamp &&
-        withdrawInfos[_lpToken][id].executed == false,
+        !withdrawInfos[_lpToken][id].executed,
       'P12Mine: can not withdraw'
     );
     withdrawInfos[_lpToken][id].executed = true;
