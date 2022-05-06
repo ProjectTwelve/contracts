@@ -7,6 +7,9 @@ interface IP12MineUpgradeable {
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount); // withdraw lpToken log
   event WithdrawDelay(address indexed user, uint256 indexed pid, uint256 amount, bytes32 newWithdrawId); // delayed unStaking mining log
   event Claim(address indexed user, uint256 amount); // get rewards
+  event SetDelayB(uint256 oldDelayB, uint256 newDelayB); // change delayB log
+  event SetDelayK(uint256 oldDelayK, uint256 newDelayK); // change delayK log
+  event UpdatePool(uint256 _pid, address _lpToken, uint256 accP12PerShare); // reward change record for unit p12 in each of pool
 
   function createPool(address _lpToken, bool _withUpdate) external; // new pool
 
@@ -34,6 +37,7 @@ interface IP12MineUpgradeable {
 
   function claimAll() external; // get all pending rewards
 
-  function updatePool(uint256 _pid)external;
+  function updatePool(uint256 _pid) external;
+
   function massUpdatePools() external;
 }
