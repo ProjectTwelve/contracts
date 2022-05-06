@@ -258,7 +258,7 @@ contract P12V0FactoryUpgradeable is
     returns (bool)
   {
     // check if it has been executed
-    require(coinMintRecords[gameCoinAddress][mintId].executed == false, 'this mint has been executed');
+    require(!coinMintRecords[gameCoinAddress][mintId].executed, 'this mint has been executed');
 
     uint256 time = getBlockTimestamp();
 
