@@ -10,12 +10,12 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
   /**
    * @dev Off-chain data, game id
    */
-  string private _gameId;
+  string public override gameId;
 
   /**
    * @dev game coin's logo
    */
-  string private _gameCoinIconUrl;
+  string public override gameCoinIconUrl;
 
   constructor(
     string memory name_,
@@ -24,8 +24,8 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
     string memory gameCoinIconUrl_,
     uint256 amount
   ) ERC20(name_, symbol_) {
-    _gameId = gameId_;
-    _gameCoinIconUrl = gameCoinIconUrl_;
+    gameId = gameId_;
+    gameCoinIconUrl = gameCoinIconUrl_;
     _mint(msg.sender, amount);
   }
 
@@ -34,20 +34,6 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
    */
   function mint(address to, uint256 amount) public override onlyOwner {
     _mint(to, amount);
-  }
-
-  /**
-   * @return string off-chain game id
-   */
-  function gameId() external view override returns (string memory) {
-    return _gameId;
-  }
-
-  /**
-   * @return string game coin logo url
-   */
-  function gameCoinIconUrl() external view override returns (string memory) {
-    return _gameCoinIconUrl;
   }
 
   /**

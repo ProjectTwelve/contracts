@@ -11,14 +11,14 @@ import './interfaces/IP12RewardVault.sol';
 contract P12RewardVault is Ownable, IP12RewardVault {
   using SafeERC20 for IERC20;
 
-  address public P12Token;
+  address public p12Token;
 
-  constructor(address _P12Token) {
-    P12Token = _P12Token;
+  constructor(address p12Token_) {
+    p12Token = p12Token_;
   }
 
-  //send reward
+  // send reward
   function reward(address to, uint256 amount) external virtual override onlyOwner {
-    IERC20(P12Token).safeTransfer(to, amount);
+    IERC20(p12Token).safeTransfer(to, amount);
   }
 }

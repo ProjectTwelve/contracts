@@ -46,15 +46,14 @@ contract SecretShopUpgradable is
   function initialize(uint256 feeCapPct_, address weth_) public initializer {
     feeCapPct = feeCapPct_;
     weth = IWETHUpgradable(weth_);
-
-    bytes32 EIP712DOMAIN_TYPEHASH = keccak256(
+    bytes32 eip712DomainTypeHash = keccak256(
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
 
     // if changed, not compatible with old version
-    DOMAIN_SEPARATOR = keccak256(
+    domainSeparator = keccak256(
       abi.encode(
-        EIP712DOMAIN_TYPEHASH,
+        eip712DomainTypeHash,
         keccak256(bytes('P12 SecretShop')),
         keccak256(bytes('1.0.0')),
         block.chainid,
@@ -125,10 +124,10 @@ contract SecretShopUpgradable is
       if (input.shared.canFail) {
         try ISecretShopUpgradable(address(this)).runSingle(order, input.shared, detail) returns (uint256 ethPayment) {
           amountEth -= ethPayment;
-        } catch Error(string memory _err) {
-          emit EvFailure(i, bytes(_err));
-        } catch (bytes memory _err) {
-          emit EvFailure(i, _err);
+        } catch Error(string memory err) {
+          emit EvFailure(i, bytes(err));
+        } catch (bytes memory err) {
+          emit EvFailure(i, err);
         }
       } else {
         amountEth -= _run(order, input.shared, detail);
@@ -304,7 +303,7 @@ contract SecretShopUpgradable is
     address orderSigner;
 
     if (order.signVersion == Market.SIGN_V1) {
-      bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, _hash(order));
+      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
       orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
     } else {
       revert('SecretShop: wrong sig version');

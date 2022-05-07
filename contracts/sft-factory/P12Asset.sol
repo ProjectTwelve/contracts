@@ -41,11 +41,11 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
    * @return uint256 new asset's tokenId
    */
 
-  function create(uint256 amount_, string calldata uri_) public override onlyOwner returns (uint256) {
+  function create(uint256 amount, string calldata newUri) public override onlyOwner returns (uint256) {
     // set tokenId totalSupply
-    maxSupply[idx] = amount_;
+    maxSupply[idx] = amount;
     // set metadata Uri
-    _setUri(idx, uri_);
+    _setUri(idx, newUri);
     // idx increment
     idx += 1;
     return idx - 1;
@@ -66,15 +66,6 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
   }
 
   /**
-   * @dev set token metadata uri
-   */
-  function _setUri(uint256 id, string calldata uri_) private {
-    require(bytes(_uri[id]).length == 0, 'P12Asset: uri already set');
-    _uri[id] = uri_;
-    emit SetUri(id, uri_);
-  }
-
-  /**
    * @dev return token metadata uri
    */
   function uri(uint256 id) public view virtual override returns (string memory) {
@@ -89,5 +80,14 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
     string memory oldContractURI = contractURI;
     contractURI = newContractURI_;
     emit SetContractURI(oldContractURI, contractURI);
+  }
+
+  /**
+   * @dev set token metadata uri
+   */
+  function _setUri(uint256 id, string calldata uri_) private {
+    require(bytes(_uri[id]).length == 0, 'P12Asset: uri already set');
+    _uri[id] = uri_;
+    emit SetUri(id, uri_);
   }
 }

@@ -3,7 +3,7 @@
 pragma solidity ^0.8.0;
 
 contract P12MineStorage {
-  uint256 constant ONE = 10**18;
+  uint256 public constant ONE = 10**18;
 
   // Info of each user.
   struct UserInfo {

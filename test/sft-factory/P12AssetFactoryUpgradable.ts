@@ -47,9 +47,13 @@ describe('P12AssetFactoryUpgradable', function () {
     const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
 
     // not fully use, so set random address args
-    p12factory = await upgrades.deployProxy(P12FACTORY, [p12Token.address, p12Token.address, p12Token.address, 0n], {
-      kind: 'uups',
-    });
+    p12factory = await upgrades.deployProxy(
+      P12FACTORY,
+      [p12Token.address, p12Token.address, p12Token.address, 0n, ethers.utils.randomBytes(32)],
+      {
+        kind: 'uups',
+      },
+    );
 
     // register game
     await p12factory.register('gameId1', developer1.address);

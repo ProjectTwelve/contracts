@@ -41,16 +41,17 @@ contract P12V0FactoryUpgradeable is
   }
 
   function initialize(
-    address _p12,
-    address _uniswapFactory,
-    address _uniswapRouter,
-    uint256 _effectiveTime
+    address p12_,
+    address uniswapFactory_,
+    address uniswapRouter_,
+    uint256 effectiveTime_,
+    bytes32 initHash_
   ) public initializer {
-    p12 = _p12;
-    uniswapFactory = _uniswapFactory;
-    uniswapRouter = _uniswapRouter;
-    init_hash = 0x6e71edae12b1b97f4d1f60370fef10105fa2faae0126114a169c64845d6126c9;
-    addLiquidityEffectiveTime = _effectiveTime;
+    p12 = p12_;
+    uniswapFactory = uniswapFactory_;
+    uniswapRouter = uniswapRouter_;
+    _initHash = initHash_;
+    addLiquidityEffectiveTime = effectiveTime_;
     IERC20(p12).approve(uniswapRouter, type(uint256).max);
 
     __ReentrancyGuard_init_unchained();
@@ -61,10 +62,10 @@ contract P12V0FactoryUpgradeable is
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   // set p12mine contract address
-  function setP12Mine(address _p12mine) external virtual onlyOwner {
-    require(_p12mine != address(0), 'address cannot be zero');
+  function setP12Mine(address newP12mine) external virtual onlyOwner {
+    require(newP12mine != address(0), 'address cannot be zero');
     address oldP12Mine = p12mine;
-    p12mine = _p12mine;
+    p12mine = newP12mine;
     emit SetP12Mine(oldP12Mine, p12mine);
   }
 
@@ -80,8 +81,8 @@ contract P12V0FactoryUpgradeable is
    * @dev developer first create their game coin
    */
   function create(
-    string memory name_,
-    string memory symbol_,
+    string memory name,
+    string memory symbol,
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
@@ -89,7 +90,7 @@ contract P12V0FactoryUpgradeable is
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     require(msg.sender == allGames[gameId], 'FORBIDDEN: no permit to create');
     require(amountP12 > 0, 'FORBIDDEN: not enough p12');
-    gameCoinAddress = _create(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
+    gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
     IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), amountP12);
@@ -132,13 +133,13 @@ contract P12V0FactoryUpgradeable is
    * @dev function to create a game coin contract
    */
   function _create(
-    string memory name_,
-    string memory symbol_,
+    string memory name,
+    string memory symbol,
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin
   ) internal virtual returns (address gameCoinAddress) {
-    P12V0ERC20 gameCoin = new P12V0ERC20(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
+    P12V0ERC20 gameCoin = new P12V0ERC20(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     gameCoinAddress = address(gameCoin);
   }
 
@@ -155,8 +156,8 @@ contract P12V0FactoryUpgradeable is
     // Set the correct unlock time
     uint256 time;
     uint256 currentTimestamp = getBlockTimestamp();
-    bytes32 _preMintId = preMintIds[gameCoinAddress];
-    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][_preMintId].unlockTimestamp;
+    bytes32 preMintId = preMintIds[gameCoinAddress];
+    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][preMintId].unlockTimestamp;
     if (currentTimestamp >= lastUnlockTimestamp) {
       time = currentTimestamp;
     } else {
@@ -172,7 +173,7 @@ contract P12V0FactoryUpgradeable is
 
     uint256 delayD = getMintDelay(gameCoinAddress, amountGameCoin);
 
-    bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, init_hash);
+    bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, _initHash);
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
 
     emit DeclareMint(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
@@ -289,9 +290,9 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev set linear function's K parameter
    */
-  function setDelayK(uint256 _delayK) public virtual override onlyOwner returns (bool) {
+  function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayK = delayK;
-    delayK = _delayK;
+    delayK = newDelayK;
     emit SetDelayK(oldDelayK, delayK);
     return true;
   }
@@ -299,9 +300,9 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev set linear function's B parameter
    */
-  function setDelayB(uint256 _delayB) public virtual override onlyOwner returns (bool) {
+  function setDelayB(uint256 newDelayB) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayB = delayB;
-    delayB = _delayB;
+    delayB = newDelayB;
     emit SetDelayB(oldDelayB, delayB);
     return true;
   }

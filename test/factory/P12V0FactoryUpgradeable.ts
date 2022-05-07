@@ -53,7 +53,7 @@ describe('P12Factory', function () {
     const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
     const p12FactoryAddr = await upgrades.deployProxy(
       P12FACTORY,
-      [p12.address, uniswapV2Factory.address, uniswapV2Router02.address, 3600],
+      [p12.address, uniswapV2Factory.address, uniswapV2Router02.address, 3600, ethers.utils.randomBytes(32)],
       {
         kind: 'uups',
       },

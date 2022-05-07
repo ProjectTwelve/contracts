@@ -29,7 +29,7 @@ abstract contract SecretShopStorage {
   /**
    * @dev DOMAIN_SEPARATOR for EIP712
    */
-  bytes32 public DOMAIN_SEPARATOR;
+  bytes32 public domainSeparator;
 
   IWETHUpgradable public weth;
 }

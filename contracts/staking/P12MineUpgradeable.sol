@@ -97,22 +97,22 @@ contract P12MineUpgradeable is
   }
 
   // get user lpToken balance
-  function getUserLpBalance(address _lpToken, address _user) public view virtual returns (uint256) {
-    uint256 pid = getPid(_lpToken);
-    return userInfo[pid][_user].amountOfLpToken;
+  function getUserLpBalance(address lpToken, address user) public view virtual returns (uint256) {
+    uint256 pid = getPid(lpToken);
+    return userInfo[pid][user].amountOfLpToken;
   }
 
   // This method is only used when creating game coin in p12factory
-  function addLpTokenInfoForGameCreator(address _lpToken, address gameCoinCreator)
+  function addLpTokenInfoForGameCreator(address lpToken, address gameCoinCreator)
     public
     virtual
     override
     whenNotPaused
     onlyP12Factory
   {
-    uint256 pid = getPid(_lpToken);
-    uint256 _totalLpStaked = totalLpStakedOfEachPool[_lpToken];
-    uint256 totalLpStaked = IERC20Upgradeable(_lpToken).balanceOf(address(this));
+    uint256 pid = getPid(lpToken);
+    uint256 _totalLpStaked = totalLpStakedOfEachPool[lpToken];
+    uint256 totalLpStaked = IERC20Upgradeable(lpToken).balanceOf(address(this));
     uint256 _amount = totalLpStaked.sub(_totalLpStaked);
     require(_amount > 0, 'P12Mine: _amount should > 0');
     PoolInfo storage pool = poolInfos[pid];
@@ -120,10 +120,10 @@ contract P12MineUpgradeable is
     updatePool(pid);
     // Update the current value of lpTokens
     user.amountOfLpToken = user.amountOfLpToken.add(_amount);
-    totalLpStakedOfEachPool[_lpToken] += _amount;
+    totalLpStakedOfEachPool[lpToken] += _amount;
 
     // Calculate the value of p12 corresponding to lpToken
-    uint256 _amountOfP12 = calculateP12AmountByLpToken(_lpToken, _amount);
+    uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, _amount);
     // Update the value of p12 in the current pool
     pool.p12Total = pool.p12Total.add(_amountOfP12);
     // Update the value of the current user p12
@@ -137,46 +137,46 @@ contract P12MineUpgradeable is
   // ============ Ownable ============
 
   // create a new pool
-  function createPool(address _lpToken, bool _withUpdate)
+  function createPool(address lpToken, bool withUpdate)
     public
     virtual
     override
-    lpTokenNotExist(_lpToken)
+    lpTokenNotExist(lpToken)
     whenNotPaused
     onlyP12FactoryOrOwner
   {
-    if (_withUpdate) {
+    if (withUpdate) {
       massUpdatePools();
     }
     uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
-    poolInfos.push(PoolInfo({ lpToken: _lpToken, p12Total: 0, lastRewardBlock: lastRewardBlock, accP12PerShare: 0 }));
-    lpTokenRegistry[_lpToken] = poolInfos.length;
+    poolInfos.push(PoolInfo({ lpToken: lpToken, p12Total: 0, lastRewardBlock: lastRewardBlock, accP12PerShare: 0 }));
+    lpTokenRegistry[lpToken] = poolInfos.length;
   }
 
   // set reward value for per block
-  function setReward(uint256 _p12PerBlock, bool _withUpdate) external virtual override onlyOwner {
-    if (_withUpdate) {
+  function setReward(uint256 newP12PerBlock, bool withUpdate) external virtual override onlyOwner {
+    if (withUpdate) {
       massUpdatePools();
     }
-    p12PerBlock = _p12PerBlock;
+    p12PerBlock = newP12PerBlock;
   }
 
-  function setDelayK(uint256 _delayK) public virtual override onlyOwner returns (bool) {
+  function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayK = delayK;
-    delayK = _delayK;
+    delayK = newDelayK;
     emit SetDelayK(oldDelayK, delayK);
     return true;
   }
 
-  function setDelayB(uint256 _delayB) public virtual override onlyOwner returns (bool) {
+  function setDelayB(uint256 newDelayB) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayB = delayB;
-    delayB = _delayB;
+    delayB = newDelayB;
     emit SetDelayB(oldDelayB, delayB);
     return true;
   }
 
-  function getDlpMiningSpeed(address _lpToken) external view virtual override returns (uint256) {
-    uint256 pid = getPid(_lpToken);
+  function getDlpMiningSpeed(address lpToken) external view virtual override returns (uint256) {
+    uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
   }
@@ -192,8 +192,8 @@ contract P12MineUpgradeable is
   }
 
   // Update reward variables of the given pool to be up-to-date.
-  function updatePool(uint256 _pid) public virtual override whenNotPaused {
-    PoolInfo storage pool = poolInfos[_pid];
+  function updatePool(uint256 pid) public virtual override whenNotPaused {
+    PoolInfo storage pool = poolInfos[pid];
     if (block.number <= pool.lastRewardBlock) {
       return;
     }
@@ -202,18 +202,18 @@ contract P12MineUpgradeable is
       pool.lastRewardBlock = block.number;
       return;
     }
-    uint256 P12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
-    pool.accP12PerShare = pool.accP12PerShare.add(P12Reward.mul(ONE).div(pool.p12Total));
+    uint256 p12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
+    pool.accP12PerShare = pool.accP12PerShare.add(p12Reward.mul(ONE).div(pool.p12Total));
     pool.lastRewardBlock = block.number;
-    emit UpdatePool(_pid, pool.lpToken, pool.accP12PerShare);
+    emit UpdatePool(pid, pool.lpToken, pool.accP12PerShare);
   }
 
   // ============ Deposit & Withdraw & Claim ============
   // Deposit & withdraw will also trigger claim
 
   // deposit lpToken
-  function deposit(address _lpToken, uint256 _amount) public virtual override whenNotPaused nonReentrant {
-    uint256 pid = getPid(_lpToken);
+  function deposit(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
+    uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     updatePool(pid);
@@ -221,23 +221,23 @@ contract P12MineUpgradeable is
       uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
       safeP12Transfer(msg.sender, pending);
     }
-    IERC20Upgradeable(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), _amount);
-    totalLpStakedOfEachPool[_lpToken] += _amount;
-    user.amountOfLpToken = user.amountOfLpToken.add(_amount);
-    uint256 _amountOfP12 = calculateP12AmountByLpToken(_lpToken, _amount);
+    IERC20Upgradeable(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), amount);
+    totalLpStakedOfEachPool[lpToken] += amount;
+    user.amountOfLpToken = user.amountOfLpToken.add(amount);
+    uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, amount);
     pool.p12Total = pool.p12Total.add(_amountOfP12);
     user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
     totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
-    emit Deposit(msg.sender, pid, _amount);
+    emit Deposit(msg.sender, pid, amount);
   }
 
   // withdraw lpToken delay
-  function withdrawDelay(address _lpToken, uint256 _amount) public virtual override whenNotPaused nonReentrant {
-    uint256 pid = getPid(_lpToken);
+  function withdrawDelay(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
+    uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    require(user.amountOfLpToken >= _amount, 'P12Mine: withdraw too much');
+    require(user.amountOfLpToken >= amount, 'P12Mine: withdraw too much');
     updatePool(pid);
     if (user.amountOfLpToken > 0) {
       uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
@@ -245,22 +245,22 @@ contract P12MineUpgradeable is
     }
     uint256 time;
     uint256 currentTimestamp = block.timestamp;
-    bytes32 _preWithdrawId = preWithdrawIds[_lpToken];
-    uint256 lastUnlockTimestamp = withdrawInfos[_lpToken][_preWithdrawId].unlockTimestamp;
+    bytes32 _preWithdrawId = preWithdrawIds[lpToken];
+    uint256 lastUnlockTimestamp = withdrawInfos[lpToken][_preWithdrawId].unlockTimestamp;
 
     time = currentTimestamp >= lastUnlockTimestamp ? currentTimestamp : lastUnlockTimestamp;
-    uint256 delay = _amount.mul(delayK).div(IERC20Upgradeable(pool.lpToken).totalSupply()) + delayB;
+    uint256 delay = amount.mul(delayK).div(IERC20Upgradeable(pool.lpToken).totalSupply()) + delayB;
     uint256 unlockTimestamp = delay + time;
 
-    bytes32 newWithdrawId = createWithdrawId(_lpToken, _amount, msg.sender);
-    withdrawInfos[_lpToken][newWithdrawId] = WithdrawInfo(_amount, unlockTimestamp, false);
+    bytes32 newWithdrawId = createWithdrawId(lpToken, amount, msg.sender);
+    withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(amount, unlockTimestamp, false);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
-    emit WithdrawDelay(msg.sender, pid, _amount, newWithdrawId);
+    emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId);
   }
 
   // get pending rewards
-  function claim(address _lpToken) public virtual override nonReentrant whenNotPaused {
-    uint256 pid = getPid(_lpToken);
+  function claim(address lpToken) public virtual override nonReentrant whenNotPaused {
+    uint256 pid = getPid(lpToken);
     if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
       return; // save gas
     }
@@ -292,33 +292,33 @@ contract P12MineUpgradeable is
   // withdraw lpToken
   function withdraw(
     address pledger,
-    address _lpToken,
+    address lpToken,
     bytes32 id
   ) public virtual override nonReentrant whenNotPaused {
-    uint256 pid = getPid(_lpToken);
+    uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][pledger];
     require(
-      withdrawInfos[_lpToken][id].amount <= user.amountOfLpToken &&
-        block.timestamp >= withdrawInfos[_lpToken][id].unlockTimestamp &&
-        !withdrawInfos[_lpToken][id].executed,
+      withdrawInfos[lpToken][id].amount <= user.amountOfLpToken &&
+        block.timestamp >= withdrawInfos[lpToken][id].unlockTimestamp &&
+        !withdrawInfos[lpToken][id].executed,
       'P12Mine: can not withdraw'
     );
-    withdrawInfos[_lpToken][id].executed = true;
+    withdrawInfos[lpToken][id].executed = true;
     updatePool(pid);
     uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
     safeP12Transfer(pledger, pending);
-    uint256 _amount = withdrawInfos[_lpToken][id].amount;
-    user.amountOfLpToken = user.amountOfLpToken.sub(_amount);
+    uint256 amount = withdrawInfos[lpToken][id].amount;
+    user.amountOfLpToken = user.amountOfLpToken.sub(amount);
 
-    uint256 _amountOfP12 = calculateP12AmountByLpToken(_lpToken, _amount);
-    pool.p12Total = pool.p12Total.sub(_amountOfP12);
-    user.amountOfP12 = user.amountOfP12.sub(_amountOfP12);
-    totalBalanceOfP12 = totalBalanceOfP12.sub(_amountOfP12);
+    uint256 amountOfP12 = calculateP12AmountByLpToken(lpToken, amount);
+    pool.p12Total = pool.p12Total.sub(amountOfP12);
+    user.amountOfP12 = user.amountOfP12.sub(amountOfP12);
+    totalBalanceOfP12 = totalBalanceOfP12.sub(amountOfP12);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
-    totalLpStakedOfEachPool[_lpToken] -= _amount;
-    IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), _amount);
-    emit Withdraw(pledger, pid, _amount);
+    totalLpStakedOfEachPool[lpToken] -= amount;
+    IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), amount);
+    emit Withdraw(pledger, pid, amount);
   }
 
   // ============ Internal ============
@@ -345,11 +345,11 @@ contract P12MineUpgradeable is
   }
 
   // Calculate the value of p12 corresponding to lpToken
-  function calculateP12AmountByLpToken(address _lpToken, uint256 _amount) internal view virtual returns (uint256) {
-    getPid(_lpToken);
-    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(_lpToken);
-    uint256 _totalSupply = IERC20Upgradeable(_lpToken).totalSupply();
-    uint256 amount0 = _amount.mul(balance0) / _totalSupply;
+  function calculateP12AmountByLpToken(address lpToken, uint256 amount) internal view virtual returns (uint256) {
+    getPid(lpToken);
+    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(lpToken);
+    uint256 totalSupply = IERC20Upgradeable(lpToken).totalSupply();
+    uint256 amount0 = amount.mul(balance0) / totalSupply;
 
     return amount0;
   }
