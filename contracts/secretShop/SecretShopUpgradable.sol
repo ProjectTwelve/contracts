@@ -5,7 +5,7 @@ import './interfaces/IDelegate.sol';
 import './interfaces/IWETHUpgradable.sol';
 
 import './interfaces/ISecretShopUpgradable.sol';
-import './MarketConsts.sol';
+
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
@@ -14,8 +14,10 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
+import './SecretShopStorage.sol';
 
 contract SecretShopUpgradable is
+  SecretShopStorage,
   ISecretShopUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
@@ -24,34 +26,6 @@ contract SecretShopUpgradable is
   UUPSUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
-
-  /**
-   * @dev store delegator contract status
-   */
-  mapping(address => bool) public delegates;
-
-  /**
-   * @dev store currency supported
-   */
-  mapping(IERC20Upgradeable => bool) public currencies;
-
-  /**
-   * @dev store itemHash status
-   */
-  mapping(bytes32 => Market.InvStatus) public inventoryStatus;
-
-  /** @dev precision of the parameters */
-  uint256 public constant RATE_BASE = 1e6;
-  /**
-   * @dev fee Cap
-   */
-  uint256 public feeCapPct;
-  /**
-   * @dev DOMAIN_SEPARATOR for EIP712
-   */
-  bytes32 public DOMAIN_SEPARATOR;
-
-  IWETHUpgradable public weth;
 
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}

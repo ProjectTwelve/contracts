@@ -13,6 +13,15 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
   string public contractURI;
 
   /**
+   * @dev current supply, how many a id are minted not.
+   */
+  mapping(uint256 => uint256) public supply;
+
+  /**
+   * @dev max supply, a token id has a max supply cap
+   */
+  mapping(uint256 => uint256) public maxSupply;
+  /**
    * @dev token id index, which will increase one by one
    */
   uint256 private idx = 0;
@@ -22,16 +31,6 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
 
   // metadata uri
   mapping(uint256 => string) private _uri;
-
-  /**
-   * @dev current supply, how many a id are minted not.
-   */
-  mapping(uint256 => uint256) public supply;
-
-  /**
-   * @dev max supply, a token id has a max supply cap
-   */
-  mapping(uint256 => uint256) public maxSupply;
 
   constructor(string memory contractURI_) {
     contractURI = contractURI_;
