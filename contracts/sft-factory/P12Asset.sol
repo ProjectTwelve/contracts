@@ -6,12 +6,9 @@ import './interfaces/IP12Asset.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
 import '@openzeppelin/contracts/access/Ownable.sol';
 
-contract P12Asset is IP12Asset, ERC1155(''), Ownable {
-  /**
-   * @dev contract-level metadata uri, refer to https://docs.opensea.io/docs/contract-level-metadata
-   */
-  string public contractURI;
+import './P12AssetStorage.sol';
 
+contract P12Asset is P12AssetStorage, IP12Asset, ERC1155(''), Ownable {
   /**
    * @dev token id index, which will increase one by one
    */
@@ -22,16 +19,6 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
 
   // metadata uri
   mapping(uint256 => string) private _uri;
-
-  /**
-   * @dev current supply, how many a id are minted not.
-   */
-  mapping(uint256 => uint256) public supply;
-
-  /**
-   * @dev max supply, a token id has a max supply cap
-   */
-  mapping(uint256 => uint256) public maxSupply;
 
   constructor(string memory contractURI_) {
     contractURI = contractURI_;

@@ -11,8 +11,10 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
 import '../factory/P12V0FactoryUpgradeable.sol';
 import './interfaces/IP12AssetFactoryUpgradable.sol';
+import './P12AssetFactoryUpgradableStorage.sol';
 
 contract P12AssetFactoryUpgradable is
+  P12AssetFactoryUpgradableStorage,
   IP12AssetFactoryUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
@@ -20,16 +22,6 @@ contract P12AssetFactoryUpgradable is
   PausableUpgradeable,
   UUPSUpgradeable
 {
-  /**
-    @dev collection address => gameId
-  */
-  mapping(address => string) public registry;
-
-  /**
-   * p12factory address, for reading game and developer relationship
-   */
-  address public p12factory;
-
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 

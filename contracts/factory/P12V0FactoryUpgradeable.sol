@@ -18,8 +18,10 @@ import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import './P12V0FactoryUpgradeableStorage.sol';
 
 contract P12V0FactoryUpgradeable is
+  P12V0FactoryUpgradeableStorage,
   Initializable,
   UUPSUpgradeable,
   IP12V0FactoryUpgradeable,
@@ -28,56 +30,7 @@ contract P12V0FactoryUpgradeable is
   PausableUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
-
   using SafeMath for uint256;
-  /**
-   * @dev p12 ERC20 address
-   */
-  address public p12;
-  /**
-   * @dev uniswap v2 Router address
-   */
-  address public uniswapRouter;
-  /**
-   * @dev uniswap v2 Factory address
-   */
-  address public uniswapFactory;
-  /**
-   * @dev length of cast delay time is a linear function of percentage of additional issues,
-   * @dev delayK and delayB is the linear function's parameter which could be changed later
-   */
-  uint256 public delayK;
-  uint256 public delayB;
-
-  /**
-   * @dev a random hash value for calculate mintId
-   */
-  bytes32 internal init_hash;
-
-  /**
-   * @dev struct of each mint request
-   */
-  struct MintCoinInfo {
-    uint256 amount;
-    uint256 unlockTimestamp;
-    bool executed;
-  }
-
-  uint256 internal addLiquidityEffectiveTime;
-
-  /**
-   * @dev p12 staking contract
-   */
-  address public p12mine;
-
-  // gameId => developer address
-  mapping(string => address) public allGames;
-  // gameCoinAddress => gameId
-  mapping(address => string) public allGameCoins;
-  // gameCoinAddress => declareMintId => MintCoinInfo
-  mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
-  // gameCoinAddress => declareMintId
-  mapping(address => bytes32) public preMintIds;
 
   function pause() public onlyOwner {
     _pause();
