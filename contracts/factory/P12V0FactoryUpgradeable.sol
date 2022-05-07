@@ -18,10 +18,10 @@ import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import './P12V0FactoryUpgradeableStorage.sol';
+import './P12V0FactoryStorage.sol';
 
 contract P12V0FactoryUpgradeable is
-  P12V0FactoryUpgradeableStorage,
+  P12V0FactoryStorage,
   Initializable,
   UUPSUpgradeable,
   IP12V0FactoryUpgradeable,

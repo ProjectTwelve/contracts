@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-abstract contract P12V0FactoryUpgradeableStorage {
+contract P12V0FactoryStorage {
   /**
    * @dev p12 ERC20 address
    */

@@ -11,10 +11,10 @@ import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
 import '../factory/P12V0FactoryUpgradeable.sol';
 import './interfaces/IP12AssetFactoryUpgradable.sol';
-import './P12AssetFactoryUpgradableStorage.sol';
+import './P12AssetFactoryStorage.sol';
 
 contract P12AssetFactoryUpgradable is
-  P12AssetFactoryUpgradableStorage,
+  P12AssetFactoryStorage,
   IP12AssetFactoryUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,

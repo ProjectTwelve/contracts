@@ -15,10 +15,10 @@ import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
-import './P12MineUpgradeableStorage.sol';
+import './P12MineStorage.sol';
 
 contract P12MineUpgradeable is
-  P12MineUpgradeableStorage,
+  P12MineStorage,
   IP12MineUpgradeable,
   Initializable,
   UUPSUpgradeable,

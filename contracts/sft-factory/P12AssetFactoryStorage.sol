@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Unlicensed
 pragma solidity ^0.8.0;
 
-abstract contract P12AssetFactoryUpgradableStorage {
+contract P12AssetFactoryStorage {
   /**
     @dev collection address => gameId
   */
