@@ -15,6 +15,9 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+
+import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 
 contract P12V0FactoryUpgradeable is
   Initializable,
@@ -24,6 +27,8 @@ contract P12V0FactoryUpgradeable is
   ReentrancyGuardUpgradeable,
   PausableUpgradeable
 {
+  using SafeERC20Upgradeable for IERC20Upgradeable;
+
   using SafeMath for uint256;
   /**
    * @dev p12 ERC20 address
@@ -134,7 +139,7 @@ contract P12V0FactoryUpgradeable is
     gameCoinAddress = _create(name_, symbol_, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
-    IERC20(p12).transferFrom(msg.sender, address(this), amountP12);
+    IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), amountP12);
 
     P12V0ERC20(gameCoinAddress).approve(uniswapRouter, amountGameCoinDesired);
 
@@ -210,7 +215,7 @@ contract P12V0FactoryUpgradeable is
     // require(p12Needed < amountP12, "p12 not enough");
 
     // transfer the p12 to this contract
-    ERC20(p12).transferFrom(msg.sender, address(this), p12Fee);
+    IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), p12Fee);
 
     uint256 delayD = getMintDelay(gameCoinAddress, amountGameCoin);
 
@@ -282,7 +287,7 @@ contract P12V0FactoryUpgradeable is
     address gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override onlyOwner returns (bool) {
-    P12V0ERC20(gameCoinAddress).transfer(userAddress, amountGameCoin);
+    IERC20Upgradeable(gameCoinAddress).safeTransfer(userAddress, amountGameCoin);
     emit Withdraw(userAddress, gameCoinAddress, amountGameCoin);
     return true;
   }
