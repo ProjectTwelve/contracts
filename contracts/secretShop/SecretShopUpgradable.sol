@@ -14,10 +14,10 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
-import './SecretShopUpgradableStorage.sol';
+import './SecretShopStorage.sol';
 
 contract SecretShopUpgradable is
-  SecretShopUpgradableStorage,
+  SecretShopStorage,
   ISecretShopUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
