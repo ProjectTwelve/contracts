@@ -60,6 +60,54 @@ contract P12V0FactoryUpgradeable is
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
+  /**
+   * @dev compare two string and judge whether they are the same
+   */
+  function compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
+    return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
+  }
+
+  /**
+   * @dev get current block's timestamp
+   */
+  function getBlockTimestamp() internal view virtual returns (uint256) {
+    return block.timestamp;
+  }
+
+  /**
+   * @dev calculate the MintFee in P12
+   */
+  function getMintFee(address gameCoinAddress, uint256 amountGameCoin)
+    public
+    view
+    virtual
+    override
+    returns (uint256 amountP12)
+  {
+    uint256 gameCoinReserved;
+    uint256 p12Reserved;
+    if (p12 < gameCoinAddress) {
+      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
+        .getReserves();
+    } else {
+      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
+        .getReserves();
+    }
+
+    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
+    amountP12 = p12Reserved.mul(amountGameCoin).div((gameCoinReserved * 100));
+
+    return amountP12;
+  }
+
+  /**
+   * @dev linear function to calculate the delay time
+   */
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
+    time = amountGameCoin.mul(delayK).div(P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
+    return time;
+  }
+
   // set p12mine contract address
   function setP12Mine(address newP12mine) external virtual onlyOwner {
     require(newP12mine != address(0), 'address cannot be zero');
@@ -129,20 +177,6 @@ contract P12V0FactoryUpgradeable is
   }
 
   /**
-   * @dev function to create a game coin contract
-   */
-  function _create(
-    string memory name,
-    string memory symbol,
-    string memory gameId,
-    string memory gameCoinIconUrl,
-    uint256 amountGameCoin
-  ) internal virtual returns (address gameCoinAddress) {
-    P12V0ERC20 gameCoin = new P12V0ERC20(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
-    gameCoinAddress = address(gameCoin);
-  }
-
-  /**
    * @dev if developer want to mint after create coin, developer must declare first
    */
   function declareMintCoin(
@@ -178,30 +212,6 @@ contract P12V0FactoryUpgradeable is
     emit DeclareMint(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
 
     return true;
-  }
-
-  /**
-   * @dev compare two string and judge whether they are the same
-   */
-  function compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
-    return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
-  }
-
-  /**
-   * @dev hash function to general mintId
-   */
-  function _hashOperation(
-    address gameCoinAddress,
-    address declarer,
-    uint256 amount,
-    uint256 timestamp,
-    bytes32 salt
-  ) internal virtual returns (bytes32 hash) {
-    bytes32 preMintId = preMintIds[gameCoinAddress];
-
-    bytes32 preMintIdNew = keccak256(abi.encode(gameCoinAddress, declarer, amount, timestamp, preMintId, salt));
-    preMintIds[gameCoinAddress] = preMintIdNew;
-    return preMintIdNew;
   }
 
   /**
@@ -246,47 +256,6 @@ contract P12V0FactoryUpgradeable is
   }
 
   /**
-   * @dev calculate the MintFee in P12
-   */
-  function getMintFee(address gameCoinAddress, uint256 amountGameCoin)
-    public
-    view
-    virtual
-    override
-    returns (uint256 amountP12)
-  {
-    uint256 gameCoinReserved;
-    uint256 p12Reserved;
-    if (p12 < gameCoinAddress) {
-      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
-        .getReserves();
-    } else {
-      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(IUniswapV2Factory(uniswapFactory).getPair(gameCoinAddress, p12))
-        .getReserves();
-    }
-
-    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
-    amountP12 = p12Reserved.mul(amountGameCoin).div((gameCoinReserved * 100));
-
-    return amountP12;
-  }
-
-  /**
-   * @dev linear function to calculate the delay time
-   */
-  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
-    time = amountGameCoin.mul(delayK).div(P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
-    return time;
-  }
-
-  /**
-   * @dev get current block's timestamp
-   */
-  function getBlockTimestamp() internal view virtual returns (uint256) {
-    return block.timestamp;
-  }
-
-  /**
    * @dev set linear function's K parameter
    */
   function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
@@ -304,5 +273,36 @@ contract P12V0FactoryUpgradeable is
     delayB = newDelayB;
     emit SetDelayB(oldDelayB, delayB);
     return true;
+  }
+
+  /**
+   * @dev function to create a game coin contract
+   */
+  function _create(
+    string memory name,
+    string memory symbol,
+    string memory gameId,
+    string memory gameCoinIconUrl,
+    uint256 amountGameCoin
+  ) internal virtual returns (address gameCoinAddress) {
+    P12V0ERC20 gameCoin = new P12V0ERC20(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
+    gameCoinAddress = address(gameCoin);
+  }
+
+  /**
+   * @dev hash function to general mintId
+   */
+  function _hashOperation(
+    address gameCoinAddress,
+    address declarer,
+    uint256 amount,
+    uint256 timestamp,
+    bytes32 salt
+  ) internal virtual returns (bytes32 hash) {
+    bytes32 preMintId = preMintIds[gameCoinAddress];
+
+    bytes32 preMintIdNew = keccak256(abi.encode(gameCoinAddress, declarer, amount, timestamp, preMintId, salt));
+    preMintIds[gameCoinAddress] = preMintIdNew;
+    return preMintIdNew;
   }
 }

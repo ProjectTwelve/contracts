@@ -14,8 +14,8 @@ interface IP12V0FactoryUpgradeable {
 
   // mint game coin
   function create(
-    string memory name_,
-    string memory symbol_,
+    string memory name,
+    string memory symbol,
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
@@ -45,10 +45,10 @@ interface IP12V0FactoryUpgradeable {
   function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get delayK
-  function setDelayK(uint256 _delayK) external returns (bool);
+  function setDelayK(uint256 delayK) external returns (bool);
 
   // get delayB
-  function setDelayB(uint256 _delayB) external returns (bool);
+  function setDelayB(uint256 delayB) external returns (bool);
 
   // register Game developer log
   event RegisterGame(string gameId, address indexed developer);

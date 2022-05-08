@@ -102,6 +102,22 @@ contract P12MineUpgradeable is
     return userInfo[pid][user].amountOfLpToken;
   }
 
+  function getDlpMiningSpeed(address lpToken) external view virtual override returns (uint256) {
+    uint256 pid = getPid(lpToken);
+    PoolInfo storage pool = poolInfos[pid];
+    return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
+  }
+
+  // Calculate the value of p12 corresponding to lpToken
+  function calculateP12AmountByLpToken(address lpToken, uint256 amount) internal view virtual returns (uint256) {
+    getPid(lpToken);
+    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(lpToken);
+    uint256 totalSupply = IERC20Upgradeable(lpToken).totalSupply();
+    uint256 amount0 = amount.mul(balance0) / totalSupply;
+
+    return amount0;
+  }
+
   // This method is only used when creating game coin in p12factory
   function addLpTokenInfoForGameCreator(address lpToken, address gameCoinCreator)
     public
@@ -175,12 +191,6 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  function getDlpMiningSpeed(address lpToken) external view virtual override returns (uint256) {
-    uint256 pid = getPid(lpToken);
-    PoolInfo storage pool = poolInfos[pid];
-    return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
-  }
-
   // ============ Update Pools ============
 
   // Update reward variables for all pools. Be careful of gas spending!
@@ -219,7 +229,7 @@ contract P12MineUpgradeable is
     updatePool(pid);
     if (user.amountOfLpToken > 0) {
       uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
-      safeP12Transfer(msg.sender, pending);
+      _safeP12Transfer(msg.sender, pending);
     }
     IERC20Upgradeable(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), amount);
     totalLpStakedOfEachPool[lpToken] += amount;
@@ -241,7 +251,7 @@ contract P12MineUpgradeable is
     updatePool(pid);
     if (user.amountOfLpToken > 0) {
       uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
-      safeP12Transfer(msg.sender, pending);
+      _safeP12Transfer(msg.sender, pending);
     }
     uint256 time;
     uint256 currentTimestamp = block.timestamp;
@@ -252,7 +262,7 @@ contract P12MineUpgradeable is
     uint256 delay = amount.mul(delayK).div(IERC20Upgradeable(pool.lpToken).totalSupply()) + delayB;
     uint256 unlockTimestamp = delay + time;
 
-    bytes32 newWithdrawId = createWithdrawId(lpToken, amount, msg.sender);
+    bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
     withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(amount, unlockTimestamp, false);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId);
@@ -269,7 +279,7 @@ contract P12MineUpgradeable is
     updatePool(pid);
     uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
-    safeP12Transfer(msg.sender, pending);
+    _safeP12Transfer(msg.sender, pending);
   }
 
   // get all pending rewards
@@ -286,7 +296,7 @@ contract P12MineUpgradeable is
       pending = pending.add(user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt));
       user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     }
-    safeP12Transfer(msg.sender, pending);
+    _safeP12Transfer(msg.sender, pending);
   }
 
   // withdraw lpToken
@@ -307,7 +317,7 @@ contract P12MineUpgradeable is
     withdrawInfos[lpToken][id].executed = true;
     updatePool(pid);
     uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
-    safeP12Transfer(pledger, pending);
+    _safeP12Transfer(pledger, pending);
     uint256 amount = withdrawInfos[lpToken][id].amount;
     user.amountOfLpToken = user.amountOfLpToken.sub(amount);
 
@@ -324,14 +334,14 @@ contract P12MineUpgradeable is
   // ============ Internal ============
 
   // Safe P12 transfer function
-  function safeP12Transfer(address _to, uint256 _amount) internal virtual {
+  function _safeP12Transfer(address _to, uint256 _amount) internal virtual {
     IP12RewardVault(p12RewardVault).reward(_to, _amount);
     realizedReward[_to] = realizedReward[_to].add(_amount);
     emit Claim(_to, _amount);
   }
 
   // crate withdraw id
-  function createWithdrawId(
+  function _createWithdrawId(
     address lpToken,
     uint256 amount,
     address to
@@ -342,15 +352,5 @@ contract P12MineUpgradeable is
     preWithdrawIds[lpToken] = withdrawId;
 
     return withdrawId;
-  }
-
-  // Calculate the value of p12 corresponding to lpToken
-  function calculateP12AmountByLpToken(address lpToken, uint256 amount) internal view virtual returns (uint256) {
-    getPid(lpToken);
-    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(lpToken);
-    uint256 totalSupply = IERC20Upgradeable(lpToken).totalSupply();
-    uint256 amount0 = amount.mul(balance0) / totalSupply;
-
-    return amount0;
   }
 }

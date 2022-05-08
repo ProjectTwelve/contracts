@@ -66,6 +66,98 @@ contract SecretShopUpgradable is
     __Ownable_init_unchained();
   }
 
+  /**
+   * @dev judge delegate type
+   */
+  function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
+    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
+  }
+
+  /**
+   * @dev hash an item Data to calculate itemHash
+   */
+  function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
+    return
+      keccak256(
+        abi.encode(
+          order.salt,
+          order.user,
+          order.network,
+          order.intent,
+          order.delegateType,
+          order.deadline,
+          order.currency,
+          item
+        )
+      );
+  }
+
+  /**
+   * @dev hash typed data of an Order
+   */
+  function _hash(Market.Order memory order) private pure returns (bytes32) {
+    return
+      keccak256(
+        abi.encode(
+          keccak256(
+            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
+          ),
+          order.salt,
+          order.user,
+          order.network,
+          order.intent,
+          order.delegateType,
+          order.deadline,
+          order.currency,
+          order.items.length,
+          _hash(order.items)
+        )
+      );
+  }
+
+  /**
+   * @dev hash typed data of a array of OderItem
+   */
+  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
+    bytes memory h;
+    for (uint256 i = 0; i < orderItems.length; i++) {
+      h = abi.encodePacked(h, _hash(orderItems[i]));
+    }
+    return keccak256(h);
+  }
+
+  /**
+   * @dev hash typed data of an OrderItem
+   */
+
+  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
+    return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
+  }
+
+  /**
+   * @dev verify whether the order data is real
+   * @dev necessary for security
+   */
+  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
+    address orderSigner;
+
+    if (order.signVersion == Market.SIGN_V1) {
+      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
+      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
+    } else {
+      revert('SecretShop: wrong sig version');
+    }
+
+    require(orderSigner == order.user, 'SecretShop: sig not match');
+  }
+
+  /**
+   * @dev judge whether token is chain native token
+   */
+  function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
+    return address(currency) == address(0);
+  }
+
   function updateFeeCap(uint256 val) public virtual override onlyOwner {
     feeCapPct = val;
     emit EvFeeCapUpdate(val);
@@ -148,25 +240,6 @@ contract SecretShopUpgradable is
     return _run(order, shared, detail);
   }
 
-  /**
-   * @dev hash an item Data to calculate itemHash
-   */
-  function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          order.salt,
-          order.user,
-          order.network,
-          order.intent,
-          order.delegateType,
-          order.deadline,
-          order.currency,
-          item
-        )
-      );
-  }
-
   function _emitInventory(
     bytes32 itemHash,
     Market.Order memory order,
@@ -244,79 +317,6 @@ contract SecretShopUpgradable is
 
     _emitInventory(itemHash, order, item, shared, detail);
     return nativeAmount;
-  }
-
-  /**
-   * @dev judge delegate type
-   */
-  function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
-  }
-
-  /**
-   * @dev hash typed data of an Order
-   */
-  function _hash(Market.Order memory order) private pure returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          keccak256(
-            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
-          ),
-          order.salt,
-          order.user,
-          order.network,
-          order.intent,
-          order.delegateType,
-          order.deadline,
-          order.currency,
-          order.items.length,
-          _hash(order.items)
-        )
-      );
-  }
-
-  /**
-   * @dev hash typed data of a array of OderItem
-   */
-  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
-    bytes memory h;
-    for (uint256 i = 0; i < orderItems.length; i++) {
-      h = abi.encodePacked(h, _hash(orderItems[i]));
-    }
-    return keccak256(h);
-  }
-
-  /**
-   * @dev hash typed data of an OrderItem
-   */
-
-  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
-    return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
-  }
-
-  /**
-   * @dev verify whether the order data is real
-   * @dev necessary for security
-   */
-  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
-    address orderSigner;
-
-    if (order.signVersion == Market.SIGN_V1) {
-      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
-      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
-    } else {
-      revert('SecretShop: wrong sig version');
-    }
-
-    require(orderSigner == order.user, 'SecretShop: sig not match');
-  }
-
-  /**
-   * @dev judge whether token is chain native token
-   */
-  function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
-    return address(currency) == address(0);
   }
 
   /**
