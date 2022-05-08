@@ -27,6 +27,9 @@ contract SecretShopUpgradable is
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
+  /** @dev precision of the parameters */
+  uint256 public constant RATE_BASE = 1e6;
+
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 

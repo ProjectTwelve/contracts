@@ -3,8 +3,6 @@
 pragma solidity ^0.8.0;
 
 contract P12MineStorage {
-  uint256 public constant ONE = 10**18;
-
   // Info of each user.
   struct UserInfo {
     uint256 amountOfLpToken; // How many LP tokens the user has provided.

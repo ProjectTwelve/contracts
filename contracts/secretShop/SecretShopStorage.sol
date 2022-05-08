@@ -20,8 +20,6 @@ abstract contract SecretShopStorage {
    */
   mapping(bytes32 => Market.InvStatus) public inventoryStatus;
 
-  /** @dev precision of the parameters */
-  uint256 public constant RATE_BASE = 1e6;
   /**
    * @dev fee Cap
    */

@@ -29,6 +29,8 @@ contract P12MineUpgradeable is
   using SafeMath for uint256;
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
+  uint256 public constant ONE = 10**18;
+
   function pause() public onlyOwner {
     _pause();
   }
