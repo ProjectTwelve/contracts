@@ -41,18 +41,18 @@ contract P12MineUpgradeable is
 
   // init
   function initialize(
-    address _p12Token,
-    address _p12Factory,
-    uint256 _startBlock,
-    uint256 _delayK,
-    uint256 _delayB
+    address p12Token_,
+    address p12Factory_,
+    uint256 startBlock_,
+    uint256 delayK_,
+    uint256 delayB_
   ) public initializer {
-    p12Token = _p12Token;
-    p12Factory = _p12Factory;
-    p12RewardVault = address(new P12RewardVault(_p12Token));
-    startBlock = _startBlock;
-    delayK = _delayK;
-    delayB = _delayB;
+    p12Token = p12Token_;
+    p12Factory = p12Factory_;
+    p12RewardVault = address(new P12RewardVault(p12Token_));
+    startBlock = startBlock_;
+    delayK = delayK_;
+    delayB = delayB_;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
@@ -104,14 +104,14 @@ contract P12MineUpgradeable is
     return userInfo[pid][user].amountOfLpToken;
   }
 
-  function getDlpMiningSpeed(address lpToken) external view virtual override returns (uint256) {
+  function getDlpMiningSpeed(address lpToken) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
   }
 
   // Calculate the value of p12 corresponding to lpToken
-  function calculateP12AmountByLpToken(address lpToken, uint256 amount) internal view virtual returns (uint256) {
+  function calculateP12AmountByLpToken(address lpToken, uint256 amount) public view virtual returns (uint256) {
     getPid(lpToken);
     uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(lpToken);
     uint256 totalSupply = IERC20Upgradeable(lpToken).totalSupply();
