@@ -22,7 +22,7 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
    * @param symbol_ game coin symbol
    * @param gameId_ gameId
    * @param gameCoinIconUrl_ game coin icon's url
-   * @param amount amount of first minting
+   * @param amount_ amount of first minting
    */
   constructor(
     string memory name_,
