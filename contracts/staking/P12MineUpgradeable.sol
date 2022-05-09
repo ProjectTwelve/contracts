@@ -216,7 +216,7 @@ contract P12MineUpgradeable is
     }
     uint256 oldP12PerBlock = p12PerBlock;
     p12PerBlock = newP12PerBlock;
-    emit SetReward(oldP12PerBlock,p12PerBlock);
+    emit SetReward(oldP12PerBlock, p12PerBlock);
   }
 
   /**
@@ -420,7 +420,7 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Crate withdraw id
+    @notice Create withdraw id
     @param lpToken Address of lpToken
     @param amount Number of lpToken
     @param to Address of receiver
