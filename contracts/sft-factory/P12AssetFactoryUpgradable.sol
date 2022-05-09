@@ -53,14 +53,16 @@ contract P12AssetFactoryUpgradable is
 
   /**
    * @dev create Collection
+   * @param gameId a off-chain game id
+   * @param contractURI contract-level metadata uri
    */
-  function createCollection(string calldata gameId, string calldata contractURI_)
+  function createCollection(string calldata gameId, string calldata contractURI)
     public
     override
     onlyDeveloper(gameId)
     whenNotPaused
   {
-    P12Asset collection = new P12Asset(contractURI_);
+    P12Asset collection = new P12Asset(contractURI);
     // record creator
     registry[address(collection)] = gameId;
 
@@ -69,6 +71,9 @@ contract P12AssetFactoryUpgradable is
 
   /**
    * @dev create asset and mint to msg.sender address
+   * @param collection which collection want to create
+   * @param amount amount of asset
+   * @param uri new asset's metadata uri
    */
   function createAssetAndMint(
     address collection,
@@ -85,6 +90,8 @@ contract P12AssetFactoryUpgradable is
 
   /**
    * @dev update Collection Uri
+   * @param collection collection address
+   * @param newUri new Contract-level metadata uri
    */
   function updateCollectionUri(address collection, string calldata newUri)
     public

@@ -108,7 +108,10 @@ contract P12V0FactoryUpgradeable is
     return time;
   }
 
-  // set p12mine contract address
+  /**
+   * @dev set p12mine contract address
+   * @param newP12mine new p12mine address
+   */
   function setP12Mine(address newP12mine) external virtual onlyOwner {
     require(newP12mine != address(0), 'address cannot be zero');
     address oldP12Mine = p12mine;
@@ -118,6 +121,8 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev create binding between game and developer, only called by p12 backend
+   * @param gameId game id
+   * @param developer developer address, who own this game
    */
   function register(string memory gameId, address developer) external virtual override onlyOwner {
     allGames[gameId] = developer;
@@ -126,6 +131,13 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev developer first create their game coin
+   * @param name new game coin's name
+   * @param symbol game coin's symbol
+   * @param gameId the game's id
+   * @param gameCoinIconUrl game coin icon's url
+   * @param amountGameCoin how many coin first mint
+   * @param amountP12 how many P12 coin developer would stake
+   * @return gameCoinAddress the address of the new game coin
    */
   function create(
     string memory name,
@@ -178,6 +190,10 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev if developer want to mint after create coin, developer must declare first
+   * @param gameId game's id
+   * @param gameCoinAddress game coin's address
+   * @param amountGameCoin how many developer want to mint
+   * @param success whether the operation success
    */
   function declareMintCoin(
     string memory gameId,
@@ -216,6 +232,9 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev when time is up, anyone can call this function to make the mint executed
+   * @param gameCoinAddress address of the game coin
+   * @param mintId a unique id to identify a mint, developer can get it after declare
+   * @return bool whether the operation success
    */
   function executeMint(address gameCoinAddress, bytes32 mintId)
     external
@@ -245,6 +264,12 @@ contract P12V0FactoryUpgradeable is
     return true;
   }
 
+  /**
+   * @notice called when user want to withdraw his game coin from custodian address
+   * @param userAddress user's address
+   * @param gameCoinAddress gameCoin's address
+   * @param amountGameCoin how many user want to withdraw
+   */
   function withdraw(
     address userAddress,
     address gameCoinAddress,
@@ -257,6 +282,7 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev set linear function's K parameter
+   * @param newDelayK new K parameter
    */
   function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayK = delayK;
@@ -267,6 +293,7 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev set linear function's B parameter
+   * @param newDelayB new B parameter
    */
   function setDelayB(uint256 newDelayB) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayB = delayB;
@@ -277,8 +304,12 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev function to create a game coin contract
+   * @param name game coin name
+   * @param symbol game coin symbol
+   * @param gameId game id
+   * @param gameCoinIconUrl game coin icon's url
+   * @param amountGameCoin how many for first mint
    */
-
   function _create(
     string memory name,
     string memory symbol,
@@ -292,6 +323,12 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev hash function to general mintId
+   * @param gameCoinAddress game coin address
+   * @param declarer address which declare to mint game coin
+   * @param amount how much to mint
+   * @param timestamp time when declare
+   * @param salt a random bytes32
+   * @return hash mintId
    */
   function _hashOperation(
     address gameCoinAddress,

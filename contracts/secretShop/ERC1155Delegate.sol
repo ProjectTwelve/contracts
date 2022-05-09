@@ -37,6 +37,9 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     _unpause();
   }
 
+  /**
+   * @dev Received function
+   */
   function onERC1155Received(
     address,
     address,
@@ -47,6 +50,9 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     return this.onERC1155Received.selector;
   }
 
+  /**
+   * @dev Received function
+   */
   function onERC1155BatchReceived(
     address,
     address,
@@ -57,14 +63,26 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     return this.onERC1155BatchReceived.selector;
   }
 
+  /**
+   * @dev decode data to the array of Pair
+   */
   function decode(bytes calldata data) public pure returns (Pair[] memory) {
     return abi.decode(data, (Pair[]));
   }
 
+  /**
+   * @return delegateType the delegate's type
+   */
   function delegateType() external pure override returns (uint256) {
     return uint256(Market.DelegationType.ERC1155);
   }
 
+  /**
+   * @dev run the sell to transfer item
+   * @param seller address which sell the item
+   * @param buyer address which buy the item
+   * @param data the item's data, which will be decode as a array of Pair
+   */
   function executeSell(
     address seller,
     address buyer,

@@ -17,20 +17,29 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
    */
   string public override gameCoinIconUrl;
 
+  /**
+   * @param name_ game coin name
+   * @param symbol_ game coin symbol
+   * @param gameId_ gameId
+   * @param gameCoinIconUrl_ game coin icon's url
+   * @param amount_ amount of first minting
+   */
   constructor(
     string memory name_,
     string memory symbol_,
     string memory gameId_,
     string memory gameCoinIconUrl_,
-    uint256 amount
+    uint256 amount_
   ) ERC20(name_, symbol_) {
     gameId = gameId_;
     gameCoinIconUrl = gameCoinIconUrl_;
-    _mint(msg.sender, amount);
+    _mint(msg.sender, amount_);
   }
 
   /**
    * @dev mint function, the Owner will only be factory contract
+   * @param to address which receive newly-minted coin
+   * @param amount amount of the minting
    */
   function mint(address to, uint256 amount) public override onlyOwner {
     _mint(to, amount);
@@ -38,6 +47,10 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
 
   /**
    * @dev transfer function for just a basic transfer with an off-chain account
+   * @dev called when a user want to deposit his coin from on-chain to off-chain
+   * @param recipient address which receive the coin, usually be custodian address
+   * @param account off-chain account
+   * @param amount amount of this transfer
    */
   function transferWithAccount(
     address recipient,
