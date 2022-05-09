@@ -46,6 +46,11 @@ contract SecretShopUpgradable is
     _unpause();
   }
 
+  /**
+   * @dev initialize
+   * @param feeCapPct_ max fee percentage
+   * @param weth_ address of wrapped eth
+   */
   function initialize(uint256 feeCapPct_, address weth_) public initializer {
     feeCapPct = feeCapPct_;
     weth = IWETHUpgradable(weth_);
@@ -71,6 +76,8 @@ contract SecretShopUpgradable is
 
   /**
    * @dev judge delegate type
+   * @param order order by the maker
+   * @param detail settle detail by the taker
    */
   function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
     require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
@@ -78,6 +85,9 @@ contract SecretShopUpgradable is
 
   /**
    * @dev hash an item Data to calculate itemHash
+   * @param order order by the maker
+   * @param item which item to be hashed in the order
+   * @return hash the item's hash, which is unique
    */
   function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
     return
@@ -97,6 +107,8 @@ contract SecretShopUpgradable is
 
   /**
    * @dev hash typed data of an Order
+   * @param order order by the maker
+   * @return hash typed data hash
    */
   function _hash(Market.Order memory order) private pure returns (bytes32) {
     return
@@ -119,7 +131,9 @@ contract SecretShopUpgradable is
   }
 
   /**
-   * @dev hash typed data of a array of OderItem
+   * @dev hash typed data of a array of orderItem
+   * @param orderItems[] the array of the orderItem
+   * @return hash typed data hash
    */
   function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
     bytes memory h;
@@ -130,7 +144,9 @@ contract SecretShopUpgradable is
   }
 
   /**
-   * @dev hash typed data of an OrderItem
+   * @dev hash typed data of an orderItem
+   * @param orderItem
+   * @return hash typed data hash
    */
 
   function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
@@ -138,8 +154,8 @@ contract SecretShopUpgradable is
   }
 
   /**
-   * @dev verify whether the order data is real
-   * @dev necessary for security
+   * @dev verify whether the order data is real, necessary for security
+   * @param order order by the maker
    */
   function _verifyOrderSignature(Market.Order memory order) internal view virtual {
     address orderSigner;
@@ -156,11 +172,16 @@ contract SecretShopUpgradable is
 
   /**
    * @dev judge whether token is chain native token
+   * @param currency address of the currency, 0 for native token
+   * @return bool whether the token is a native token
    */
   function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
     return address(currency) == address(0);
   }
 
+  /**
+   * @param val new Fee Cap
+   */
   function updateFeeCap(uint256 val) public virtual override onlyOwner {
     feeCapPct = val;
     emit EvFeeCapUpdate(val);
@@ -168,6 +189,8 @@ contract SecretShopUpgradable is
 
   /**
    * @dev update Delegates address
+   * @param toAdd the array of delegate address that want to add
+   * @param toRemove the array to delegate address that want to remove
    */
   function updateDelegates(address[] calldata toAdd, address[] calldata toRemove) public virtual override onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
@@ -182,6 +205,8 @@ contract SecretShopUpgradable is
 
   /**
    * @dev update Currencies address
+   * @param toAdd the array of currency address that want to add
+   * @param toRemove the array to currency address that want to remove
    */
   function updateCurrencies(IERC20Upgradeable[] memory toAdd, IERC20Upgradeable[] memory toRemove) public override onlyOwner {
     for (uint256 i = 0; i < toAdd.length; i++) {
@@ -196,6 +221,7 @@ contract SecretShopUpgradable is
 
   /**
    * @dev Entry of a contract call
+   * @param input a struct that contains all data
    */
   function run(Market.RunInput memory input) public payable virtual override nonReentrant whenNotPaused {
     require(input.shared.deadline > block.timestamp, 'SecretShop: deadline reached');
@@ -232,6 +258,9 @@ contract SecretShopUpgradable is
 
   /**
    * @dev run a single order
+   * @param order order by the maker
+   * @param shared some option of the taker
+   * @param detail detail by the taker
    */
   function runSingle(
     Market.Order memory order,
@@ -266,8 +295,11 @@ contract SecretShopUpgradable is
   }
 
   /**
-   *
+   * @dev internal function, real implementation
    * @dev make single trade to be achieved
+   * @param order order by the maker
+   * @param shared some option of the taker
+   * @param detail detail by the taker
    */
   function _run(
     Market.Order memory order,
@@ -324,8 +356,10 @@ contract SecretShopUpgradable is
 
   /**
    * @dev transfer some kind ERC20 to this contract
+   * @param currency currency's address
+   * @param from who pays
+   * @param amount how much pay
    */
-
   function _takePayment(
     IERC20Upgradeable currency,
     address from,
@@ -343,6 +377,9 @@ contract SecretShopUpgradable is
 
   /**
    * @dev transfer some kind ERC20
+   * @param currency currency's address
+   * @param to who receive
+   * @param amount how much receive
    */
   function _transferTo(
     IERC20Upgradeable currency,
@@ -360,6 +397,12 @@ contract SecretShopUpgradable is
 
   /**
    * @dev distribute fees and give extra to seller
+   * @param itemHash the item's hash
+   * @param seller who sell the item
+   * @param currency currency's address
+   * @param sd detail by the taker
+   * @param price the item's price
+   * @param netPrice the item's net price
    */
   function _distributeFeeAndProfit(
     bytes32 itemHash,
