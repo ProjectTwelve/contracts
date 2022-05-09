@@ -337,7 +337,7 @@ contract SecretShopUpgradable is
       nativeAmount = _takePayment(order.currency, shared.user, detail.price);
       require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'SecretShop: delegation error');
 
-      _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price, detail.price);
+      _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price);
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
     } else if (detail.op == Market.Op.CANCEL_OFFER) {
       /** CANCEL_OFFER */
@@ -402,19 +402,15 @@ contract SecretShopUpgradable is
    * @param currency currency's address
    * @param sd detail by the taker
    * @param price the item's price
-   * @param netPrice the item's net price
    */
   function _distributeFeeAndProfit(
     bytes32 itemHash,
     address seller,
     IERC20Upgradeable currency,
     Market.SettleDetail memory sd,
-    uint256 price,
-    uint256 netPrice
+    uint256 price
   ) internal virtual {
-    require(price >= netPrice, 'price error');
-
-    uint256 payment = netPrice;
+    uint256 payment = price;
     uint256 totalFeePct;
 
     /**
