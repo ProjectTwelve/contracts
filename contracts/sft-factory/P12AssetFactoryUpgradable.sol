@@ -72,26 +72,26 @@ contract P12AssetFactoryUpgradable is
    */
   function createAssetAndMint(
     address collection,
-    uint256 amount_,
-    string calldata uri_
+    uint256 amount,
+    string calldata uri
   ) public override onlyCollectionDeveloper(collection) whenNotPaused nonReentrant {
     // create
-    uint256 tokenId = P12Asset(collection).create(amount_, uri_);
+    uint256 tokenId = P12Asset(collection).create(amount, uri);
     // mint to developer address
-    P12Asset(collection).mint(msg.sender, tokenId, amount_, new bytes(0));
+    P12Asset(collection).mint(msg.sender, tokenId, amount, new bytes(0));
 
-    emit SftCreated(address(collection), tokenId, amount_);
+    emit SftCreated(address(collection), tokenId, amount);
   }
 
   /**
    * @dev update Collection Uri
    */
-  function updateCollectionUri(address collection, string calldata uri_)
+  function updateCollectionUri(address collection, string calldata newUri)
     public
     override
     onlyCollectionDeveloper(collection)
     whenNotPaused
   {
-    P12Asset(collection).setContractURI(uri_);
+    P12Asset(collection).setContractURI(newUri);
   }
 }

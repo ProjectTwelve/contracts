@@ -20,8 +20,6 @@ abstract contract SecretShopStorage {
    */
   mapping(bytes32 => Market.InvStatus) public inventoryStatus;
 
-  /** @dev precision of the parameters */
-  uint256 public constant RATE_BASE = 1e6;
   /**
    * @dev fee Cap
    */
@@ -29,7 +27,7 @@ abstract contract SecretShopStorage {
   /**
    * @dev DOMAIN_SEPARATOR for EIP712
    */
-  bytes32 public DOMAIN_SEPARATOR;
+  bytes32 public domainSeparator;
 
   IWETHUpgradable public weth;
 }

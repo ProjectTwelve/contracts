@@ -24,9 +24,9 @@ contract P12V0FactoryStorage {
   /**
    * @dev a random hash value for calculate mintId
    */
-  bytes32 internal init_hash;
+  bytes32 internal _initHash;
 
-  uint256 internal addLiquidityEffectiveTime;
+  uint256 public addLiquidityEffectiveTime;
 
   /**
    * @dev p12 staking contract

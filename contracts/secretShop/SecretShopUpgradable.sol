@@ -27,6 +27,9 @@ contract SecretShopUpgradable is
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
+  /** @dev precision of the parameters */
+  uint256 public constant RATE_BASE = 1e6;
+
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
@@ -46,15 +49,14 @@ contract SecretShopUpgradable is
   function initialize(uint256 feeCapPct_, address weth_) public initializer {
     feeCapPct = feeCapPct_;
     weth = IWETHUpgradable(weth_);
-
-    bytes32 EIP712DOMAIN_TYPEHASH = keccak256(
+    bytes32 eip712DomainTypeHash = keccak256(
       'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
     );
 
     // if changed, not compatible with old version
-    DOMAIN_SEPARATOR = keccak256(
+    domainSeparator = keccak256(
       abi.encode(
-        EIP712DOMAIN_TYPEHASH,
+        eip712DomainTypeHash,
         keccak256(bytes('P12 SecretShop')),
         keccak256(bytes('1.0.0')),
         block.chainid,
@@ -65,6 +67,98 @@ contract SecretShopUpgradable is
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
     __Ownable_init_unchained();
+  }
+
+  /**
+   * @dev judge delegate type
+   */
+  function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
+    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
+  }
+
+  /**
+   * @dev hash an item Data to calculate itemHash
+   */
+  function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
+    return
+      keccak256(
+        abi.encode(
+          order.salt,
+          order.user,
+          order.network,
+          order.intent,
+          order.delegateType,
+          order.deadline,
+          order.currency,
+          item
+        )
+      );
+  }
+
+  /**
+   * @dev hash typed data of an Order
+   */
+  function _hash(Market.Order memory order) private pure returns (bytes32) {
+    return
+      keccak256(
+        abi.encode(
+          keccak256(
+            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
+          ),
+          order.salt,
+          order.user,
+          order.network,
+          order.intent,
+          order.delegateType,
+          order.deadline,
+          order.currency,
+          order.items.length,
+          _hash(order.items)
+        )
+      );
+  }
+
+  /**
+   * @dev hash typed data of a array of OderItem
+   */
+  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
+    bytes memory h;
+    for (uint256 i = 0; i < orderItems.length; i++) {
+      h = abi.encodePacked(h, _hash(orderItems[i]));
+    }
+    return keccak256(h);
+  }
+
+  /**
+   * @dev hash typed data of an OrderItem
+   */
+
+  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
+    return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
+  }
+
+  /**
+   * @dev verify whether the order data is real
+   * @dev necessary for security
+   */
+  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
+    address orderSigner;
+
+    if (order.signVersion == Market.SIGN_V1) {
+      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
+      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
+    } else {
+      revert('SecretShop: wrong sig version');
+    }
+
+    require(orderSigner == order.user, 'SecretShop: sig not match');
+  }
+
+  /**
+   * @dev judge whether token is chain native token
+   */
+  function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
+    return address(currency) == address(0);
   }
 
   function updateFeeCap(uint256 val) public virtual override onlyOwner {
@@ -125,10 +219,10 @@ contract SecretShopUpgradable is
       if (input.shared.canFail) {
         try ISecretShopUpgradable(address(this)).runSingle(order, input.shared, detail) returns (uint256 ethPayment) {
           amountEth -= ethPayment;
-        } catch Error(string memory _err) {
-          emit EvFailure(i, bytes(_err));
-        } catch (bytes memory _err) {
-          emit EvFailure(i, _err);
+        } catch Error(string memory err) {
+          emit EvFailure(i, bytes(err));
+        } catch (bytes memory err) {
+          emit EvFailure(i, err);
         }
       } else {
         amountEth -= _run(order, input.shared, detail);
@@ -147,25 +241,6 @@ contract SecretShopUpgradable is
     require(msg.sender == address(this), 'SecretShop: unsafe call');
 
     return _run(order, shared, detail);
-  }
-
-  /**
-   * @dev hash an item Data to calculate itemHash
-   */
-  function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          order.salt,
-          order.user,
-          order.network,
-          order.intent,
-          order.delegateType,
-          order.deadline,
-          order.currency,
-          item
-        )
-      );
   }
 
   function _emitInventory(
@@ -245,79 +320,6 @@ contract SecretShopUpgradable is
 
     _emitInventory(itemHash, order, item, shared, detail);
     return nativeAmount;
-  }
-
-  /**
-   * @dev judge delegate type
-   */
-  function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
-  }
-
-  /**
-   * @dev hash typed data of an Order
-   */
-  function _hash(Market.Order memory order) private pure returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          keccak256(
-            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
-          ),
-          order.salt,
-          order.user,
-          order.network,
-          order.intent,
-          order.delegateType,
-          order.deadline,
-          order.currency,
-          order.items.length,
-          _hash(order.items)
-        )
-      );
-  }
-
-  /**
-   * @dev hash typed data of a array of OderItem
-   */
-  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
-    bytes memory h;
-    for (uint256 i = 0; i < orderItems.length; i++) {
-      h = abi.encodePacked(h, _hash(orderItems[i]));
-    }
-    return keccak256(h);
-  }
-
-  /**
-   * @dev hash typed data of an OrderItem
-   */
-
-  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
-    return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
-  }
-
-  /**
-   * @dev verify whether the order data is real
-   * @dev necessary for security
-   */
-  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
-    address orderSigner;
-
-    if (order.signVersion == Market.SIGN_V1) {
-      bytes32 dataHash = ECDSA.toTypedDataHash(DOMAIN_SEPARATOR, _hash(order));
-      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
-    } else {
-      revert('SecretShop: wrong sig version');
-    }
-
-    require(orderSigner == order.user, 'SecretShop: sig not match');
-  }
-
-  /**
-   * @dev judge whether token is chain native token
-   */
-  function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
-    return address(currency) == address(0);
   }
 
   /**

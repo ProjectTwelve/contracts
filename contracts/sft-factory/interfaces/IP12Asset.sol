@@ -6,12 +6,12 @@ interface IP12Asset {
   /**
    * @dev Update log of contract-level MetaData
    */
-  event SetContractURI(string oldContractURI, string newContractURI_);
+  event SetContractURI(string oldContractURI, string newContractURI);
 
   /**
    * @dev log of token metadata uri
    */
-  event SetUri(uint256 id, string uri_);
+  event SetUri(uint256 id, string uri);
 
   function create(uint256, string calldata) external returns (uint256);
 
