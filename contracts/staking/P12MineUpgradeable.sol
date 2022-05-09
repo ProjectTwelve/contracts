@@ -336,10 +336,10 @@ contract P12MineUpgradeable is
   // ============ Internal ============
 
   // Safe P12 transfer function
-  function _safeP12Transfer(address _to, uint256 _amount) internal virtual {
-    IP12RewardVault(p12RewardVault).reward(_to, _amount);
-    realizedReward[_to] = realizedReward[_to].add(_amount);
-    emit Claim(_to, _amount);
+  function _safeP12Transfer(address to, uint256 amount) internal virtual {
+    IP12RewardVault(p12RewardVault).reward(to, amount);
+    realizedReward[to] = realizedReward[to].add(amount);
+    emit Claim(to, amount);
   }
 
   // crate withdraw id
