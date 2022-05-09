@@ -10,6 +10,7 @@ interface IP12MineUpgradeable {
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB); // change delayB log
   event SetDelayK(uint256 oldDelayK, uint256 newDelayK); // change delayK log
   event UpdatePool(uint256 pid, address lpToken, uint256 accP12PerShare); // reward change record for unit p12 in each of pool
+  event SetReward(uint256 oldP12PerBlock,uint256 newP12PerBlock); // set new reward 
 
   function createPool(address lpToken, bool withUpdate) external; // new pool
 

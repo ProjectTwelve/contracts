@@ -104,7 +104,7 @@ contract P12MineUpgradeable is
 
   /**
     @notice Get pool id
-    @param lpToken Address of lptoken
+    @param lpToken Address of lpToken
    */
   function getPid(address lpToken) public view virtual lpTokenExist(lpToken) returns (uint256) {
     return lpTokenRegistry[lpToken] - 1;
@@ -120,9 +120,8 @@ contract P12MineUpgradeable is
     uint256 pid = getPid(lpToken);
     return userInfo[pid][user].amountOfLpToken;
   }
-  
 
-    /**
+  /**
     @notice The block reward of the current pool
     @param lpToken Address of lpToken
     @return Number of p12
@@ -132,7 +131,7 @@ contract P12MineUpgradeable is
     PoolInfo storage pool = poolInfos[pid];
     return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
   }
-  
+
   /**
     @notice Calculate the value of p12 corresponding to lpToken
     @param lpToken Address of lpToken
@@ -147,7 +146,7 @@ contract P12MineUpgradeable is
     return amount0;
   }
 
-   /**
+  /**
     @notice This method is only used when creating game coin in p12factory
     @param lpToken Address of lpToken
     @param gameCoinCreator user of game coin creator
@@ -185,7 +184,7 @@ contract P12MineUpgradeable is
 
   // ============ Ownable ============
 
-/**
+  /**
     @notice Create a new pool
     @param lpToken Address of lpToken
     @param withUpdate If true then update all pool otherwise do nothing 
@@ -215,7 +214,9 @@ contract P12MineUpgradeable is
     if (withUpdate) {
       massUpdatePools();
     }
+    uint256 oldP12PerBlock = p12PerBlock;
     p12PerBlock = newP12PerBlock;
+    emit SetReward(oldP12PerBlock,p12PerBlock);
   }
 
   /**
@@ -242,7 +243,6 @@ contract P12MineUpgradeable is
     return true;
   }
 
- 
   // ============ Update Pools ============
 
   /**
