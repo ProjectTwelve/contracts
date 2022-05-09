@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.13;
 
 interface IP12MineUpgradeable {
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount); // deposit lpToken log
