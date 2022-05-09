@@ -39,7 +39,14 @@ contract P12MineUpgradeable is
     _unpause();
   }
 
-  // init
+  /**
+    @notice Contract initialization
+    @param p12Token Address of p12Token
+    @param p12Factory Address of p12Factory
+    @param startBlock Staking start time
+    @param delayK delayK is a coefficient
+    @param delayB delayB is a coefficient
+   */
   function initialize(
     address p12Token_,
     address p12Factory_,
@@ -88,29 +95,49 @@ contract P12MineUpgradeable is
 
   // ============ Helper ============
 
-  // get pool len
+  /**
+    @notice Get pool len
+   */
   function poolLength() external view virtual returns (uint256) {
     return poolInfos.length;
   }
 
-  // get pool id
+  /**
+    @notice Get pool id
+    @param lptoken Address of lptoken
+   */
   function getPid(address _lpToken) public view virtual lpTokenExist(_lpToken) returns (uint256) {
     return lpTokenRegistry[_lpToken] - 1;
   }
 
-  // get user lpToken balance
+  /**
+    @notice Get user lpToken balance
+    @param lpToken Address of lpToken
+    @param user LpToken holder
+    @return Get lpToken balance 
+   */
   function getUserLpBalance(address lpToken, address user) public view virtual returns (uint256) {
     uint256 pid = getPid(lpToken);
     return userInfo[pid][user].amountOfLpToken;
   }
+  
 
+    /**
+    @notice The block reward of the current pool
+    @param lpToken Address of lpToken
+    @return Number of p12
+   */
   function getDlpMiningSpeed(address lpToken) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
   }
-
-  // Calculate the value of p12 corresponding to lpToken
+  
+  /**
+    @notice Calculate the value of p12 corresponding to lpToken
+    @param lpToken Address of lpToken
+    @param amount Number of lpToken
+   */
   function calculateP12AmountByLpToken(address lpToken, uint256 amount) public view virtual returns (uint256) {
     getPid(lpToken);
     uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(lpToken);
@@ -120,7 +147,11 @@ contract P12MineUpgradeable is
     return amount0;
   }
 
-  // This method is only used when creating game coin in p12factory
+   /**
+    @notice This method is only used when creating game coin in p12factory
+    @param lpToken Address of lpToken
+    @param gameCoinCreator user of game coin creator
+   */
   function addLpTokenInfoForGameCreator(address lpToken, address gameCoinCreator)
     public
     virtual
@@ -154,7 +185,11 @@ contract P12MineUpgradeable is
 
   // ============ Ownable ============
 
-  // create a new pool
+/**
+    @notice Create a new pool
+    @param lpToken Address of lpToken
+    @param withUpdate If true then update all pool otherwise do nothing 
+   */
   function createPool(address lpToken, bool withUpdate)
     public
     virtual
@@ -171,7 +206,11 @@ contract P12MineUpgradeable is
     lpTokenRegistry[lpToken] = poolInfos.length;
   }
 
-  // set reward value for per block
+  /**
+    @notice Set reward value for per block
+    @param p12PerBlock Reward of per block
+    @param withUpdate If true then update all pool otherwise do nothing 
+   */
   function setReward(uint256 newP12PerBlock, bool withUpdate) external virtual override onlyOwner {
     if (withUpdate) {
       massUpdatePools();
@@ -179,6 +218,11 @@ contract P12MineUpgradeable is
     p12PerBlock = newP12PerBlock;
   }
 
+  /**
+    @notice Set delayK value 
+    @param delayK Is a coefficient
+    @return Get bool result 
+   */
   function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayK = delayK;
     delayK = newDelayK;
@@ -186,6 +230,11 @@ contract P12MineUpgradeable is
     return true;
   }
 
+  /**
+    @notice Set delayB value 
+    @param delayB Is a coefficient
+    @return Get bool result 
+   */
   function setDelayB(uint256 newDelayB) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayB = delayB;
     delayB = newDelayB;
@@ -193,9 +242,12 @@ contract P12MineUpgradeable is
     return true;
   }
 
+ 
   // ============ Update Pools ============
 
-  // Update reward variables for all pools. Be careful of gas spending!
+  /**
+    @notice Update reward variables for all pools. Be careful of gas spending!
+   */
   function massUpdatePools() public virtual override whenNotPaused {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; ++pid) {
@@ -203,7 +255,10 @@ contract P12MineUpgradeable is
     }
   }
 
-  // Update reward variables of the given pool to be up-to-date.
+  /**
+    @notice Update reward variables of the given pool to be up-to-date.
+    @param pid Pool id
+   */
   function updatePool(uint256 pid) public virtual override whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     if (block.number <= pool.lastRewardBlock) {
@@ -223,7 +278,11 @@ contract P12MineUpgradeable is
   // ============ Deposit & Withdraw & Claim ============
   // Deposit & withdraw will also trigger claim
 
-  // deposit lpToken
+  /**
+    @notice Deposit lpToken
+    @param lpToken Address of lpToken
+    @param amount Number of lpToken
+   */
   function deposit(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
@@ -244,7 +303,11 @@ contract P12MineUpgradeable is
     emit Deposit(msg.sender, pid, amount);
   }
 
-  // withdraw lpToken delay
+  /**
+  @notice Withdraw lpToken delay
+  @param lpToken Address of lpToken
+  @param amount Number of lpToken
+  */
   function withdrawDelay(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
@@ -270,7 +333,10 @@ contract P12MineUpgradeable is
     emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId);
   }
 
-  // get pending rewards
+  /**
+    @notice Get pending rewards
+    @param lpToken Address of lpToken
+   */
   function claim(address lpToken) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
     if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
@@ -284,7 +350,9 @@ contract P12MineUpgradeable is
     _safeP12Transfer(msg.sender, pending);
   }
 
-  // get all pending rewards
+  /**
+    @notice Get all pending rewards
+   */
   function claimAll() public virtual override nonReentrant whenNotPaused {
     uint256 length = poolInfos.length;
     uint256 pending = 0;
@@ -301,7 +369,12 @@ contract P12MineUpgradeable is
     _safeP12Transfer(msg.sender, pending);
   }
 
-  // withdraw lpToken
+  /**
+    @notice Withdraw lpToken
+    @param pledger Holder of lpToken
+    @param lpToken Address of lpToken
+    @param id Withdraw id 
+   */
   function withdraw(
     address pledger,
     address lpToken,
@@ -335,14 +408,24 @@ contract P12MineUpgradeable is
 
   // ============ Internal ============
 
-  // Safe P12 transfer function
-  function _safeP12Transfer(address _to, uint256 _amount) internal virtual {
-    IP12RewardVault(p12RewardVault).reward(_to, _amount);
-    realizedReward[_to] = realizedReward[_to].add(_amount);
-    emit Claim(_to, _amount);
+  /**
+    @notice Transfer p12 to user
+    @param  to The address of receiver
+    @param amount Number of p12
+   */
+  function _safeP12Transfer(address to, uint256 amount) internal virtual {
+    IP12RewardVault(p12RewardVault).reward(to, amount);
+    realizedReward[to] = realizedReward[to].add(amount);
+    emit Claim(to, amount);
   }
 
-  // crate withdraw id
+  /**
+    @notice Crate withdraw id
+    @param lpToken Address of lpToken
+    @param amount Number of lpToken
+    @param to Address of receiver
+    @return Get a withdraw Id
+   */
   function _createWithdrawId(
     address lpToken,
     uint256 amount,

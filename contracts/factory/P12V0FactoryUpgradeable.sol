@@ -189,8 +189,8 @@ contract P12V0FactoryUpgradeable is
     // Set the correct unlock time
     uint256 time;
     uint256 currentTimestamp = getBlockTimestamp();
-    bytes32 preMintId = preMintIds[gameCoinAddress];
-    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][preMintId].unlockTimestamp;
+    bytes32 _preMintId = preMintIds[gameCoinAddress];
+    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][_preMintId].unlockTimestamp;
     if (currentTimestamp >= lastUnlockTimestamp) {
       time = currentTimestamp;
     } else {
@@ -278,6 +278,7 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev function to create a game coin contract
    */
+
   function _create(
     string memory name,
     string memory symbol,
