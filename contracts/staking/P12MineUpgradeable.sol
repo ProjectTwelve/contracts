@@ -41,11 +41,11 @@ contract P12MineUpgradeable is
 
   /**
     @notice Contract initialization
-    @param p12Token Address of p12Token
-    @param p12Factory Address of p12Factory
-    @param startBlock Staking start time
-    @param delayK delayK is a coefficient
-    @param delayB delayB is a coefficient
+    @param p12Token_ Address of p12Token
+    @param p12Factory_ Address of p12Factory
+    @param startBlock_ Staking start time
+    @param delayK_ delayK_ is a coefficient
+    @param delayB_ delayB_ is a coefficient
    */
   function initialize(
     address p12Token_,
@@ -104,10 +104,10 @@ contract P12MineUpgradeable is
 
   /**
     @notice Get pool id
-    @param lptoken Address of lptoken
+    @param lpToken Address of lptoken
    */
-  function getPid(address _lpToken) public view virtual lpTokenExist(_lpToken) returns (uint256) {
-    return lpTokenRegistry[_lpToken] - 1;
+  function getPid(address lpToken) public view virtual lpTokenExist(lpToken) returns (uint256) {
+    return lpTokenRegistry[lpToken] - 1;
   }
 
   /**
@@ -208,7 +208,7 @@ contract P12MineUpgradeable is
 
   /**
     @notice Set reward value for per block
-    @param p12PerBlock Reward of per block
+    @param newP12PerBlock Reward of per block
     @param withUpdate If true then update all pool otherwise do nothing 
    */
   function setReward(uint256 newP12PerBlock, bool withUpdate) external virtual override onlyOwner {
@@ -220,7 +220,7 @@ contract P12MineUpgradeable is
 
   /**
     @notice Set delayK value 
-    @param delayK Is a coefficient
+    @param newDelayK Is a coefficient
     @return Get bool result 
    */
   function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
@@ -232,7 +232,7 @@ contract P12MineUpgradeable is
 
   /**
     @notice Set delayB value 
-    @param delayB Is a coefficient
+    @param newDelayB Is a coefficient
     @return Get bool result 
    */
   function setDelayB(uint256 newDelayB) public virtual override onlyOwner returns (bool) {
@@ -424,7 +424,7 @@ contract P12MineUpgradeable is
     @param lpToken Address of lpToken
     @param amount Number of lpToken
     @param to Address of receiver
-    @return Get a withdraw Id
+    @return hash Get a withdraw Id
    */
   function _createWithdrawId(
     address lpToken,
