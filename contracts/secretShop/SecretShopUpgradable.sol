@@ -145,7 +145,7 @@ contract SecretShopUpgradable is
 
   /**
    * @dev hash typed data of an orderItem
-   * @param orderItem
+   * @param orderItem orderItem
    * @return hash typed data hash
    */
 

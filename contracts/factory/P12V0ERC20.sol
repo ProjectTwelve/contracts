@@ -31,8 +31,8 @@ contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, Ownable {
 
   /**
    * @dev mint function, the Owner will only be factory contract
-   * @param to
-   * @param amount
+   * @param to address which receive newly-minted coin
+   * @param amount amount of the minting
    */
   function mint(address to, uint256 amount) public override onlyOwner {
     _mint(to, amount);

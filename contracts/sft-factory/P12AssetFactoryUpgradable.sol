@@ -71,7 +71,7 @@ contract P12AssetFactoryUpgradable is
 
   /**
    * @dev create asset and mint to msg.sender address
-   * @param which collection want to create
+   * @param collection which collection want to create
    * @param amount amount of asset
    * @param uri new asset's metadata uri
    */
