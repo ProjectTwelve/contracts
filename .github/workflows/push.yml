@@ -19,7 +19,7 @@ jobs:
       - run: npm ci
       - run: npm run compile
       - run: npm run lint
-      - run: npm run coverage
+      - run: npm run test
       # - name: show coverage
       #   uses: devmasx/coverage-check-action@v1.2.0
       #   with:
