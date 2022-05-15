@@ -1,16 +1,18 @@
-import { ethers, upgrades } from 'hardhat';
+import env, { ethers, upgrades } from 'hardhat';
 
 async function main() {
-  const P12V0FactoryUpgradeable = await ethers.getContractFactory('P12V0FactoryUpgradeable');
-  const p12Address = '0xd1190C53dFF162242EE5145cFb1C28dA75B921f3';
-  const uniswapV2Factory = '0x47Ce8814257d598E126ae5CD8b933D28a4719B66';
-  const uniswapV2Router = '0x7c3ad1f15019acfed2c7b5f05905008f39e44560';
-  const p12V0FactoryUpgradeable = await upgrades.deployProxy(
-    P12V0FactoryUpgradeable,
-    [p12Address, uniswapV2Factory, uniswapV2Router],
-    { kind: 'uups' },
-  );
-  console.log('proxy contract', p12V0FactoryUpgradeable.address);
+  if (env.network.name === 'p12TestNet') {
+    const P12V0FactoryUpgradeable = await ethers.getContractFactory('P12V0FactoryUpgradeable');
+    const p12Address = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
+    const uniswapV2Factory = '0x913d71546cC9FBB06b6F9d2ADEb0C58EFEF7a690';
+    const uniswapV2Router = '0x7320C150D5fd661Fb1fB7af19a6337F3d099b41f';
+    const p12V0FactoryUpgradeable = await upgrades.deployProxy(
+      P12V0FactoryUpgradeable,
+      [p12Address, uniswapV2Factory, uniswapV2Router, 86400, ethers.utils.randomBytes(32)],
+      { kind: 'uups' },
+    );
+    console.log('proxy contract', p12V0FactoryUpgradeable.address);
+  }
 }
 
 main().catch((error) => {
