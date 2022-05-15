@@ -5,13 +5,11 @@ import '../factory/P12V0FactoryUpgradeable.sol';
 
 // new contract for test
 contract P12V0FactoryUpgradeable2 is P12V0FactoryUpgradeable {
-  string public name;
-
-  function setName(string memory _name) public {
-    name = _name;
+  function setUniswapFactory(address newAddr) public onlyOwner {
+    uniswapFactory = newAddr;
   }
 
-  function getName() public view returns (string memory) {
-    return name;
+  function setUniswapRouter(address newAddr) public onlyOwner {
+    uniswapRouter = newAddr;
   }
 }

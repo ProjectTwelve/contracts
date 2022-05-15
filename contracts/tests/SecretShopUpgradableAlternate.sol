@@ -2,16 +2,11 @@
 pragma solidity 0.8.13;
 
 import '../secretShop/SecretShopUpgradable.sol';
+import '../secretShop/interfaces/IWETHUpgradable.sol';
 
 contract SecretShopUpgradableAlternative is SecretShopUpgradable {
-  string public name;
-
-  function setName(string memory _name) public {
-    name = _name;
-  }
-
-  function getName() public view returns (string memory) {
-    return name;
+  function setWETH(IWETHUpgradable newAddr) public onlyOwner {
+    weth = newAddr;
   }
 
   /**

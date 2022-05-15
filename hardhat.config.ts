@@ -86,7 +86,14 @@ const config: HardhatUserConfig = {
       chainId: 44010,
       accounts: accounts,
       gas: 'auto',
-      gasPrice: 'auto',
+      gasPrice: 3000000000,
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_URL || '',
+      chainId: 4,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 3000000000, // 3 Gwei
     },
   },
   gasReporter: {

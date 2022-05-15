@@ -29,6 +29,7 @@ async function main() {
       await ethers.getContractAt('SecretShopUpgradable', secretShop.address)
     ).updateDelegates([erc1155delegate.address], []);
     // Add WhiteList
+    await (await ethers.getContractAt('SecretShopUpgradable', secretShop.address)).updateCurrencies([p12coin.address], []);
   }
 }
 
