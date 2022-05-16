@@ -93,7 +93,6 @@ describe('lpToken stake ', function () {
     const Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
     pair = Pair.attach(pairAddress);
     liquidity = await pair.balanceOf(user.address);
-
     await gameCoin.connect(user2).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
     await reward.connect(user2).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
 
@@ -373,11 +372,6 @@ describe('lpToken stake ', function () {
   // try update a non-existing pool
   it('show update pool fail', async function () {
     await expect(p12Mine.updatePool(2)).to.be.revertedWith('panic code 0x32');
-  });
-  // get mining speed
-  it('show mining speed > 0', async function () {
-    const res = await p12Mine.getDlpMiningSpeed(pairAddress);
-    expect(res).to.be.equal(5n * 10n ** 18n);
   });
 
   // get pool info

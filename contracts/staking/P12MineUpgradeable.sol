@@ -16,6 +16,7 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
 import './P12MineStorage.sol';
+import 'hardhat/console.sol';
 
 contract P12MineUpgradeable is
   P12MineStorage,
@@ -129,7 +130,10 @@ contract P12MineUpgradeable is
   function getDlpMiningSpeed(address lpToken) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
-    return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
+    uint256 totalLpStaked = IERC20Upgradeable(pool.lpToken).balanceOf(address(this));
+    uint256 res = calculateP12AmountByLpToken(lpToken, totalLpStaked);
+    uint256 supplyOfP12 = IERC20Upgradeable(p12Token).totalSupply();
+    return p12PerBlock.mul(res).div(supplyOfP12);
   }
 
   /**
@@ -169,15 +173,10 @@ contract P12MineUpgradeable is
     // Update the current value of lpTokens
     user.amountOfLpToken = user.amountOfLpToken.add(_amount);
     totalLpStakedOfEachPool[lpToken] += _amount;
-
     // Calculate the value of p12 corresponding to lpToken
     uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, _amount);
-    // Update the value of p12 in the current pool
-    pool.p12Total = pool.p12Total.add(_amountOfP12);
     // Update the value of the current user p12
     user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
-    // Update the value of p12 in the total pool
-    totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(gameCoinCreator, pid, _amount);
   }
@@ -201,7 +200,7 @@ contract P12MineUpgradeable is
       massUpdatePools();
     }
     uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
-    poolInfos.push(PoolInfo({ lpToken: lpToken, p12Total: 0, lastRewardBlock: lastRewardBlock, accP12PerShare: 0 }));
+    poolInfos.push(PoolInfo({ lpToken: lpToken, lastRewardBlock: lastRewardBlock, accP12PerShare: 0 }));
     lpTokenRegistry[lpToken] = poolInfos.length;
   }
 
@@ -261,6 +260,7 @@ contract P12MineUpgradeable is
    */
   function updatePool(uint256 pid) public virtual override whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
+    UserInfo storage user = userInfo[pid][msg.sender];
     if (block.number <= pool.lastRewardBlock) {
       return;
     }
@@ -269,8 +269,14 @@ contract P12MineUpgradeable is
       pool.lastRewardBlock = block.number;
       return;
     }
-    uint256 p12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
-    pool.accP12PerShare = pool.accP12PerShare.add(p12Reward.mul(ONE).div(pool.p12Total));
+    uint256 preAmountOfP12 = user.amountOfP12;
+
+    // Calculate the current number of p12 take the smaller value
+    uint256 currentAmountOfP12 = calculateP12AmountByLpToken(pool.lpToken, user.amountOfLpToken);
+    user.amountOfP12 = _min(preAmountOfP12, currentAmountOfP12);
+    uint256 supplyOfP12 = IERC20Upgradeable(p12Token).totalSupply();
+    uint256 rewardsPerP12 = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(ONE).div(supplyOfP12);
+    pool.accP12PerShare += rewardsPerP12;
     pool.lastRewardBlock = block.number;
     emit UpdatePool(pid, pool.lpToken, pool.accP12PerShare);
   }
@@ -294,11 +300,8 @@ contract P12MineUpgradeable is
     }
     IERC20Upgradeable(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), amount);
     totalLpStakedOfEachPool[lpToken] += amount;
-    user.amountOfLpToken = user.amountOfLpToken.add(amount);
-    uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, amount);
-    pool.p12Total = pool.p12Total.add(_amountOfP12);
-    user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
-    totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
+    user.amountOfLpToken += amount;
+    user.amountOfP12 = calculateP12AmountByLpToken(lpToken, user.amountOfLpToken);
     user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(msg.sender, pid, amount);
   }
@@ -339,7 +342,7 @@ contract P12MineUpgradeable is
    */
   function claim(address lpToken) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
-    if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
+    if (userInfo[pid][msg.sender].amountOfLpToken == 0) {
       return; // save gas
     }
     PoolInfo storage pool = poolInfos[pid];
@@ -357,7 +360,7 @@ contract P12MineUpgradeable is
     uint256 length = poolInfos.length;
     uint256 pending = 0;
     for (uint256 pid = 0; pid < length; ++pid) {
-      if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
+      if (userInfo[pid][msg.sender].amountOfLpToken == 0) {
         continue; // save gas
       }
       PoolInfo storage pool = poolInfos[pid];
@@ -394,14 +397,11 @@ contract P12MineUpgradeable is
     uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
     _safeP12Transfer(pledger, pending);
     uint256 amount = withdrawInfos[lpToken][id].amount;
-    user.amountOfLpToken = user.amountOfLpToken.sub(amount);
-
-    uint256 amountOfP12 = calculateP12AmountByLpToken(lpToken, amount);
-    pool.p12Total = pool.p12Total.sub(amountOfP12);
-    user.amountOfP12 = user.amountOfP12.sub(amountOfP12);
-    totalBalanceOfP12 = totalBalanceOfP12.sub(amountOfP12);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
+    user.amountOfLpToken -= amount;
     totalLpStakedOfEachPool[lpToken] -= amount;
+
+    user.amountOfP12 = calculateP12AmountByLpToken(lpToken, user.amountOfLpToken);
+    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), amount);
     emit Withdraw(pledger, pid, amount);
   }
@@ -437,5 +437,13 @@ contract P12MineUpgradeable is
     preWithdrawIds[lpToken] = withdrawId;
 
     return withdrawId;
+  }
+
+  function _min(uint256 amountA, uint256 amountB) internal view returns (uint256) {
+    if (amountA > amountB) {
+      return amountB;
+    } else {
+      return amountA;
+    }
   }
 }

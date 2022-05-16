@@ -8,6 +8,7 @@ contract P12MineStorage {
     uint256 amountOfLpToken; // How many LP tokens the user has provided.
     uint256 rewardDebt; // Reward debt. See explanation below.
     uint256 amountOfP12;
+
     //
     // We do some fancy math here. Basically, any point in time, the amount of P12s
     // entitled to a user but is pending to be distributed is:
@@ -24,7 +25,6 @@ contract P12MineStorage {
   // Info of each pool.
   struct PoolInfo {
     address lpToken; // Address of LP token contract.
-    uint256 p12Total;
     uint256 lastRewardBlock; // Last block number that P12s distribution occurs.
     uint256 accP12PerShare; // Accumulated P12s per share, times 1e18. See below.
   }
@@ -59,9 +59,6 @@ contract P12MineStorage {
   mapping(address => bytes32) public preWithdrawIds;
   // lpToken => id=> WithdrawInfo
   mapping(address => mapping(bytes32 => WithdrawInfo)) public withdrawInfos;
-
-  // Sum of all pools p12
-  uint256 public totalBalanceOfP12;
 
   mapping(address => uint256) public totalLpStakedOfEachPool;
 }
