@@ -269,11 +269,15 @@ contract P12MineUpgradeable is
       pool.lastRewardBlock = block.number;
       return;
     }
+    
     uint256 preAmountOfP12 = user.amountOfP12;
-
-    // Calculate the current number of p12 take the smaller value
-    uint256 currentAmountOfP12 = calculateP12AmountByLpToken(pool.lpToken, user.amountOfLpToken);
-    user.amountOfP12 = _min(preAmountOfP12, currentAmountOfP12);
+    if(preAmountOfP12 >0){
+      // Calculate the current number of p12 take the smaller value
+      uint256 currentAmountOfP12 = calculateP12AmountByLpToken(pool.lpToken, user.amountOfLpToken);
+      user.amountOfP12 = _min(preAmountOfP12, currentAmountOfP12);
+      user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
+    }
+    
     uint256 supplyOfP12 = IERC20Upgradeable(p12Token).totalSupply();
     uint256 rewardsPerP12 = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(ONE).div(supplyOfP12);
     pool.accP12PerShare += rewardsPerP12;
@@ -332,7 +336,6 @@ contract P12MineUpgradeable is
 
     bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
     withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(amount, unlockTimestamp, false);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId);
   }
 
@@ -349,7 +352,6 @@ contract P12MineUpgradeable is
     UserInfo storage user = userInfo[pid][msg.sender];
     updatePool(pid);
     uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     _safeP12Transfer(msg.sender, pending);
   }
 
@@ -367,7 +369,6 @@ contract P12MineUpgradeable is
       UserInfo storage user = userInfo[pid][msg.sender];
       updatePool(pid);
       pending = pending.add(user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt));
-      user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     }
     _safeP12Transfer(msg.sender, pending);
   }
@@ -399,9 +400,7 @@ contract P12MineUpgradeable is
     uint256 amount = withdrawInfos[lpToken][id].amount;
     user.amountOfLpToken -= amount;
     totalLpStakedOfEachPool[lpToken] -= amount;
-
     user.amountOfP12 = calculateP12AmountByLpToken(lpToken, user.amountOfLpToken);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), amount);
     emit Withdraw(pledger, pid, amount);
   }
