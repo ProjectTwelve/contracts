@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 import '../secretShop/SecretShopUpgradable.sol';
 import '../secretShop/interfaces/IWETHUpgradable.sol';
 
-contract SecretShopUpgradableAlternative is SecretShopUpgradable {
+contract SecretShopUpgradableAlter is SecretShopUpgradable {
   function setWETH(IWETHUpgradable newAddr) public onlyOwner {
     weth = newAddr;
   }

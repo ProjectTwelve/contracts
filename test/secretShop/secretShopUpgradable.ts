@@ -613,7 +613,7 @@ describe('SecretShopUpgradable', function () {
     ).to.be.revertedWith('SecretShop: sold or canceled');
 
     // Should upgrade successfully
-    const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlternative');
+    const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlter');
 
     const secretShopAlter = await upgrades.upgradeProxy(secretShop.address, SecretShopAlterF);
 
