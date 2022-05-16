@@ -3,37 +3,35 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { ethers, upgrades } from 'hardhat';
+import env, { ethers, upgrades } from 'hardhat';
 
 async function main() {
-  const developer = (await ethers.getSigners())[0];
+  if (env.network.name === 'rinkeby') {
+    const developer = (await ethers.getSigners())[0];
 
-  // console.log(developer.address);
+    const p12coin = await ethers.getContractAt('P12Token', '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
+    const wethAddr = '0xc778417e063141139fce010982780140aa0cd5ab';
 
-  const p12coin = await ethers.getContractAt('P12Coin', '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086');
-  console.log('P12 Coin: ', p12coin.address);
+    const SecretShopUpgradableF = await ethers.getContractFactory('SecretShopUpgradable');
 
-  const weth = await ethers.getContractAt('WETH9', '0xDf032Bc4B9dC2782Bb09352007D4C57B75160B15');
+    const secretShop = await upgrades.deployProxy(SecretShopUpgradableF, [10n ** 5n, wethAddr], {
+      kind: 'uups',
+    });
 
-  const SecretShopUpgradableF = await ethers.getContractFactory('SecretShopUpgradable');
-
-  const p12exchange = await upgrades.deployProxy(SecretShopUpgradableF, [0, weth.address], {
-    kind: 'uups',
-  });
-  const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
-
-  // deploy delegate
-  const erc1155delegate = await ERC1155DelegateF.deploy();
-  // Give Role to exchange contract
-  await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), p12exchange.address);
-
-  // Give Role to developer
-  await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), developer.address);
-
-  // Add delegate
-  await (
-    await ethers.getContractAt('SecretShopUpgradable', p12exchange.address)
-  ).updateDelegates([erc1155delegate.address], []);
+    console.log('SecretShop Proxy', secretShop.address);
+    const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
+    const erc1155delegate = await ERC1155DelegateF.deploy();
+    // Give delegate role to exchange contract
+    await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), secretShop.address);
+    // Give pausable Role to developer
+    await erc1155delegate.grantRole(await erc1155delegate.PAUSABLE_CALLER(), developer.address);
+    // Add delegate
+    await (
+      await ethers.getContractAt('SecretShopUpgradable', secretShop.address)
+    ).updateDelegates([erc1155delegate.address], []);
+    // Add WhiteList
+    await (await ethers.getContractAt('SecretShopUpgradable', secretShop.address)).updateCurrencies([p12coin.address], []);
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

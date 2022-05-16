@@ -24,6 +24,8 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
+const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
@@ -76,19 +78,22 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || '',
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
     hardhat: {
       chainId: 44102,
     },
     p12TestNet: {
       url: 'https://testnet.p12.games/',
       chainId: 44010,
-      accounts: [],
+      accounts: accounts,
       gas: 'auto',
-      gasPrice: 'auto',
+      gasPrice: 3000000000,
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_URL || '',
+      chainId: 4,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 3000000000, // 3 Gwei
     },
   },
   gasReporter: {

@@ -617,9 +617,6 @@ describe('SecretShopUpgradable', function () {
 
     const secretShopAlter = await upgrades.upgradeProxy(secretShop.address, SecretShopAlterF);
 
-    await secretShopAlter.setName('Project Twelve');
-    expect(await secretShopAlter.getName()).to.be.equal('Project Twelve');
-
     // trigger revert failure log
     // run order but allow failure
     await expect(

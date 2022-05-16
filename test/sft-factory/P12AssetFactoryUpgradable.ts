@@ -119,11 +119,11 @@ describe('P12AssetFactoryUpgradable', function () {
   });
 
   it('Should upgrade successfully', async () => {
-    const P12AssetFactoryAlter = await ethers.getContractFactory('P12AssetFactoryUpgradableAlternative');
+    const P12AssetFactoryAlter = await ethers.getContractFactory('P12AssetFactoryUpgradableAlter');
 
-    const p12ExchangeAlter = await upgrades.upgradeProxy(p12AssetFactory.address, P12AssetFactoryAlter);
+    const p12AssetFactoryAlter = await upgrades.upgradeProxy(p12AssetFactory.address, P12AssetFactoryAlter);
 
-    await p12ExchangeAlter.setName('Project Twelve');
-    expect(await p12ExchangeAlter.getName()).to.be.equal('Project Twelve');
+    await p12AssetFactoryAlter.setP12factory(ethers.constants.AddressZero);
+    expect(await p12AssetFactoryAlter.p12factory()).to.be.equal(ethers.constants.AddressZero);
   });
 });

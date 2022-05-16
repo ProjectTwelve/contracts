@@ -3,20 +3,22 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { ethers, upgrades } from 'hardhat';
+import env, { ethers, upgrades } from 'hardhat';
 
 async function main() {
-  const developer = (await ethers.getSigners())[0];
-  console.log('developer: ', developer);
+  if (env.network.name === 'rinkeby') {
+    const developer = (await ethers.getSigners())[0];
+    console.log('developer: ', developer.address);
 
-  const p12factoryAddr = '0x395FAbef71433280f85f79ad43f99E3cC040af5C';
+    const p12factoryAddr = '0xA2C44E2d4DEC9B9e9C1AA2e508eD645EE3AE8dF7';
 
-  const P12AssetFactoryUpgradableF = await ethers.getContractFactory('P12AssetFactoryUpgradable');
-  const p12AssetFactoryAddr = await upgrades.deployProxy(P12AssetFactoryUpgradableF, [p12factoryAddr], {
-    kind: 'uups',
-  });
-  const p12AssetFactory = await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactoryAddr.address);
-  console.log('P12AssetFactory Address', p12AssetFactory.address);
+    const P12AssetFactoryUpgradableF = await ethers.getContractFactory('P12AssetFactoryUpgradable');
+    const p12AssetFactoryAddr = await upgrades.deployProxy(P12AssetFactoryUpgradableF, [p12factoryAddr], {
+      kind: 'uups',
+    });
+    const p12AssetFactory = await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactoryAddr.address);
+    console.log('p12AssetFactory proxy: ', p12AssetFactory.address);
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere

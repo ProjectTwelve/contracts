@@ -7,17 +7,16 @@ import env, { ethers, upgrades } from 'hardhat';
 
 async function main() {
   if (env.network.name === 'p12TestNet') {
-    const developer = (await ethers.getSigners())[0];
-    console.log('developer: ', developer.address);
-
-    const p12factoryAddr = '0x3288095c0033E33DcD25bf2cf439B848b45DFB70';
-
     const P12AssetFactoryUpgradableF = await ethers.getContractFactory('P12AssetFactoryUpgradable');
-    const p12AssetFactoryAddr = await upgrades.deployProxy(P12AssetFactoryUpgradableF, [p12factoryAddr], {
-      kind: 'uups',
-    });
-    const p12AssetFactory = await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactoryAddr.address);
-    console.log('p12AssetFactory: ', p12AssetFactory.address);
+
+    const proxyAddr = '0x173e4D790A43E3016AAeD9Bbd0987CD760f0dB9F';
+
+    // const p12Token = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
+    // const uniswapV2Factory = '0x8C2543578eFEd64343C63e9075ed70F1d255D1c6';
+    // const uniswapV2Router = '0x71A3B75A9A774EB793A44a36AF760ee2868912ac';
+    await upgrades.upgradeProxy(proxyAddr, P12AssetFactoryUpgradableF);
+
+    console.log('proxy contract', proxyAddr);
   }
 }
 
