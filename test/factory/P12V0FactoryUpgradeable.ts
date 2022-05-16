@@ -190,4 +190,13 @@ describe('P12Factory', function () {
 
     expect(await p12V0ERC20.balanceOf(user.address)).to.be.equal(1n * 10n ** 18n);
   });
+  it('Should contract upgrade successfully', async function () {
+    const p12FactoryAlterF = await ethers.getContractFactory('P12V0FactoryUpgradeableAlter');
+
+    await upgrades.upgradeProxy(p12Factory.address, p12FactoryAlterF);
+
+    const p12FactoryAlter = await ethers.getContractAt('P12V0FactoryUpgradeableAlter', p12Factory.address);
+
+    await p12FactoryAlter.callWhiteBlack();
+  });
 });
