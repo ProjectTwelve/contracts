@@ -177,7 +177,6 @@ contract P12MineUpgradeable is
     uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, _amount);
     // Update the value of the current user p12
     user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(gameCoinCreator, pid, _amount);
   }
 
@@ -264,20 +263,19 @@ contract P12MineUpgradeable is
     if (block.number <= pool.lastRewardBlock) {
       return;
     }
-    uint256 totalLpStaked = IERC20Upgradeable(pool.lpToken).balanceOf(address(this));
-    if (totalLpStaked == 0) {
+    if (IERC20Upgradeable(pool.lpToken).balanceOf(address(this)) == 0) {
       pool.lastRewardBlock = block.number;
       return;
     }
-    
+
     uint256 preAmountOfP12 = user.amountOfP12;
-    if(preAmountOfP12 >0){
+    if (preAmountOfP12 > 0) {
       // Calculate the current number of p12 take the smaller value
       uint256 currentAmountOfP12 = calculateP12AmountByLpToken(pool.lpToken, user.amountOfLpToken);
       user.amountOfP12 = _min(preAmountOfP12, currentAmountOfP12);
       user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     }
-    
+
     uint256 supplyOfP12 = IERC20Upgradeable(p12Token).totalSupply();
     uint256 rewardsPerP12 = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(ONE).div(supplyOfP12);
     pool.accP12PerShare += rewardsPerP12;
@@ -306,7 +304,6 @@ contract P12MineUpgradeable is
     totalLpStakedOfEachPool[lpToken] += amount;
     user.amountOfLpToken += amount;
     user.amountOfP12 = calculateP12AmountByLpToken(lpToken, user.amountOfLpToken);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(msg.sender, pid, amount);
   }
 
