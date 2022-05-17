@@ -31,7 +31,7 @@ contract P12V0FactoryUpgradeableAlter is P12V0FactoryUpgradeable {
   /**
    * @dev public function to call internal function
    */
-  function callWhiteBlack() public {
+  function callWhiteBlack() public pure {
     require(compareStrings('1', '2'), 'callWhiteBlack fail');
   }
 }

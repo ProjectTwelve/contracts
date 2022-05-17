@@ -101,4 +101,18 @@ contract P12AssetFactoryUpgradable is
   {
     P12Asset(collection).setContractURI(newUri);
   }
+
+  /**
+   * @dev update Sft Uri
+   * @param collection collection address
+   * @param tokenId token id
+   * @param newUri new metadata uri
+   */
+  function updateSftUri(
+    address collection,
+    uint256 tokenId,
+    string calldata newUri
+  ) public override onlyCollectionDeveloper(collection) whenNotPaused {
+    P12Asset(collection).setUri(tokenId, newUri);
+  }
 }
