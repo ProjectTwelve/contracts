@@ -21,4 +21,10 @@ interface IP12AssetFactoryUpgradable {
   ) external;
 
   function updateCollectionUri(address, string calldata) external;
+
+  function updateSftUri(
+    address,
+    uint256,
+    string calldata
+  ) external;
 }

@@ -23,4 +23,6 @@ interface IP12Asset {
   ) external;
 
   function setContractURI(string calldata) external;
+
+  function setUri(uint256, string calldata) external;
 }

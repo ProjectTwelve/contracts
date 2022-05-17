@@ -118,6 +118,18 @@ describe('P12AssetFactoryUpgradable', function () {
       .withArgs(collection.address, 1, 10);
   });
 
+  it('Should developer1 update metadata uri successfully', async () => {
+    await expect(p12AssetFactory.connect(developer1).updateSftUri(collection.address, 0, 'ar://'))
+      .to.emit(collection, 'SetUri')
+      .withArgs(0, 'ar://');
+
+    expect(await collection.uri(0)).to.be.equal('ar://');
+
+    await expect(p12AssetFactory.connect(developer2).updateSftUri(collection.address, 0, 'ar://')).to.be.revertedWith(
+      'P12Asset: not game developer',
+    );
+  });
+
   it('Should upgrade successfully', async () => {
     const P12AssetFactoryAlter = await ethers.getContractFactory('P12AssetFactoryUpgradableAlter');
 

@@ -54,6 +54,15 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
   }
 
   /**
+   * @dev update token's metadata uri
+   * @param id tokenId
+   * @param newUri new uri
+   */
+  function setUri(uint256 id, string calldata newUri) public override onlyOwner {
+    _setUri(id, newUri);
+  }
+
+  /**
    * See {_mint}.
    */
   function mint(
@@ -93,7 +102,7 @@ contract P12Asset is IP12Asset, ERC1155(''), Ownable {
    * @param newUri metadata uri
    */
   function _setUri(uint256 id, string calldata newUri) private {
-    require(bytes(_uri[id]).length == 0, 'P12Asset: uri already set');
+    require(id <= idx, 'P12Asset: id not exist');
     _uri[id] = newUri;
     emit SetUri(id, newUri);
   }
