@@ -16,7 +16,6 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
 import './P12MineStorage.sol';
-import 'hardhat/console.sol';
 
 contract P12MineUpgradeable is
   P12MineStorage,
