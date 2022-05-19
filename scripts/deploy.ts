@@ -13,13 +13,13 @@ import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory
 import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
 import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
 
-declare type ExternalContract = {
+export declare type ExternalContract = {
   uniswapFactory: Contract;
   uniswapRouter: Contract;
   weth: Contract;
 };
 
-declare type EconomyContract = {
+export declare type EconomyContract = {
   p12Token: P12Token;
   p12V0Factory: P12V0FactoryUpgradeable;
   p12AssetFactory: P12AssetFactoryUpgradable;
@@ -98,6 +98,9 @@ export async function setUp(ec: EconomyContract) {
 
   await ec.erc1155delegate.renounceRole(await ec.erc1155delegate.DEFAULT_ADMIN_ROLE(), admin.address);
   await ec.erc721delegate.renounceRole(await ec.erc721delegate.DEFAULT_ADMIN_ROLE(), admin.address);
+
+  await ec.p12SecretShop.updateCurrencies([ec.p12Token.address], []);
+  await ec.p12SecretShop.updateDelegates([ec.erc1155delegate.address, ec.erc721delegate.address], []);
 }
 
 export async function deployAll(): Promise<EconomyContract & ExternalContract> {

@@ -1,22 +1,18 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { SecretShopUpgradable, P12AssetDemo, ERC1155Delegate, P12Token } from '../../typechain';
+import { P12AssetDemo } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { Contract, utils } from 'ethers';
-import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
+import { utils } from 'ethers';
 import { Salt } from './utils';
+import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 
 describe('SecretShopUpgradable', function () {
-  let secretShopForDeploy: Contract;
-  let secretShop: SecretShopUpgradable;
   let developer: SignerWithAddress;
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
   let recipient: SignerWithAddress;
-  let weth: Contract;
-  let p12coin: P12Token;
   let p12asset: P12AssetDemo;
-  let erc1155delegate: ERC1155Delegate;
+  let core: EconomyContract & ExternalContract;
 
   const types = {
     OrderItem: [
@@ -52,69 +48,27 @@ describe('SecretShopUpgradable', function () {
     user2 = accounts[2];
     recipient = accounts[3];
 
-    // deploy WETH
-    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, developer);
-    weth = await WETH.deploy();
+    core = await deployAll();
 
-    // deploy p12 coin
-    const P12CoinF = await ethers.getContractFactory('P12Token');
-    p12coin = await P12CoinF.deploy('Project Twelve', 'P12', 0n);
-
-    // mint p12 Coin
-    await p12coin.mint(user1.address, 100n * 10n ** 18n);
-    await p12coin.mint(user2.address, 100n * 10n ** 18n);
-    expect(await p12coin.balanceOf(user1.address)).to.be.equal(100n * 10n ** 18n);
-    expect(await p12coin.balanceOf(user2.address)).to.be.equal(100n * 10n ** 18n);
+    // mint p12Token
+    await core.p12Token.mint(user1.address, 100n * 10n ** 18n);
+    await core.p12Token.mint(user2.address, 100n * 10n ** 18n);
 
     // deploy ERC1155
     const P12AssetDemoF = await ethers.getContractFactory('P12AssetDemo');
     p12asset = await P12AssetDemoF.deploy();
 
     // mint ERC1155
-    await p12asset.mint(user1.address, 0, 1, []);
-    expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
-
-    // mint this tokenId just for transfer to Delegator
-    await p12asset.mint(user1.address, 1, 2, []);
-    expect(await p12asset.balanceOf(user1.address, 1)).to.be.equal(2);
-  });
-
-  it('Should SecretShopUpgradable Deploy successfully', async function () {
-    const SecretShopUpgradableF = await ethers.getContractFactory('SecretShopUpgradable');
-    secretShopForDeploy = await upgrades.deployProxy(SecretShopUpgradableF, [10n ** 5n, weth.address], {
-      kind: 'uups',
-    });
-
-    secretShop = await ethers.getContractAt('SecretShopUpgradable', secretShopForDeploy.address);
+    await p12asset.mint(user2.address, 0, 1, []);
+    expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
 
     // update EIP-712 verifyingContract address
-    domain.verifyingContract = secretShop.address;
-  });
-
-  it('Should ERC1155 Delegate Deploy successfully', async function () {
-    const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
-    erc1155delegate = await ERC1155DelegateF.deploy();
-
-    expect(await erc1155delegate.delegateType()).to.be.equal(1);
-
-    // trigger on received
-    await p12asset.connect(user1).safeTransferFrom(user1.address, erc1155delegate.address, 1, 1, []);
-    await p12asset.connect(user1).safeBatchTransferFrom(user1.address, erc1155delegate.address, [1], [1], []);
-    expect(await p12asset.balanceOf(user1.address, 1)).to.be.equal(0);
-    expect(await p12asset.balanceOf(erc1155delegate.address, 1)).to.be.equal(2);
-
-    // Give Role to exchange contract
-    await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), secretShop.address);
-
-    // Give Role to developer
-    await erc1155delegate.grantRole(await erc1155delegate.DELEGATION_CALLER(), developer.address);
-    await erc1155delegate.grantRole(await erc1155delegate.PAUSABLE_CALLER(), developer.address);
+    domain.verifyingContract = core.p12SecretShop.address;
   });
 
   it('Should Delegator transfer token successfully', async function () {
     // approve
-    await p12asset.connect(user1).setApprovalForAll(erc1155delegate.address, true);
-
+    await p12asset.connect(user1).setApprovalForAll(core.erc1155delegate.address, true);
     const data = [
       {
         salt: new Salt().value,
@@ -123,41 +77,30 @@ describe('SecretShopUpgradable', function () {
         amount: BigInt(1),
       },
     ];
-
     const dd = utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]);
 
-    // should Pausable effective
-
-    await erc1155delegate.pause();
-    await expect(erc1155delegate.executeSell(user1.address, user2.address, dd)).to.be.revertedWith('Pausable: paused');
-    await erc1155delegate.unpause();
-
-    await erc1155delegate.executeSell(user1.address, user2.address, dd);
-    expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(0);
-    expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
+    await expect(core.erc1155delegate.executeSell(user1.address, user2.address, dd)).to.be.revertedWith(
+      `AccessControl: account ${developer.address.toLowerCase()} is missing role ${await core.erc1155delegate.DELEGATION_CALLER()}`,
+    );
   });
 
   it('should update fee cap successfully', async function () {
-    expect(await secretShop.feeCapPct()).to.equal(10n ** 5n);
+    expect(await core.p12SecretShop.feeCapPct()).to.equal(10n ** 5n);
 
     // update feeCap
-    await secretShop.connect(developer).updateFeeCap(11n ** 5n);
+    await core.p12SecretShop.connect(developer).updateFeeCap(11n ** 5n);
 
-    expect(await secretShop.feeCapPct()).to.equal(11n ** 5n);
+    expect(await core.p12SecretShop.feeCapPct()).to.equal(11n ** 5n);
   });
 
   it('should change delegates successfully', async function () {
-    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(false);
-
-    // Add delegate
-    await secretShop.updateDelegates([erc1155delegate.address], []);
-    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(true);
+    expect(await core.p12SecretShop.delegates(core.erc1155delegate.address)).to.equal(true);
 
     // delete and then add
-    await secretShop.updateDelegates([], [erc1155delegate.address]);
-    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(false);
-    await secretShop.updateDelegates([erc1155delegate.address], []);
-    expect(await secretShop.delegates(erc1155delegate.address)).to.equal(true);
+    await core.p12SecretShop.updateDelegates([], [core.erc1155delegate.address]);
+    expect(await core.p12SecretShop.delegates(core.erc1155delegate.address)).to.equal(false);
+    await core.p12SecretShop.updateDelegates([core.erc1155delegate.address], []);
+    expect(await core.p12SecretShop.delegates(core.erc1155delegate.address)).to.equal(true);
   });
 
   it('Should sell successfully', async function () {
@@ -178,7 +121,7 @@ describe('SecretShopUpgradable', function () {
       intent: BigInt(1),
       delegateType: BigInt(1),
       deadline: BigInt(new Date().getTime() + 100),
-      currency: p12coin.address,
+      currency: core.p12Token.address,
     };
 
     const items = [
@@ -249,30 +192,33 @@ describe('SecretShopUpgradable', function () {
       itemIdx: 0n,
       price: 10n * 10n ** 18n,
       itemHash: itemHash,
-      executionDelegate: erc1155delegate.address,
+      executionDelegate: core.erc1155delegate.address,
       fees: [{ percentage: 10000n, to: recipient.address }],
     };
 
     // Buyer approve coin
-    await p12coin.connect(user1).approve(secretShop.address, SettleDetail.price);
+    await core.p12Token.connect(user1).approve(core.p12SecretShop.address, SettleDetail.price);
 
     // seller approve
-    await p12asset.connect(user2).setApprovalForAll(erc1155delegate.address, true);
+    await p12asset.connect(user2).setApprovalForAll(core.erc1155delegate.address, true);
+
+    // delete p12 from whitelist first and then add
+    await core.p12SecretShop.connect(developer).updateCurrencies([], [core.p12Token.address]);
 
     // not allowed currency should fail
     await expect(
-      secretShop.connect(user1).run({
+      core.p12SecretShop.connect(user1).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
       }),
     ).to.be.revertedWith('SecretShop: wrong currency');
 
-    await secretShop.connect(developer).updateCurrencies([p12coin.address, ethers.constants.AddressZero], []);
+    await core.p12SecretShop.connect(developer).updateCurrencies([core.p12Token.address, ethers.constants.AddressZero], []);
 
     // wrong op should fail
     await expect(
-      secretShop.connect(user1).run({
+      core.p12SecretShop.connect(user1).run({
         orders: [Order],
         details: [{ ...SettleDetail, op: 2n }],
         shared: SettleShared,
@@ -281,7 +227,7 @@ describe('SecretShopUpgradable', function () {
 
     // wrong sig version should fail
     await expect(
-      secretShop.connect(user1).run({
+      core.p12SecretShop.connect(user1).run({
         orders: [{ ...Order, signVersion: '0x02' }],
         details: [SettleDetail],
         shared: SettleShared,
@@ -289,7 +235,7 @@ describe('SecretShopUpgradable', function () {
     ).to.be.revertedWith('SecretShop: wrong sig version');
 
     // run order
-    await secretShop.connect(user1).run({
+    await core.p12SecretShop.connect(user1).run({
       orders: [Order],
       details: [SettleDetail],
       shared: SettleShared,
@@ -297,20 +243,20 @@ describe('SecretShopUpgradable', function () {
 
     // run order but allow failure
     await expect(
-      secretShop.connect(user1).run({
+      core.p12SecretShop.connect(user1).run({
         orders: [Order],
         details: [SettleDetail],
         shared: { ...SettleShared, canFail: true },
       }),
     )
-      .to.emit(secretShop, 'EvFailure')
+      .to.emit(core.p12SecretShop, 'EvFailure')
       .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled')));
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);
-    expect(await p12coin.balanceOf(user1.address)).to.be.equal(90n * 10n ** 18n);
-    expect(await p12coin.balanceOf(user2.address)).to.be.equal(1099n * 10n ** 17n);
-    expect(await p12coin.balanceOf(recipient.address)).to.be.equal(1n * 10n ** 17n);
+    expect(await core.p12Token.balanceOf(user1.address)).to.be.equal(90n * 10n ** 18n);
+    expect(await core.p12Token.balanceOf(user2.address)).to.be.equal(1099n * 10n ** 17n);
+    expect(await core.p12Token.balanceOf(recipient.address)).to.be.equal(1n * 10n ** 17n);
   });
 
   it('Should sell use native token successfully', async () => {
@@ -403,18 +349,18 @@ describe('SecretShopUpgradable', function () {
       itemIdx: 0n,
       price: 1n * 10n ** 18n,
       itemHash: itemHash,
-      executionDelegate: erc1155delegate.address,
+      executionDelegate: core.erc1155delegate.address,
       fees: [],
     };
 
     // seller approve
-    await p12asset.connect(user1).setApprovalForAll(erc1155delegate.address, true);
+    await p12asset.connect(user1).setApprovalForAll(core.erc1155delegate.address, true);
 
     const user1BalanceBefore = await user1.getBalance();
     const user2BalanceBefore = await user2.getBalance();
 
     // run order
-    await secretShop.connect(user2).run(
+    await core.p12SecretShop.connect(user2).run(
       {
         orders: [Order],
         details: [SettleDetail],
@@ -425,7 +371,7 @@ describe('SecretShopUpgradable', function () {
 
     // run order but allow failure
     await expect(
-      secretShop.connect(user2).run(
+      core.p12SecretShop.connect(user2).run(
         {
           orders: [Order],
           details: [SettleDetail],
@@ -434,13 +380,13 @@ describe('SecretShopUpgradable', function () {
         { value: ethers.utils.parseEther('2.0') },
       ),
     )
-      .to.emit(secretShop, 'EvFailure')
+      .to.emit(core.p12SecretShop, 'EvFailure')
       .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled')));
 
     // disallow native token, which cause a failure
-    await secretShop.updateCurrencies([], [ethers.constants.AddressZero]);
+    await core.p12SecretShop.updateCurrencies([], [ethers.constants.AddressZero]);
     await expect(
-      secretShop.connect(user2).run(
+      core.p12SecretShop.connect(user2).run(
         {
           orders: [Order],
           details: [SettleDetail],
@@ -449,7 +395,7 @@ describe('SecretShopUpgradable', function () {
         { value: ethers.utils.parseEther('2.0') },
       ),
     )
-      .to.emit(secretShop, 'EvFailure')
+      .to.emit(core.p12SecretShop, 'EvFailure')
       .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: wrong currency')));
 
     expect(await user1.getBalance()).to.be.equal(user1BalanceBefore.add(ethers.utils.parseEther('1')));
@@ -470,7 +416,7 @@ describe('SecretShopUpgradable', function () {
       name: 'P12 SecretShop',
       version: '1.0.0',
       chainId: 44102,
-      verifyingContract: secretShop.address,
+      verifyingContract: core.p12SecretShop.address,
     };
 
     const orderPreInfo = {
@@ -480,7 +426,7 @@ describe('SecretShopUpgradable', function () {
       intent: BigInt(1),
       delegateType: BigInt(1),
       deadline: BigInt(new Date().getTime() + 100),
-      currency: p12coin.address,
+      currency: core.p12Token.address,
     };
 
     const items = [
@@ -551,19 +497,19 @@ describe('SecretShopUpgradable', function () {
       itemIdx: 0n,
       price: 10n * 10n ** 18n,
       itemHash: itemHash,
-      executionDelegate: erc1155delegate.address,
+      executionDelegate: core.erc1155delegate.address,
       fees: [],
     };
 
     // Buyer approve coin
-    await p12coin.connect(user2).approve(secretShop.address, SettleDetail.price);
+    await core.p12Token.connect(user2).approve(core.p12SecretShop.address, SettleDetail.price);
 
     // seller approve
-    await p12asset.connect(user1).setApprovalForAll(erc1155delegate.address, true);
+    await p12asset.connect(user1).setApprovalForAll(core.erc1155delegate.address, true);
 
     // other cancel
     await expect(
-      secretShop.connect(user2).run({
+      core.p12SecretShop.connect(user2).run({
         orders: [Order],
         details: [{ ...SettleDetail, op: 3n }],
         shared: { ...SettleShared, user: user2.address },
@@ -571,14 +517,14 @@ describe('SecretShopUpgradable', function () {
     ).to.be.revertedWith('SecretShop: no permit cancel');
 
     // seller cancel
-    await (await ethers.getContractAt('SecretShopUpgradable', secretShop.address)).connect(user1).run({
+    await (await ethers.getContractAt('SecretShopUpgradable', core.p12SecretShop.address)).connect(user1).run({
       orders: [Order],
       details: [{ ...SettleDetail, op: 3n }],
       shared: { ...SettleShared, user: user1.address },
     });
 
     await expect(
-      secretShop.connect(user2).run({
+      core.p12SecretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
@@ -587,25 +533,25 @@ describe('SecretShopUpgradable', function () {
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(0);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
-    expect(await p12coin.balanceOf(user1.address)).to.be.equal(90n * 10n ** 18n);
-    expect(await p12coin.balanceOf(user2.address)).to.be.equal(1099n * 10n ** 17n);
-    expect(await p12coin.balanceOf(recipient.address)).to.be.equal(1n * 10n ** 17n);
+    expect(await core.p12Token.balanceOf(user1.address)).to.be.equal(90n * 10n ** 18n);
+    expect(await core.p12Token.balanceOf(user2.address)).to.be.equal(1099n * 10n ** 17n);
+    expect(await core.p12Token.balanceOf(recipient.address)).to.be.equal(1n * 10n ** 17n);
 
     // check pauseable
-    await secretShop.connect(developer).pause();
+    await core.p12SecretShop.connect(developer).pause();
 
     await expect(
-      secretShop.connect(user2).run({
+      core.p12SecretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
       }),
     ).to.be.revertedWith('Pausable: paused');
 
-    await secretShop.connect(developer).unpause();
+    await core.p12SecretShop.connect(developer).unpause();
 
     await expect(
-      secretShop.connect(user2).run({
+      core.p12SecretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: SettleShared,
@@ -615,7 +561,7 @@ describe('SecretShopUpgradable', function () {
     // Should upgrade successfully
     const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlter');
 
-    const secretShopAlter = await upgrades.upgradeProxy(secretShop.address, SecretShopAlterF);
+    const secretShopAlter = await upgrades.upgradeProxy(core.p12SecretShop.address, SecretShopAlterF);
 
     // trigger revert failure log
     // run order but allow failure
