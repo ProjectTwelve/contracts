@@ -111,7 +111,9 @@ export async function deployAll(): Promise<EconomyContract & ExternalContract> {
   return { ...ex, ...ec };
 }
 
-deployAll().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+if (require.main === module) {
+  deployAll().catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+  });
+}

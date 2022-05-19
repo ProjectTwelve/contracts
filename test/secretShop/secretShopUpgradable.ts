@@ -79,8 +79,9 @@ describe('SecretShopUpgradable', function () {
     ];
     const dd = utils.defaultAbiCoder.encode(['tuple(uint256 salt, address token, uint256 tokenId, uint256 amount)[]'], [data]);
 
+    const dc = await core.erc1155delegate.DELEGATION_CALLER();
     await expect(core.erc1155delegate.executeSell(user1.address, user2.address, dd)).to.be.revertedWith(
-      `AccessControl: account ${developer.address.toLowerCase()} is missing role ${await core.erc1155delegate.DELEGATION_CALLER()}`,
+      `AccessControl: account ${developer.address.toLowerCase()} is missing role ${dc}`,
     );
   });
 
