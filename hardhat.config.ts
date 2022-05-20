@@ -88,6 +88,9 @@ const config: HardhatUserConfig = {
       gas: 'auto',
       gasPrice: 3000000000,
     },
+    forkP12TestNet: {
+      url: 'http://127.0.0.1:8545/',
+    },
     rinkeby: {
       url: process.env.RINKEBY_URL || '',
       chainId: 4,
