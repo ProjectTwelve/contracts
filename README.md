@@ -37,4 +37,4 @@ $ yarn test
 
 # License
 
-[MIT](LICENSE) © Project Twelve
+[GPL-3.0](LICENSE) © Project Twelve
