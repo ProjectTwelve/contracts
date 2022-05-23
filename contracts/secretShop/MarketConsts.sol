@@ -113,6 +113,7 @@ library Market {
 
   enum DelegationType {
     INVALID,
-    ERC1155
+    ERC1155,
+    ERC721
   }
 }
