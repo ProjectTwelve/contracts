@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '../utils/TwoStepOwnable.sol';
 
 pragma solidity 0.8.13;
 
-contract GameCoin is ERC20, Ownable {
+contract GameCoin is ERC20, TwoStepOwnable {
   constructor(
     string memory name,
     string memory symbol,

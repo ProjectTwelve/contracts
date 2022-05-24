@@ -6,7 +6,7 @@ import './interfaces/IWETHUpgradable.sol';
 
 import './interfaces/ISecretShopUpgradable.sol';
 
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '../utils/TwoStepOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
@@ -21,7 +21,7 @@ contract SecretShopUpgradable is
   ISecretShopUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
-  OwnableUpgradeable,
+  TwoStepOwnableUpgradeable,
   PausableUpgradeable,
   UUPSUpgradeable
 {

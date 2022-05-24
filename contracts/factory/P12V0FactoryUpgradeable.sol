@@ -7,7 +7,7 @@ import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import '../utils/TwoStepOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
@@ -23,7 +23,7 @@ contract P12V0FactoryUpgradeable is
   Initializable,
   UUPSUpgradeable,
   IP12V0FactoryUpgradeable,
-  OwnableUpgradeable,
+  TwoStepOwnableUpgradeable,
   ReentrancyGuardUpgradeable,
   PausableUpgradeable
 {
@@ -93,7 +93,7 @@ contract P12V0FactoryUpgradeable is
     }
 
     // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
-    amountP12 = p12Reserved * amountGameCoin / (gameCoinReserved * 100);
+    amountP12 = (p12Reserved * amountGameCoin) / (gameCoinReserved * 100);
 
     return amountP12;
   }
@@ -102,7 +102,7 @@ contract P12V0FactoryUpgradeable is
    * @dev linear function to calculate the delay time
    */
   function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
-    time = amountGameCoin * delayK / (P12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
+    time = (amountGameCoin * delayK) / (P12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
     return time;
   }
 

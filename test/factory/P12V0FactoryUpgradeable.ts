@@ -9,6 +9,7 @@ import { Contract } from 'ethers';
 
 describe('P12Factory', function () {
   let admin: SignerWithAddress;
+  let admin2: SignerWithAddress;
   let developer: SignerWithAddress;
   let user: SignerWithAddress;
   let uniswapV2Router02: Contract;
@@ -25,6 +26,7 @@ describe('P12Factory', function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
     admin = accounts[0];
+    admin2 = accounts[3];
     developer = accounts[1];
     user = accounts[2];
 
@@ -189,6 +191,24 @@ describe('P12Factory', function () {
     const p12V0ERC20 = await P12V0ERC20.attach(gameCoinAddress);
 
     expect(await p12V0ERC20.balanceOf(user.address)).to.be.equal(1n * 10n ** 18n);
+  });
+  it('should transfer ownership successfully', async () => {
+    await expect(p12Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
+      'TSOwnable: new owner is zero',
+    );
+
+    await expect(p12Factory.connect(admin2).claimOwnership()).to.be.revertedWith('TSOwnable: caller != pending');
+
+    await p12Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
+    await p12Factory.transferOwnership(admin2.address, false);
+
+    await expect(
+      p12Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
+    ).to.be.revertedWith('TSOwnable: caller not the owner');
+
+    await p12Factory.connect(admin2).claimOwnership();
+    await p12Factory.connect(admin2).transferOwnership(admin.address, false);
+    await p12Factory.claimOwnership();
   });
   it('Should contract upgrade successfully', async function () {
     const p12FactoryAlterF = await ethers.getContractFactory('P12V0FactoryUpgradeableAlter');
