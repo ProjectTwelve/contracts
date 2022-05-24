@@ -4,7 +4,6 @@ pragma solidity 0.8.13;
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
-import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
@@ -29,7 +28,6 @@ contract P12V0FactoryUpgradeable is
   PausableUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
-  using SafeMath for uint256;
 
   function pause() public onlyOwner {
     _pause();
@@ -95,7 +93,7 @@ contract P12V0FactoryUpgradeable is
     }
 
     // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
-    amountP12 = p12Reserved.mul(amountGameCoin).div((gameCoinReserved * 100));
+    amountP12 = p12Reserved * amountGameCoin / (gameCoinReserved * 100);
 
     return amountP12;
   }
@@ -104,7 +102,7 @@ contract P12V0FactoryUpgradeable is
    * @dev linear function to calculate the delay time
    */
   function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
-    time = amountGameCoin.mul(delayK).div(P12V0ERC20(gameCoinAddress).totalSupply()) + 4 * delayB;
+    time = amountGameCoin * delayK / (P12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
     return time;
   }
 
