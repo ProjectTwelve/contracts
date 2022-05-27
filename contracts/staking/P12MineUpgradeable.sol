@@ -4,16 +4,16 @@ pragma solidity 0.8.13;
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
-
-import './interfaces/IP12MineUpgradeable.sol';
-
+import '@openzeppelin/contracts/utils/math/Math.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
+import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
+import './interfaces/IGaugeController.sol';
+import './interfaces/IP12MineUpgradeable.sol';
 import './P12MineStorage.sol';
 
 contract P12MineUpgradeable is
@@ -27,8 +27,14 @@ contract P12MineUpgradeable is
 {
   using SafeMath for uint256;
   using SafeERC20Upgradeable for IERC20Upgradeable;
+  using Math for uint256;
 
   uint256 public constant ONE = 10**18;
+  uint256 public constant BOOST_WARMUP = 2 * 7 * 86400;
+  uint256 public constant WEEK = 7 * 86400;
+  uint256 public constant TOKENLESS_PRODUCTION = 40;
+  uint256 public constant YEAR = 365 * 86400;
+  uint256 public constant RATE = (200000000 * ONE) / YEAR;
 
   function pause() public onlyOwner {
     _pause();
@@ -42,21 +48,24 @@ contract P12MineUpgradeable is
     @notice Contract initialization
     @param p12Token_ Address of p12Token
     @param p12Factory_ Address of p12Factory
-    @param startBlock_ Staking start time
+    @param controller_ address of gaugeController
+    @param votingEscrow_ address of votingEscrow
     @param delayK_ delayK_ is a coefficient
     @param delayB_ delayB_ is a coefficient
    */
   function initialize(
     address p12Token_,
     address p12Factory_,
-    uint256 startBlock_,
+    address controller_,
+    address votingEscrow_,
     uint256 delayK_,
     uint256 delayB_
   ) public initializer {
     p12Token = p12Token_;
     p12Factory = p12Factory_;
+    controller = controller_;
+    votingEscrow = votingEscrow_;
     p12RewardVault = address(new P12RewardVault(p12Token_));
-    startBlock = startBlock_;
     delayK = delayK_;
     delayB = delayB_;
 
@@ -117,32 +126,7 @@ contract P12MineUpgradeable is
    */
   function getUserLpBalance(address lpToken, address user) public view virtual returns (uint256) {
     uint256 pid = getPid(lpToken);
-    return userInfo[pid][user].amountOfLpToken;
-  }
-
-  /**
-    @notice The block reward of the current pool
-    @param lpToken Address of lpToken
-    @return Number of p12
-   */
-  function getDlpMiningSpeed(address lpToken) public view virtual override returns (uint256) {
-    uint256 pid = getPid(lpToken);
-    PoolInfo storage pool = poolInfos[pid];
-    return p12PerBlock.mul(pool.p12Total).div(totalBalanceOfP12);
-  }
-
-  /**
-    @notice Calculate the value of p12 corresponding to lpToken
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
-   */
-  function calculateP12AmountByLpToken(address lpToken, uint256 amount) public view virtual returns (uint256) {
-    getPid(lpToken);
-    uint256 balance0 = IERC20Upgradeable(p12Token).balanceOf(lpToken);
-    uint256 totalSupply = IERC20Upgradeable(lpToken).totalSupply();
-    uint256 amount0 = amount.mul(balance0) / totalSupply;
-
-    return amount0;
+    return userInfo[pid][user].amount;
   }
 
   /**
@@ -150,35 +134,29 @@ contract P12MineUpgradeable is
     @param lpToken Address of lpToken
     @param gameCoinCreator user of game coin creator
    */
-  function addLpTokenInfoForGameCreator(address lpToken, address gameCoinCreator)
-    public
-    virtual
-    override
-    whenNotPaused
-    onlyP12Factory
-  {
+  function addLpTokenInfoForGameCreator(
+    address lpToken,
+    uint256 amount,
+    address gameCoinCreator
+  ) public virtual override whenNotPaused onlyP12Factory {
     uint256 pid = getPid(lpToken);
-    uint256 _totalLpStaked = totalLpStakedOfEachPool[lpToken];
     uint256 totalLpStaked = IERC20Upgradeable(lpToken).balanceOf(address(this));
-    uint256 _amount = totalLpStaked.sub(_totalLpStaked);
-    require(_amount > 0, 'P12Mine: _amount should > 0');
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][gameCoinCreator];
-    updatePool(pid);
-    // Update the current value of lpTokens
-    user.amountOfLpToken = user.amountOfLpToken.add(_amount);
-    totalLpStakedOfEachPool[lpToken] += _amount;
-
-    // Calculate the value of p12 corresponding to lpToken
-    uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, _amount);
-    // Update the value of p12 in the current pool
-    pool.p12Total = pool.p12Total.add(_amountOfP12);
-    // Update the value of the current user p12
-    user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
-    // Update the value of p12 in the total pool
-    totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
-    emit Deposit(gameCoinCreator, pid, _amount);
+    require(amount <= totalLpStaked - pool.amount, 'P12Mine: value should <= totalLpStaked - pool.amount');
+    _checkpoint(pid);
+    if (user.workingAmount > 0) {
+      uint256 pending = user.workingAmount.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
+      _safeP12Transfer(msg.sender, pending);
+    }
+    if (amount != 0) {
+      user.amount += amount;
+      pool.amount += amount;
+      uint256 balance = IERC20Upgradeable(lpToken).balanceOf(address(this)) + amount;
+      _updateLiquidityLimit(pid, user.amount, balance);
+    }
+    user.rewardDebt = user.workingAmount.mul(pool.accP12PerShare).div(ONE);
+    emit Deposit(gameCoinCreator, pid, amount);
   }
 
   // ============ Ownable ============
@@ -186,36 +164,11 @@ contract P12MineUpgradeable is
   /**
     @notice Create a new pool
     @param lpToken Address of lpToken
-    @param withUpdate If true then update all pool otherwise do nothing 
    */
-  function createPool(address lpToken, bool withUpdate)
-    public
-    virtual
-    override
-    lpTokenNotExist(lpToken)
-    whenNotPaused
-    onlyP12FactoryOrOwner
-  {
-    if (withUpdate) {
-      massUpdatePools();
-    }
-    uint256 lastRewardBlock = block.number > startBlock ? block.number : startBlock;
-    poolInfos.push(PoolInfo({ lpToken: lpToken, p12Total: 0, lastRewardBlock: lastRewardBlock, accP12PerShare: 0 }));
+  function createPool(address lpToken) public virtual override lpTokenNotExist(lpToken) whenNotPaused onlyP12FactoryOrOwner {
+    poolInfos.push(PoolInfo({ lpToken: lpToken, accP12PerShare: 0, workingAmount: 0, amount: 0, period: 0 }));
+    periodTimestamp[lpToken][0] = block.timestamp;
     lpTokenRegistry[lpToken] = poolInfos.length;
-  }
-
-  /**
-    @notice Set reward value for per block
-    @param newP12PerBlock Reward of per block
-    @param withUpdate If true then update all pool otherwise do nothing 
-   */
-  function setReward(uint256 newP12PerBlock, bool withUpdate) external virtual override onlyOwner {
-    if (withUpdate) {
-      massUpdatePools();
-    }
-    uint256 oldP12PerBlock = p12PerBlock;
-    p12PerBlock = newP12PerBlock;
-    emit SetReward(oldP12PerBlock, p12PerBlock);
   }
 
   /**
@@ -242,36 +195,18 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  // ============ Update Pools ============
-
+  // ============ checkpoint ============
   /**
-    @notice Update reward variables for all pools. Be careful of gas spending!
-   */
-  function massUpdatePools() public virtual override whenNotPaused {
-    uint256 length = poolInfos.length;
-    for (uint256 pid = 0; pid < length; ++pid) {
-      updatePool(pid);
-    }
-  }
-
-  /**
-    @notice Update reward variables of the given pool to be up-to-date.
-    @param pid Pool id
-   */
-  function updatePool(uint256 pid) public virtual override whenNotPaused {
+      @param lpToken address of lpToken
+      @return bool success
+     */
+  function userCheckpoint(address lpToken) external virtual returns (bool) {
+    uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
-    if (block.number <= pool.lastRewardBlock) {
-      return;
-    }
-    uint256 totalLpStaked = IERC20Upgradeable(pool.lpToken).balanceOf(address(this));
-    if (totalLpStaked == 0) {
-      pool.lastRewardBlock = block.number;
-      return;
-    }
-    uint256 p12Reward = block.number.sub(pool.lastRewardBlock).mul(p12PerBlock).mul(pool.p12Total).div(totalBalanceOfP12);
-    pool.accP12PerShare = pool.accP12PerShare.add(p12Reward.mul(ONE).div(pool.p12Total));
-    pool.lastRewardBlock = block.number;
-    emit UpdatePool(pid, pool.lpToken, pool.accP12PerShare);
+    UserInfo storage user = userInfo[pid][msg.sender];
+    _checkpoint(pid);
+    _updateLiquidityLimit(pid, user.amount, pool.amount);
+    return true;
   }
 
   // ============ Deposit & Withdraw & Claim ============
@@ -286,19 +221,19 @@ contract P12MineUpgradeable is
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    updatePool(pid);
-    if (user.amountOfLpToken > 0) {
-      uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
+
+    _checkpoint(pid);
+    if (user.workingAmount > 0) {
+      uint256 pending = user.workingAmount.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
       _safeP12Transfer(msg.sender, pending);
     }
-    IERC20Upgradeable(pool.lpToken).safeTransferFrom(address(msg.sender), address(this), amount);
-    totalLpStakedOfEachPool[lpToken] += amount;
-    user.amountOfLpToken = user.amountOfLpToken.add(amount);
-    uint256 _amountOfP12 = calculateP12AmountByLpToken(lpToken, amount);
-    pool.p12Total = pool.p12Total.add(_amountOfP12);
-    user.amountOfP12 = user.amountOfP12.add(_amountOfP12);
-    totalBalanceOfP12 = totalBalanceOfP12.add(_amountOfP12);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
+    if (amount != 0) {
+      user.amount += amount;
+      pool.amount += amount;
+      _updateLiquidityLimit(pid, user.amount, pool.amount);
+      IERC20Upgradeable(pool.lpToken).safeTransferFrom(msg.sender, address(this), amount);
+    }
+    user.rewardDebt = user.workingAmount.mul(pool.accP12PerShare).div(ONE);
     emit Deposit(msg.sender, pid, amount);
   }
 
@@ -311,10 +246,10 @@ contract P12MineUpgradeable is
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    require(user.amountOfLpToken >= amount, 'P12Mine: withdraw too much');
-    updatePool(pid);
-    if (user.amountOfLpToken > 0) {
-      uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
+    require(user.amount >= amount, 'P12Mine: withdraw too much');
+    _checkpoint(pid);
+    if (user.workingAmount > 0) {
+      uint256 pending = user.amount.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
       _safeP12Transfer(msg.sender, pending);
     }
     uint256 time;
@@ -328,7 +263,7 @@ contract P12MineUpgradeable is
 
     bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
     withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(amount, unlockTimestamp, false);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
+    user.rewardDebt = user.workingAmount.mul(pool.accP12PerShare).div(ONE);
     emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId);
   }
 
@@ -338,14 +273,14 @@ contract P12MineUpgradeable is
    */
   function claim(address lpToken) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
-    if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
+    if (userInfo[pid][msg.sender].workingAmount == 0) {
       return; // save gas
     }
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    updatePool(pid);
-    uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
+    _checkpoint(pid);
+    uint256 pending = user.workingAmount.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
+    user.rewardDebt = user.workingAmount.mul(pool.accP12PerShare).div(ONE);
     _safeP12Transfer(msg.sender, pending);
   }
 
@@ -356,14 +291,14 @@ contract P12MineUpgradeable is
     uint256 length = poolInfos.length;
     uint256 pending = 0;
     for (uint256 pid = 0; pid < length; ++pid) {
-      if (userInfo[pid][msg.sender].amountOfLpToken == 0 || poolInfos[pid].p12Total == 0) {
+      if (userInfo[pid][msg.sender].workingAmount == 0) {
         continue; // save gas
       }
       PoolInfo storage pool = poolInfos[pid];
       UserInfo storage user = userInfo[pid][msg.sender];
-      updatePool(pid);
-      pending = pending.add(user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt));
-      user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
+      _checkpoint(pid);
+      pending = pending.add(user.workingAmount.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt));
+      user.rewardDebt = user.workingAmount.mul(pool.accP12PerShare).div(ONE);
     }
     _safeP12Transfer(msg.sender, pending);
   }
@@ -383,29 +318,86 @@ contract P12MineUpgradeable is
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][pledger];
     require(
-      withdrawInfos[lpToken][id].amount <= user.amountOfLpToken &&
+      withdrawInfos[lpToken][id].amount <= user.amount &&
         block.timestamp >= withdrawInfos[lpToken][id].unlockTimestamp &&
         !withdrawInfos[lpToken][id].executed,
       'P12Mine: can not withdraw'
     );
     withdrawInfos[lpToken][id].executed = true;
-    updatePool(pid);
-    uint256 pending = user.amountOfP12.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
+    _checkpoint(pid);
+    uint256 pending = user.workingAmount.mul(pool.accP12PerShare).div(ONE).sub(user.rewardDebt);
     _safeP12Transfer(pledger, pending);
     uint256 amount = withdrawInfos[lpToken][id].amount;
-    user.amountOfLpToken = user.amountOfLpToken.sub(amount);
-
-    uint256 amountOfP12 = calculateP12AmountByLpToken(lpToken, amount);
-    pool.p12Total = pool.p12Total.sub(amountOfP12);
-    user.amountOfP12 = user.amountOfP12.sub(amountOfP12);
-    totalBalanceOfP12 = totalBalanceOfP12.sub(amountOfP12);
-    user.rewardDebt = user.amountOfP12.mul(pool.accP12PerShare).div(ONE);
-    totalLpStakedOfEachPool[lpToken] -= amount;
+    user.amount -= amount;
+    pool.amount -= amount;
+    _updateLiquidityLimit(pid, user.amount, pool.amount);
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(pledger), amount);
     emit Withdraw(pledger, pid, amount);
   }
 
   // ============ Internal ============
+
+  /**
+      @notice Checkpoint for a user
+      @param pid Pool Id
+  */
+  function _checkpoint(uint256 pid) internal virtual {
+    PoolInfo storage pool = poolInfos[pid];
+    uint256 _accP12PerShare = pool.accP12PerShare;
+    uint256 _workingTotalAmount = pool.workingAmount;
+    uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
+    IGaugeController(controller).checkpointGauge(address(pool.lpToken));
+
+    if (block.timestamp > _periodTime) {
+      uint256 prevWeekTime = _periodTime;
+      uint256 weekTime = Math.min(((_periodTime + WEEK) / WEEK) * WEEK, block.timestamp);
+      for (uint256 i = 0; i < 500; i++) {
+        uint256 dt = weekTime - prevWeekTime;
+        uint256 w = IGaugeController(controller).gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
+        if (_workingTotalAmount > 0) {
+          _accP12PerShare += (RATE * w * dt) / _workingTotalAmount;
+        }
+        if (weekTime == block.timestamp) {
+          break;
+        }
+        prevWeekTime = weekTime;
+        weekTime = Math.min(weekTime + WEEK, block.timestamp);
+      }
+    }
+
+    pool.accP12PerShare = _accP12PerShare;
+    pool.period += 1;
+    periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
+  }
+
+  /**
+    @param pid pool id
+    @param l User's amount of liquidity (LP tokens)
+    @param L Total amount of liquidity (LP tokens)
+   */
+  function _updateLiquidityLimit(
+    uint256 pid,
+    uint256 l,
+    uint256 L
+  ) internal virtual {
+    PoolInfo storage pool = poolInfos[pid];
+    UserInfo storage user = userInfo[pid][msg.sender];
+
+    // To be called after pool's lpToken is updated
+    uint256 votingBalance = IERC20Upgradeable(votingEscrow).balanceOf(msg.sender);
+    uint256 votingTotal = IERC20Upgradeable(votingEscrow).totalSupply();
+
+    uint256 lim = (l * TOKENLESS_PRODUCTION) / 100;
+    if (votingTotal > 0 && block.timestamp > (periodTimestamp[pool.lpToken][0] + BOOST_WARMUP)) {
+      lim += (((L * votingBalance) / votingTotal) * (100 - TOKENLESS_PRODUCTION)) / 100;
+    }
+    lim = Math.min(l, lim);
+    uint256 oldWorkingAmount = user.workingAmount;
+    user.workingAmount = lim;
+    pool.workingAmount = pool.workingAmount + lim - oldWorkingAmount;
+
+    emit UpdateLiquidityLimit(msg.sender, l, L, lim, pool.workingAmount);
+  }
 
   /**
     @notice Transfer p12 to user
@@ -437,4 +429,5 @@ contract P12MineUpgradeable is
 
     return withdrawId;
   }
+
 }

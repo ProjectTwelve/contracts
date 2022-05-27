@@ -20,6 +20,8 @@ describe('P12Factory', function () {
   // eslint-disable-next-line no-unused-vars
   let mintId2: string;
   let p12MineUpgradeable: Contract;
+  let votingEscrow: Contract;
+  let gaugeController: Contract;
 
   this.beforeAll(async function () {
     // hardhat test accounts
@@ -61,17 +63,30 @@ describe('P12Factory', function () {
     p12Factory = await ethers.getContractAt('P12V0FactoryUpgradeable', p12FactoryAddr.address);
     expect(await p12Factory.owner()).to.be.equal(admin.address);
   });
+  // deploy votingEscrow
+  it('should show deploy votingEscrow successfully', async function () {
+    const VotingEscrow = await ethers.getContractFactory('VotingEscrow');
+    votingEscrow = await VotingEscrow.deploy(p12.address, 'VeP12', 'veP12');
+  });
+
+  // deploy GaugeController
+  it('show GaugeController deploy successfully', async function () {
+    const GaugeController = await ethers.getContractFactory('GaugeControllerUpgradeable');
+    gaugeController = await upgrades.deployProxy(GaugeController, [admin.address, votingEscrow.address], { kind: 'uups' });
+  });
 
   // deploy P12Mine
   it('show deploy p12mine successfully', async function () {
-    const timeStart = 1;
-    const delayK = 60;
-    const delayB = 60;
-    const P12MineUpgradeable = await ethers.getContractFactory('P12MineUpgradeable');
+    const p12factory = p12Factory.address;
+    const delayK = 5;
+    const delayB = 5;
+    const P12Mine = await ethers.getContractFactory('P12MineUpgradeable');
     p12MineUpgradeable = await upgrades.deployProxy(
-      P12MineUpgradeable,
-      [p12.address, p12Factory.address, timeStart, delayK, delayB],
-      { kind: 'uups' },
+      P12Mine,
+      [p12.address, p12factory, gaugeController.address, votingEscrow.address, delayK, delayB],
+      {
+        kind: 'uups',
+      },
     );
   });
   it('set some info to p12Factory', async function () {

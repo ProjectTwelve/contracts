@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.13;
-
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
@@ -93,7 +92,7 @@ contract P12V0FactoryUpgradeable is
     }
 
     // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
-    amountP12 = p12Reserved * amountGameCoin / (gameCoinReserved * 100);
+    amountP12 = (p12Reserved * amountGameCoin) / (gameCoinReserved * 100);
 
     return amountP12;
   }
@@ -102,7 +101,7 @@ contract P12V0FactoryUpgradeable is
    * @dev linear function to calculate the delay time
    */
   function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
-    time = amountGameCoin * delayK / (P12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
+    time = (amountGameCoin * delayK) / (P12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
     return time;
   }
 
@@ -176,10 +175,10 @@ contract P12V0FactoryUpgradeable is
     require(liquidity0 == liquidity1, 'P12Factory: liquidities not =');
 
     // new staking pool
-    IP12Mine(p12mine).createPool(pair, false);
+    IP12Mine(p12mine).createPool(pair);
 
     //
-    IP12Mine(p12mine).addLpTokenInfoForGameCreator(pair, msg.sender);
+    IP12Mine(p12mine).addLpTokenInfoForGameCreator(pair, liquidity1, msg.sender);
 
     allGameCoins[gameCoinAddress] = gameId;
     emit CreateGameCoin(gameCoinAddress, gameId, amountP12);

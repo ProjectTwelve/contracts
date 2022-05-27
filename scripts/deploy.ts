@@ -7,6 +7,8 @@ import {
   P12Token,
   P12V0FactoryUpgradeable,
   SecretShopUpgradable,
+  GaugeControllerUpgradeable,
+  VotingEscrow,
 } from '../typechain';
 import { Contract } from 'ethers';
 import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
@@ -27,6 +29,8 @@ export declare type EconomyContract = {
   erc1155delegate: ERC1155Delegate;
   erc721delegate: ERC721Delegate;
   p12Mine: P12MineUpgradeable;
+  gaugeControllerUpgradeable: GaugeControllerUpgradeable;
+  votingEscrow: VotingEscrow;
 };
 
 export async function deployExternal(): Promise<ExternalContract> {
@@ -58,6 +62,8 @@ export async function deployEconomyContract(externalContract: ExternalContract):
   const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
   const ERC721DelegateF = await ethers.getContractFactory('ERC721Delegate');
   const P12MineF = await ethers.getContractFactory('P12MineUpgradeable');
+  const GaugeControllerUpgradeable = await ethers.getContractFactory('GaugeControllerUpgradeable');
+  const VotingEscrow = await ethers.getContractFactory('VotingEscrow');
 
   const p12Token = await P12Token.deploy('Project Twelve', 'P12', 10000n * 10n ** 18n);
   const p12V0Factory = await upgrades.deployProxy(P12V0FactoryF, [
@@ -71,7 +77,19 @@ export async function deployEconomyContract(externalContract: ExternalContract):
   const p12SecretShop = await upgrades.deployProxy(P12SecretShopF, [10n ** 5n, externalContract.weth.address]);
   const erc1155delegate = await ERC1155DelegateF.deploy();
   const erc721delegate = await ERC721DelegateF.deploy();
-  const p12Mine = await upgrades.deployProxy(P12MineF, [p12Token.address, p12V0Factory.address, 0n, 1, 1]);
+  const votingEscrow = await VotingEscrow.deploy(p12Token.address, 'Vote-escrowed P12', 'veP12');
+  const gaugeControllerUpgradeable = await upgrades.deployProxy(
+    GaugeControllerUpgradeable,
+    [p12V0Factory.address, votingEscrow.address],
+    { kind: 'uups' },
+  );
+  const p12Mine = await upgrades.deployProxy(
+    P12MineF,
+    [p12Token.address, p12V0Factory.address, gaugeControllerUpgradeable.address, votingEscrow.address, 60, 60],
+    {
+      kind: 'uups',
+    },
+  );
 
   return {
     p12Token: p12Token,
@@ -80,6 +98,8 @@ export async function deployEconomyContract(externalContract: ExternalContract):
     p12SecretShop: await ethers.getContractAt('SecretShopUpgradable', p12SecretShop.address),
     erc1155delegate: erc1155delegate,
     erc721delegate: erc721delegate,
+    votingEscrow: votingEscrow,
+    gaugeControllerUpgradeable: await ethers.getContractAt('GaugeControllerUpgradeable', gaugeControllerUpgradeable.address),
     p12Mine: await ethers.getContractAt('P12MineUpgradeable', p12Mine.address),
   };
 }

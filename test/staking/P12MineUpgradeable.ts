@@ -13,18 +13,21 @@ describe('lpToken stake ', function () {
   let admin: SignerWithAddress;
   let user: SignerWithAddress;
   let user2: SignerWithAddress;
-  const startBlock = 1;
   let reward: P12Token;
   let p12Mine: P12MineUpgradeable;
-  let id: string;
   let weth: Contract;
   let uniswapV2Factory: Contract;
   let uniswapV2Router02: Contract;
   let gameCoin: GameCoin;
+  let gameCoin2: GameCoin;
   let pair: Contract;
+  let pair2: Contract;
+  let gaugeController: Contract;
+  let votingEscrow: Contract;
   let pairAddress: string;
   let liquidity: BigNumber;
   let liquidity2: BigNumber;
+  let id: string;
   let total: BigNumber;
   // accounts info
   it('should use the correct account ', async function () {
@@ -38,8 +41,8 @@ describe('lpToken stake ', function () {
     const Reward = await ethers.getContractFactory('P12Token');
     reward = await Reward.deploy('rewards token', 'RT', 1000000000n * 10n ** 18n);
     expect(await reward.balanceOf(admin.address)).to.equal(1000000000n * 10n ** 18n);
-    await reward.transfer(user.address, 100n * 10n ** 18n);
-    await reward.transfer(user2.address, 100n * 10n ** 18n);
+    await reward.transfer(user.address, 1000n * 10n ** 18n);
+    await reward.transfer(user2.address, 1000n * 10n ** 18n);
   });
 
   // deploy gameCoin
@@ -49,6 +52,15 @@ describe('lpToken stake ', function () {
     expect(await gameCoin.balanceOf(admin.address)).to.equal(100000000n * 10n ** 18n);
     await gameCoin.transfer(user.address, 1000n * 10n ** 18n);
     await gameCoin.transfer(user2.address, 1000n * 10n ** 18n);
+  });
+
+  // deploy gameCoin2
+  it('show gameCoin2 token deploy successfully', async function () {
+    const GameCoin2 = await ethers.getContractFactory('GameCoin');
+    gameCoin2 = await GameCoin2.deploy('gameCoin2', 'GC2', 100000000n * 10n ** 18n);
+    expect(await gameCoin2.balanceOf(admin.address)).to.equal(100000000n * 10n ** 18n);
+    await gameCoin2.transfer(user.address, 1000n * 10n ** 18n);
+    await gameCoin2.transfer(user2.address, 1000n * 10n ** 18n);
   });
 
   // deploy weth
@@ -73,6 +85,22 @@ describe('lpToken stake ', function () {
   });
   // add liquidity
   it('show add liquidity successfully', async function () {
+    // add liquidity by admin
+    await gameCoin.connect(admin).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await reward.connect(admin).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
+    await uniswapV2Router02
+      .connect(admin)
+      .addLiquidity(
+        reward.address,
+        gameCoin.address,
+        10n * 10n ** 18n,
+        100n * 10n ** 18n,
+        10n * 10n ** 18n,
+        100n * 10n ** 18n,
+        admin.address,
+        2647583680,
+      );
+
     await gameCoin.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
     await reward.connect(user).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
     await uniswapV2Router02
@@ -90,10 +118,10 @@ describe('lpToken stake ', function () {
 
     pairAddress = await uniswapV2Factory.getPair(reward.address, gameCoin.address);
 
-    const Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
+    let Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
+
     pair = Pair.attach(pairAddress);
     liquidity = await pair.balanceOf(user.address);
-
     await gameCoin.connect(user2).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
     await reward.connect(user2).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
 
@@ -111,27 +139,61 @@ describe('lpToken stake ', function () {
       );
 
     liquidity2 = await pair.balanceOf(user2.address);
+
+    // add gameCoin2 and p12
+    await gameCoin2.connect(user).approve(uniswapV2Router02.address, 100n * 10n ** 18n);
+    await reward.connect(user).approve(uniswapV2Router02.address, 10n * 10n ** 18n);
+
+    await uniswapV2Router02
+      .connect(user)
+      .addLiquidity(
+        reward.address,
+        gameCoin2.address,
+        10n * 10n ** 18n,
+        100n * 10n ** 18n,
+        10n * 10n ** 18n,
+        100n * 10n ** 18n,
+        user.address,
+        2647583680,
+      );
+    const pairAddress2 = await uniswapV2Factory.getPair(reward.address, gameCoin2.address);
+    Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
+    pair2 = Pair.attach(pairAddress2);
   });
+  // deploy votingEscrow
+  it('should show deploy votingEscrow successfully', async function () {
+    const VotingEscrow = await ethers.getContractFactory('VotingEscrow');
+    votingEscrow = await VotingEscrow.deploy(reward.address, 'VeP12', 'veP12');
+  });
+
+  // deploy GaugeController
+  it('show GaugeController deploy successfully', async function () {
+    const GaugeController = await ethers.getContractFactory('GaugeControllerUpgradeable');
+    gaugeController = await upgrades.deployProxy(GaugeController, [admin.address, votingEscrow.address], { kind: 'uups' });
+  });
+
   // deploy p12Mine
   it('show P12mine deploy successfully', async function () {
     const p12factory = admin.address;
     const delayK = 5;
     const delayB = 5;
     const P12Mine = await ethers.getContractFactory('P12MineUpgradeable');
-    const p12MineAddr = await upgrades.deployProxy(P12Mine, [reward.address, p12factory, startBlock, delayK, delayB], {
-      kind: 'uups',
-    });
+    const p12MineAddr = await upgrades.deployProxy(
+      P12Mine,
+      [reward.address, p12factory, gaugeController.address, votingEscrow.address, delayK, delayB],
+      {
+        kind: 'uups',
+      },
+    );
     p12Mine = await ethers.getContractAt('P12MineUpgradeable', p12MineAddr.address);
   });
 
   it('should pausable effective', async () => {
     await p12Mine.pause();
     await expect(
-      p12Mine.addLpTokenInfoForGameCreator(ethers.constants.AddressZero, ethers.constants.AddressZero),
+      p12Mine.addLpTokenInfoForGameCreator(ethers.constants.AddressZero, 0n, ethers.constants.AddressZero),
     ).to.be.revertedWith('Pausable: paused');
-    await expect(p12Mine.createPool(ethers.constants.AddressZero, true)).to.be.revertedWith('Pausable: paused');
-    await expect(p12Mine.massUpdatePools()).to.be.revertedWith('Pausable: paused');
-    await expect(p12Mine.updatePool(0n)).to.be.revertedWith('Pausable: paused');
+    await expect(p12Mine.createPool(ethers.constants.AddressZero)).to.be.revertedWith('Pausable: paused');
     await expect(p12Mine.deposit(ethers.constants.AddressZero, 0n)).to.be.revertedWith('Pausable: paused');
     await expect(p12Mine.withdrawDelay(ethers.constants.AddressZero, 0n)).to.be.revertedWith('Pausable: paused');
     await expect(p12Mine.claim(ethers.constants.AddressZero)).to.be.revertedWith('Pausable: paused');
@@ -152,30 +214,42 @@ describe('lpToken stake ', function () {
     expect(await reward.balanceOf(p12RewardVault.address)).to.be.equal(100000000n * 10n ** 18n);
   });
 
-  // set reward for each block
-  it('show set rewardPerBlock successfully', async function () {
-    await p12Mine.setReward(10n * 10n ** 18n, true);
-    expect(await p12Mine.p12PerBlock()).to.be.equal(10n * 10n ** 18n);
-  });
-
-  // try crate a new pool by no permission account
-  it('show create a new pool fail', async function () {
-    await expect(p12Mine.connect(user).addLpTokenInfoForGameCreator(pairAddress, user.address)).to.be.revertedWith(
-      'P12Mine: caller not p12factory',
-    );
-  });
-
   //  try crate a new pool by no permission account
   it('show create a new pool fail', async function () {
-    await expect(p12Mine.connect(user).createPool(gameCoin.address, true)).to.be.revertedWith(
-      'P12Mine: not p12factory or owner',
-    );
+    await expect(p12Mine.connect(user).createPool(gameCoin.address)).to.be.revertedWith('P12Mine: not p12factory or owner');
   });
 
   // add lpToken to stake pool
   it('show add lpToken successfully ', async function () {
-    await p12Mine.connect(admin).createPool(pairAddress, true);
+    await p12Mine.connect(admin).createPool(pairAddress);
     expect(await p12Mine.lpTokenRegistry(pairAddress)).to.be.equal(1);
+    await p12Mine.connect(admin).createPool(pair2.address);
+    expect(await p12Mine.lpTokenRegistry(pairAddress)).to.be.equal(1);
+  });
+
+  // add type and gauge
+  it('show add type and gauge successfully', async function () {
+    await gaugeController.addType('liquidity', 1n * 10n ** 18n);
+    await gaugeController.addGauge(pairAddress, 0, 0);
+    await gaugeController.addGauge(pair2.address, 0, 0);
+  });
+
+  // create locker
+  it('show create locker successfully', async function () {
+    await reward.connect(user).approve(votingEscrow.address, 200n * 10n ** 18n);
+    await votingEscrow.connect(user).createLock(200n * 10n ** 18n, 1716693857);
+    await reward.connect(admin).approve(votingEscrow.address, 200n * 10n ** 18n);
+    await votingEscrow.connect(admin).createLock(200n * 10n ** 18n, 1716693857);
+  });
+  // vote for gauge
+  it('show vote for gauge successfully', async function () {
+    await gaugeController.connect(user).voteForGaugeWeights(pairAddress, 1000);
+    await gaugeController.connect(user).voteForGaugeWeights(pair2.address, 9000);
+    await gaugeController.connect(admin).voteForGaugeWeights(pairAddress, 1000);
+    const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    await ethers.provider.send('evm_mine', [timestampBefore + 86400 * 10]);
+    await gaugeController.connect(user).voteForGaugeWeights(pair2.address, 0);
+    await gaugeController.connect(user).voteForGaugeWeights(pairAddress, 10000);
   });
 
   // Staking Mining
@@ -184,12 +258,22 @@ describe('lpToken stake ', function () {
     await pair.connect(user).approve(p12Mine.address, liquidity);
 
     await p12Mine.connect(user).deposit(pairAddress, liquidity);
+
     expect(await p12Mine.getUserLpBalance(pairAddress, user.address)).to.be.equal(liquidity);
 
     await pair.connect(user2).approve(p12Mine.address, liquidity2);
 
     await p12Mine.connect(user2).deposit(pairAddress, liquidity2);
     expect(await p12Mine.getUserLpBalance(pairAddress, user2.address)).to.be.equal(liquidity2);
+
+    await pair.connect(admin).approve(p12Mine.address, pair.balanceOf(admin.address));
+
+    await p12Mine.connect(admin).deposit(pairAddress, pair.balanceOf(admin.address));
+  });
+
+  // add lpToken by factory
+  it('show add lpToken successfully', async function () {
+    await p12Mine.connect(admin).addLpTokenInfoForGameCreator(pairAddress, 0n, user.address);
   });
 
   // attempts to forge false information to obtain lpToken and rewards should fail
@@ -199,7 +283,6 @@ describe('lpToken stake ', function () {
     await p12Mine
       .connect(user)
       .withdraw(user.address, pairAddress, '0x686a653b3b000000000000000000000000000000000000000000000000000000');
-
     expect(await reward.balanceOf(user.address)).to.be.above(balanceOfReward);
     expect(await p12Mine.getUserLpBalance(pairAddress, user.address)).to.be.equal(balanceOfLpToken);
   });
@@ -247,12 +330,6 @@ describe('lpToken stake ', function () {
     await p12Mine.withdraw(user.address, pairAddress, id);
     expect(await p12Mine.getUserLpBalance(pairAddress, user.address)).to.be.equal(0);
     expect(await reward.balanceOf(user.address)).to.be.above(0);
-  });
-
-  // reset reward value for per block
-  it('show changed reward value success', async function () {
-    await p12Mine.setReward(5n * 10n ** 18n, true);
-    expect(await p12Mine.p12PerBlock()).to.be.equal(5n * 10n ** 18n);
   });
 
   // reset delayK and delayB
@@ -326,17 +403,21 @@ describe('lpToken stake ', function () {
       expect(await p12Mine.getUserLpBalance(pairAddress, user.address)).to.be.equal(total);
     }
   });
-  // claim all pending reward
-  it('show claim all success', async function () {
+
+  // claim  pending reward with fake account
+  it('show claim nothing', async function () {
+    const balanceOfReward = await reward.balanceOf(admin.address);
+    await p12Mine.connect(admin).claim(pair.address);
+    expect(await reward.balanceOf(admin.address)).to.be.equal(balanceOfReward);
+  });
+
+  // get pending reward by claimAll
+  it('show claimAll successfully', async function () {
+    const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    await ethers.provider.send('evm_mine', [timestampBefore + 86400 * 7]);
     const balanceOfReward = await reward.balanceOf(user.address);
     await p12Mine.connect(user).claimAll();
     expect(await reward.balanceOf(user.address)).to.be.above(balanceOfReward);
-  });
-  // claim all pending reward with fake account
-  it('show claim nothing', async function () {
-    const balanceOfReward = await reward.balanceOf(user.address);
-    await p12Mine.claimAll();
-    expect(await reward.balanceOf(user.address)).to.be.equal(balanceOfReward);
   });
 
   it('show withdraw successfully', async function () {
@@ -358,39 +439,21 @@ describe('lpToken stake ', function () {
 
   // try create an existing pool
   it('show create an existing pool fail', async function () {
-    await expect(p12Mine.connect(admin).createPool(pairAddress, true)).to.be.revertedWith('P12Mine: LP Token Already Exist');
+    await expect(p12Mine.connect(admin).createPool(pairAddress)).to.be.revertedWith('P12Mine: LP Token Already Exist');
     expect(await p12Mine.lpTokenRegistry(pairAddress)).to.be.equal(1);
-  });
-
-  // update pool
-  it('show update pool success', async function () {
-    await p12Mine.updatePool(0);
-  });
-  // update all pool
-  it('show update all pool success', async function () {
-    await p12Mine.massUpdatePools();
-  });
-  // try update a non-existing pool
-  it('show update pool fail', async function () {
-    await expect(p12Mine.updatePool(2)).to.be.revertedWith('panic code 0x32');
-  });
-  // get mining speed
-  it('show mining speed > 0', async function () {
-    const res = await p12Mine.getDlpMiningSpeed(pairAddress);
-    expect(res).to.be.equal(5n * 10n ** 18n);
   });
 
   // get pool info
   it('show get pool info success', async function () {
     const len = await p12Mine.poolLength();
-    expect(len).to.equal(1);
+    expect(len).to.equal(2);
     const pid = await p12Mine.getPid(pairAddress);
-    expect(pid).to.be.equal(len.sub(1));
+    const tmp = await p12Mine.lpTokenRegistry(pairAddress);
+    expect(pid).to.be.equal(tmp.sub(1));
   });
-  // get pending reward with fake account
-  it('show claim nothing', async function () {
-    const balanceOfReward = await reward.balanceOf(admin.address);
-    await p12Mine.claim(pairAddress);
-    expect(await reward.balanceOf(admin.address)).to.be.equal(balanceOfReward);
+
+  // user checkpoint
+  it('show checkpoint  success', async function () {
+    await p12Mine.userCheckpoint(pairAddress);
   });
 });
