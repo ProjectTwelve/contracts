@@ -54,7 +54,12 @@
     "SLOAD",
     "composability",
     "Hola",
-    "ipfs"
+    "ipfs",
+    "TOKENLESS",
+    "MAXTIME",
+    "Dslope",
+    "checkins",
+    "checkpointed"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]
 }

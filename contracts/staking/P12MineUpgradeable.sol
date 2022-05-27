@@ -429,5 +429,4 @@ contract P12MineUpgradeable is
 
     return withdrawId;
   }
-
 }
