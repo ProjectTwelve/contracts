@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: MIT
+// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol and https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/master/contracts/access/OwnableUpgradeable.sol
 
 pragma solidity 0.8.13;
 
@@ -58,7 +59,7 @@ contract TwoStepOwnableUpgradeable is Initializable, ContextUpgradeable {
   /**
    * @dev Transfers ownership of the contract to a new account (`newOwner`).
    * Can only be called by the current owner.
-   * Note If direct it false, it will set an pending owner and the OwnerShipTransferring
+   * Note If direct is false, it will set an pending owner and the OwnerShipTransferring
    * only happens when the pending owner claim the ownership
    */
   function transferOwnership(address newOwner, bool direct) public virtual onlyOwner {
