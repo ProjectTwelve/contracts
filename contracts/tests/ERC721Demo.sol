@@ -3,7 +3,7 @@
 pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
-import '../utils/TwoStepOwnable.sol';
+import '../access/TwoStepOwnable.sol';
 
 contract ERC721Demo is ERC721('', ''), TwoStepOwnable {
   /**

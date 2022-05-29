@@ -4,7 +4,7 @@ pragma solidity 0.8.13;
 
 import './interfaces/IP12Asset.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
-import '../utils/TwoStepOwnable.sol';
+import '../access/TwoStepOwnable.sol';
 
 contract P12Asset is IP12Asset, ERC1155(''), TwoStepOwnable {
   /**

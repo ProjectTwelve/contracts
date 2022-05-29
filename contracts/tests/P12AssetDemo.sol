@@ -3,7 +3,7 @@
 pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
-import '../utils/TwoStepOwnable.sol';
+import '../access/TwoStepOwnable.sol';
 
 contract P12AssetDemo is ERC1155(''), TwoStepOwnable {
   // Mapping from token ID to account balances

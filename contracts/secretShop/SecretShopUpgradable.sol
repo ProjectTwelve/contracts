@@ -6,7 +6,7 @@ import './interfaces/IWETHUpgradable.sol';
 
 import './interfaces/ISecretShopUpgradable.sol';
 
-import '../utils/TwoStepOwnableUpgradeable.sol';
+import '../access/TwoStepOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
