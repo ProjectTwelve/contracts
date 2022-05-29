@@ -29,6 +29,9 @@ contract TwoStepOwnableUpgradeable is Initializable, ContextUpgradeable {
     return _owner;
   }
 
+  /**
+   * @dev Return the address of the pending owner
+   */
   function pendingOwner() public view virtual returns (address) {
     return _pendingOwner;
   }
@@ -55,6 +58,8 @@ contract TwoStepOwnableUpgradeable is Initializable, ContextUpgradeable {
   /**
    * @dev Transfers ownership of the contract to a new account (`newOwner`).
    * Can only be called by the current owner.
+   * Note If direct it false, it will set an pending owner and the OwnerShipTransferring
+   * only happens when the pending owner claim the ownership
    */
   function transferOwnership(address newOwner, bool direct) public virtual onlyOwner {
     require(newOwner != address(0), 'TSOwnable: new owner is zero');
@@ -86,7 +91,7 @@ contract TwoStepOwnableUpgradeable is Initializable, ContextUpgradeable {
   }
 
   /**
-   * @dev Transfers ownership of the contract to a new account (`newOwner`).
+   * @dev set the pending owner address
    * Internal function without access restriction.
    */
   function _transferPendingOwnership(address newOwner) internal virtual {
