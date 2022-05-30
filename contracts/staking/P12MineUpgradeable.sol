@@ -10,7 +10,7 @@ import './interfaces/IP12MineUpgradeable.sol';
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '../access/TwoStepOwnableUpgradeable.sol';
+import '../access/SafeOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 
@@ -21,7 +21,7 @@ contract P12MineUpgradeable is
   IP12MineUpgradeable,
   Initializable,
   UUPSUpgradeable,
-  TwoStepOwnableUpgradeable,
+  SafeOwnableUpgradeable,
   ReentrancyGuardUpgradeable,
   PausableUpgradeable
 {

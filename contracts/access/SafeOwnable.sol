@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol and https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
+// Safe Ownable, which use two step transfer pattern to ensure security
+// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol
+// and https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts/utils/Context.sol';
 
-contract TwoStepOwnable is Context {
+contract SafeOwnable is Context {
   address private _owner;
   address private _pendingOwner;
 

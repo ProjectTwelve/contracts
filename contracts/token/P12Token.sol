@@ -3,12 +3,12 @@
 pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '../access/TwoStepOwnable.sol';
+import '../access/SafeOwnable.sol';
 import './IP12Token.sol';
 
 // temporary contract, not corresponding to real token model
 
-contract P12Token is IP12Token, ERC20, TwoStepOwnable {
+contract P12Token is IP12Token, ERC20, SafeOwnable {
   constructor(
     string memory name,
     string memory symbol,

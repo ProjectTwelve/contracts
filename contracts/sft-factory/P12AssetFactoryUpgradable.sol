@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.13;
 
-import '../access/TwoStepOwnableUpgradeable.sol';
+import '../access/SafeOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
@@ -18,7 +18,7 @@ contract P12AssetFactoryUpgradable is
   IP12AssetFactoryUpgradable,
   Initializable,
   ReentrancyGuardUpgradeable,
-  TwoStepOwnableUpgradeable,
+  SafeOwnableUpgradeable,
   PausableUpgradeable,
   UUPSUpgradeable
 {

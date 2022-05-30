@@ -2,11 +2,11 @@
 pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '../access/TwoStepOwnable.sol';
+import '../access/SafeOwnable.sol';
 import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol';
 import './interfaces/IP12V0ERC20.sol';
 
-contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, TwoStepOwnable {
+contract P12V0ERC20 is IP12V0ERC20, ERC20, ERC20Burnable, SafeOwnable {
   /**
    * @dev Off-chain data, game id
    */

@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: MIT
-// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol and https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/master/contracts/access/OwnableUpgradeable.sol
+// Safe Ownable Upgradable, which use two step transfer pattern to ensure security
+// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol
+// and https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 
 pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
 
-contract TwoStepOwnableUpgradeable is Initializable, ContextUpgradeable {
+contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
   address private _owner;
   address private _pendingOwner;
 
