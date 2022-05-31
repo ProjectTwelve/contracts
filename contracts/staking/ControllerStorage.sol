@@ -29,8 +29,8 @@ contract ControllerStorage {
   address public admin; // Can and will be a smart contract
   address public futureAdmin; // Can and will be a smart contract
 
-  address public token; // P12 token
   address public votingEscrow; // Voting escrow
+  address public p12Factory;
 
   // Gauge parameters
   // All numbers are "fixed point" on the basis of 1e18

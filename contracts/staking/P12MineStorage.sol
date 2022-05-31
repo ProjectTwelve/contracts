@@ -7,13 +7,11 @@ contract P12MineStorage {
   struct UserInfo {
     uint256 amount; // How many LP tokens the user has provided.
     uint256 rewardDebt; // Reward debt. See explanation below.
-    uint256 workingAmount; // How many working LP tokens the user has.
-
     //
     // We do some fancy math here. Basically, any point in time, the amount of P12s
     // entitled to a user but is pending to be distributed is:
     //
-    //   pending reward = (workingAmount * pool.accP12PerShare) - user.rewardDebt
+    //   pending reward = (Amount * pool.accP12PerShare) - user.rewardDebt
     //
     // Whenever a user deposits or withdraws LP tokens to a pool. Here's what happens:
     //   1. The pool's `accP12PerShare` (and `lastRewardBlock`) gets updated.
@@ -26,12 +24,12 @@ contract P12MineStorage {
   struct PoolInfo {
     address lpToken; // Address of LP token contract.
     uint256 accP12PerShare; // Accumulated P12s per share, times 1e18. See below.
-    uint256 workingAmount; // How many working LP tokens the pool has.
-    uint256 amount; // hwo many LP tokens the pool has
+    uint256 amount; // how many lpToken in this pool
     uint256 period;
   }
   // withdraw info
   struct WithdrawInfo {
+    address who;
     uint256 amount;
     uint256 unlockTimestamp;
     bool executed;
@@ -42,7 +40,7 @@ contract P12MineStorage {
   address public p12Factory;
   address public p12Token;
   address public votingEscrow;
-  address public controller;
+  address public gaugeController;
 
   address public p12RewardVault;
 
@@ -56,6 +54,7 @@ contract P12MineStorage {
 
   uint256 public delayK;
   uint256 public delayB;
+  uint256 public rate;
 
   // lpToken => id
   mapping(address => bytes32) public preWithdrawIds;

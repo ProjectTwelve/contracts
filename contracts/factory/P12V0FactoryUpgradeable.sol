@@ -16,6 +16,7 @@ import './P12V0ERC20.sol';
 import './interfaces/IP12V0FactoryUpgradeable.sol';
 import './interfaces/IP12Mine.sol';
 import './P12V0FactoryStorage.sol';
+import './interfaces/IGaugeController.sol';
 
 contract P12V0FactoryUpgradeable is
   P12V0FactoryStorage,
@@ -107,13 +108,24 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev set p12mine contract address
-   * @param newP12mine new p12mine address
+   * @param newP12Mine new p12mine address
    */
-  function setP12Mine(address newP12mine) external virtual onlyOwner {
-    require(newP12mine != address(0), 'address cannot be zero');
-    address oldP12Mine = p12mine;
-    p12mine = newP12mine;
-    emit SetP12Mine(oldP12Mine, p12mine);
+  function setP12Mine(address newP12Mine) external virtual onlyOwner {
+    require(newP12Mine != address(0), 'address cannot be zero');
+    address oldP12Mine = p12Mine;
+    p12Mine = newP12Mine;
+    emit SetP12Mine(oldP12Mine, newP12Mine);
+  }
+
+  /**
+   * @dev set gaugeController contract address
+   * @param newGaugeController new gaugeController address
+   */
+  function setGaugeController(address newGaugeController) external virtual onlyOwner {
+    require(newGaugeController != address(0), 'address cannot be zero');
+    address oldGaugeController = gaugeController;
+    gaugeController = newGaugeController;
+    emit SetGaugeController(oldGaugeController, newGaugeController);
   }
 
   /**
@@ -161,7 +173,7 @@ contract P12V0FactoryUpgradeable is
       amountGameCoinDesired,
       amountP12,
       amountGameCoinDesired,
-      address(p12mine),
+      address(p12Mine),
       getBlockTimestamp() + addLiquidityEffectiveTime
     );
     //get pair contract address
@@ -171,14 +183,15 @@ contract P12V0FactoryUpgradeable is
     require(pair != address(0), 'P12Factory::pair address error');
 
     // get lpToken value
-    uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12mine));
+    uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12Mine));
     require(liquidity0 == liquidity1, 'P12Factory: liquidities not =');
 
+    // add pair address to Controller,100 is init weight
+    IGaugeController(gaugeController).addGauge(pair, 0, 100);
     // new staking pool
-    IP12Mine(p12mine).createPool(pair);
+    IP12Mine(p12Mine).createPool(pair);
 
-    //
-    IP12Mine(p12mine).addLpTokenInfoForGameCreator(pair, liquidity1, msg.sender);
+    IP12Mine(p12Mine).addLpTokenInfoForGameCreator(pair, liquidity1, msg.sender);
 
     allGameCoins[gameCoinAddress] = gameId;
     emit CreateGameCoin(gameCoinAddress, gameId, amountP12);

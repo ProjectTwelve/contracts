@@ -11,7 +11,6 @@ import '@openzeppelin/contracts/utils/math/Math.sol';
 import './interfaces/IGaugeController.sol';
 import './interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
-import 'hardhat/console.sol';
 
 contract GaugeControllerUpgradeable is
   ControllerStorage,
@@ -37,9 +36,18 @@ contract GaugeControllerUpgradeable is
     _unpause();
   }
 
-  function initialize(address admin_, address votingEscrow_) public initializer {
+  function initialize(
+    address admin_,
+    address votingEscrow_,
+    address p12Factory_
+  ) public initializer {
+    require(
+      admin_ != address(0) && votingEscrow_ != address(0) && p12Factory_ != address(0),
+      'GaugeController: address can not zero'
+    );
     admin = admin_;
     votingEscrow = votingEscrow_;
+    p12Factory = p12Factory_;
 
     __Pausable_init_unchained();
     __Ownable_init_unchained();
@@ -233,7 +241,7 @@ contract GaugeControllerUpgradeable is
     int128 gaugeType,
     uint256 weight
   ) external virtual {
-    require(msg.sender == admin, 'GaugeController: only admin');
+    require(msg.sender == admin || msg.sender == p12Factory, 'GaugeController: only admin or p12Factory');
     require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GaugeController: gaugeType error');
     require(gaugeTypes[addr] == 0, 'GaugeController: cannot add the same gauge twice'); //dev: cannot add the same gauge twice
 

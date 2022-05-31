@@ -38,6 +38,10 @@ interface IP12V0FactoryUpgradeable {
     uint256 amountGameCoin
   ) external returns (bool);
 
+  function setP12Mine(address newP12Mine) external;
+
+  function setGaugeController(address newGaugeController) external;
+
   // get mintFee
   function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
@@ -71,9 +75,10 @@ interface IP12V0FactoryUpgradeable {
   // game player withdraw gameCoin
   event Withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin);
 
-  // p12Mine address change log
+  // p12Mine and GaugeController address change log
   event SetP12Mine(address oldP12Mine, address newP12Mine);
-
+  //
+  event SetGaugeController(address oldGaugeController, address newGaugeController);
   // change delayB log
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB);
 

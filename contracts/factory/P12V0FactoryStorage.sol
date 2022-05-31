@@ -31,7 +31,8 @@ contract P12V0FactoryStorage {
   /**
    * @dev p12 staking contract
    */
-  address public p12mine;
+  address public p12Mine;
+  address public gaugeController;
 
   // gameId => developer address
   mapping(string => address) public allGames;

@@ -28,4 +28,12 @@ interface IGaugeController {
   function getTotalWeight() external returns (uint256);
 
   function getWeightsSumPerType(int128 typeId) external returns (uint256);
+
+  function addGauge(
+    address addr,
+    int128 gaugeType,
+    uint256 weight
+  ) external;
+
+  function addType(string memory name, uint256 weight) external;
 }
