@@ -8,7 +8,6 @@ describe('p12V0Factory', function () {
   let developer: SignerWithAddress;
   let user: SignerWithAddress;
   let mintId: string;
-  let mintId2: string;
   let gameCoinAddress: string;
   let core: EconomyContract & ExternalContract;
 
@@ -91,20 +90,6 @@ describe('p12V0Factory', function () {
     });
   });
 
-  it('Should show declare mint successfully!', async function () {
-    const amountP12 = BigInt(6) * BigInt(10) ** 17n;
-
-    await core.p12Token.connect(developer).approve(core.p12V0Factory.address, amountP12);
-    const tx = await core.p12V0Factory
-      .connect(developer)
-      .declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
-    (await tx.wait()).events!.forEach((x) => {
-      if (x.event === 'DeclareMint') {
-        mintId2 = x.args!.mintId;
-      }
-    });
-  });
-
   it('Should show execute mint successfully!', async function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
@@ -112,7 +97,6 @@ describe('p12V0Factory', function () {
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
     await core.p12V0Factory.executeMint(gameCoinAddress, mintId);
   });
-
   it('Should show duplicate mint fail!', async function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);

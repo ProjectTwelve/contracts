@@ -16,8 +16,6 @@ import './interfaces/IGaugeController.sol';
 import './interfaces/IP12MineUpgradeable.sol';
 import './P12MineStorage.sol';
 
-
-
 contract P12MineUpgradeable is
   P12MineStorage,
   IP12MineUpgradeable,
@@ -205,7 +203,7 @@ contract P12MineUpgradeable is
       @notice update checkpoint for pool
       @param pid Pool Id
   */
-  function checkpoint(uint256 pid) public whenNotPaused virtual {
+  function checkpoint(uint256 pid) public virtual whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     uint256 _accP12PerShare = pool.accP12PerShare;

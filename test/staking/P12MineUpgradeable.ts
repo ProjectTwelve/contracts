@@ -99,7 +99,7 @@ describe('p12Mine', function () {
   it('show claim p12Token successfully', async function () {
     await core.p12Mine.connect(developer).checkpoint(await core.p12Mine.getPid(pair.address));
     expect(await core.p12Mine.getPid(pair.address)).to.be.equal(1);
-   // await core.p12Mine.connect(developer).claim(pair.address);
+    // await core.p12Mine.connect(developer).claim(pair.address);
   });
 
   // attempts to forge false information to obtain lpToken and p12Tokens should fail
@@ -151,7 +151,7 @@ describe('p12Mine', function () {
   });
 
   // reset rate
-  it('show set new rate successfully', async function (){
+  it('show set new rate successfully', async function () {
     await core.p12Mine.setRate(4n * 10n ** 18n);
     expect(await core.p12Mine.rate()).to.be.equal(4n * 10n ** 18n);
   });
@@ -183,7 +183,6 @@ describe('p12Mine', function () {
 
   // delay unStaking mining
   it('show  withdraw delay', async function () {
-
     const info = await core.p12Mine.userInfo(await core.p12Mine.getPid(pair.address), developer.address);
     const tx = await core.p12Mine.connect(developer).withdrawDelay(pair.address, info.amount);
     expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(info.amount);
