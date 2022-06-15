@@ -4,20 +4,21 @@ pragma solidity 0.8.13;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
 
 import './interfaces/IGaugeController.sol';
-import './interfaces/IVotingEscrow.sol';
+import '../token/interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
+import '../access/SafeOwnableUpgradeable.sol';
+import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 
 contract GaugeControllerUpgradeable is
   ControllerStorage,
   IGaugeController,
   Initializable,
   UUPSUpgradeable,
-  OwnableUpgradeable,
+  SafeOwnableUpgradeable,
   PausableUpgradeable
 {
   using Math for uint256;
@@ -36,18 +37,10 @@ contract GaugeControllerUpgradeable is
     _unpause();
   }
 
-  function initialize(
-    address admin_,
-    address votingEscrow_,
-    address p12Factory_
-  ) public initializer {
-    require(
-      admin_ != address(0) && votingEscrow_ != address(0) && p12Factory_ != address(0),
-      'GaugeController: address can not zero'
-    );
-    admin = admin_;
-    votingEscrow = votingEscrow_;
-    p12Factory = p12Factory_;
+  function initialize(address votingEscrow_, address p12Factory_) public initializer {
+    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GaugeController: address can not zero');
+    votingEscrow = IVotingEscrow(votingEscrow_);
+    p12Factory = IP12V0FactoryUpgradeable(p12Factory_);
 
     __Pausable_init_unchained();
     __Ownable_init_unchained();
@@ -56,31 +49,32 @@ contract GaugeControllerUpgradeable is
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   /**
-      @notice Transfer ownership of GaugeController to `addr`
-      @param addr Address to have ownership transferred to
-     */
-  function commitTransferOwnership(address addr) external virtual {
-    require(msg.sender == admin, 'GaugeController: only admin'); // dev: admin only
-    futureAdmin = addr;
-    emit CommitOwnership(addr);
+    @notice set new votingEscrow
+    @param newVotingEscrow address of votingEscrow
+   */
+  function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual onlyOwner {
+    IVotingEscrow oldVotingEscrow = votingEscrow;
+    require(address(newVotingEscrow) != address(0), 'GaugeController: votingEscrow can not zero');
+    votingEscrow = newVotingEscrow;
+    emit SetVotingEscrow(oldVotingEscrow, newVotingEscrow);
   }
 
   /**
-        @notice Apply pending ownership transfer
-     */
-  function applyTransferOwnership() external virtual {
-    require(msg.sender == admin, 'GaugeController: only admin'); // dev: admin only
-    address _admin = futureAdmin;
-    require(_admin != address(0), 'GaugeController: admin can not zero'); //dev: admin not set
-    admin = _admin;
-    emit ApplyOwnership(_admin);
+    @notice set new p12Factory
+    @param newP12Factory address of newP12Factory
+   */
+  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external virtual onlyOwner {
+    IP12V0FactoryUpgradeable oldP12Factory = p12Factory;
+    require(address(newP12Factory) != address(0), 'GaugeController: votingEscrow can not zero');
+    p12Factory = newP12Factory;
+    emit SetP12Factory(oldP12Factory, newP12Factory);
   }
 
   /**
-        @notice Get gauge type for address
-        @param addr Gauge address
-        @return Gauge type id
-     */
+    @notice Get gauge type for address
+    @param addr Gauge address
+    @return Gauge type id
+  */
   function getGaugeTypes(address addr) external view virtual returns (int128) {
     int128 gaugeType = gaugeTypes[addr];
     require(gaugeType != 0, 'GaugeController: gauge type not add');
@@ -88,11 +82,11 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-        @notice Fill historic type weights week-over-week for missed checkins
-            and return the type weight for the future week
-        @param gaugeType Gauge type id
-        @return Type weight
-     */
+    @notice Fill historic type weights week-over-week for missed checkins
+        and return the type weight for the future week
+    @param gaugeType Gauge type id
+    @return Type weight
+  */
   function _getTypeWeight(int128 gaugeType) internal virtual returns (uint256) {
     uint256 t = timeTypeWeight[gaugeType];
     if (t > 0) {
@@ -114,11 +108,11 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-        @notice Fill sum of gauge weights for the same type week-over-week for
-            missed checkins and return the sum for the future week
-        @param gaugeType Gauge type id
-        @return Sum of weights
-     */
+    @notice Fill sum of gauge weights for the same type week-over-week for
+        missed checkins and return the sum for the future week
+    @param gaugeType Gauge type id
+    @return Sum of weights
+  */
   function _getSum(int128 gaugeType) internal virtual returns (uint256) {
     uint256 t = timeSum[gaugeType];
     if (t > 0) {
@@ -149,10 +143,10 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-         @notice Fill historic total weights week-over-week for missed checkins
-            and return the total for the future week
-        @return Total weight
-     */
+    @notice Fill historic total weights week-over-week for missed checkins
+      and return the total for the future week
+    @return Total weight
+  */
   function _getTotal() internal virtual returns (uint256) {
     uint256 t = timeTotal;
     int128 _nGaugeTypes = nGaugeTypes;
@@ -196,11 +190,11 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-        @notice Fill historic gauge weights week-over-week for missed checkins
-            and return the total for the future week
-        @param gaugeAddr Address of the gauge
-        @return Gauge weight
-     */
+    @notice Fill historic gauge weights week-over-week for missed checkins
+        and return the total for the future week
+    @param gaugeAddr Address of the gauge
+    @return Gauge weight
+  */
   function _getWeight(address gaugeAddr) internal virtual returns (uint256) {
     uint256 t = timeWeight[gaugeAddr];
     if (t > 0) {
@@ -241,7 +235,7 @@ contract GaugeControllerUpgradeable is
     int128 gaugeType,
     uint256 weight
   ) external virtual {
-    require(msg.sender == admin || msg.sender == p12Factory, 'GaugeController: only admin or p12Factory');
+    require(msg.sender == owner() || msg.sender == address(p12Factory), 'GaugeController: only admin or p12Factory');
     require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GaugeController: gaugeType error');
     require(gaugeTypes[addr] == 0, 'GaugeController: cannot add the same gauge twice'); //dev: cannot add the same gauge twice
 
@@ -357,8 +351,7 @@ contract GaugeControllerUpgradeable is
         @param name Name of gauge type
         @param weight Weight of gauge type
      */
-  function addType(string memory name, uint256 weight) external virtual {
-    require(msg.sender == admin, 'GaugeController: only admin');
+  function addType(string memory name, uint256 weight) external virtual onlyOwner {
     int128 typeId = nGaugeTypes;
     gaugeTypeNames[typeId] = name;
     nGaugeTypes = typeId + 1;
@@ -373,8 +366,7 @@ contract GaugeControllerUpgradeable is
         @param typeId Gauge type id
         @param weight New Gauge weight
      */
-  function changeTypeWeight(int128 typeId, uint256 weight) external virtual {
-    require(msg.sender == admin, 'GaugeController: only admin');
+  function changeTypeWeight(int128 typeId, uint256 weight) external virtual onlyOwner {
     _changeTypeWeight(typeId, weight);
   }
 
@@ -407,8 +399,7 @@ contract GaugeControllerUpgradeable is
         @param addr `GaugeController` contract address
         @param weight New Gauge weight
      */
-  function changeGaugeWeight(address addr, uint256 weight) external virtual {
-    require(msg.sender == admin, 'GaugeController: only admin');
+  function changeGaugeWeight(address addr, uint256 weight) external virtual onlyOwner {
     _changeGaugeWeight(addr, weight);
   }
 
@@ -418,9 +409,8 @@ contract GaugeControllerUpgradeable is
         @param userWeight Weight for a gauge in bps (units of 0.01%). Minimal is 0.01%. Ignored if 0
      */
   function voteForGaugeWeights(address gaugeAddr, uint256 userWeight) external virtual whenNotPaused {
-    address escrow = votingEscrow;
-    uint256 slope = IVotingEscrow(escrow).getLastUserSlope(msg.sender);
-    uint256 lockEnd = IVotingEscrow(escrow).lockedEnd(msg.sender);
+    uint256 slope = votingEscrow.getLastUserSlope(msg.sender);
+    uint256 lockEnd = votingEscrow.lockedEnd(msg.sender);
     uint256 nextTime = ((block.timestamp + WEEK) / WEEK) * WEEK;
 
     require(lockEnd > nextTime, ' GaugeController: Your token lock expires too soon');

@@ -14,14 +14,17 @@ describe('p12Mine', function () {
   let pair: Contract;
   let liquidity: number;
   let id: string;
+  let p12Dev: SignerWithAddress;
 
   this.beforeAll(async function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
     admin = accounts[0];
+    p12Dev = accounts[9];
     developer = accounts[1];
     user = accounts[2];
     core = await deployAll();
+    await core.p12V0Factory.connect(admin).grantDevRole(p12Dev.address);
   });
 
   // pause
@@ -43,7 +46,7 @@ describe('p12Mine', function () {
 
   it('Should show developer register successfully', async function () {
     const gameId = '1101';
-    await core.p12V0Factory.connect(admin).register(gameId, developer.address);
+    await core.p12V0Factory.connect(p12Dev).register(gameId, developer.address);
     expect(await core.p12V0Factory.allGames('1101')).to.be.equal(developer.address);
   });
 
@@ -79,8 +82,10 @@ describe('p12Mine', function () {
   });
   // create locker
   it('show create locker successfully', async function () {
-    await core.p12Token.connect(developer).approve(core.votingEscrow.address, 2n * 10n ** 18n);
+    await core.p12Token.connect(developer).approve(core.votingEscrow.address, 200n * 10n ** 18n);
     await core.votingEscrow.connect(developer).createLock(2n * 10n ** 18n, 1716693857);
+    const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    await ethers.provider.send('evm_mine', [timestampBefore + 10 * 86400]);
   });
   // get gauge type
   it('show gauge type', async function () {
@@ -91,7 +96,6 @@ describe('p12Mine', function () {
     await core.gaugeController.connect(developer).voteForGaugeWeights(pair.address, 5000);
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 86400 * 10]);
-    await core.gaugeController.connect(developer).voteForGaugeWeights(pair.address, 3000);
     expect(await core.gaugeController.getTypeWeight(0)).to.be.equal(1n * 10n ** 18n);
   });
 
@@ -99,7 +103,9 @@ describe('p12Mine', function () {
   it('show claim p12Token successfully', async function () {
     await core.p12Mine.connect(developer).checkpoint(await core.p12Mine.getPid(pair.address));
     expect(await core.p12Mine.getPid(pair.address)).to.be.equal(1);
-    // await core.p12Mine.connect(developer).claim(pair.address);
+    const balanceOf = await core.p12Token.balanceOf(developer.address);
+    await core.p12Mine.connect(developer).claim(pair.address);
+    expect(await core.p12Token.balanceOf(developer.address)).to.be.above(balanceOf);
   });
 
   // attempts to forge false information to obtain lpToken and p12Tokens should fail

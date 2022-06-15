@@ -55,8 +55,6 @@ export async function deployExternal(): Promise<ExternalContract> {
 }
 
 export async function deployEconomyContract(externalContract: ExternalContract): Promise<EconomyContract> {
-  const accounts = await ethers.getSigners();
-  const admin = accounts[0];
   const P12Token = await ethers.getContractFactory('P12Token');
   const P12V0FactoryF = await ethers.getContractFactory('P12V0FactoryUpgradeable');
   const P12AssetFactoryF = await ethers.getContractFactory('P12AssetFactoryUpgradable');
@@ -80,11 +78,7 @@ export async function deployEconomyContract(externalContract: ExternalContract):
   const erc1155delegate = await ERC1155DelegateF.deploy();
   const erc721delegate = await ERC721DelegateF.deploy();
   const votingEscrow = await VotingEscrow.deploy(p12Token.address, 'Vote-escrowed P12', 'veP12');
-  const gaugeController = await upgrades.deployProxy(GaugeController, [
-    admin.address,
-    votingEscrow.address,
-    p12V0Factory.address,
-  ]);
+  const gaugeController = await upgrades.deployProxy(GaugeController, [votingEscrow.address, p12V0Factory.address]);
   const p12Mine = await upgrades.deployProxy(P12MineF, [
     p12Token.address,
     p12V0Factory.address,
@@ -132,7 +126,6 @@ export async function deployAll(): Promise<EconomyContract & ExternalContract> {
   const ex = await deployExternal();
   const ec = await deployEconomyContract(ex);
   await setUp(ec);
-
   return { ...ex, ...ec };
 }
 

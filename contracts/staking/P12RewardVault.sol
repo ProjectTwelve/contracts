@@ -3,17 +3,18 @@
 pragma solidity 0.8.13;
 pragma experimental ABIEncoderV2;
 
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '../access/SafeOwnable.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './interfaces/IP12RewardVault.sol';
+import '../token/interfaces/IP12Token.sol';
 
-contract P12RewardVault is Ownable, IP12RewardVault {
+contract P12RewardVault is SafeOwnable, IP12RewardVault {
   using SafeERC20 for IERC20;
 
-  address public p12Token;
+  IP12Token public p12Token;
 
-  constructor(address p12Token_) {
+  constructor(IP12Token p12Token_) {
     p12Token = p12Token_;
   }
 
@@ -23,6 +24,6 @@ contract P12RewardVault is Ownable, IP12RewardVault {
     @param amount number of awards 
    */
   function reward(address to, uint256 amount) external virtual override onlyOwner {
-    IERC20(p12Token).safeTransfer(to, amount);
+    IERC20(address(p12Token)).safeTransfer(to, amount);
   }
 }

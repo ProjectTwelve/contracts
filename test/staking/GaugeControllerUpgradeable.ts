@@ -72,9 +72,8 @@ describe('gaugeController', function () {
 
   // change admin
   it('show change admin successfully', async function () {
-    await core.gaugeController.commitTransferOwnership(user.address);
-    await core.gaugeController.applyTransferOwnership();
-    const addr = await core.gaugeController.admin();
+    await core.gaugeController.transferOwnership(user.address, true);
+    const addr = await core.gaugeController.owner();
     expect(addr).to.be.equal(user.address);
   });
 });

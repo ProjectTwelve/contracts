@@ -10,18 +10,23 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 import './interfaces/IGaugeController.sol';
 import './interfaces/IP12MineUpgradeable.sol';
 import './P12MineStorage.sol';
+import '../access/SafeOwnableUpgradeable.sol';
+import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
+
+import '../token/interfaces/IP12Token.sol';
 
 contract P12MineUpgradeable is
+  AccessControlUpgradeable,
   P12MineStorage,
   IP12MineUpgradeable,
-  Initializable,
   UUPSUpgradeable,
-  OwnableUpgradeable,
+  SafeOwnableUpgradeable,
   ReentrancyGuardUpgradeable,
   PausableUpgradeable
 {
@@ -29,7 +34,6 @@ contract P12MineUpgradeable is
   using Math for uint256;
 
   uint256 public constant ONE = 10**18;
-  uint256 public constant BOOST_WARMUP = 2 * 7 * 86400;
   uint256 public constant WEEK = 7 * 86400;
 
   function pause() public onlyOwner {
@@ -50,21 +54,21 @@ contract P12MineUpgradeable is
     @param delayB_ delayB_ is a coefficient
    */
   function initialize(
-    address p12Token_,
-    address p12Factory_,
-    address gaugeController_,
-    address votingEscrow_,
+    IP12Token p12Token_,
+    IP12V0FactoryUpgradeable p12Factory_,
+    IGaugeController gaugeController_,
+    IVotingEscrow votingEscrow_,
     uint256 delayK_,
     uint256 delayB_
   ) public initializer {
     p12Token = p12Token_;
-    p12Factory = p12Factory_;
-    gaugeController = gaugeController_;
+    p12Factory = IP12V0FactoryUpgradeable(p12Factory_);
+    gaugeController = IGaugeController(gaugeController_);
     votingEscrow = votingEscrow_;
-    p12RewardVault = address(new P12RewardVault(p12Token_));
+    p12RewardVault = IP12RewardVault(new P12RewardVault(p12Token_));
     delayK = delayK_;
     delayB = delayB_;
-    rate = 5 * ONE;
+    rate = 0.5e17;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
@@ -88,13 +92,13 @@ contract P12MineUpgradeable is
 
   // check the caller
   modifier onlyP12FactoryOrOwner() {
-    require(msg.sender == p12Factory || msg.sender == owner(), 'P12Mine: not p12factory or owner');
+    require(msg.sender == address(p12Factory) || msg.sender == owner(), 'P12Mine: not p12factory or owner');
     _;
   }
 
   // check the caller
   modifier onlyP12Factory() {
-    require(msg.sender == p12Factory, 'P12Mine: caller not p12factory');
+    require(msg.sender == address(p12Factory), 'P12Mine: caller not p12factory');
     _;
   }
 
@@ -195,6 +199,39 @@ contract P12MineUpgradeable is
     checkpointAll();
     emit SetRate(oldRate, newRate);
     return true;
+  }
+
+  /**
+    @notice set new votingEscrow
+    @param newVotingEscrow address of votingEscrow
+   */
+  function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual onlyOwner {
+    IVotingEscrow oldVotingEscrow = votingEscrow;
+    require(address(newVotingEscrow) != address(0), 'P12Mine: votingEscrow can not zero');
+    votingEscrow = newVotingEscrow;
+    emit SetVotingEscrow(oldVotingEscrow, newVotingEscrow);
+  }
+
+  /**
+  @notice set new p12Factory
+  @param newP12Factory address of p12Factory
+   */
+  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external virtual onlyOwner {
+    IP12V0FactoryUpgradeable oldP12Factory = p12Factory;
+    require(address(newP12Factory) != address(0), 'P12Mine: p12Factory can not zero');
+    p12Factory = newP12Factory;
+    emit SetP12Factory(oldP12Factory, newP12Factory);
+  }
+
+  /**
+  @notice set new gaugeController
+  @param newGaugeController address of gaugeController
+   */
+  function setGaugeController(IGaugeController newGaugeController) external virtual onlyOwner {
+    IGaugeController oldGaugeController = gaugeController;
+    require(address(newGaugeController) != address(0), 'P12Mine: gaugeController can not zero');
+    gaugeController = newGaugeController;
+    emit SetGaugeController(oldGaugeController, newGaugeController);
   }
 
   // ============ checkpoint ============
@@ -368,7 +405,7 @@ contract P12MineUpgradeable is
     @param amount Number of p12
    */
   function _safeP12Transfer(address to, uint256 amount) internal virtual {
-    IP12RewardVault(p12RewardVault).reward(to, amount);
+    p12RewardVault.reward(to, amount);
     realizedReward[to] = realizedReward[to] + amount;
     emit Claim(to, amount);
   }

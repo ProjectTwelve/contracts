@@ -2,6 +2,10 @@
 
 pragma solidity 0.8.13;
 
+import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+import '../token/interfaces/IVotingEscrow.sol';
+import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
+
 contract ControllerStorage {
   struct Point {
     uint256 bias;
@@ -26,11 +30,8 @@ contract ControllerStorage {
     uint256 newBias;
   }
 
-  address public admin; // Can and will be a smart contract
-  address public futureAdmin; // Can and will be a smart contract
-
-  address public votingEscrow; // Voting escrow
-  address public p12Factory;
+  IVotingEscrow public votingEscrow; // Voting escrow
+  IP12V0FactoryUpgradeable public p12Factory;
 
   // Gauge parameters
   // All numbers are "fixed point" on the basis of 1e18

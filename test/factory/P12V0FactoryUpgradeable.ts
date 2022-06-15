@@ -5,19 +5,23 @@ import { deployAll, EconomyContract, ExternalContract } from '../../scripts/depl
 
 describe('p12V0Factory', function () {
   let admin: SignerWithAddress;
-  let developer: SignerWithAddress;
+  let p12Dev: SignerWithAddress;
+  let gameDeveloper: SignerWithAddress;
   let user: SignerWithAddress;
   let mintId: string;
   let gameCoinAddress: string;
   let core: EconomyContract & ExternalContract;
-
+  let test: SignerWithAddress;
   this.beforeAll(async function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
     admin = accounts[0];
-    developer = accounts[1];
-    user = accounts[2];
+    gameDeveloper = accounts[2];
+    user = accounts[3];
+    p12Dev = accounts[8];
+    test = accounts[9];
     core = await deployAll();
+    await core.p12V0Factory.connect(admin).grantDevRole(p12Dev.address);
   });
   it('Should pausable effective', async () => {
     await core.p12V0Factory.pause();
@@ -27,16 +31,21 @@ describe('p12V0Factory', function () {
     await core.p12V0Factory.unpause();
   });
 
-  it('Should show developer register successfully', async function () {
+  it('Should show gameDeveloper register successfully', async function () {
     const gameId = '1101';
-    await core.p12V0Factory.connect(admin).register(gameId, developer.address);
-    expect(await core.p12V0Factory.allGames('1101')).to.be.equal(developer.address);
+    await core.p12V0Factory.connect(p12Dev).register(gameId, gameDeveloper.address);
+    expect(await core.p12V0Factory.allGames('1101')).to.be.equal(gameDeveloper.address);
   });
-
-  it('Give developer p12 and approve p12 token to p12V0factory', async function () {
-    await core.p12Token.connect(admin).transfer(developer.address, BigInt(3) * 10n ** 18n);
-    expect(await core.p12Token.balanceOf(developer.address)).to.be.equal(3n * 10n ** 18n);
-    await core.p12Token.connect(developer).approve(core.p12V0Factory.address, 3n * 10n ** 18n);
+  it('should show register fail by test account', async function () {
+    const gameId2 = '1102';
+    expect(core.p12V0Factory.connect(test).register(gameId2, gameDeveloper.address)).to.be.revertedWith(
+      'AccessControl: account 0xa0ee7a142d267c1f36714e4a8f75612f20a79720 is missing role 0x7613a25ecc738585a232ad50a301178f12b3ba8887d13e138b523c4269c47689',
+    );
+  });
+  it('Give gameDeveloper p12 and approve p12 token to p12V0factory', async function () {
+    await core.p12Token.connect(admin).transfer(gameDeveloper.address, BigInt(3) * 10n ** 18n);
+    expect(await core.p12Token.balanceOf(gameDeveloper.address)).to.be.equal(3n * 10n ** 18n);
+    await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, 3n * 10n ** 18n);
   });
   it('Should show gameCoin create successfully!', async function () {
     const name = 'GameCoin';
@@ -47,9 +56,9 @@ describe('p12V0Factory', function () {
     const amountGameCoin = BigInt(10) * BigInt(10) ** 18n;
     const amountP12 = BigInt(1) * BigInt(10) ** 18n;
 
-    await core.p12Token.connect(developer).approve(core.p12V0Factory.address, amountP12);
+    await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, amountP12);
     const createInfo = await core.p12V0Factory
-      .connect(developer)
+      .connect(gameDeveloper)
       .create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
 
     (await createInfo.wait()).events!.forEach((x) => {
@@ -57,6 +66,15 @@ describe('p12V0Factory', function () {
         gameCoinAddress = x.args!.gameCoinAddress;
       }
     });
+  });
+
+  // chang superAdmin to a new account
+  it('show change superAdmin and new superAdmin successfully', async function () {
+    await core.p12V0Factory.grantSuperAdminRoleToMultiSignWallet(test.address);
+    expect(await core.p12V0Factory.owner()).to.be.equal(test.address);
+    const adminHash = await core.p12V0Factory.SUPER_ADMIN_ROLE();
+    expect(await core.p12V0Factory.hasRole(adminHash, test.address)).to.be.equal(true);
+    await core.p12V0Factory.connect(test).grantSuperAdminRoleToMultiSignWallet(admin.address);
   });
 
   it('Should show set delay variable successfully! ', async function () {
@@ -79,9 +97,9 @@ describe('p12V0Factory', function () {
   });
   it('Should show declare mint successfully!', async function () {
     const amountP12 = BigInt(6) * BigInt(10) ** 17n;
-    await core.p12Token.connect(developer).approve(core.p12V0Factory.address, amountP12);
+    await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, amountP12);
     const tx = await core.p12V0Factory
-      .connect(developer)
+      .connect(gameDeveloper)
       .declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
     (await tx.wait()).events!.forEach((x) => {
       if (x.event === 'DeclareMint') {
@@ -105,9 +123,9 @@ describe('p12V0Factory', function () {
     await expect(core.p12V0Factory.executeMint(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
   });
 
-  it('Should show change game developer successfully !', async function () {
+  it('Should show change game gameDeveloper successfully !', async function () {
     const gameId = '1101';
-    await core.p12V0Factory.connect(admin).register(gameId, admin.address);
+    await core.p12V0Factory.connect(p12Dev).register(gameId, admin.address);
     expect(await core.p12V0Factory.allGames('1101')).to.be.equal(admin.address);
   });
 

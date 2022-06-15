@@ -2,6 +2,10 @@
 
 pragma solidity 0.8.13;
 
+import '../../token/interfaces/IVotingEscrow.sol';
+import '../../factory/interfaces/IP12V0FactoryUpgradeable.sol';
+import './IGaugeController.sol';
+
 interface IP12MineUpgradeable {
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // deposit lpToken log
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // withdraw lpToken log
@@ -16,6 +20,9 @@ interface IP12MineUpgradeable {
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB); // change delayB log
   event SetDelayK(uint256 oldDelayK, uint256 newDelayK); // change delayK log
   event SetRate(uint256 oldRate, uint256 newRate); // set new rate
+  event SetVotingEscrow(IVotingEscrow oldVotingEscrow, IVotingEscrow newVotingEscrow);
+  event SetP12Factory(IP12V0FactoryUpgradeable oldP12Factory, IP12V0FactoryUpgradeable newP12Factory);
+  event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
 
   function createPool(address lpToken) external; // new pool
 
@@ -26,6 +33,12 @@ interface IP12MineUpgradeable {
   function deposit(address lpToken, uint256 amount) external; // deposit lpToken
 
   function setRate(uint256 newRate) external returns (bool);
+
+  function setVotingEscrow(IVotingEscrow newVotingEscrow) external;
+
+  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external;
+
+  function setGaugeController(IGaugeController newGaugeController) external;
 
   function withdraw(address lpToken, bytes32 id) external; // withdraw lpToken
 

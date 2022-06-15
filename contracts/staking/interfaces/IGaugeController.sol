@@ -2,6 +2,9 @@
 
 pragma solidity 0.8.13;
 
+import '../../token/interfaces/IVotingEscrow.sol';
+import '../../factory/interfaces/IP12V0FactoryUpgradeable.sol';
+
 interface IGaugeController {
   event CommitOwnership(address admin);
 
@@ -16,6 +19,10 @@ interface IGaugeController {
   event VoteForGauge(uint256 time, address user, address gaugeAddress, uint256 weight);
 
   event NewGauge(address addr, int128 gaugeType, uint256 weight);
+
+  event SetVotingEscrow(IVotingEscrow oldVotingEscrow, IVotingEscrow newVotingEscrow);
+
+  event SetP12Factory(IP12V0FactoryUpgradeable oldP12Factory, IP12V0FactoryUpgradeable newP12Factory);
 
   function checkpointGauge(address addr) external;
 
@@ -36,4 +43,8 @@ interface IGaugeController {
   ) external;
 
   function addType(string memory name, uint256 weight) external;
+
+  function setVotingEscrow(IVotingEscrow newVotingEscrow) external;
+
+  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external;
 }

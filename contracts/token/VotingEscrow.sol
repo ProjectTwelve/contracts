@@ -157,7 +157,6 @@ contract VotingEscrow is ReentrancyGuard {
     cpState.oldDslope = 0;
     cpState.newDslope = 0;
     cpState._epoch = epoch;
-
     if (addr != address(0)) {
       // Calculate slopes and biases
       // Kept at zero when they have to
