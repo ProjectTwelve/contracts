@@ -87,7 +87,6 @@ export async function deployEconomyContract(externalContract: ExternalContract):
     60,
     60,
   ]);
-
   return {
     p12Token: p12Token,
     p12V0Factory: await ethers.getContractAt('P12V0FactoryUpgradeable', p12V0Factory.address),

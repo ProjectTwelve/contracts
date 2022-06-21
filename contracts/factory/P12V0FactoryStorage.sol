@@ -41,6 +41,8 @@ contract P12V0FactoryStorage {
   IP12MineUpgradeable public p12Mine;
   IGaugeController public gaugeController;
 
+  address public pendingSuperAdmin;
+
   // gameId => developer address
   mapping(string => address) public allGames;
   // gameCoinAddress => gameId

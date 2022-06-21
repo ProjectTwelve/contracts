@@ -15,7 +15,7 @@ describe('p12Mine', function () {
   let liquidity: number;
   let id: string;
   let p12Dev: SignerWithAddress;
-
+  let superAdminRole: string;
   this.beforeAll(async function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
@@ -24,7 +24,8 @@ describe('p12Mine', function () {
     developer = accounts[1];
     user = accounts[2];
     core = await deployAll();
-    await core.p12V0Factory.connect(admin).grantDevRole(p12Dev.address);
+    superAdminRole = await core.p12V0Factory.SUPER_ADMIN_ROLE();
+    await core.p12V0Factory.connect(admin).grantRole(superAdminRole, p12Dev.address);
   });
 
   // pause

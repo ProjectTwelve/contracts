@@ -20,8 +20,8 @@ async function main() {
   // transfer ownership
   const gnosis = '0x3247bd464B08de78ad8c53d942FaC2eb61bA0d01';
   const factory = await P12V0FactoryUpgradeable.attach(p12V0Factory.address);
-
-  await factory.grantSuperAdminRoleToMultiSignWallet(gnosis);
+  const superAdminRole = await factory.SUPER_ADMIN_ROLE();
+  await factory.grantRole(superAdminRole, gnosis);
 }
 
 main().catch((error) => {

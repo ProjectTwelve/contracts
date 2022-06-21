@@ -5,7 +5,9 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
-contract VotingEscrow is ReentrancyGuard {
+import '../access/SafeOwnable.sol';
+
+contract VotingEscrow is ReentrancyGuard , SafeOwnable{
   using SafeERC20 for IERC20;
   // all future times are rounded by week
   uint256 constant WEEK = 7 * 86400;
@@ -24,15 +26,9 @@ contract VotingEscrow is ReentrancyGuard {
   mapping(address => uint256) public userPointEpoch;
   mapping(uint256 => int256) public slopeChanges;
 
-  address public controller;
-  bool public transfersEnabled;
-
   string public name;
   string public symbol;
   uint256 public decimals = 18;
-
-  address public admin;
-  address public futureAdmin;
 
   enum OperationType {
     DEPOSIT_FOR_TYPE,
@@ -78,34 +74,9 @@ contract VotingEscrow is ReentrancyGuard {
   ) {
     name = name_;
     symbol = symbol_;
-    admin = msg.sender;
     p12Token = P12TokenAddr;
     pointHistory[0].blk = block.number;
     pointHistory[0].ts = block.timestamp;
-    controller = msg.sender;
-    transfersEnabled = true;
-  }
-
-  /** 
-    @notice Transfer ownership of VotingEscrow contract to `addr`
-    @param addr Address to have ownership transferred to
-  */
-  function commitTransferOwnership(address addr) external {
-    require(msg.sender == admin, 'VotingEscrow: caller must be admin');
-    futureAdmin = addr;
-    emit CommitOwnership(addr);
-  }
-
-  /** 
-    @notice Apply ownership transfer
-  */
-
-  function applyTransferOwnership() external {
-    require(msg.sender == admin, 'VotingEscrow: caller must be admin');
-    address _admin = futureAdmin;
-    require(_admin != address(0), 'VotingEscrow: admin address cannot be zero');
-    admin = _admin;
-    emit ApplyOwnership(_admin);
   }
 
   /** 
@@ -566,11 +537,4 @@ contract VotingEscrow is ReentrancyGuard {
     return supplyAt(point, point.ts + dt);
   }
 
-  /** 
-    @notice Dummy methods for compatibility with Aragon
-  */
-  function changeController(address newController) external {
-    require(msg.sender == controller, 'VotingEscrow: caller must be controller');
-    controller = newController;
-  }
 }

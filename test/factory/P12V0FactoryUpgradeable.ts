@@ -12,6 +12,8 @@ describe('p12V0Factory', function () {
   let gameCoinAddress: string;
   let core: EconomyContract & ExternalContract;
   let test: SignerWithAddress;
+  let devRole: string;
+  let superAdminRole: string;
   this.beforeAll(async function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
@@ -21,7 +23,9 @@ describe('p12V0Factory', function () {
     p12Dev = accounts[8];
     test = accounts[9];
     core = await deployAll();
-    await core.p12V0Factory.connect(admin).grantDevRole(p12Dev.address);
+    devRole = await core.p12V0Factory.DEV_ROLE();
+    superAdminRole = await core.p12V0Factory.SUPER_ADMIN_ROLE();
+    await core.p12V0Factory.connect(admin).grantRole(devRole, p12Dev.address);
   });
   it('Should pausable effective', async () => {
     await core.p12V0Factory.pause();
@@ -70,16 +74,18 @@ describe('p12V0Factory', function () {
 
   // chang superAdmin to a new account
   it('show change superAdmin and new superAdmin successfully', async function () {
-    await core.p12V0Factory.grantSuperAdminRoleToMultiSignWallet(test.address);
-    expect(await core.p12V0Factory.owner()).to.be.equal(test.address);
-    const adminHash = await core.p12V0Factory.SUPER_ADMIN_ROLE();
-    expect(await core.p12V0Factory.hasRole(adminHash, test.address)).to.be.equal(true);
-    await core.p12V0Factory.connect(test).grantSuperAdminRoleToMultiSignWallet(admin.address);
+    await core.p12V0Factory.connect(admin).grantSuperAdminRole(test.address);
+    expect(await core.p12V0Factory.hasRole(superAdminRole, test.address)).to.be.equal(false);
+    await core.p12V0Factory.connect(test).applyGrantSuperAdminRole();
+    expect(await core.p12V0Factory.hasRole(superAdminRole, test.address)).to.be.equal(true);
+    expect(await core.p12V0Factory.hasRole(superAdminRole, admin.address)).to.be.equal(true);
+    await core.p12V0Factory.connect(admin).renounceRole(superAdminRole, admin.address);
+    expect(await core.p12V0Factory.hasRole(superAdminRole, admin.address)).to.be.equal(false);
   });
 
   it('Should show set delay variable successfully! ', async function () {
-    await core.p12V0Factory.connect(admin).setDelayK(1);
-    await core.p12V0Factory.connect(admin).setDelayB(1);
+    await core.p12V0Factory.connect(test).setDelayK(1);
+    await core.p12V0Factory.connect(test).setDelayB(1);
     expect(await core.p12V0Factory.delayK()).to.be.equal(1);
     expect(await core.p12V0Factory.delayB()).to.be.equal(1);
   });
@@ -130,17 +136,18 @@ describe('p12V0Factory', function () {
   });
 
   it('Should show withdraw gameCoin successfully', async function () {
-    await core.p12V0Factory.connect(admin).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
+    await core.p12V0Factory.connect(test).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
     const P12V0ERC20 = await ethers.getContractFactory('P12V0ERC20');
     const p12V0ERC20 = await P12V0ERC20.attach(gameCoinAddress);
 
     expect(await p12V0ERC20.balanceOf(user.address)).to.be.equal(1n * 10n ** 18n);
   });
   it('Should contract upgrade successfully', async function () {
+    await core.p12V0Factory.connect(test).grantSuperAdminRole(admin.address);
+    await core.p12V0Factory.connect(admin).applyGrantSuperAdminRole();
     const p12FactoryAlterF = await ethers.getContractFactory('P12V0FactoryUpgradeableAlter');
 
     await upgrades.upgradeProxy(core.p12V0Factory.address, p12FactoryAlterF);
-
     const p12FactoryAlter = await ethers.getContractAt('P12V0FactoryUpgradeableAlter', core.p12V0Factory.address);
 
     await p12FactoryAlter.callWhiteBlack();

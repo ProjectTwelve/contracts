@@ -7,7 +7,6 @@ import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '../access/SafeOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
@@ -25,7 +24,6 @@ contract P12V0FactoryUpgradeable is
   P12V0FactoryStorage,
   UUPSUpgradeable,
   IP12V0FactoryUpgradeable,
-  SafeOwnableUpgradeable,
   ReentrancyGuardUpgradeable,
   PausableUpgradeable
 {
@@ -58,7 +56,6 @@ contract P12V0FactoryUpgradeable is
     _setRoleAdmin(DEV_ROLE, SUPER_ADMIN_ROLE);
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
-    __Ownable_init_unchained();
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyRole(SUPER_ADMIN_ROLE) {}
@@ -141,35 +138,27 @@ contract P12V0FactoryUpgradeable is
     emit SetGaugeController(oldGaugeController, newGaugeController);
   }
 
-  /**
-    @notice Transfer the permissions under the role
-    @param multiSignWallet address of multiSignWallet 
-   */
-  function grantSuperAdminRoleToMultiSignWallet(address multiSignWallet) external virtual onlyRole(SUPER_ADMIN_ROLE) {
-    require(multiSignWallet != address(0), 'P12Factory: address cannot be zero');
-    _grantRole(SUPER_ADMIN_ROLE, multiSignWallet);
-    renounceRole(SUPER_ADMIN_ROLE, msg.sender);
-    _transferOwnership(multiSignWallet);
-  }
 
   /**
-    @notice Grant p12Dev permissions to the account
-    @param dev address of dev account
-   */
-  function grantDevRole(address dev) external virtual onlyRole(SUPER_ADMIN_ROLE) {
-    require(dev != address(0), 'P12Factory: address cannot be zero');
-    _grantRole(DEV_ROLE, dev);
+    @dev Grants `SUPER_ADMIN_ROLE` to `account`.
+    the caller must have SUPER_ADMIN_ROLE
+  */
+  function grantSuperAdminRole(address account) public virtual onlyRole(SUPER_ADMIN_ROLE) {
+    require(account != address(0), 'P12Factory: address cannot be zero');
+    pendingSuperAdmin = account;
   }
-
   /**
-    @notice Cancel the permissions of the P12Dev account
-    @param dev address of dev account
-   */
-  function revokeDevRole(address dev) external virtual onlyRole(SUPER_ADMIN_ROLE) {
-    require(dev != address(0), 'P12Factory: address cannot be zero');
-    _revokeRole(DEV_ROLE, dev);
+    @notice Transfer the super administrative authority to the pending super admin account, 
+    and the original super administrator should give up the existing authority through `renounceRole` function
+    Otherwise, the account still has the control permission under the `SUPER_ADMIN_ROLE` role to the contract,
+    never forget do it
+  */
+  function applyGrantSuperAdminRole()public virtual{
+    require(msg.sender == pendingSuperAdmin,'P12Factory: caller must be pending admin');
+    _grantRole(SUPER_ADMIN_ROLE, msg.sender);
   }
 
+  
   /**
    * @dev create binding between game and developer, only called by p12 backend
    * @param gameId game id
