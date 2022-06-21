@@ -56,8 +56,8 @@ describe('P12AssetFactoryUpgradable', function () {
         kind: 'uups',
       },
     );
-
-    await p12factory.grantDevRole(p12Dev.address);
+    const devRole = await p12factory.DEV_ROLE();
+    await p12factory.grantRole(devRole, p12Dev.address);
 
     // register game
     await p12factory.connect(p12Dev).register('gameId1', developer1.address);

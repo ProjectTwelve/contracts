@@ -138,7 +138,6 @@ contract P12V0FactoryUpgradeable is
     emit SetGaugeController(oldGaugeController, newGaugeController);
   }
 
-
   /**
     @dev Grants `SUPER_ADMIN_ROLE` to `account`.
     the caller must have SUPER_ADMIN_ROLE
@@ -147,18 +146,18 @@ contract P12V0FactoryUpgradeable is
     require(account != address(0), 'P12Factory: address cannot be zero');
     pendingSuperAdmin = account;
   }
+
   /**
     @notice Transfer the super administrative authority to the pending super admin account, 
     and the original super administrator should give up the existing authority through `renounceRole` function
     Otherwise, the account still has the control permission under the `SUPER_ADMIN_ROLE` role to the contract,
     never forget do it
   */
-  function applyGrantSuperAdminRole()public virtual{
-    require(msg.sender == pendingSuperAdmin,'P12Factory: caller must be pending admin');
+  function applyGrantSuperAdminRole() public virtual {
+    require(msg.sender == pendingSuperAdmin, 'P12Factory: caller must be pending admin');
     _grantRole(SUPER_ADMIN_ROLE, msg.sender);
   }
 
-  
   /**
    * @dev create binding between game and developer, only called by p12 backend
    * @param gameId game id

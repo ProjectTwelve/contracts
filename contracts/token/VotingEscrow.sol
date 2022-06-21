@@ -7,7 +7,7 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 
 import '../access/SafeOwnable.sol';
 
-contract VotingEscrow is ReentrancyGuard , SafeOwnable{
+contract VotingEscrow is ReentrancyGuard, SafeOwnable {
   using SafeERC20 for IERC20;
   // all future times are rounded by week
   uint256 constant WEEK = 7 * 86400;
@@ -536,5 +536,4 @@ contract VotingEscrow is ReentrancyGuard , SafeOwnable{
     // Now dt contains info on how far are we beyond point
     return supplyAt(point, point.ts + dt);
   }
-
 }
