@@ -10,7 +10,6 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol';
 
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 import './interfaces/IGaugeController.sol';
@@ -22,7 +21,6 @@ import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 import '../token/interfaces/IP12Token.sol';
 
 contract P12MineUpgradeable is
-  AccessControlUpgradeable,
   P12MineStorage,
   IP12MineUpgradeable,
   UUPSUpgradeable,
@@ -245,7 +243,7 @@ contract P12MineUpgradeable is
     UserInfo storage user = userInfo[pid][msg.sender];
     uint256 _accP12PerShare = pool.accP12PerShare;
     uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
-    IGaugeController(gaugeController).checkpointGauge(address(pool.lpToken));
+    gaugeController.checkpointGauge(address(pool.lpToken));
     require(block.timestamp > _periodTime, 'P12Mine: need current timestamp > _periodTime');
     if (pool.amount == 0) {
       pool.period += 1;
@@ -256,7 +254,7 @@ contract P12MineUpgradeable is
     uint256 weekTime = Math.min(((_periodTime + WEEK) / WEEK) * WEEK, block.timestamp);
     for (uint256 i = 0; i < 500; i++) {
       uint256 dt = weekTime - prevWeekTime;
-      uint256 w = IGaugeController(gaugeController).gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
+      uint256 w = gaugeController.gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
       if (user.amount > 0) {
         _accP12PerShare += (rate * w * dt) / pool.amount;
       }

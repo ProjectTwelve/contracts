@@ -12,6 +12,7 @@ import '../token/interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
 import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
+import 'hardhat/console.sol';
 
 contract GaugeControllerUpgradeable is
   ControllerStorage,
@@ -293,6 +294,7 @@ contract GaugeControllerUpgradeable is
      */
   function _gaugeRelativeWeight(address addr, uint256 time) internal view virtual returns (uint256) {
     uint256 t = (time / WEEK) * WEEK;
+
     uint256 totalWeight = pointsTotal[t];
 
     if (totalWeight > 0) {
@@ -409,7 +411,7 @@ contract GaugeControllerUpgradeable is
         @param userWeight Weight for a gauge in bps (units of 0.01%). Minimal is 0.01%. Ignored if 0
      */
   function voteForGaugeWeights(address gaugeAddr, uint256 userWeight) external virtual whenNotPaused {
-    uint256 slope = votingEscrow.getLastUserSlope(msg.sender);
+    uint256 slope = uint256(votingEscrow.getLastUserSlope(msg.sender));
     uint256 lockEnd = votingEscrow.lockedEnd(msg.sender);
     uint256 nextTime = ((block.timestamp + WEEK) / WEEK) * WEEK;
 

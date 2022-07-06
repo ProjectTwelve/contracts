@@ -11,9 +11,9 @@ interface IP12MineUpgradeable {
   event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // withdraw lpToken log
   event WithdrawDelay(
     address indexed user,
-    uint256 indexed pid,
-    uint256 amount,
-    bytes32 newWithdrawId,
+    uint256 pid,
+    uint256 indexed amount,
+    bytes32 indexed newWithdrawId,
     uint256 unlockTimestamp
   ); // delayed unStaking mining log
   event Claim(address indexed user, uint256 amount); // get rewards

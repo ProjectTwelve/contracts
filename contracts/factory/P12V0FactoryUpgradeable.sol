@@ -217,7 +217,7 @@ contract P12V0FactoryUpgradeable is
     require(liquidity0 == liquidity1, 'P12Factory: liquidities not =');
 
     // add pair address to Controller,100 is init weight
-    IGaugeController(gaugeController).addGauge(pair, 0, 100);
+    gaugeController.addGauge(pair, 0, 100);
     // new staking pool
     p12Mine.createPool(pair);
 

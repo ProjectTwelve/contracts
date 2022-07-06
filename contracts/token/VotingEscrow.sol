@@ -4,10 +4,12 @@ pragma solidity 0.8.13;
 import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
+import '@openzeppelin/contracts/security/Pausable.sol';
 
 import '../access/SafeOwnable.sol';
+import './interfaces/IVotingEscrow.sol';
 
-contract VotingEscrow is ReentrancyGuard, SafeOwnable {
+contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   using SafeERC20 for IERC20;
   // all future times are rounded by week
   uint256 constant WEEK = 7 * 86400;
@@ -20,6 +22,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
   uint256 public totalLockedP12;
   mapping(address => LockedBalance) public locked;
   uint256 public epoch;
+  bool public expired; // true if the contract end
 
   mapping(uint256 => Point) public pointHistory;
   mapping(address => mapping(uint256 => Point)) public userPointHistory;
@@ -77,6 +80,24 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
     p12Token = P12TokenAddr;
     pointHistory[0].blk = block.number;
     pointHistory[0].ts = block.timestamp;
+  }
+
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
+  modifier contractNotExpired() {
+    require(!expired, 'VotingEscrow: The contract has been stopped, only withdrawals can be made');
+    _;
+  }
+
+  function expire() external onlyOwner contractNotExpired {
+    expired = true;
+    emit Expired(msg.sender, block.timestamp);
   }
 
   /** 
@@ -296,7 +317,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
     @param addr User's wallet address
     @param value Amount to add to user's lock  
   */
-  function depositFor(address addr, uint256 value) external nonReentrant {
+  function depositFor(address addr, uint256 value) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[addr];
     require(value > 0, 'VotingEscrow: deposit value should > 0');
     require(_locked.amount > 0, 'VotingEscrow: No existing lock found');
@@ -309,7 +330,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
     @param value Amount to deposit
     @param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
   */
-  function createLock(uint256 value, uint256 unlockTime) external nonReentrant {
+  function createLock(uint256 value, uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
     //lockTime is rounded down to weeks
     uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
     LockedBalance memory _locked = locked[msg.sender];
@@ -325,7 +346,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
             without modifying the unlock time
     @param value Amount of tokens to deposit and add to the lock
   */
-  function increaseAmount(uint256 value) external nonReentrant {
+  function increaseAmount(uint256 value) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[msg.sender];
     require(value > 0, 'VotingEscrow: deposit value should > 0');
     require(_locked.amount > 0, 'VotingEscrow: No existing lock found');
@@ -337,7 +358,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
     @notice Extend the unlock time for `msg.sender` to `unlock_time`
     @param unlockTime New epoch time for unlocking
   */
-  function increaseUnlockTime(uint256 unlockTime) external nonReentrant {
+  function increaseUnlockTime(uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[msg.sender];
     uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
     require(_locked.end > block.timestamp, 'VotingEscrow: Lock expired');
@@ -353,6 +374,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable {
   */
   function withdraw() external nonReentrant {
     LockedBalance memory _locked = locked[msg.sender];
+    require(_locked.amount > 0, 'VotingEscrow: you have not pledged');
     require(block.timestamp >= _locked.end, 'VotingEscrow: The lock did not expire');
     uint256 value = uint256(_locked.amount);
 
