@@ -39,9 +39,6 @@ contract P12V0FactoryStorage {
    * @dev p12 staking contract
    */
   IP12MineUpgradeable public p12Mine;
-  IGaugeController public gaugeController;
-
-  address public pendingSuperAdmin;
 
   // gameId => developer address
   mapping(string => address) public allGames;
@@ -60,4 +57,7 @@ contract P12V0FactoryStorage {
     uint256 unlockTimestamp;
     bool executed;
   }
+
+  address public dev;
+  IGaugeController public gaugeController;
 }

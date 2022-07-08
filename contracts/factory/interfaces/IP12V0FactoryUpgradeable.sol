@@ -4,6 +4,9 @@ pragma solidity 0.8.13;
 import './IP12V0ERC20.sol';
 import '../../staking/interfaces/IP12MineUpgradeable.sol';
 import '../../staking/interfaces/IGaugeController.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
+import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+import '../../token/interfaces/IP12Token.sol';
 
 interface IP12V0FactoryUpgradeable {
   // register gameId =>developer
@@ -38,6 +41,13 @@ interface IP12V0FactoryUpgradeable {
   function setP12Mine(IP12MineUpgradeable newP12Mine) external;
 
   function setGaugeController(IGaugeController newGaugeController) external;
+
+  function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external;
+
+
+  function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external;
+
+  function setP12Token(IP12Token newP12Token) external;
 
   // get mintFee
   function getMintFee(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
@@ -74,8 +84,16 @@ interface IP12V0FactoryUpgradeable {
 
   // p12Mine and GaugeController address change log
   event SetP12Mine(IP12MineUpgradeable oldP12Mine, IP12MineUpgradeable newP12Mine);
-  //
+
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
+
+  // unifactory and router address change log
+  event SetUniswapFactory(IUniswapV2Factory oldUniswapFactory,IUniswapV2Factory newUniswapFactory);
+
+  event SetUniswapRouter(IUniswapV2Router02 oldUniswapRouter, IUniswapV2Router02 newUniswapRouter);
+
+  event SetP12Token(IP12Token oldP12Token, IP12Token newP12Token);
+
   // change delayB log
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB);
 
