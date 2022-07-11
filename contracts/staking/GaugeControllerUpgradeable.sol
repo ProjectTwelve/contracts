@@ -11,7 +11,6 @@ import './interfaces/IGaugeController.sol';
 import '../token/interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
-import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 import 'hardhat/console.sol';
 
 contract GaugeControllerUpgradeable is
@@ -41,7 +40,7 @@ contract GaugeControllerUpgradeable is
   function initialize(address votingEscrow_, address p12Factory_) public initializer {
     require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GaugeController: address can not zero');
     votingEscrow = IVotingEscrow(votingEscrow_);
-    p12Factory = IP12V0FactoryUpgradeable(p12Factory_);
+    p12Factory = p12Factory_;
 
     __Pausable_init_unchained();
     __Ownable_init_unchained();
@@ -64,9 +63,9 @@ contract GaugeControllerUpgradeable is
     @notice set new p12Factory
     @param newP12Factory address of newP12Factory
    */
-  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external virtual onlyOwner {
-    IP12V0FactoryUpgradeable oldP12Factory = p12Factory;
-    require(address(newP12Factory) != address(0), 'GaugeController: votingEscrow can not zero');
+  function setP12Factory(address newP12Factory) external virtual onlyOwner {
+    address oldP12Factory = p12Factory;
+    require(newP12Factory != address(0), 'GaugeController: votingEscrow can not zero');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }

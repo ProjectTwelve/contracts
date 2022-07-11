@@ -11,7 +11,7 @@ contract P12V0FactoryUpgradeableAlter is P12V0FactoryUpgradeable {
    * @dev set UniswapFactory address
    * @param newAddr new UniswapFactory address
    */
-  function setUniswapFactory(IUniswapV2Factory newAddr) public override onlyOwner() {
+  function setUniswapFactory(IUniswapV2Factory newAddr) public override onlyOwner {
     uniswapFactory = IUniswapV2Factory(newAddr);
   }
 
@@ -19,7 +19,7 @@ contract P12V0FactoryUpgradeableAlter is P12V0FactoryUpgradeable {
    * @dev set Uniswap Router Address
    * @param newAddr new Uniswap Router Address
    */
-  function setUniswapRouter(IUniswapV2Router02 newAddr) public override onlyOwner() {
+  function setUniswapRouter(IUniswapV2Router02 newAddr) public override onlyOwner {
     uniswapRouter = IUniswapV2Router02(newAddr);
   }
 

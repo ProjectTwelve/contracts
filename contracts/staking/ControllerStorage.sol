@@ -4,7 +4,6 @@ pragma solidity 0.8.13;
 
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '../token/interfaces/IVotingEscrow.sol';
-import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 
 contract ControllerStorage {
   struct Point {
@@ -31,7 +30,7 @@ contract ControllerStorage {
   }
 
   IVotingEscrow public votingEscrow; // Voting escrow
-  IP12V0FactoryUpgradeable public p12Factory;
+  address public p12Factory;
 
   // Gauge parameters
   // All numbers are "fixed point" on the basis of 1e18

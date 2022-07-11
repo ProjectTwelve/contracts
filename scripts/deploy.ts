@@ -83,7 +83,6 @@ export async function deployEconomyContract(externalContract: ExternalContract):
     p12Token.address,
     p12V0Factory.address,
     gaugeController.address,
-    votingEscrow.address,
     60,
     60,
   ]);

@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.13;
-
-import './IP12V0ERC20.sol';
-import '../../staking/interfaces/IP12MineUpgradeable.sol';
-import '../../staking/interfaces/IGaugeController.sol';
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
-import '../../token/interfaces/IP12Token.sol';
+import './IP12MineUpgradeable.sol';
+import './IGaugeController.sol';
+import './IP12V0ERC20.sol';
 
 interface IP12V0FactoryUpgradeable {
   // register gameId =>developer
@@ -25,18 +23,20 @@ interface IP12V0FactoryUpgradeable {
   //  mint coin and Launch a statement
   function declareMintCoin(
     string memory gameId,
-    IP12V0ERC20 gameCoinAddress,
+    address gameCoinAddress,
     uint256 amountGameCoin
   ) external returns (bool);
 
   // execute Mint coin
-  function executeMint(IP12V0ERC20 gameCoinAddress, bytes32 mintId) external returns (bool);
+  function executeMint(address gameCoinAddress, bytes32 mintId) external returns (bool);
 
   function withdraw(
     address userAddress,
-    IP12V0ERC20 gameCoinAddress,
+    address gameCoinAddress,
     uint256 amountGameCoin
   ) external returns (bool);
+
+  function setDev(address newDev) external;
 
   function setP12Mine(IP12MineUpgradeable newP12Mine) external;
 
@@ -44,16 +44,15 @@ interface IP12V0FactoryUpgradeable {
 
   function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external;
 
-
   function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external;
 
-  function setP12Token(IP12Token newP12Token) external;
+  function setP12Token(address newP12Token) external;
 
   // get mintFee
-  function getMintFee(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+  function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get mintDelay
-  function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get delayK
   function setDelayK(uint256 delayK) external returns (bool);
@@ -65,34 +64,36 @@ interface IP12V0FactoryUpgradeable {
   event RegisterGame(string gameId, address indexed developer);
 
   // register Game coin log
-  event CreateGameCoin(IP12V0ERC20 indexed gameCoinAddress, string gameId, uint256 amountP12);
+  event CreateGameCoin(address indexed gameCoinAddress, string gameId, uint256 amountP12);
 
   // mint coin in future log
   event DeclareMint(
     bytes32 indexed mintId,
-    IP12V0ERC20 indexed gameCoinAddress,
+    address indexed gameCoinAddress,
     uint256 mintAmount,
     uint256 unlockTimestamp,
     uint256 amountP12
   );
 
   // mint coin success log
-  event ExecuteMint(bytes32 indexed mintId, IP12V0ERC20 indexed gameCoinAddress, address indexed executor);
+  event ExecuteMint(bytes32 indexed mintId, address indexed gameCoinAddress, address indexed executor);
 
   // game player withdraw gameCoin
-  event Withdraw(address userAddress, IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin);
+  event Withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin);
+
+  event SetDev(address oldDev, address newDev);
 
   // p12Mine and GaugeController address change log
   event SetP12Mine(IP12MineUpgradeable oldP12Mine, IP12MineUpgradeable newP12Mine);
 
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
 
-  // unifactory and router address change log
-  event SetUniswapFactory(IUniswapV2Factory oldUniswapFactory,IUniswapV2Factory newUniswapFactory);
+  // uniFactory and router address change log
+  event SetUniswapFactory(IUniswapV2Factory oldUniswapFactory, IUniswapV2Factory newUniswapFactory);
 
   event SetUniswapRouter(IUniswapV2Router02 oldUniswapRouter, IUniswapV2Router02 newUniswapRouter);
 
-  event SetP12Token(IP12Token oldP12Token, IP12Token newP12Token);
+  event SetP12Token(address oldP12Token, address newP12Token);
 
   // change delayB log
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB);
