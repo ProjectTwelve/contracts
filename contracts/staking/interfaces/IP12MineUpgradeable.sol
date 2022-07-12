@@ -3,7 +3,6 @@
 pragma solidity 0.8.13;
 
 import '../../token/interfaces/IVotingEscrow.sol';
-import '../../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 import './IGaugeController.sol';
 
 interface IP12MineUpgradeable {
@@ -20,8 +19,7 @@ interface IP12MineUpgradeable {
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB); // change delayB log
   event SetDelayK(uint256 oldDelayK, uint256 newDelayK); // change delayK log
   event SetRate(uint256 oldRate, uint256 newRate); // set new rate
-  event SetVotingEscrow(IVotingEscrow oldVotingEscrow, IVotingEscrow newVotingEscrow);
-  event SetP12Factory(IP12V0FactoryUpgradeable oldP12Factory, IP12V0FactoryUpgradeable newP12Factory);
+  event SetP12Factory(address oldP12Factory, address newP12Factory);
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
 
   function createPool(address lpToken) external; // new pool
@@ -34,9 +32,7 @@ interface IP12MineUpgradeable {
 
   function setRate(uint256 newRate) external returns (bool);
 
-  function setVotingEscrow(IVotingEscrow newVotingEscrow) external;
-
-  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external;
+  function setP12Factory(address newP12Factory) external;
 
   function setGaugeController(IGaugeController newGaugeController) external;
 

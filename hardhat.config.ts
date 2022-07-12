@@ -79,6 +79,10 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
+      forking: {
+        url: 'https://testnet.p12.games/',
+        blockNumber: 997788,
+      },
       chainId: 44102,
     },
     p12TestNet: {

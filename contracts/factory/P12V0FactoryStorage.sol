@@ -3,16 +3,14 @@ pragma solidity 0.8.13;
 
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
-import '../staking/interfaces/IP12MineUpgradeable.sol';
-import '../staking/interfaces/IGaugeController.sol';
-import './interfaces/IP12V0ERC20.sol';
-import '../token/interfaces/IP12Token.sol';
+import './interfaces/IP12MineUpgradeable.sol';
+import './interfaces/IGaugeController.sol';
 
 contract P12V0FactoryStorage {
   /**
    * @dev p12 ERC20 address
    */
-  IP12Token public p12;
+  address public p12;
   /**
    * @dev uniswap v2 Router address
    */
@@ -39,18 +37,11 @@ contract P12V0FactoryStorage {
    * @dev p12 staking contract
    */
   IP12MineUpgradeable public p12Mine;
+
+  address public dev;
   IGaugeController public gaugeController;
 
-  address public pendingSuperAdmin;
-
-  // gameId => developer address
-  mapping(string => address) public allGames;
-  // gameCoinAddress => gameId
-  mapping(IP12V0ERC20 => string) public allGameCoins;
-  // gameCoinAddress => declareMintId => MintCoinInfo
-  mapping(IP12V0ERC20 => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
-  // gameCoinAddress => declareMintId
-  mapping(IP12V0ERC20 => bytes32) public preMintIds;
+  uint256[40] private __gap;
 
   /**
    * @dev struct of each mint request
@@ -60,4 +51,12 @@ contract P12V0FactoryStorage {
     uint256 unlockTimestamp;
     bool executed;
   }
+  // gameId => developer address
+  mapping(string => address) public allGames;
+  // gameCoinAddress => gameId
+  mapping(address => string) public allGameCoins;
+  // gameCoinAddress => declareMintId => MintCoinInfo
+  mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
+  // gameCoinAddress => declareMintId
+  mapping(address => bytes32) public preMintIds;
 }

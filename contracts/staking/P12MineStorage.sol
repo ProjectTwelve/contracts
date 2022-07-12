@@ -2,10 +2,7 @@
 
 pragma solidity 0.8.13;
 
-import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 import './interfaces/IGaugeController.sol';
-import '../token/interfaces/IVotingEscrow.sol';
-import '../factory/P12V0FactoryUpgradeable.sol';
 import './interfaces/IP12RewardVault.sol';
 import '../token/interfaces/IP12Token.sol';
 
@@ -44,11 +41,9 @@ contract P12MineStorage {
   // address=>period=>timestamp
   mapping(address => mapping(uint256 => uint256)) public periodTimestamp;
 
-  IP12V0FactoryUpgradeable public p12Factory;
-  IP12Token public p12Token;
-  IVotingEscrow public votingEscrow;
+  address public p12Factory;
+  address public p12Token;
   IGaugeController public gaugeController;
-
   IP12RewardVault public p12RewardVault;
 
   // Info of each pool.

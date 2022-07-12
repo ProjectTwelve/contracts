@@ -10,13 +10,11 @@ import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
-
 import { IP12RewardVault, P12RewardVault } from './P12RewardVault.sol';
 import './interfaces/IGaugeController.sol';
 import './interfaces/IP12MineUpgradeable.sol';
 import './P12MineStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
-import '../factory/interfaces/IP12V0FactoryUpgradeable.sol';
 
 import '../token/interfaces/IP12Token.sol';
 
@@ -47,22 +45,19 @@ contract P12MineUpgradeable is
     @param p12Token_ Address of p12Token
     @param p12Factory_ Address of p12Factory
     @param gaugeController_ address of gaugeController
-    @param votingEscrow_ address of votingEscrow
     @param delayK_ delayK_ is a coefficient
     @param delayB_ delayB_ is a coefficient
    */
   function initialize(
-    IP12Token p12Token_,
-    IP12V0FactoryUpgradeable p12Factory_,
+    address p12Token_,
+    address p12Factory_,
     IGaugeController gaugeController_,
-    IVotingEscrow votingEscrow_,
     uint256 delayK_,
     uint256 delayB_
   ) public initializer {
     p12Token = p12Token_;
-    p12Factory = IP12V0FactoryUpgradeable(p12Factory_);
+    p12Factory = p12Factory_;
     gaugeController = IGaugeController(gaugeController_);
-    votingEscrow = votingEscrow_;
     p12RewardVault = IP12RewardVault(new P12RewardVault(p12Token_));
     delayK = delayK_;
     delayB = delayB_;
@@ -200,23 +195,12 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice set new votingEscrow
-    @param newVotingEscrow address of votingEscrow
-   */
-  function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual onlyOwner {
-    IVotingEscrow oldVotingEscrow = votingEscrow;
-    require(address(newVotingEscrow) != address(0), 'P12Mine: votingEscrow can not zero');
-    votingEscrow = newVotingEscrow;
-    emit SetVotingEscrow(oldVotingEscrow, newVotingEscrow);
-  }
-
-  /**
   @notice set new p12Factory
   @param newP12Factory address of p12Factory
    */
-  function setP12Factory(IP12V0FactoryUpgradeable newP12Factory) external virtual onlyOwner {
-    IP12V0FactoryUpgradeable oldP12Factory = p12Factory;
-    require(address(newP12Factory) != address(0), 'P12Mine: p12Factory can not zero');
+  function setP12Factory(address newP12Factory) external virtual onlyOwner {
+    address oldP12Factory = p12Factory;
+    require(newP12Factory != address(0), 'P12Mine: p12Factory can not zero');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
