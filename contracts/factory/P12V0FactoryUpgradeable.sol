@@ -144,6 +144,7 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev set p12Token address
+   * reserved only during development
    * @param newP12Token new p12Token address
    */
   function setP12Token(address newP12Token) external virtual override onlyOwner {
@@ -155,6 +156,7 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev set uniswapFactory address
+   * reserved only during development
    * @param newUniswapFactory new UniswapFactory address
    */
   function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external virtual override onlyOwner {
@@ -166,6 +168,7 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev set uniswapRouter address
+   * reserved only during development
    * @param newUniswapRouter new uniswapRouter address
    */
   function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external virtual override onlyOwner {

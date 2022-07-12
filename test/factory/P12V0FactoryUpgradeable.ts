@@ -38,8 +38,8 @@ describe('p12V0Factory', function () {
   });
   it('should show register fail by test account', async function () {
     const gameId2 = '1102';
-    expect(core.p12V0Factory.connect(test).register(gameId2, gameDeveloper.address)).to.be.revertedWith(
-      'AccessControl: account 0xa0ee7a142d267c1f36714e4a8f75612f20a79720 is missing role 0x7613a25ecc738585a232ad50a301178f12b3ba8887d13e138b523c4269c47689',
+    await expect(core.p12V0Factory.connect(test).register(gameId2, gameDeveloper.address)).to.be.revertedWith(
+      'P12Factory: caller must be dev',
     );
   });
   it('Give gameDeveloper p12 and approve p12 token to p12V0factory', async function () {

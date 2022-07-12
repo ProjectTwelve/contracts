@@ -41,7 +41,6 @@ contract P12V0FactoryStorage {
   address public dev;
   IGaugeController public gaugeController;
 
-
   uint256[40] private __gap;
 
   /**
