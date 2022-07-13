@@ -5,6 +5,7 @@ import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 import './interfaces/IP12MineUpgradeable.sol';
 import './interfaces/IGaugeController.sol';
+import './interfaces/IP12V0ERC20.sol';
 
 contract P12V0FactoryStorage {
   /**
@@ -54,9 +55,9 @@ contract P12V0FactoryStorage {
   // gameId => developer address
   mapping(string => address) public allGames;
   // gameCoinAddress => gameId
-  mapping(address => string) public allGameCoins;
+  mapping(IP12V0ERC20 => string) public allGameCoins;
   // gameCoinAddress => declareMintId => MintCoinInfo
-  mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
+  mapping(IP12V0ERC20 => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
   // gameCoinAddress => declareMintId
-  mapping(address => bytes32) public preMintIds;
+  mapping(IP12V0ERC20 => bytes32) public preMintIds;
 }

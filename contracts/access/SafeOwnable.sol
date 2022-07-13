@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: GPL-3.0-only
 // Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol and https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
 

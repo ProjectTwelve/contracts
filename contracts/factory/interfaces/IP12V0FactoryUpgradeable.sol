@@ -23,16 +23,16 @@ interface IP12V0FactoryUpgradeable {
   //  mint coin and Launch a statement
   function declareMintCoin(
     string memory gameId,
-    address gameCoinAddress,
+    IP12V0ERC20 gameCoinAddress,
     uint256 amountGameCoin
   ) external returns (bool);
 
   // execute Mint coin
-  function executeMint(address gameCoinAddress, bytes32 mintId) external returns (bool);
+  function executeMint(IP12V0ERC20 gameCoinAddress, bytes32 mintId) external returns (bool);
 
   function withdraw(
     address userAddress,
-    address gameCoinAddress,
+    IP12V0ERC20 gameCoinAddress,
     uint256 amountGameCoin
   ) external returns (bool);
 
@@ -49,10 +49,10 @@ interface IP12V0FactoryUpgradeable {
   function setP12Token(address newP12Token) external;
 
   // get mintFee
-  function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+  function getMintFee(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get mintDelay
-  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+  function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get delayK
   function setDelayK(uint256 delayK) external returns (bool);
@@ -64,22 +64,22 @@ interface IP12V0FactoryUpgradeable {
   event RegisterGame(string gameId, address indexed developer);
 
   // register Game coin log
-  event CreateGameCoin(address indexed gameCoinAddress, string gameId, uint256 amountP12);
+  event CreateGameCoin(IP12V0ERC20 indexed gameCoinAddress, string gameId, uint256 amountP12);
 
   // mint coin in future log
   event DeclareMint(
     bytes32 indexed mintId,
-    address indexed gameCoinAddress,
+    IP12V0ERC20 indexed gameCoinAddress,
     uint256 mintAmount,
     uint256 unlockTimestamp,
     uint256 amountP12
   );
 
   // mint coin success log
-  event ExecuteMint(bytes32 indexed mintId, address indexed gameCoinAddress, address indexed executor);
+  event ExecuteMint(bytes32 indexed mintId, IP12V0ERC20 indexed gameCoinAddress, address indexed executor);
 
   // game player withdraw gameCoin
-  event Withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin);
+  event Withdraw(address userAddress, IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin);
 
   event SetDev(address oldDev, address newDev);
 

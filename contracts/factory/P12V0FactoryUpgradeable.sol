@@ -17,7 +17,7 @@ import './interfaces/IP12MineUpgradeable.sol';
 import './P12V0FactoryStorage.sol';
 import './interfaces/IGaugeController.sol';
 import './P12V0ERC20.sol';
-import '../token/interfaces/IP12Token.sol';
+import './interfaces/IP12V0ERC20.sol';
 
 contract P12V0FactoryUpgradeable is
   P12V0FactoryStorage,
@@ -80,7 +80,7 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev calculate the MintFee in P12
    */
-  function getMintFee(address gameCoinAddress, uint256 amountGameCoin)
+  function getMintFee(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
     public
     view
     virtual
@@ -89,10 +89,10 @@ contract P12V0FactoryUpgradeable is
   {
     uint256 gameCoinReserved;
     uint256 p12Reserved;
-    if (p12 < gameCoinAddress) {
-      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(uniswapFactory.getPair(gameCoinAddress, p12)).getReserves();
+    if (p12 < address(gameCoinAddress)) {
+      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
     } else {
-      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(uniswapFactory.getPair(gameCoinAddress, p12)).getReserves();
+      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
     }
 
     // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
@@ -104,8 +104,13 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev linear function to calculate the delay time
    */
-  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
-
+  function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
+    public
+    view
+    virtual
+    override
+    returns (uint256 time)
+  {
     time = (amountGameCoin * delayK) / (IP12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
     return time;
   }
@@ -244,9 +249,9 @@ contract P12V0FactoryUpgradeable is
 
     p12Mine.addLpTokenInfoForGameCreator(pair, liquidity1, msg.sender);
 
-    allGameCoins[address(gameCoinAddress)] = gameId;
-    emit CreateGameCoin(address(gameCoinAddress), gameId, amountP12);
-    return gameCoinAddress;
+    allGameCoins[gameCoinAddress] = gameId;
+    emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
+    return IP12V0ERC20(gameCoinAddress);
   }
 
   /**
@@ -258,7 +263,7 @@ contract P12V0FactoryUpgradeable is
    */
   function declareMintCoin(
     string memory gameId,
-    address gameCoinAddress,
+    IP12V0ERC20 gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
     require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permission');
@@ -297,7 +302,7 @@ contract P12V0FactoryUpgradeable is
    * @param mintId a unique id to identify a mint, developer can get it after declare
    * @return bool whether the operation success
    */
-  function executeMint(address gameCoinAddress, bytes32 mintId)
+  function executeMint(IP12V0ERC20 gameCoinAddress, bytes32 mintId)
     external
     virtual
     override
@@ -333,10 +338,10 @@ contract P12V0FactoryUpgradeable is
    */
   function withdraw(
     address userAddress,
-    address gameCoinAddress,
+    IP12V0ERC20 gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override onlyOwner returns (bool) {
-    IERC20Upgradeable(gameCoinAddress).safeTransfer(userAddress, amountGameCoin);
+    IERC20Upgradeable(address(gameCoinAddress)).safeTransfer(userAddress, amountGameCoin);
     emit Withdraw(userAddress, gameCoinAddress, amountGameCoin);
     return true;
   }
@@ -392,7 +397,7 @@ contract P12V0FactoryUpgradeable is
    * @return hash mintId
    */
   function _hashOperation(
-    address gameCoinAddress,
+    IP12V0ERC20 gameCoinAddress,
     address declarer,
     uint256 amount,
     uint256 timestamp,

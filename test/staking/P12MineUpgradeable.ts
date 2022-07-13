@@ -241,10 +241,7 @@ describe('p12Mine', function () {
     const before = await core.p12Mine.poolLength();
     await expect(core.p12Mine.connect(admin).createPool(pair.address)).to.be.revertedWith('P12Mine: LP Token Already Exist');
     expect(await core.p12Mine.lpTokenRegistry(pair.address)).to.be.equal(before);
-    await expect(p12Mine.connect(admin).createPool(pairAddress, true)).to.be.revertedWith('P12Mine: LP Token Already Exist');
-    expect(await p12Mine.lpTokenRegistry(pairAddress)).to.be.equal(1);
   });
-
 
   // get pool info
   it('show get pool info success', async function () {

@@ -5,12 +5,9 @@ import { deployAll, EconomyContract, ExternalContract } from '../../scripts/depl
 
 describe('p12V0Factory', function () {
   let admin: SignerWithAddress;
-
   let p12Dev: SignerWithAddress;
   let gameDeveloper: SignerWithAddress;
-
   let admin2: SignerWithAddress;
-  let developer: SignerWithAddress;
   let user: SignerWithAddress;
   let mintId: string;
   let gameCoinAddress: string;
@@ -20,34 +17,13 @@ describe('p12V0Factory', function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
     admin = accounts[0];
-
+    admin2 = accounts[1];
     gameDeveloper = accounts[2];
     user = accounts[3];
     p12Dev = accounts[8];
     test = accounts[9];
     core = await deployAll();
     await core.p12V0Factory.setDev(p12Dev.address);
-
-
-    // deploy uniswap
-    const UNISWAPV2ROUTER = new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
-    const UNISWAPV2FACTORY = new ethers.ContractFactory(
-      compiledUniswapFactory.interface,
-      compiledUniswapFactory.bytecode,
-      admin,
-    );
-    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
-    uniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
-
-    const weth = await WETH.deploy();
-
-    uniswapV2Router02 = await UNISWAPV2ROUTER.connect(admin).deploy(uniswapV2Factory.address, weth.address);
-  });
-  it('Should show p12 token deploy successfully!', async function () {
-    // deploy p12token
-    const ERC20 = await ethers.getContractFactory('P12Token');
-    p12 = await ERC20.connect(admin).deploy('ProjectTwelve', 'P12', 1000n * 10n ** 18n);
-    expect(await p12.balanceOf(admin.address)).to.be.equal(1000n * 10n ** 18n);
   });
   it('Should pausable effective', async () => {
     await core.p12V0Factory.pause();
@@ -154,22 +130,22 @@ describe('p12V0Factory', function () {
     expect(await p12V0ERC20.balanceOf(user.address)).to.be.equal(1n * 10n ** 18n);
   });
   it('should transfer ownership successfully', async () => {
-    await expect(p12Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
+    await expect(core.p12V0Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
       'SafeOwnable: new owner is zero',
     );
 
-    await expect(p12Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
+    await expect(core.p12V0Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
 
-    await p12Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
-    await p12Factory.transferOwnership(admin2.address, false);
+    // await core.p12V0Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
+    // await core.p12V0Factory.transferOwnership(admin2.address, false);
 
-    await expect(
-      p12Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
-    ).to.be.revertedWith('SafeOwnable: caller not the owner');
+    // await expect(
+    //   core.p12V0Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
+    // ).to.be.revertedWith('SafeOwnable: caller not the owner');
 
-    await p12Factory.connect(admin2).claimOwnership();
-    await p12Factory.connect(admin2).transferOwnership(admin.address, false);
-    await p12Factory.claimOwnership();
+    // await core.p12V0Factory.connect(admin2).claimOwnership();
+    // await core.p12V0Factory.connect(admin2).transferOwnership(admin.address, false);
+    // await core.p12V0Factory.claimOwnership();
   });
   it('Should contract upgrade successfully', async function () {
     const p12FactoryAlterF = await ethers.getContractFactory('P12V0FactoryUpgradeableAlter');
