@@ -10,6 +10,7 @@ describe('SecretShopUpgradable', function () {
   let developer: SignerWithAddress;
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
+  let passerby: SignerWithAddress;
   let recipient: SignerWithAddress;
   let p12asset: P12AssetDemo;
   let erc721demo: ERC721Demo;
@@ -73,6 +74,7 @@ describe('SecretShopUpgradable', function () {
     user1 = accounts[1];
     user2 = accounts[2];
     recipient = accounts[3];
+    passerby = accounts[4];
 
     core = await deployAll();
 
@@ -98,6 +100,22 @@ describe('SecretShopUpgradable', function () {
 
     // update EIP-712 verifyingContract address
     domain.verifyingContract = core.p12SecretShop.address;
+  });
+
+  it('should transfer ownership successfully', async () => {
+    await p12asset.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
+
+    await expect(p12asset.connect(passerby).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
+
+    await p12asset.transferOwnership(passerby.address, false);
+
+    await expect(p12asset.connect(passerby).mint(passerby.address, 3, 1, '0x')).to.be.revertedWith(
+      'SafeOwnable: caller not the owner',
+    );
+
+    await p12asset.connect(passerby).claimOwnership();
+    await p12asset.connect(passerby).mint(passerby.address, 3, 1, '0x');
+    expect(await p12asset.balanceOf(passerby.address, 3)).to.be.equal(1);
   });
 
   it('Should Delegator transfer token successfully', async function () {

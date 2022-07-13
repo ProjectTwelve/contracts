@@ -4,9 +4,9 @@ pragma solidity 0.8.13;
 
 import './interfaces/IP12Asset.sol';
 import '@openzeppelin/contracts/token/ERC1155/ERC1155.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '../access/SafeOwnable.sol';
 
-contract P12Asset is IP12Asset, ERC1155(''), Ownable {
+contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
   /**
    * @dev contract-level metadata uri, refer to https://docs.opensea.io/docs/contract-level-metadata
    */
