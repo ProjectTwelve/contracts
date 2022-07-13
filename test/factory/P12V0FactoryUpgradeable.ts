@@ -194,17 +194,17 @@ describe('P12Factory', function () {
   });
   it('should transfer ownership successfully', async () => {
     await expect(p12Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
-      'TSOwnable: new owner is zero',
+      'SafeOwnable: new owner is zero',
     );
 
-    await expect(p12Factory.connect(admin2).claimOwnership()).to.be.revertedWith('TSOwnable: caller != pending');
+    await expect(p12Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
 
     await p12Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
     await p12Factory.transferOwnership(admin2.address, false);
 
     await expect(
       p12Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
-    ).to.be.revertedWith('TSOwnable: caller not the owner');
+    ).to.be.revertedWith('SafeOwnable: caller not the owner');
 
     await p12Factory.connect(admin2).claimOwnership();
     await p12Factory.connect(admin2).transferOwnership(admin.address, false);

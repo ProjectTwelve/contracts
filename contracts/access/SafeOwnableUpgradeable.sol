@@ -43,7 +43,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
    * @dev Throws if called by any account other than the owner.
    */
   modifier onlyOwner() {
-    require(owner() == _msgSender(), 'TSOwnable: caller not the owner');
+    require(owner() == _msgSender(), 'SafeOwnable: caller not the owner');
     _;
   }
 
@@ -65,7 +65,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
    * only happens when the pending owner claim the ownership
    */
   function transferOwnership(address newOwner, bool direct) public virtual onlyOwner {
-    require(newOwner != address(0), 'TSOwnable: new owner is zero');
+    require(newOwner != address(0), 'SafeOwnable: new owner is zero');
 
     if (direct) {
       _transferOwnership(newOwner);
@@ -78,7 +78,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
    * @dev pending owner call this function to claim ownership
    */
   function claimOwnership() public {
-    require(msg.sender == _pendingOwner, 'TSOwnable: caller != pending');
+    require(msg.sender == _pendingOwner, 'SafeOwnable: caller != pending');
 
     _claimOwnership();
   }
