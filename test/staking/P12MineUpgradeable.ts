@@ -372,7 +372,7 @@ describe('lpToken stake ', function () {
   });
   // try update a non-existing pool
   it('show update pool fail', async function () {
-    await expect(p12Mine.updatePool(2)).to.be.revertedWith('panic code 0x32');
+    await expect(p12Mine.updatePool(2)).to.be.revertedWith('');
   });
   // get mining speed
   it('show mining speed > 0', async function () {
