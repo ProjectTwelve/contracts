@@ -7,8 +7,8 @@ import './IGaugeController.sol';
 
 interface IP12MineUpgradeable {
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // deposit lpToken log
-  event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // withdraw lpToken log
-  event WithdrawDelay(
+  event ExecuteWithdraw(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // withdraw lpToken log
+  event QueueWithdraw(
     address indexed user,
     uint256 pid,
     uint256 indexed amount,
@@ -36,9 +36,9 @@ interface IP12MineUpgradeable {
 
   function setGaugeController(IGaugeController newGaugeController) external;
 
-  function withdraw(address lpToken, bytes32 id) external; // withdraw lpToken
+  function executeWithdraw(address lpToken, bytes32 id) external; // withdraw lpToken
 
-  function withdrawDelay(address lpToken, uint256 amount) external; // delayed unStaking mining
+  function queueWithdraw(address lpToken, uint256 amount) external; // delayed unStaking mining
 
   function addLpTokenInfoForGameCreator(
     address lpToken,

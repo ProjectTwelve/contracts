@@ -294,7 +294,7 @@ contract P12MineUpgradeable is
   @param lpToken Address of lpToken
   @param amount Number of lpToken
   */
-  function withdrawDelay(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
+  function queueWithdraw(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -316,7 +316,7 @@ contract P12MineUpgradeable is
     bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
     withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(msg.sender, amount, unlockTimestamp, false);
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
-    emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId, unlockTimestamp);
+    emit QueueWithdraw(msg.sender, pid, amount, newWithdrawId, unlockTimestamp);
   }
 
   /**
@@ -358,7 +358,7 @@ contract P12MineUpgradeable is
     @param lpToken Address of lpToken
     @param id Withdraw id 
    */
-  function withdraw(address lpToken, bytes32 id) public virtual nonReentrant whenNotPaused {
+  function executeWithdraw(address lpToken, bytes32 id) public virtual nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
     address _who = withdrawInfos[lpToken][id].who;
     require(msg.sender == _who, 'P12Mine: withdraw the lpToken requires its owner');
@@ -376,7 +376,7 @@ contract P12MineUpgradeable is
     pool.amount -= amount;
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(_who), amount);
-    emit Withdraw(_who, pid, amount, user.amount, pool.amount);
+    emit ExecuteWithdraw(_who, pid, amount, user.amount, pool.amount);
   }
 
   // ============ Internal ============
