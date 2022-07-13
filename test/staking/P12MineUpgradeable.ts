@@ -224,7 +224,6 @@ describe('p12Mine', function () {
     const balanceOf = await core.p12Token.balanceOf(developer.address);
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 600]);
-    console.log('sdf', await core.p12Mine.getUserLpBalance(pair.address, developer.address));
     await core.p12Mine.connect(developer).executeWithdraw(pair.address, id);
     expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(0);
     expect(await core.p12Token.balanceOf(developer.address)).to.be.above(balanceOf);

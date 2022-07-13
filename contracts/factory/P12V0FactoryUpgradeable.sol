@@ -255,7 +255,7 @@ contract P12V0FactoryUpgradeable is
    * @param amountGameCoin how many developer want to mint
    * @param success whether the operation success
    */
-  function declareMintCoin(
+  function queueMintCoin(
     string memory gameId,
     address gameCoinAddress,
     uint256 amountGameCoin
@@ -285,7 +285,7 @@ contract P12V0FactoryUpgradeable is
     bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, _initHash);
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
 
-    emit DeclareMint(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
+    emit QueueMintCoin(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
 
     return true;
   }
@@ -296,7 +296,7 @@ contract P12V0FactoryUpgradeable is
    * @param mintId a unique id to identify a mint, developer can get it after declare
    * @return bool whether the operation success
    */
-  function executeMint(address gameCoinAddress, bytes32 mintId)
+  function executeMintCoin(address gameCoinAddress, bytes32 mintId)
     external
     virtual
     override
@@ -319,7 +319,7 @@ contract P12V0FactoryUpgradeable is
 
     IP12V0ERC20(gameCoinAddress).mint(address(this), coinMintRecords[gameCoinAddress][mintId].amount);
 
-    emit ExecuteMint(mintId, gameCoinAddress, msg.sender);
+    emit ExecuteMintCoin(mintId, gameCoinAddress, msg.sender);
 
     return true;
   }
