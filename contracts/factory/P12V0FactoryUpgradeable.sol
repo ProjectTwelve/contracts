@@ -104,7 +104,7 @@ contract P12V0FactoryUpgradeable is
    * @dev there still be delayB period before someone can really mint zero token
    * @dev delayK is the parameter to take the ratio of new amount in to account
    * @dev For example, the initial supply of Game Coin is 100k. If developer want
-   * @dev to mint 100k, developer needs to real mint it after `delayK + delayB`. If 
+   * @dev to mint 100k, developer needs to real mint it after `delayK + delayB`. If
    * @dev developer want to mint 200k, developer has to real mint it after `2DelayK +
    * @dev delayB`.
    */
