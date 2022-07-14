@@ -5,7 +5,6 @@ import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '../access/SafeOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
@@ -21,7 +20,6 @@ import './interfaces/IP12V0ERC20.sol';
 
 contract P12V0FactoryUpgradeable is
   P12V0FactoryStorage,
-  Initializable,
   UUPSUpgradeable,
   IP12V0FactoryUpgradeable,
   SafeOwnableUpgradeable,

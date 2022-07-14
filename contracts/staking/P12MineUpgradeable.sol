@@ -5,7 +5,6 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import '@openzeppelin/contracts/utils/math/SafeMath.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '../access/SafeOwnableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
@@ -15,7 +14,6 @@ import './interfaces/IGaugeController.sol';
 import './interfaces/IP12MineUpgradeable.sol';
 import './P12MineStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
-
 import '../token/interfaces/IP12Token.sol';
 
 contract P12MineUpgradeable is
