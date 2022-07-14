@@ -53,7 +53,7 @@ contract P12V0FactoryStorage {
   // gameCoinAddress => declareMintId
   mapping(IP12V0ERC20 => bytes32) public preMintIds;
 
-   /**
+  /**
    * @dev struct of each mint request
    */
   struct MintCoinInfo {

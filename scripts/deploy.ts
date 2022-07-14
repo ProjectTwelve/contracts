@@ -85,6 +85,7 @@ export async function deployEconomyContract(externalContract: ExternalContract):
     gaugeController.address,
     60,
     60,
+    5n * 10n ** 17n,
   ]);
   return {
     p12Token: p12Token,

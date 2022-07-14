@@ -19,7 +19,6 @@ contract P12MineStorage {
   // Info of each pool.
   PoolInfo[] public poolInfos;
 
-
   mapping(address => uint256) public lpTokenRegistry;
   // Info of each user that stakes LP tokens.
   mapping(uint256 => mapping(address => UserInfo)) public userInfo;

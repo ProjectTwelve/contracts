@@ -51,7 +51,8 @@ contract P12MineUpgradeable is
     address p12Factory_,
     IGaugeController gaugeController_,
     uint256 delayK_,
-    uint256 delayB_
+    uint256 delayB_,
+    uint256 rate_
   ) public initializer {
     p12Token = p12Token_;
     p12Factory = p12Factory_;
@@ -59,7 +60,7 @@ contract P12MineUpgradeable is
     p12RewardVault = IP12RewardVault(new P12RewardVault(p12Token_));
     delayK = delayK_;
     delayB = delayB_;
-    rate = 0.5e17;
+    rate = rate_;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();

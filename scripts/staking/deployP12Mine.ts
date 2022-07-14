@@ -8,10 +8,11 @@ async function main() {
     const votingEscrow = '0x1d8C8fd6762047d0eA81a8Da301D71249b00156c';
     const delayK = 60;
     const delayB = 60;
+    const rate = 5n * 10n ** 17n;
     const P12MineUpgradeable = await ethers.getContractFactory('P12MineUpgradeable');
     const p12MineUpgradeable = await upgrades.deployProxy(
       P12MineUpgradeable,
-      [reward, p12factory, gaugeController, votingEscrow, delayK, delayB],
+      [reward, p12factory, gaugeController, votingEscrow, delayK, delayB, rate],
       {
         kind: 'uups',
       },
