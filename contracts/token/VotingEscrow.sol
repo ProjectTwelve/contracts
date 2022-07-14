@@ -29,9 +29,9 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   mapping(address => uint256) public userPointEpoch;
   mapping(uint256 => int256) public slopeChanges;
 
-  string public name;
-  string public symbol;
-  uint256 public decimals = 18;
+  string public  name;
+  string public  symbol;
+  uint256 constant public decimals = 18;
 
   enum OperationType {
     DEPOSIT_FOR_TYPE,
