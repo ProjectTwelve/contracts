@@ -44,14 +44,6 @@ contract P12V0FactoryStorage {
 
   uint256[40] private __gap;
 
-  /**
-   * @dev struct of each mint request
-   */
-  struct MintCoinInfo {
-    uint256 amount;
-    uint256 unlockTimestamp;
-    bool executed;
-  }
   // gameId => developer address
   mapping(string => address) public allGames;
   // gameCoinAddress => gameId
@@ -60,4 +52,13 @@ contract P12V0FactoryStorage {
   mapping(IP12V0ERC20 => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
   // gameCoinAddress => declareMintId
   mapping(IP12V0ERC20 => bytes32) public preMintIds;
+
+   /**
+   * @dev struct of each mint request
+   */
+  struct MintCoinInfo {
+    uint256 amount;
+    uint256 unlockTimestamp;
+    bool executed;
+  }
 }

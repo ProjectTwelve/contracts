@@ -6,45 +6,24 @@ import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
 import '../token/interfaces/IVotingEscrow.sol';
 
 contract ControllerStorage {
-  struct Point {
-    uint256 bias;
-    uint256 slope;
-  }
-
-  struct VotedSlope {
-    uint256 slope;
-    uint256 power;
-    uint256 end;
-  }
-
-  struct TmpBiasAndSlope {
-    uint256 oldWeightBias;
-    uint256 oldWeightSlope;
-    uint256 oldSumBias;
-    uint256 oldSumSlope;
-  }
-
-  struct TmpBias {
-    uint256 oldBias;
-    uint256 newBias;
-  }
-
   IVotingEscrow public votingEscrow; // Voting escrow
   address public p12Factory;
-
   // Gauge parameters
   // All numbers are "fixed point" on the basis of 1e18
   int128 public nGaugeTypes;
   int128 public nGauges;
-  mapping(int128 => string) public gaugeTypeNames;
+  
 
+
+
+  mapping(int128 => string) public gaugeTypeNames;
   // Needed for enumeration
   mapping(int128 => address) public gauges;
 
   // we increment values by 1 prior to storing them here so we can rely on a value
   // of zero as meaning the gauge has not been set
   mapping(address => int128) public gaugeTypes;
-
+  
   mapping(address => mapping(address => VotedSlope)) public voteUserSlopes; // user -> gauge_addr -> VotedSlope
   mapping(address => uint256) public voteUserPower; // Total vote power used by user
   mapping(address => mapping(address => uint256)) public lastUserVote; // Last user vote's timestamp for each gauge address
@@ -68,4 +47,30 @@ contract ControllerStorage {
 
   mapping(int128 => mapping(uint256 => uint256)) public pointsTypeWeight; // type_id -> time -> type weight
   mapping(int128 => uint256) public timeTypeWeight; // type_id -> last scheduled time (next week)
+
+
+  struct Point {
+    uint256 bias;
+    uint256 slope;
+  }
+
+  struct VotedSlope {
+    uint256 slope;
+    uint256 power;
+    uint256 end;
+  }
+
+  struct TmpBiasAndSlope {
+    uint256 oldWeightBias;
+    uint256 oldWeightSlope;
+    uint256 oldSumBias;
+    uint256 oldSumSlope;
+  }
+
+  struct TmpBias {
+    uint256 oldBias;
+    uint256 newBias;
+  }
+
+  uint256[46] private __gap;
 }
