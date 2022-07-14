@@ -136,16 +136,16 @@ describe('p12V0Factory', function () {
 
     await expect(core.p12V0Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
 
-    // await core.p12V0Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
-    // await core.p12V0Factory.transferOwnership(admin2.address, false);
+    await core.p12V0Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
+    await core.p12V0Factory.transferOwnership(admin2.address, false);
 
-    // await expect(
-    //   core.p12V0Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
-    // ).to.be.revertedWith('SafeOwnable: caller not the owner');
+    await expect(
+      core.p12V0Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
+    ).to.be.revertedWith('SafeOwnable: caller not the owner');
 
-    // await core.p12V0Factory.connect(admin2).claimOwnership();
-    // await core.p12V0Factory.connect(admin2).transferOwnership(admin.address, false);
-    // await core.p12V0Factory.claimOwnership();
+    await core.p12V0Factory.connect(admin2).claimOwnership();
+    await core.p12V0Factory.connect(admin2).transferOwnership(admin.address, false);
+    await core.p12V0Factory.claimOwnership();
   });
   it('Should contract upgrade successfully', async function () {
     const p12FactoryAlterF = await ethers.getContractFactory('P12V0FactoryUpgradeableAlter');
