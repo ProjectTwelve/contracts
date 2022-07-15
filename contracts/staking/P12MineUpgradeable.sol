@@ -32,9 +32,6 @@ contract P12MineUpgradeable is
 
   // ============ External ============
 
-  
-
-
   /**
   @notice set new p12Factory
   @param newP12Factory address of p12Factory
@@ -115,7 +112,7 @@ contract P12MineUpgradeable is
     @param lpToken Address of lpToken
     @param amount Number of lpToken
    */
-  function getWithdrawUnlockTimestamp(address lpToken, uint256 amount)public view virtual override returns(uint256) {
+  function getWithdrawUnlockTimestamp(address lpToken, uint256 amount) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
     PoolInfo memory pool = poolInfos[pid];
     uint256 time;
@@ -128,7 +125,6 @@ contract P12MineUpgradeable is
     uint256 unlockTimestamp = delay + time;
     return unlockTimestamp;
   }
-
 
   /**
     @notice Get pool id
@@ -159,6 +155,7 @@ contract P12MineUpgradeable is
     uint256 amount,
     address gameCoinCreator
   ) public virtual override whenNotPaused onlyP12Factory {
+    createPool(lpToken);
     uint256 pid = getPid(lpToken);
     uint256 totalLpStaked = IERC20Upgradeable(lpToken).balanceOf(address(this));
     PoolInfo storage pool = poolInfos[pid];

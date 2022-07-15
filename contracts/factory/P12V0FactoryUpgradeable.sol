@@ -242,9 +242,8 @@ contract P12V0FactoryUpgradeable is
 
     // add pair address to Controller,100 is init weight
     gaugeController.addGauge(pair, 0, 100);
-    // new staking pool
-    p12Mine.createPool(pair);
 
+    // create a new pool and add staking info
     p12Mine.addLpTokenInfoForGameCreator(pair, liquidity1, msg.sender);
 
     allGameCoins[gameCoinAddress] = gameId;
