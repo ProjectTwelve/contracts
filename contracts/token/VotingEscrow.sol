@@ -40,8 +40,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     INCREASE_UNLOCK_TIME
   }
 
-  event CommitOwnership(address admin);
-  event ApplyOwnership(address admin);
+  event Expired(address addr, uint256 timestamp);
   event Deposit(address indexed provider, uint256 value, uint256 indexed lockTime, OperationType t, uint256 ts);
   event Withdraw(address indexed provider, uint256 value, uint256 ts);
   event TotalLocked(uint256 prevTotalLockedP12, uint256 totalLockedP12);
@@ -66,18 +65,18 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
 
   /** 
     @notice Contract constructor
-    @param P12TokenAddr `ERC20CRV` token address
+    @param p12TokenAddr_ `ERC20P12` token address
     @param name_ Token name
     @param symbol_ Token symbol
   */
   constructor(
-    address P12TokenAddr,
+    address p12TokenAddr_,
     string memory name_,
     string memory symbol_
   ) {
     name = name_;
     symbol = symbol_;
-    p12Token = P12TokenAddr;
+    p12Token = p12TokenAddr_;
     pointHistory[0].blk = block.number;
     pointHistory[0].ts = block.timestamp;
   }
