@@ -11,4 +11,6 @@ contract P12AssetFactoryStorage {
    * p12factory address, for reading game and developer relationship
    */
   address public p12factory;
+
+  uint256[49] private __gap;
 }

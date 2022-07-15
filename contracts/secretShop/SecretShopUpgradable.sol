@@ -5,9 +5,6 @@ import './interfaces/IDelegate.sol';
 import './interfaces/IWETHUpgradable.sol';
 
 import './interfaces/ISecretShopUpgradable.sol';
-
-import '../access/SafeOwnableUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
@@ -15,11 +12,11 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './SecretShopStorage.sol';
+import '../access/SafeOwnableUpgradeable.sol';
 
 contract SecretShopUpgradable is
   SecretShopStorage,
   ISecretShopUpgradable,
-  Initializable,
   ReentrancyGuardUpgradeable,
   SafeOwnableUpgradeable,
   PausableUpgradeable,

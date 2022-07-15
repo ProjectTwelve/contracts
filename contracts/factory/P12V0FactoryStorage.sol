@@ -1,6 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.13;
 
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
+import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+import './interfaces/IP12MineUpgradeable.sol';
+import './interfaces/IGaugeController.sol';
+import './interfaces/IP12V0ERC20.sol';
+
 contract P12V0FactoryStorage {
   /**
    * @dev p12 ERC20 address
@@ -9,11 +15,11 @@ contract P12V0FactoryStorage {
   /**
    * @dev uniswap v2 Router address
    */
-  address public uniswapRouter;
+  IUniswapV2Router02 public uniswapRouter;
   /**
    * @dev uniswap v2 Factory address
    */
-  address public uniswapFactory;
+  IUniswapV2Factory public uniswapFactory;
   /**
    * @dev length of cast delay time is a linear function of percentage of additional issues,
    * @dev delayK and delayB is the linear function's parameter which could be changed later
@@ -31,16 +37,21 @@ contract P12V0FactoryStorage {
   /**
    * @dev p12 staking contract
    */
-  address public p12mine;
+  IP12MineUpgradeable public p12Mine;
+
+  address public dev;
+  IGaugeController public gaugeController;
+
+  uint256[40] private __gap;
 
   // gameId => developer address
   mapping(string => address) public allGames;
   // gameCoinAddress => gameId
-  mapping(address => string) public allGameCoins;
+  mapping(IP12V0ERC20 => string) public allGameCoins;
   // gameCoinAddress => declareMintId => MintCoinInfo
-  mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
+  mapping(IP12V0ERC20 => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
   // gameCoinAddress => declareMintId
-  mapping(address => bytes32) public preMintIds;
+  mapping(IP12V0ERC20 => bytes32) public preMintIds;
 
   /**
    * @dev struct of each mint request

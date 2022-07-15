@@ -30,4 +30,6 @@ abstract contract SecretShopStorage {
   bytes32 public domainSeparator;
 
   IWETHUpgradable public weth;
+
+  uint256[47] private __gap;
 }

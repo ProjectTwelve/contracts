@@ -20,6 +20,7 @@ describe('P12AssetFactoryUpgradable', function () {
   let p12AssetFactory: P12AssetFactoryUpgradable;
   let collectionAddr: string;
   let collection: P12Asset;
+  let p12Dev: SignerWithAddress;
 
   this.beforeAll(async () => {
     // distribute account
@@ -27,13 +28,14 @@ describe('P12AssetFactoryUpgradable', function () {
     admin = accounts[0];
     developer1 = accounts[1];
     developer2 = accounts[2];
+    p12Dev = accounts[9];
     // user1 = accounts[3];
 
     // deploy p12 coin
     const P12TokenF = await ethers.getContractFactory('P12Token');
     const p12Token = await P12TokenF.deploy('Project Twelve', 'P12', 0n);
 
-    // // mint p12 Coin
+    // mint p12 Coin
     // await p12coin.mint(user1.address, 100n * 10n ** 18n);
     // await p12coin.mint(user2.address, 100n * 10n ** 18n);
     // expect(await p12coin.balanceOf(user1.address)).to.be.equal(
@@ -45,8 +47,8 @@ describe('P12AssetFactoryUpgradable', function () {
 
     // deploy p12factory
     const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
-
     // not fully use, so set random address args
+
     p12factory = await upgrades.deployProxy(
       P12FACTORY,
       [p12Token.address, p12Token.address, p12Token.address, 0n, ethers.utils.randomBytes(32)],
@@ -54,9 +56,10 @@ describe('P12AssetFactoryUpgradable', function () {
         kind: 'uups',
       },
     );
+    await p12factory.setDev(p12Dev.address);
 
     // register game
-    await p12factory.register('gameId1', developer1.address);
+    await p12factory.connect(p12Dev).register('gameId1', developer1.address);
   });
 
   it('Should P12AssetFactoryUpgradable Deploy successfully', async function () {

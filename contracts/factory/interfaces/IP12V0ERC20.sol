@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.13;
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-interface IP12V0ERC20 {
+interface IP12V0ERC20 is IERC20 {
   /**
    * @dev record the event that transfer coin with a off-chain account, which will be used when someone want to deposit his coin to off-chain game.
    */
