@@ -109,15 +109,15 @@ contract P12V0FactoryUpgradeable is
    * @dev developer want to mint 200k, developer has to real mint it after `2DelayK +
    * @dev delayB`.
           ^
-        t +      /
-          |     /
+        t +            /
+          |          /
+          |        /
+      2k+b|      /
           |    /
-      2k+b|   /
-          |  /
-       k+b| / 
+       k+b|  / 
           |/ 
          b|
-          0--p--2p---------> amount
+          0----p---2p---------> amount
             
    */
   function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
