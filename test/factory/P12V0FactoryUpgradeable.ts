@@ -1,105 +1,53 @@
 import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { P12Token, P12V0FactoryUpgradeable } from '../../typechain';
-import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
-import * as compiledUniswapRouter from '@uniswap/v2-periphery/build/UniswapV2Router02.json';
-import * as compiledWETH from 'canonical-weth/build/contracts/WETH9.json';
-import { Contract } from 'ethers';
+import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 
-describe('P12Factory', function () {
+describe('p12V0Factory', function () {
   let admin: SignerWithAddress;
+  let p12Dev: SignerWithAddress;
+  let gameDeveloper: SignerWithAddress;
   let admin2: SignerWithAddress;
-  let developer: SignerWithAddress;
   let user: SignerWithAddress;
-  let uniswapV2Router02: Contract;
-  let p12: P12Token;
-  let uniswapV2Factory: Contract;
-  let p12Factory: P12V0FactoryUpgradeable;
-  let gameCoinAddress: string;
   let mintId: string;
-  // eslint-disable-next-line no-unused-vars
-  let mintId2: string;
-  let p12MineUpgradeable: Contract;
-
+  let gameCoinAddress: string;
+  let core: EconomyContract & ExternalContract;
+  let test: SignerWithAddress;
   this.beforeAll(async function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
     admin = accounts[0];
-    admin2 = accounts[3];
-    developer = accounts[1];
-    user = accounts[2];
-
-    // deploy uniswap
-    const UNISWAPV2ROUTER = new ethers.ContractFactory(compiledUniswapRouter.abi, compiledUniswapRouter.bytecode, admin);
-    const UNISWAPV2FACTORY = new ethers.ContractFactory(
-      compiledUniswapFactory.interface,
-      compiledUniswapFactory.bytecode,
-      admin,
-    );
-    const WETH = new ethers.ContractFactory(compiledWETH.abi, compiledWETH.bytecode, admin);
-    uniswapV2Factory = await UNISWAPV2FACTORY.connect(admin).deploy(admin.address);
-
-    const weth = await WETH.deploy();
-
-    uniswapV2Router02 = await UNISWAPV2ROUTER.connect(admin).deploy(uniswapV2Factory.address, weth.address);
+    admin2 = accounts[1];
+    gameDeveloper = accounts[2];
+    user = accounts[3];
+    p12Dev = accounts[8];
+    test = accounts[9];
+    core = await deployAll();
+    await core.p12V0Factory.setDev(p12Dev.address);
   });
-  it('Should show p12 token deploy successfully!', async function () {
-    // deploy p12token
-    const ERC20 = await ethers.getContractFactory('P12Token');
-    p12 = await ERC20.connect(admin).deploy('ProjectTwelve', 'P12', 1000n * 10n ** 18n);
-    expect(await p12.balanceOf(admin.address)).to.be.equal(1000n * 10n ** 18n);
-  });
-
-  it('Should show P12Factory contract deploy successful!', async function () {
-    const P12FACTORY = await ethers.getContractFactory('P12V0FactoryUpgradeable');
-    const p12FactoryAddr = await upgrades.deployProxy(
-      P12FACTORY,
-      [p12.address, uniswapV2Factory.address, uniswapV2Router02.address, 3600, ethers.utils.randomBytes(32)],
-      {
-        kind: 'uups',
-      },
-    );
-    p12Factory = await ethers.getContractAt('P12V0FactoryUpgradeable', p12FactoryAddr.address);
-    expect(await p12Factory.owner()).to.be.equal(admin.address);
-  });
-
-  // deploy P12Mine
-  it('show deploy p12mine successfully', async function () {
-    const timeStart = 1;
-    const delayK = 60;
-    const delayB = 60;
-    const P12MineUpgradeable = await ethers.getContractFactory('P12MineUpgradeable');
-    p12MineUpgradeable = await upgrades.deployProxy(
-      P12MineUpgradeable,
-      [p12.address, p12Factory.address, timeStart, delayK, delayB],
-      { kind: 'uups' },
-    );
-  });
-  it('set some info to p12Factory', async function () {
-    await p12Factory.setP12Mine(p12MineUpgradeable.address);
-    expect(await p12Factory.p12mine()).to.be.equal(p12MineUpgradeable.address);
-  });
-
   it('Should pausable effective', async () => {
-    await p12Factory.pause();
-
-    expect(p12Factory.create('', '', '', '', 0n, 0n)).to.be.revertedWith('Pausable: paused');
-    expect(p12Factory.declareMintCoin('', '', 0n)).to.be.revertedWith('Pausable: paused');
-    expect(p12Factory.executeMint('', '')).to.be.revertedWith('Pausable: paused');
-
-    await p12Factory.unpause();
+    await core.p12V0Factory.pause();
+    expect(core.p12V0Factory.create('', '', '', '', 0n, 0n)).to.be.revertedWith('Pausable: paused');
+    expect(core.p12V0Factory.queueMintCoin('', '', 0n)).to.be.revertedWith('Pausable: paused');
+    expect(core.p12V0Factory.executeMintCoin('', '')).to.be.revertedWith('Pausable: paused');
+    await core.p12V0Factory.unpause();
   });
 
-  it('Should show developer register successfully', async function () {
+  it('Should show gameDeveloper register successfully', async function () {
     const gameId = '1101';
-    await p12Factory.connect(admin).register(gameId, developer.address);
-    expect(await p12Factory.allGames('1101')).to.be.equal(developer.address);
+    await core.p12V0Factory.connect(p12Dev).register(gameId, gameDeveloper.address);
+    expect(await core.p12V0Factory.allGames('1101')).to.be.equal(gameDeveloper.address);
   });
-
-  it('Give developer p12', async function () {
-    await p12.connect(admin).transfer(developer.address, BigInt(3) * 10n ** 18n);
-    expect(await p12.balanceOf(developer.address)).to.be.equal(3n * 10n ** 18n);
+  it('should show register fail by test account', async function () {
+    const gameId2 = '1102';
+    await expect(core.p12V0Factory.connect(test).register(gameId2, gameDeveloper.address)).to.be.revertedWith(
+      'P12Factory: caller must be dev',
+    );
+  });
+  it('Give gameDeveloper p12 and approve p12 token to p12V0factory', async function () {
+    await core.p12Token.connect(admin).transfer(gameDeveloper.address, BigInt(3) * 10n ** 18n);
+    expect(await core.p12Token.balanceOf(gameDeveloper.address)).to.be.equal(3n * 10n ** 18n);
+    await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, 3n * 10n ** 18n);
   });
   it('Should show gameCoin create successfully!', async function () {
     const name = 'GameCoin';
@@ -110,9 +58,9 @@ describe('P12Factory', function () {
     const amountGameCoin = BigInt(10) * BigInt(10) ** 18n;
     const amountP12 = BigInt(1) * BigInt(10) ** 18n;
 
-    await p12.connect(developer).approve(p12Factory.address, amountP12);
-    const createInfo = await p12Factory
-      .connect(developer)
+    await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, amountP12);
+    const createInfo = await core.p12V0Factory
+      .connect(gameDeveloper)
       .create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
 
     (await createInfo.wait()).events!.forEach((x) => {
@@ -123,14 +71,14 @@ describe('P12Factory', function () {
   });
 
   it('Should show set delay variable successfully! ', async function () {
-    await p12Factory.connect(admin).setDelayK(1);
-    await p12Factory.connect(admin).setDelayB(1);
-    expect(await p12Factory.delayK()).to.be.equal(1);
-    expect(await p12Factory.delayB()).to.be.equal(1);
+    await core.p12V0Factory.connect(admin).setDelayK(1);
+    await core.p12V0Factory.connect(admin).setDelayB(1);
+    expect(await core.p12V0Factory.delayK()).to.be.equal(1);
+    expect(await core.p12V0Factory.delayB()).to.be.equal(1);
   });
 
   // it("Check gameCoin mint fee", async function () {
-  //   const price = await p12Factory.getMintFee(
+  //   const price = await core.p12V0Factory.getMintFee(
   //     gameCoinAddress,
   //     BigInt(30) * BigInt(10) ** 18n
   //   );
@@ -138,27 +86,17 @@ describe('P12Factory', function () {
   // });
 
   it('Check gameCoin mint delay time', async function () {
-    await p12Factory.getMintDelay(gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
+    await core.p12V0Factory.getMintDelay(gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
   });
   it('Should show declare mint successfully!', async function () {
     const amountP12 = BigInt(6) * BigInt(10) ** 17n;
-    await p12.connect(developer).approve(p12Factory.address, amountP12);
-    const tx = await p12Factory.connect(developer).declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
+    await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, amountP12);
+    const tx = await core.p12V0Factory
+      .connect(gameDeveloper)
+      .queueMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
     (await tx.wait()).events!.forEach((x) => {
-      if (x.event === 'DeclareMint') {
+      if (x.event === 'QueueMintCoin') {
         mintId = x.args!.mintId;
-      }
-    });
-  });
-
-  it('Should show declare mint successfully!', async function () {
-    const amountP12 = BigInt(6) * BigInt(10) ** 17n;
-
-    await p12.connect(developer).approve(p12Factory.address, amountP12);
-    const tx = await p12Factory.connect(developer).declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
-    (await tx.wait()).events!.forEach((x) => {
-      if (x.event === 'DeclareMint') {
-        mintId2 = x.args!.mintId;
       }
     });
   });
@@ -168,54 +106,52 @@ describe('P12Factory', function () {
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await p12Factory.executeMint(gameCoinAddress, mintId);
+    await core.p12V0Factory.executeMintCoin(gameCoinAddress, mintId);
   });
-
   it('Should show duplicate mint fail!', async function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await expect(p12Factory.executeMint(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
+    await expect(core.p12V0Factory.executeMintCoin(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
   });
 
-  it('Should show change game developer successfully !', async function () {
+  it('Should show change game gameDeveloper successfully !', async function () {
     const gameId = '1101';
-    await p12Factory.connect(admin).register(gameId, admin.address);
-    expect(await p12Factory.allGames('1101')).to.be.equal(admin.address);
+    await core.p12V0Factory.connect(p12Dev).register(gameId, admin.address);
+    expect(await core.p12V0Factory.allGames('1101')).to.be.equal(admin.address);
   });
 
   it('Should show withdraw gameCoin successfully', async function () {
-    await p12Factory.connect(admin).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
+    await core.p12V0Factory.connect(admin).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
     const P12V0ERC20 = await ethers.getContractFactory('P12V0ERC20');
     const p12V0ERC20 = await P12V0ERC20.attach(gameCoinAddress);
 
     expect(await p12V0ERC20.balanceOf(user.address)).to.be.equal(1n * 10n ** 18n);
   });
   it('should transfer ownership successfully', async () => {
-    await expect(p12Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
+    await expect(core.p12V0Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
       'SafeOwnable: new owner is zero',
     );
 
-    await expect(p12Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
+    await expect(core.p12V0Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
 
-    await p12Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
-    await p12Factory.transferOwnership(admin2.address, false);
+    await core.p12V0Factory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
+    await core.p12V0Factory.transferOwnership(admin2.address, false);
 
     await expect(
-      p12Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
+      core.p12V0Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
     ).to.be.revertedWith('SafeOwnable: caller not the owner');
 
-    await p12Factory.connect(admin2).claimOwnership();
-    await p12Factory.connect(admin2).transferOwnership(admin.address, false);
-    await p12Factory.claimOwnership();
+    await core.p12V0Factory.connect(admin2).claimOwnership();
+    await core.p12V0Factory.connect(admin2).transferOwnership(admin.address, false);
+    await core.p12V0Factory.claimOwnership();
   });
   it('Should contract upgrade successfully', async function () {
     const p12FactoryAlterF = await ethers.getContractFactory('P12V0FactoryUpgradeableAlter');
 
-    await upgrades.upgradeProxy(p12Factory.address, p12FactoryAlterF);
-
-    const p12FactoryAlter = await ethers.getContractAt('P12V0FactoryUpgradeableAlter', p12Factory.address);
+    await upgrades.upgradeProxy(core.p12V0Factory.address, p12FactoryAlterF);
+    const p12FactoryAlter = await ethers.getContractAt('P12V0FactoryUpgradeableAlter', core.p12V0Factory.address);
 
     await p12FactoryAlter.callWhiteBlack();
   });

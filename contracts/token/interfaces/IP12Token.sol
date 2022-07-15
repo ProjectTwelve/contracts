@@ -2,8 +2,6 @@
 
 pragma solidity 0.8.13;
 
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-
-interface IP12Token is IERC20 {
+interface IP12Token {
   function mint(address recipient, uint256 amount) external;
 }

@@ -2,6 +2,8 @@
 pragma solidity 0.8.13;
 
 import '../factory/P12V0FactoryUpgradeable.sol';
+import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
+import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 
 // new contract for test
 contract P12V0FactoryUpgradeableAlter is P12V0FactoryUpgradeable {
@@ -9,16 +11,16 @@ contract P12V0FactoryUpgradeableAlter is P12V0FactoryUpgradeable {
    * @dev set UniswapFactory address
    * @param newAddr new UniswapFactory address
    */
-  function setUniswapFactory(address newAddr) public onlyOwner {
-    uniswapFactory = newAddr;
+  function setUniswapFactory(IUniswapV2Factory newAddr) public override onlyOwner {
+    uniswapFactory = IUniswapV2Factory(newAddr);
   }
 
   /**
    * @dev set Uniswap Router Address
    * @param newAddr new Uniswap Router Address
    */
-  function setUniswapRouter(address newAddr) public onlyOwner {
-    uniswapRouter = newAddr;
+  function setUniswapRouter(IUniswapV2Router02 newAddr) public override onlyOwner {
+    uniswapRouter = IUniswapV2Router02(newAddr);
   }
 
   /**

@@ -3,10 +3,7 @@ pragma solidity 0.8.13;
 
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router01.sol';
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-
-import 'hardhat/console.sol';
 
 interface IP12V0Factory {
   // register gameId =>developer

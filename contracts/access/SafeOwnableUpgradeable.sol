@@ -1,7 +1,5 @@
-// SPDX-License-Identifier: MIT
-// Safe Ownable Upgradable, which use two step transfer pattern to ensure security
-// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol
-// and https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol
+// SPDX-License-Identifier: GPL-3.0-only
+// Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol and https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/master/contracts/access/OwnableUpgradeable.sol
 
 pragma solidity 0.8.13;
 
@@ -66,7 +64,6 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
    */
   function transferOwnership(address newOwner, bool direct) public virtual onlyOwner {
     require(newOwner != address(0), 'SafeOwnable: new owner is zero');
-
     if (direct) {
       _transferOwnership(newOwner);
     } else {

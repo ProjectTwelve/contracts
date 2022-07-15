@@ -7,6 +7,8 @@ import {
   P12Token,
   P12V0FactoryUpgradeable,
   SecretShopUpgradable,
+  GaugeControllerUpgradeable,
+  VotingEscrow,
 } from '../typechain';
 import { Contract } from 'ethers';
 import * as compiledUniswapFactory from '@uniswap/v2-core/build/UniswapV2Factory.json';
@@ -27,6 +29,8 @@ export declare type EconomyContract = {
   erc1155delegate: ERC1155Delegate;
   erc721delegate: ERC721Delegate;
   p12Mine: P12MineUpgradeable;
+  gaugeController: GaugeControllerUpgradeable;
+  votingEscrow: VotingEscrow;
 };
 
 export async function deployExternal(): Promise<ExternalContract> {
@@ -58,6 +62,8 @@ export async function deployEconomyContract(externalContract: ExternalContract):
   const ERC1155DelegateF = await ethers.getContractFactory('ERC1155Delegate');
   const ERC721DelegateF = await ethers.getContractFactory('ERC721Delegate');
   const P12MineF = await ethers.getContractFactory('P12MineUpgradeable');
+  const GaugeController = await ethers.getContractFactory('GaugeControllerUpgradeable');
+  const VotingEscrow = await ethers.getContractFactory('VotingEscrow');
 
   const p12Token = await P12Token.deploy('Project Twelve', 'P12', 10000n * 10n ** 18n);
   const p12V0Factory = await upgrades.deployProxy(P12V0FactoryF, [
@@ -71,8 +77,16 @@ export async function deployEconomyContract(externalContract: ExternalContract):
   const p12SecretShop = await upgrades.deployProxy(P12SecretShopF, [10n ** 5n, externalContract.weth.address]);
   const erc1155delegate = await ERC1155DelegateF.deploy();
   const erc721delegate = await ERC721DelegateF.deploy();
-  const p12Mine = await upgrades.deployProxy(P12MineF, [p12Token.address, p12V0Factory.address, 0n, 1, 1]);
-
+  const votingEscrow = await VotingEscrow.deploy(p12Token.address, 'Vote-escrowed P12', 'veP12');
+  const gaugeController = await upgrades.deployProxy(GaugeController, [votingEscrow.address, p12V0Factory.address]);
+  const p12Mine = await upgrades.deployProxy(P12MineF, [
+    p12Token.address,
+    p12V0Factory.address,
+    gaugeController.address,
+    60,
+    60,
+    5n * 10n ** 17n,
+  ]);
   return {
     p12Token: p12Token,
     p12V0Factory: await ethers.getContractAt('P12V0FactoryUpgradeable', p12V0Factory.address),
@@ -80,6 +94,8 @@ export async function deployEconomyContract(externalContract: ExternalContract):
     p12SecretShop: await ethers.getContractAt('SecretShopUpgradable', p12SecretShop.address),
     erc1155delegate: erc1155delegate,
     erc721delegate: erc721delegate,
+    votingEscrow: votingEscrow,
+    gaugeController: await ethers.getContractAt('GaugeControllerUpgradeable', gaugeController.address),
     p12Mine: await ethers.getContractAt('P12MineUpgradeable', p12Mine.address),
   };
 }
@@ -89,6 +105,8 @@ export async function setUp(ec: EconomyContract) {
   const admin = accounts[0];
 
   await ec.p12V0Factory.setP12Mine(ec.p12Mine.address);
+  await ec.p12V0Factory.setGaugeController(ec.gaugeController.address);
+  await ec.gaugeController.addType('liquidity', 1n * 10n ** 18n);
 
   await ec.erc1155delegate.grantRole(await ec.erc1155delegate.DELEGATION_CALLER(), ec.p12SecretShop.address);
   await ec.erc721delegate.grantRole(await ec.erc1155delegate.DELEGATION_CALLER(), ec.p12SecretShop.address);
@@ -107,7 +125,6 @@ export async function deployAll(): Promise<EconomyContract & ExternalContract> {
   const ex = await deployExternal();
   const ec = await deployEconomyContract(ex);
   await setUp(ec);
-
   return { ...ex, ...ec };
 }
 
