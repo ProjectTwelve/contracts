@@ -16,7 +16,6 @@ import './P12MineStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
 import '../token/interfaces/IP12Token.sol';
 
-
 contract P12MineUpgradeable is
   P12MineStorage,
   IP12MineUpgradeable,
@@ -32,6 +31,9 @@ contract P12MineUpgradeable is
   uint256 public constant WEEK = 7 * 86400;
 
   // ============ External ============
+
+  
+
 
   /**
   @notice set new p12Factory
@@ -61,14 +63,13 @@ contract P12MineUpgradeable is
   function poolLength() external view virtual returns (uint256) {
     return poolInfos.length;
   }
+
   /**
 ​    @notice withdraw token Emergency
   */
-   function withdrawEmergency() external virtual override onlyOwner {
-
+  function withdrawEmergency() external virtual override onlyOwner {
     p12RewardVault.withdrawEmergency(msg.sender);
   }
-
 
   // ============ Public ============
 
@@ -108,6 +109,26 @@ contract P12MineUpgradeable is
     __Pausable_init_unchained();
     __Ownable_init_unchained();
   }
+
+  /**
+    @notice get withdraw unlockTimestamp
+    @param lpToken Address of lpToken
+    @param amount Number of lpToken
+   */
+  function getWithdrawUnlockTimestamp(address lpToken, uint256 amount)public view virtual override returns(uint256) {
+    uint256 pid = getPid(lpToken);
+    PoolInfo memory pool = poolInfos[pid];
+    uint256 time;
+    uint256 currentTimestamp = block.timestamp;
+    bytes32 _preWithdrawId = preWithdrawIds[lpToken];
+    uint256 lastUnlockTimestamp = withdrawInfos[lpToken][_preWithdrawId].unlockTimestamp;
+
+    time = currentTimestamp >= lastUnlockTimestamp ? currentTimestamp : lastUnlockTimestamp;
+    uint256 delay = (amount * delayK) / IERC20Upgradeable(pool.lpToken).totalSupply() + delayB;
+    uint256 unlockTimestamp = delay + time;
+    return unlockTimestamp;
+  }
+
 
   /**
     @notice Get pool id
@@ -156,13 +177,11 @@ contract P12MineUpgradeable is
   /**
     @notice set the isEmergency status
   */
-  function setEmergency(bool emergencyStatus)public virtual override onlyOwner{
-    require(isEmergency != emergencyStatus,'P12Mine: already exists');
+  function setEmergency(bool emergencyStatus) public virtual override onlyOwner {
+    require(isEmergency != emergencyStatus, 'P12Mine: already exists');
     isEmergency = emergencyStatus;
     emit SetEmergency(emergencyStatus);
   }
-
-
 
   /**
     @notice Create a new pool
@@ -289,23 +308,15 @@ contract P12MineUpgradeable is
   */
   function queueWithdraw(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
-    PoolInfo storage pool = poolInfos[pid];
-    UserInfo storage user = userInfo[pid][msg.sender];
+    PoolInfo memory pool = poolInfos[pid];
+    UserInfo memory user = userInfo[pid][msg.sender];
     require(user.amount >= amount, 'P12Mine: withdraw too much');
     checkpoint(pid);
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
     }
-    uint256 time;
-    uint256 currentTimestamp = block.timestamp;
-    bytes32 _preWithdrawId = preWithdrawIds[lpToken];
-    uint256 lastUnlockTimestamp = withdrawInfos[lpToken][_preWithdrawId].unlockTimestamp;
-
-    time = currentTimestamp >= lastUnlockTimestamp ? currentTimestamp : lastUnlockTimestamp;
-    uint256 delay = (amount * delayK) / IERC20Upgradeable(pool.lpToken).totalSupply() + delayB;
-    uint256 unlockTimestamp = delay + time;
-
+    uint256 unlockTimestamp = getWithdrawUnlockTimestamp(lpToken, amount);
     bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
     withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(msg.sender, amount, unlockTimestamp, false);
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
@@ -372,42 +383,37 @@ contract P12MineUpgradeable is
     emit ExecuteWithdraw(_who, pid, amount, user.amount, pool.amount);
   }
 
-   /**
+  /**
 ​    @notice withdraw lpToken Emergency
   */
 
-  function withdrawAllLpTokenEmergency() public virtual override onlyEmergency{
-
+  function withdrawAllLpTokenEmergency() public virtual override onlyEmergency {
     uint256 length = poolInfos.length;
 
     for (uint256 pid = 0; pid < length; pid++) {
-
       if (userInfo[pid][msg.sender].amount == 0) {
-
         continue; // save gas
       }
       PoolInfo memory pool = poolInfos[pid];
       withdrawLpTokenEmergency(pool.lpToken);
     }
-
   }
 
-   /**
+  /**
 ​    @notice withdraw all lpToken Emergency
     @param lpToken address of lpToken
   */
-  function withdrawLpTokenEmergency(address lpToken) public virtual override onlyEmergency{
+  function withdrawLpTokenEmergency(address lpToken) public virtual override onlyEmergency {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    require(user.amount >0 ,'P12Mine: without any lpToken');
+    require(user.amount > 0, 'P12Mine: without any lpToken');
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
-    uint amount = user.amount;
+    uint256 amount = user.amount;
     user.amount = 0;
-    user.rewardDebt = 0 ;
+    user.rewardDebt = 0;
     emit WithdrawLpTokenEmergency(lpToken, amount);
   }
-
 
   // ============ Internal ============
 
@@ -468,8 +474,8 @@ contract P12MineUpgradeable is
   }
 
   // check Emergency
-  modifier onlyEmergency(){
-    require(isEmergency,'P12Mine: isEmergency must be true');
+  modifier onlyEmergency() {
+    require(isEmergency, 'P12Mine: isEmergency must be true');
     _;
   }
 }
