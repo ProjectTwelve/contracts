@@ -82,7 +82,6 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     pointHistory[0].ts = block.timestamp;
   }
 
-
   function expire() external onlyOwner contractNotExpired {
     expired = true;
     emit Expired(msg.sender, block.timestamp);
@@ -117,8 +116,6 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   function lockedEnd(address addr) external view returns (uint256) {
     return locked[addr].end;
   }
-
-  
 
   /**
     @notice Record global data to checkpoint
@@ -189,7 +186,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     @notice Withdraw all tokens for `msg.sender`
     @dev Only possible if the lock has expired
   */
-  function withdraw() external nonReentrant whenNotPaused{
+  function withdraw() external nonReentrant whenNotPaused {
     LockedBalance memory _locked = locked[msg.sender];
     require(_locked.amount > 0, 'VotingEscrow: you have not pledged');
     require(block.timestamp >= _locked.end, 'VotingEscrow: The lock did not expire');
@@ -213,7 +210,6 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     emit TotalLocked(totalLockedP12Before, totalLockedP12Before - value);
   }
 
-  
   /** 
     @notice Get the current voting power for `msg.sender`
     @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
@@ -283,8 +279,6 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     }
   }
 
-  
-
   /**
    
     @notice Calculate total voting power
@@ -324,6 +318,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     // Now dt contains info on how far are we beyond point
     return supplyAt(point, point.ts + dt);
   }
+
   //------------------public---------------
 
   function pause() public onlyOwner {
@@ -501,6 +496,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     @param value Amount to deposit
     @param unlockTime New time when to unlock the tokens, or 0 if unchanged
     @param lockedBalance Previous locked amount / timestamp
+    @param t Operation type 
   */
 
   function _depositFor(
@@ -569,5 +565,4 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     require(!expired, 'VotingEscrow: The contract has been stopped, only withdrawals can be made');
     _;
   }
-
 }
