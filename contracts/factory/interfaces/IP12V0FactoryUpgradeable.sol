@@ -21,14 +21,14 @@ interface IP12V0FactoryUpgradeable {
   ) external returns (IP12V0ERC20);
 
   //  mint coin and Launch a statement
-  function declareMintCoin(
+  function queueMintCoin(
     string memory gameId,
     IP12V0ERC20 gameCoinAddress,
     uint256 amountGameCoin
   ) external returns (bool);
 
   // execute Mint coin
-  function executeMint(IP12V0ERC20 gameCoinAddress, bytes32 mintId) external returns (bool);
+  function executeMintCoin(IP12V0ERC20 gameCoinAddress, bytes32 mintId) external returns (bool);
 
   function withdraw(
     address userAddress,
@@ -67,7 +67,7 @@ interface IP12V0FactoryUpgradeable {
   event CreateGameCoin(IP12V0ERC20 indexed gameCoinAddress, string gameId, uint256 amountP12);
 
   // mint coin in future log
-  event DeclareMint(
+  event QueueMintCoin(
     bytes32 indexed mintId,
     IP12V0ERC20 indexed gameCoinAddress,
     uint256 mintAmount,
@@ -76,7 +76,7 @@ interface IP12V0FactoryUpgradeable {
   );
 
   // mint coin success log
-  event ExecuteMint(bytes32 indexed mintId, IP12V0ERC20 indexed gameCoinAddress, address indexed executor);
+  event ExecuteMintCoin(bytes32 indexed mintId, IP12V0ERC20 indexed gameCoinAddress, address indexed executor);
 
   // game player withdraw gameCoin
   event Withdraw(address userAddress, IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin);

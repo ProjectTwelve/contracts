@@ -30,6 +30,41 @@ contract P12MineUpgradeable is
   uint256 public constant ONE = 10**18;
   uint256 public constant WEEK = 7 * 86400;
 
+  // ============ External ============
+
+  /**
+  @notice set new p12Factory
+  @param newP12Factory address of p12Factory
+   */
+  function setP12Factory(address newP12Factory) external virtual onlyOwner {
+    address oldP12Factory = p12Factory;
+    require(newP12Factory != address(0), 'P12Mine: p12Factory can not zero');
+    p12Factory = newP12Factory;
+    emit SetP12Factory(oldP12Factory, newP12Factory);
+  }
+
+  /**
+  @notice set new gaugeController
+  @param newGaugeController address of gaugeController
+   */
+  function setGaugeController(IGaugeController newGaugeController) external virtual onlyOwner {
+    IGaugeController oldGaugeController = gaugeController;
+    require(address(newGaugeController) != address(0), 'P12Mine: gaugeController can not zero');
+    gaugeController = newGaugeController;
+    emit SetGaugeController(oldGaugeController, newGaugeController);
+  }
+
+  /**
+    @notice Get pool len
+   */
+  function poolLength() external view virtual returns (uint256) {
+    return poolInfos.length;
+  }
+
+  
+
+  // ============ Public ============
+
   function pause() public onlyOwner {
     _pause();
   }
@@ -65,42 +100,6 @@ contract P12MineUpgradeable is
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
     __Ownable_init_unchained();
-  }
-
-  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
-
-  // ============ Modifiers ============
-
-  // check if lpToken exists
-  modifier lpTokenExist(address lpToken) {
-    require(lpTokenRegistry[lpToken] > 0, 'P12Mine: LP Token Not Exist');
-    _;
-  }
-  // check if lpToken exists
-  modifier lpTokenNotExist(address lpToken) {
-    require(lpTokenRegistry[lpToken] == 0, 'P12Mine: LP Token Already Exist');
-    _;
-  }
-
-  // check the caller
-  modifier onlyP12FactoryOrOwner() {
-    require(msg.sender == address(p12Factory) || msg.sender == owner(), 'P12Mine: not p12factory or owner');
-    _;
-  }
-
-  // check the caller
-  modifier onlyP12Factory() {
-    require(msg.sender == address(p12Factory), 'P12Mine: caller not p12factory');
-    _;
-  }
-
-  // ============ Helper ============
-
-  /**
-    @notice Get pool len
-   */
-  function poolLength() external view virtual returns (uint256) {
-    return poolInfos.length;
   }
 
   /**
@@ -193,30 +192,7 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  /**
-  @notice set new p12Factory
-  @param newP12Factory address of p12Factory
-   */
-  function setP12Factory(address newP12Factory) external virtual onlyOwner {
-    address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'P12Mine: p12Factory can not zero');
-    p12Factory = newP12Factory;
-    emit SetP12Factory(oldP12Factory, newP12Factory);
-  }
-
-  /**
-  @notice set new gaugeController
-  @param newGaugeController address of gaugeController
-   */
-  function setGaugeController(IGaugeController newGaugeController) external virtual onlyOwner {
-    IGaugeController oldGaugeController = gaugeController;
-    require(address(newGaugeController) != address(0), 'P12Mine: gaugeController can not zero');
-    gaugeController = newGaugeController;
-    emit SetGaugeController(oldGaugeController, newGaugeController);
-  }
-
   // ============ checkpoint ============
-
   /**
       @notice update checkpoint for pool
       @param pid Pool Id
@@ -293,7 +269,7 @@ contract P12MineUpgradeable is
   @param lpToken Address of lpToken
   @param amount Number of lpToken
   */
-  function withdrawDelay(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
+  function queueWithdraw(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -315,7 +291,7 @@ contract P12MineUpgradeable is
     bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
     withdrawInfos[lpToken][newWithdrawId] = WithdrawInfo(msg.sender, amount, unlockTimestamp, false);
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
-    emit WithdrawDelay(msg.sender, pid, amount, newWithdrawId, unlockTimestamp);
+    emit QueueWithdraw(msg.sender, pid, amount, newWithdrawId, unlockTimestamp);
   }
 
   /**
@@ -357,7 +333,7 @@ contract P12MineUpgradeable is
     @param lpToken Address of lpToken
     @param id Withdraw id 
    */
-  function withdraw(address lpToken, bytes32 id) public virtual nonReentrant whenNotPaused {
+  function executeWithdraw(address lpToken, bytes32 id) public virtual nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
     address _who = withdrawInfos[lpToken][id].who;
     require(msg.sender == _who, 'P12Mine: withdraw the lpToken requires its owner');
@@ -375,10 +351,12 @@ contract P12MineUpgradeable is
     pool.amount -= amount;
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(_who), amount);
-    emit Withdraw(_who, pid, amount, user.amount, pool.amount);
+    emit ExecuteWithdraw(_who, pid, amount, user.amount, pool.amount);
   }
 
   // ============ Internal ============
+
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   /**
     @notice Transfer p12 to user
@@ -407,5 +385,30 @@ contract P12MineUpgradeable is
     bytes32 withdrawId = keccak256(abi.encode(lpToken, amount, to, preWithdrawId));
     preWithdrawIds[lpToken] = withdrawId;
     return withdrawId;
+  }
+
+  // ============ Modifiers ============
+
+  // check if lpToken exists
+  modifier lpTokenExist(address lpToken) {
+    require(lpTokenRegistry[lpToken] > 0, 'P12Mine: LP Token Not Exist');
+    _;
+  }
+  // check if lpToken exists
+  modifier lpTokenNotExist(address lpToken) {
+    require(lpTokenRegistry[lpToken] == 0, 'P12Mine: LP Token Already Exist');
+    _;
+  }
+
+  // check the caller
+  modifier onlyP12FactoryOrOwner() {
+    require(msg.sender == address(p12Factory) || msg.sender == owner(), 'P12Mine: not p12factory or owner');
+    _;
+  }
+
+  // check the caller
+  modifier onlyP12Factory() {
+    require(msg.sender == address(p12Factory), 'P12Mine: caller not p12factory');
+    _;
   }
 }

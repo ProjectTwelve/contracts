@@ -112,7 +112,9 @@ describe('p12Mine', function () {
     const balanceOfLpToken = await core.p12Mine.getUserLpBalance(pair.address, user.address);
     const balanceOfReward = await core.p12Token.balanceOf(user.address);
     await expect(
-      core.p12Mine.connect(user).withdraw(pair.address, '0x686a653b3b000000000000000000000000000000000000000000000000000000'),
+      core.p12Mine
+        .connect(user)
+        .executeWithdraw(pair.address, '0x686a653b3b000000000000000000000000000000000000000000000000000000'),
     ).to.be.revertedWith('P12Mine: withdraw the lpToken requires its owner');
     expect(await core.p12Token.balanceOf(user.address)).to.be.equal(balanceOfReward);
     expect(await core.p12Mine.getUserLpBalance(pair.address, user.address)).to.be.equal(balanceOfLpToken);
@@ -120,11 +122,11 @@ describe('p12Mine', function () {
 
   // delay unStaking mining
   it('show  withdraw delay', async function () {
-    const tx = await core.p12Mine.connect(developer).withdrawDelay(pair.address, liquidity);
+    const tx = await core.p12Mine.connect(developer).queueWithdraw(pair.address, liquidity);
     expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(liquidity);
 
     (await tx.wait()).events!.forEach((x) => {
-      if (x.event === 'WithdrawDelay') {
+      if (x.event === 'QueueWithdraw') {
         id = x.args!.newWithdrawId;
       }
     });
@@ -133,7 +135,7 @@ describe('p12Mine', function () {
   it('show withdraw fail', async function () {
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 60]);
-    await expect(core.p12Mine.connect(developer).withdraw(pair.address, id)).to.be.revertedWith(
+    await expect(core.p12Mine.connect(developer).executeWithdraw(pair.address, id)).to.be.revertedWith(
       'P12Mine: unlock time not reached',
     );
   });
@@ -142,7 +144,7 @@ describe('p12Mine', function () {
     // time goes by
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 60]);
-    await core.p12Mine.connect(developer).withdraw(pair.address, id);
+    await core.p12Mine.connect(developer).executeWithdraw(pair.address, id);
     expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(0);
     expect(await core.p12Token.balanceOf(developer.address)).to.be.above(0);
   });
@@ -183,17 +185,17 @@ describe('p12Mine', function () {
 
   // try withdraw
   it('show withdraw fail', async function () {
-    expect(core.p12Mine.withdraw(pair.address, id)).to.be.revertedWith('P12Mine: can only be withdraw once');
+    expect(core.p12Mine.executeWithdraw(pair.address, id)).to.be.revertedWith('P12Mine: can only be withdraw once');
   });
 
   // delay unStaking mining
   it('show  withdraw delay', async function () {
     const info = await core.p12Mine.userInfo(await core.p12Mine.getPid(pair.address), developer.address);
-    const tx = await core.p12Mine.connect(developer).withdrawDelay(pair.address, info.amount);
+    const tx = await core.p12Mine.connect(developer).queueWithdraw(pair.address, info.amount);
     expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(info.amount);
 
     (await tx.wait()).events!.forEach((x) => {
-      if (x.event === 'WithdrawDelay') {
+      if (x.event === 'QueueWithdraw') {
         id = x.args!.newWithdrawId;
       }
     });
@@ -222,7 +224,7 @@ describe('p12Mine', function () {
     const balanceOf = await core.p12Token.balanceOf(developer.address);
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 600]);
-    await core.p12Mine.connect(developer).withdraw(pair.address, id);
+    await core.p12Mine.connect(developer).executeWithdraw(pair.address, id);
     expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(0);
     expect(await core.p12Token.balanceOf(developer.address)).to.be.above(balanceOf);
   });

@@ -28,8 +28,8 @@ describe('p12V0Factory', function () {
   it('Should pausable effective', async () => {
     await core.p12V0Factory.pause();
     expect(core.p12V0Factory.create('', '', '', '', 0n, 0n)).to.be.revertedWith('Pausable: paused');
-    expect(core.p12V0Factory.declareMintCoin('', '', 0n)).to.be.revertedWith('Pausable: paused');
-    expect(core.p12V0Factory.executeMint('', '')).to.be.revertedWith('Pausable: paused');
+    expect(core.p12V0Factory.queueMintCoin('', '', 0n)).to.be.revertedWith('Pausable: paused');
+    expect(core.p12V0Factory.executeMintCoin('', '')).to.be.revertedWith('Pausable: paused');
     await core.p12V0Factory.unpause();
   });
 
@@ -93,9 +93,9 @@ describe('p12V0Factory', function () {
     await core.p12Token.connect(gameDeveloper).approve(core.p12V0Factory.address, amountP12);
     const tx = await core.p12V0Factory
       .connect(gameDeveloper)
-      .declareMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
+      .queueMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
     (await tx.wait()).events!.forEach((x) => {
-      if (x.event === 'DeclareMint') {
+      if (x.event === 'QueueMintCoin') {
         mintId = x.args!.mintId;
       }
     });
@@ -106,14 +106,14 @@ describe('p12V0Factory', function () {
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await core.p12V0Factory.executeMint(gameCoinAddress, mintId);
+    await core.p12V0Factory.executeMintCoin(gameCoinAddress, mintId);
   });
   it('Should show duplicate mint fail!', async function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await expect(core.p12V0Factory.executeMint(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
+    await expect(core.p12V0Factory.executeMintCoin(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
   });
 
   it('Should show change game gameDeveloper successfully !', async function () {
