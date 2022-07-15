@@ -21,9 +21,14 @@ interface IP12MineUpgradeable {
   event SetRate(uint256 oldRate, uint256 newRate); // set new rate
   event SetP12Factory(address oldP12Factory, address newP12Factory);
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
-
+  event WithdrawLpTokenEmergency(address lpToken, uint256 amount);
+  event SetEmergency(bool emergencyStatus);
   
+  function withdrawEmergency() external;
+  function withdrawLpTokenEmergency(address lpToken)external;
+  function withdrawAllLpTokenEmergency() external;
 
+  function setEmergency(bool emergencyStatus)external;
   function createPool(address lpToken) external; // new pool
 
   function setDelayK(uint256 delayK) external returns (bool);

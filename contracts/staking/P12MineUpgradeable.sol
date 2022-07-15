@@ -16,6 +16,7 @@ import './P12MineStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
 import '../token/interfaces/IP12Token.sol';
 
+
 contract P12MineUpgradeable is
   P12MineStorage,
   IP12MineUpgradeable,
@@ -60,8 +61,14 @@ contract P12MineUpgradeable is
   function poolLength() external view virtual returns (uint256) {
     return poolInfos.length;
   }
+  /**
+​    @notice withdraw token Emergency
+  */
+   function withdrawEmergency() external virtual override onlyOwner {
 
-  
+    p12RewardVault.withdrawEmergency(msg.sender);
+  }
+
 
   // ============ Public ============
 
@@ -145,6 +152,17 @@ contract P12MineUpgradeable is
   }
 
   // ============ Ownable ============
+
+  /**
+    @notice set the isEmergency status
+  */
+  function setEmergency(bool emergencyStatus)public virtual override onlyOwner{
+    require(isEmergency != emergencyStatus,'P12Mine: already exists');
+    isEmergency = emergencyStatus;
+    emit SetEmergency(emergencyStatus);
+  }
+
+
 
   /**
     @notice Create a new pool
@@ -354,6 +372,43 @@ contract P12MineUpgradeable is
     emit ExecuteWithdraw(_who, pid, amount, user.amount, pool.amount);
   }
 
+   /**
+​    @notice withdraw lpToken Emergency
+  */
+
+  function withdrawAllLpTokenEmergency() public virtual override onlyEmergency{
+
+    uint256 length = poolInfos.length;
+
+    for (uint256 pid = 0; pid < length; pid++) {
+
+      if (userInfo[pid][msg.sender].amount == 0) {
+
+        continue; // save gas
+      }
+      PoolInfo memory pool = poolInfos[pid];
+      withdrawLpTokenEmergency(pool.lpToken);
+    }
+
+  }
+
+   /**
+​    @notice withdraw all lpToken Emergency
+    @param lpToken address of lpToken
+  */
+  function withdrawLpTokenEmergency(address lpToken) public virtual override onlyEmergency{
+    uint256 pid = getPid(lpToken);
+    PoolInfo storage pool = poolInfos[pid];
+    UserInfo storage user = userInfo[pid][msg.sender];
+    require(user.amount >0 ,'P12Mine: without any lpToken');
+    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
+    uint amount = user.amount;
+    user.amount = 0;
+    user.rewardDebt = 0 ;
+    emit WithdrawLpTokenEmergency(lpToken, amount);
+  }
+
+
   // ============ Internal ============
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
@@ -409,6 +464,12 @@ contract P12MineUpgradeable is
   // check the caller
   modifier onlyP12Factory() {
     require(msg.sender == address(p12Factory), 'P12Mine: caller not p12factory');
+    _;
+  }
+
+  // check Emergency
+  modifier onlyEmergency(){
+    require(isEmergency,'P12Mine: isEmergency must be true');
     _;
   }
 }

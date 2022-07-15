@@ -10,6 +10,7 @@ describe('p12Mine', function () {
   let developer: SignerWithAddress;
   let user: SignerWithAddress;
   let core: EconomyContract & ExternalContract;
+  let p12RewardVault: Contract;
   let gameCoinAddress: string;
   let pair: Contract;
   let liquidity: number;
@@ -36,9 +37,9 @@ describe('p12Mine', function () {
   });
 
   // transfer p12Token token to the P12RewardVault
-  it('show transfer core.p12Token successfully', async function () {
+  it('show transfer p12Token successfully', async function () {
     const P12RewardVault = await ethers.getContractFactory('P12RewardVault');
-    const p12RewardVault = P12RewardVault.attach(await core.p12Mine.p12RewardVault());
+    p12RewardVault = P12RewardVault.attach(await core.p12Mine.p12RewardVault());
     await core.p12Token.mint(p12RewardVault.address, 100000000n * 10n ** 18n);
     expect(await core.p12Token.balanceOf(p12RewardVault.address)).to.be.equal(100000000n * 10n ** 18n);
   });
@@ -262,5 +263,35 @@ describe('p12Mine', function () {
   // update checkpoint all
   it('show checkpoint  success', async function () {
     await core.p12Mine.checkpointAll();
+  });
+
+  // withdraw p12token Emergency by admin
+  it('show withdraw p12token Emergency successfully', async function () {
+    await expect(core.p12Mine.connect(developer).withdrawEmergency()).to.be.revertedWith('SafeOwnable: caller not the owner');
+    const balanceOf = await core.p12Token.balanceOf(p12RewardVault.address);
+    const balanceOfAdmin = await core.p12Token.balanceOf(admin.address);
+    await core.p12Mine.withdrawEmergency();
+    expect(await core.p12Token.balanceOf(admin.address)).be.be.equal(balanceOf.add(balanceOfAdmin));
+  });
+
+  // withdraw lpTokens Emergency
+  it('show withdraw lpTokens Emergency successfully', async function () {
+    await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: isEmergency must be true');
+    await core.p12Mine.setEmergency(true);
+    await expect(core.p12Mine.withdrawLpTokenEmergency(pair.address)).to.be.revertedWith('P12Mine: without any lpToken');
+    const balanceOf = await pair.balanceOf(developer.address);
+    await pair.connect(developer).approve(core.p12Mine.address, balanceOf);
+    await core.p12Mine.connect(developer).deposit(pair.address, balanceOf);
+    expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(balanceOf);
+    await core.p12Mine.connect(developer).withdrawLpTokenEmergency(pair.address);
+    expect(await pair.balanceOf(developer.address)).to.be.equal(balanceOf);
+    expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(0);
+
+    await pair.connect(developer).approve(core.p12Mine.address, balanceOf);
+    await core.p12Mine.connect(developer).deposit(pair.address, balanceOf);
+    expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(balanceOf);
+    await core.p12Mine.connect(developer).withdrawAllLpTokenEmergency();
+    expect(await pair.balanceOf(developer.address)).to.be.equal(balanceOf);
+    expect(await core.p12Mine.getUserLpBalance(pair.address, developer.address)).to.be.equal(0);
   });
 });

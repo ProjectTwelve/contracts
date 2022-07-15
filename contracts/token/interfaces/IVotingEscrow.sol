@@ -6,6 +6,4 @@ interface IVotingEscrow {
   function getLastUserSlope(address addr) external returns (int256);
 
   function lockedEnd(address addr) external returns (uint256);
-
-  event Expired(address addr, uint256 timestamp);
 }
