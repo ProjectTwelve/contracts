@@ -29,9 +29,9 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   mapping(address => uint256) public userPointEpoch;
   mapping(uint256 => int256) public slopeChanges;
 
-  string public  name;
-  string public  symbol;
-  uint256 constant public decimals = 18;
+  string public name;
+  string public symbol;
+  uint256 public constant decimals = 18;
 
   enum OperationType {
     DEPOSIT_FOR_TYPE,
@@ -82,18 +82,6 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     pointHistory[0].ts = block.timestamp;
   }
 
-  function pause() public onlyOwner {
-    _pause();
-  }
-
-  function unpause() public onlyOwner {
-    _unpause();
-  }
-
-  modifier contractNotExpired() {
-    require(!expired, 'VotingEscrow: The contract has been stopped, only withdrawals can be made');
-    _;
-  }
 
   function expire() external onlyOwner contractNotExpired {
     expired = true;
@@ -129,6 +117,248 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   function lockedEnd(address addr) external view returns (uint256) {
     return locked[addr].end;
   }
+
+  
+
+  /**
+    @notice Record global data to checkpoint
+  */
+  function checkPoint() external {
+    _checkPoint(address(0), LockedBalance({ amount: 0, end: 0 }), LockedBalance({ amount: 0, end: 0 }));
+  }
+
+  /**
+    @notice Deposit `value` tokens for `addr` and add to the lock
+    @dev Anyone (even a smart contract) can deposit for someone else, but
+         cannot extend their lockTime and deposit for a brand new user
+    @param addr User's wallet address
+    @param value Amount to add to user's lock  
+  */
+  function depositFor(address addr, uint256 value) external nonReentrant whenNotPaused contractNotExpired {
+    LockedBalance memory _locked = locked[addr];
+    require(value > 0, 'VotingEscrow: deposit value should > 0');
+    require(_locked.amount > 0, 'VotingEscrow: No existing lock found');
+    require(_locked.end > block.timestamp, 'VotingEscrow: Cannot add to expired lock. Withdraw');
+    _depositFor(addr, value, 0, locked[addr], OperationType.DEPOSIT_FOR_TYPE);
+  }
+
+  /** 
+    @notice Deposit `value` tokens for `msg.sender` and lock until `unlock_time`
+    @param value Amount to deposit
+    @param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
+  */
+  function createLock(uint256 value, uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
+    //lockTime is rounded down to weeks
+    uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
+    LockedBalance memory _locked = locked[msg.sender];
+    require(value > 0, 'VotingEscrow: deposit value should > 0');
+    require(_locked.amount == 0, 'VotingEscrow: Withdraw old tokens first');
+    require(_unlockTime > block.timestamp, 'VotingEscrow: Can only lock until time in the future');
+    require(_unlockTime <= block.timestamp + MAXTIME, 'VotingEscrow: Voting lock can be 4 years max');
+    _depositFor(msg.sender, value, _unlockTime, _locked, OperationType.CREATE_LOCK_TYPE);
+  }
+
+  /**
+    @notice Deposit `value` additional tokens for `msg.sender`
+            without modifying the unlock time
+    @param value Amount of tokens to deposit and add to the lock
+  */
+  function increaseAmount(uint256 value) external nonReentrant whenNotPaused contractNotExpired {
+    LockedBalance memory _locked = locked[msg.sender];
+    require(value > 0, 'VotingEscrow: deposit value should > 0');
+    require(_locked.amount > 0, 'VotingEscrow: No existing lock found');
+    require(_locked.end > block.timestamp, 'VotingEscrow: Cannot add to expired lock. Withdraw');
+    _depositFor(msg.sender, value, 0, _locked, OperationType.INCREASE_LOCK_AMOUNT);
+  }
+
+  /** 
+    @notice Extend the unlock time for `msg.sender` to `unlock_time`
+    @param unlockTime New epoch time for unlocking
+  */
+  function increaseUnlockTime(uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
+    LockedBalance memory _locked = locked[msg.sender];
+    uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
+    require(_locked.end > block.timestamp, 'VotingEscrow: Lock expired');
+    require(_locked.amount > 0, 'VotingEscrow: Nothing is locked');
+    require(_unlockTime > _locked.end, 'VotingEscrow: Can only increase lock duration');
+    require(_unlockTime <= block.timestamp + MAXTIME, 'VotingEscrow: Voting lock can be 4 years max');
+    _depositFor(msg.sender, 0, _unlockTime, _locked, OperationType.INCREASE_LOCK_AMOUNT);
+  }
+
+  /** 
+    @notice Withdraw all tokens for `msg.sender`
+    @dev Only possible if the lock has expired
+  */
+  function withdraw() external nonReentrant whenNotPaused{
+    LockedBalance memory _locked = locked[msg.sender];
+    require(_locked.amount > 0, 'VotingEscrow: you have not pledged');
+    require(block.timestamp >= _locked.end, 'VotingEscrow: The lock did not expire');
+    uint256 value = uint256(_locked.amount);
+
+    LockedBalance memory oldLocked = _locked;
+    _locked.end = 0;
+    _locked.amount = 0;
+    locked[msg.sender] = _locked;
+    uint256 totalLockedP12Before = totalLockedP12;
+    totalLockedP12 = totalLockedP12Before - value;
+
+    // old_locked can have either expired <= timestamp or zero end
+    // _locked has only 0 end
+    // Both can have >= 0 amount
+
+    _checkPoint(msg.sender, oldLocked, _locked);
+    IERC20(p12Token).safeTransfer(msg.sender, value);
+
+    emit Withdraw(msg.sender, value, block.timestamp);
+    emit TotalLocked(totalLockedP12Before, totalLockedP12Before - value);
+  }
+
+  
+  /** 
+    @notice Get the current voting power for `msg.sender`
+    @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
+    @param addr User wallet address
+    @return User voting power
+  */
+  function balanceOf(address addr) external view returns (int256) {
+    uint256 _epoch = userPointEpoch[addr];
+    if (_epoch == 0) {
+      return 0;
+    } else {
+      Point memory lastPoint = userPointHistory[addr][_epoch];
+      lastPoint.bias -= lastPoint.slope * int256(block.timestamp - lastPoint.ts);
+      if (lastPoint.bias < 0) {
+        lastPoint.bias = 0;
+      }
+      return lastPoint.bias;
+    }
+  }
+
+  /** 
+    @notice Measure voting power of `addr` at block height `_block`
+    @dev Adheres to MiniMe `balanceOfAt` interface: https://github.com/Giveth/minime
+    @param addr User's wallet address
+    @param blk Block to calculate the voting power at
+    @return Voting power
+  */
+  function balanceOfAt(address addr, uint256 blk) external view returns (int256) {
+    require(blk <= block.number, 'VotingEscrow: input block number must be <= current block number');
+    // Binary search
+    uint256 _min = 0;
+    uint256 _max = userPointEpoch[addr];
+    for (uint256 i = 1; i <= 128; i++) {
+      if (_min >= _max) {
+        break;
+      }
+      uint256 _mid = (_min + _max + 1) / 2;
+      if (userPointHistory[addr][_mid].blk <= blk) {
+        _min = _mid;
+      } else {
+        _max = _mid - 1;
+      }
+    }
+    Point memory uPoint = userPointHistory[addr][_min];
+    uint256 maxEpoch = epoch;
+    uint256 _epoch = findBlockEpoch(blk, maxEpoch);
+    Point memory point0 = pointHistory[_epoch];
+    uint256 dBlock = 0;
+    uint256 dt = 0;
+    if (_epoch < maxEpoch) {
+      Point memory point1 = pointHistory[_epoch + 1];
+      dBlock = point1.blk - point0.blk;
+      dt = point1.ts - point0.ts;
+    } else {
+      dBlock = block.number - point0.blk;
+      dt = block.timestamp - point0.ts;
+    }
+    uint256 blockTime = point0.ts;
+    if (dBlock != 0) {
+      blockTime += (dt * (blk - point0.blk)) / dBlock;
+    }
+    uPoint.bias -= uPoint.slope * int256(blockTime - uPoint.ts);
+    if (uPoint.bias >= 0) {
+      return uPoint.bias;
+    } else {
+      return 0;
+    }
+  }
+
+  
+
+  /**
+   
+    @notice Calculate total voting power
+    @dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
+    @return Total voting power
+  
+  */
+
+  function totalSupply() external view returns (uint256) {
+    uint256 _epoch = epoch;
+    Point memory lastPoint = pointHistory[_epoch];
+    return supplyAt(lastPoint, block.timestamp);
+  }
+
+  /** 
+    @notice Calculate total voting power at some point in the past
+    @param blk Block to calculate the total voting power at
+    @return Total voting power at `_block`
+  */
+  function totalSupplyAt(uint256 blk) external view returns (uint256) {
+    require(blk <= block.number, 'VotingEscrow: block number must be <= block number');
+    uint256 _epoch = epoch;
+    uint256 targetEpoch = findBlockEpoch(blk, _epoch);
+
+    Point memory point = pointHistory[targetEpoch];
+    uint256 dt = 0;
+    if (targetEpoch < _epoch) {
+      Point memory pointNext = pointHistory[targetEpoch + 1];
+      if (point.blk != pointNext.blk) {
+        dt = ((blk - point.blk) * (pointNext.ts - point.ts)) / (pointNext.blk - point.blk);
+      }
+    } else {
+      if (point.blk != block.number) {
+        dt = ((blk - point.blk) * (block.timestamp - point.ts)) / (block.number - point.blk);
+      }
+    }
+    // Now dt contains info on how far are we beyond point
+    return supplyAt(point, point.ts + dt);
+  }
+  //------------------public---------------
+
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
+  /** 
+    @notice Binary search to estimate timestamp for block number
+    @param blk Block to find
+    @param maxEpoch Don't go beyond this epoch
+    @return Approximate timestamp for block
+  */
+
+  function findBlockEpoch(uint256 blk, uint256 maxEpoch) public view returns (uint256) {
+    uint256 _min = 0;
+    uint256 _max = maxEpoch;
+    for (uint256 i = 0; i <= 128; i++) {
+      if (_min >= _max) {
+        break;
+      }
+      uint256 _mid = (_min + _max + 1) / 2;
+      if (pointHistory[_mid].blk <= blk) {
+        _min = _mid;
+      } else {
+        _max = _mid - 1;
+      }
+    }
+    return _min;
+  }
+
+  // -------------internal------------------
 
   /**
     @notice Record global and per-user data to checkpoint
@@ -303,192 +533,6 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     emit TotalLocked(totalLockedP12Before, totalLockedP12Before + value);
   }
 
-  /**
-    @notice Record global data to checkpoint
-  */
-  function checkPoint() external {
-    _checkPoint(address(0), LockedBalance({ amount: 0, end: 0 }), LockedBalance({ amount: 0, end: 0 }));
-  }
-
-  /**
-    @notice Deposit `value` tokens for `addr` and add to the lock
-    @dev Anyone (even a smart contract) can deposit for someone else, but
-         cannot extend their lockTime and deposit for a brand new user
-    @param addr User's wallet address
-    @param value Amount to add to user's lock  
-  */
-  function depositFor(address addr, uint256 value) external nonReentrant whenNotPaused contractNotExpired {
-    LockedBalance memory _locked = locked[addr];
-    require(value > 0, 'VotingEscrow: deposit value should > 0');
-    require(_locked.amount > 0, 'VotingEscrow: No existing lock found');
-    require(_locked.end > block.timestamp, 'VotingEscrow: Cannot add to expired lock. Withdraw');
-    _depositFor(addr, value, 0, locked[addr], OperationType.DEPOSIT_FOR_TYPE);
-  }
-
-  /** 
-    @notice Deposit `value` tokens for `msg.sender` and lock until `unlock_time`
-    @param value Amount to deposit
-    @param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
-  */
-  function createLock(uint256 value, uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
-    //lockTime is rounded down to weeks
-    uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
-    LockedBalance memory _locked = locked[msg.sender];
-    require(value > 0, 'VotingEscrow: deposit value should > 0');
-    require(_locked.amount == 0, 'VotingEscrow: Withdraw old tokens first');
-    require(_unlockTime > block.timestamp, 'VotingEscrow: Can only lock until time in the future');
-    require(_unlockTime <= block.timestamp + MAXTIME, 'VotingEscrow: Voting lock can be 4 years max');
-    _depositFor(msg.sender, value, _unlockTime, _locked, OperationType.CREATE_LOCK_TYPE);
-  }
-
-  /**
-    @notice Deposit `value` additional tokens for `msg.sender`
-            without modifying the unlock time
-    @param value Amount of tokens to deposit and add to the lock
-  */
-  function increaseAmount(uint256 value) external nonReentrant whenNotPaused contractNotExpired {
-    LockedBalance memory _locked = locked[msg.sender];
-    require(value > 0, 'VotingEscrow: deposit value should > 0');
-    require(_locked.amount > 0, 'VotingEscrow: No existing lock found');
-    require(_locked.end > block.timestamp, 'VotingEscrow: Cannot add to expired lock. Withdraw');
-    _depositFor(msg.sender, value, 0, _locked, OperationType.INCREASE_LOCK_AMOUNT);
-  }
-
-  /** 
-    @notice Extend the unlock time for `msg.sender` to `unlock_time`
-    @param unlockTime New epoch time for unlocking
-  */
-  function increaseUnlockTime(uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
-    LockedBalance memory _locked = locked[msg.sender];
-    uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
-    require(_locked.end > block.timestamp, 'VotingEscrow: Lock expired');
-    require(_locked.amount > 0, 'VotingEscrow: Nothing is locked');
-    require(_unlockTime > _locked.end, 'VotingEscrow: Can only increase lock duration');
-    require(_unlockTime <= block.timestamp + MAXTIME, 'VotingEscrow: Voting lock can be 4 years max');
-    _depositFor(msg.sender, 0, _unlockTime, _locked, OperationType.INCREASE_LOCK_AMOUNT);
-  }
-
-  /** 
-    @notice Withdraw all tokens for `msg.sender`
-    @dev Only possible if the lock has expired
-  */
-  function withdraw() external nonReentrant {
-    LockedBalance memory _locked = locked[msg.sender];
-    require(_locked.amount > 0, 'VotingEscrow: you have not pledged');
-    require(block.timestamp >= _locked.end, 'VotingEscrow: The lock did not expire');
-    uint256 value = uint256(_locked.amount);
-
-    LockedBalance memory oldLocked = _locked;
-    _locked.end = 0;
-    _locked.amount = 0;
-    locked[msg.sender] = _locked;
-    uint256 totalLockedP12Before = totalLockedP12;
-    totalLockedP12 = totalLockedP12Before - value;
-
-    // old_locked can have either expired <= timestamp or zero end
-    // _locked has only 0 end
-    // Both can have >= 0 amount
-
-    _checkPoint(msg.sender, oldLocked, _locked);
-    IERC20(p12Token).safeTransfer(msg.sender, value);
-
-    emit Withdraw(msg.sender, value, block.timestamp);
-    emit TotalLocked(totalLockedP12Before, totalLockedP12Before - value);
-  }
-
-  /** 
-    @notice Binary search to estimate timestamp for block number
-    @param blk Block to find
-    @param maxEpoch Don't go beyond this epoch
-    @return Approximate timestamp for block
-  */
-
-  function findBlockEpoch(uint256 blk, uint256 maxEpoch) public view returns (uint256) {
-    uint256 _min = 0;
-    uint256 _max = maxEpoch;
-    for (uint256 i = 0; i <= 128; i++) {
-      if (_min >= _max) {
-        break;
-      }
-      uint256 _mid = (_min + _max + 1) / 2;
-      if (pointHistory[_mid].blk <= blk) {
-        _min = _mid;
-      } else {
-        _max = _mid - 1;
-      }
-    }
-    return _min;
-  }
-
-  /** 
-    @notice Get the current voting power for `msg.sender`
-    @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
-    @param addr User wallet address
-    @return User voting power
-  */
-  function balanceOf(address addr) external view returns (int256) {
-    uint256 _epoch = userPointEpoch[addr];
-    if (_epoch == 0) {
-      return 0;
-    } else {
-      Point memory lastPoint = userPointHistory[addr][_epoch];
-      lastPoint.bias -= lastPoint.slope * int256(block.timestamp - lastPoint.ts);
-      if (lastPoint.bias < 0) {
-        lastPoint.bias = 0;
-      }
-      return lastPoint.bias;
-    }
-  }
-
-  /** 
-    @notice Measure voting power of `addr` at block height `_block`
-    @dev Adheres to MiniMe `balanceOfAt` interface: https://github.com/Giveth/minime
-    @param addr User's wallet address
-    @param blk Block to calculate the voting power at
-    @return Voting power
-  */
-  function balanceOfAt(address addr, uint256 blk) external view returns (int256) {
-    require(blk <= block.number, 'VotingEscrow: input block number must be <= current block number');
-    // Binary search
-    uint256 _min = 0;
-    uint256 _max = userPointEpoch[addr];
-    for (uint256 i = 1; i <= 128; i++) {
-      if (_min >= _max) {
-        break;
-      }
-      uint256 _mid = (_min + _max + 1) / 2;
-      if (userPointHistory[addr][_mid].blk <= blk) {
-        _min = _mid;
-      } else {
-        _max = _mid - 1;
-      }
-    }
-    Point memory uPoint = userPointHistory[addr][_min];
-    uint256 maxEpoch = epoch;
-    uint256 _epoch = findBlockEpoch(blk, maxEpoch);
-    Point memory point0 = pointHistory[_epoch];
-    uint256 dBlock = 0;
-    uint256 dt = 0;
-    if (_epoch < maxEpoch) {
-      Point memory point1 = pointHistory[_epoch + 1];
-      dBlock = point1.blk - point0.blk;
-      dt = point1.ts - point0.ts;
-    } else {
-      dBlock = block.number - point0.blk;
-      dt = block.timestamp - point0.ts;
-    }
-    uint256 blockTime = point0.ts;
-    if (dBlock != 0) {
-      blockTime += (dt * (blk - point0.blk)) / dBlock;
-    }
-    uPoint.bias -= uPoint.slope * int256(blockTime - uPoint.ts);
-    if (uPoint.bias >= 0) {
-      return uPoint.bias;
-    } else {
-      return 0;
-    }
-  }
-
   /** 
     @notice Calculate total voting power at some point in the past
     @param point The point (bias/slope) to start search from
@@ -519,43 +563,11 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     return uint256(lastPoint.bias);
   }
 
-  /**
-   
-    @notice Calculate total voting power
-    @dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
-    @return Total voting power
-  
-  */
+  //------------modifier-------------
 
-  function totalSupply() external view returns (uint256) {
-    uint256 _epoch = epoch;
-    Point memory lastPoint = pointHistory[_epoch];
-    return supplyAt(lastPoint, block.timestamp);
+  modifier contractNotExpired() {
+    require(!expired, 'VotingEscrow: The contract has been stopped, only withdrawals can be made');
+    _;
   }
 
-  /** 
-    @notice Calculate total voting power at some point in the past
-    @param blk Block to calculate the total voting power at
-    @return Total voting power at `_block`
-  */
-  function totalSupplyAt(uint256 blk) external view returns (uint256) {
-    require(blk <= block.number, 'VotingEscrow: block number must be <= block number');
-    uint256 _epoch = epoch;
-    uint256 targetEpoch = findBlockEpoch(blk, _epoch);
-
-    Point memory point = pointHistory[targetEpoch];
-    uint256 dt = 0;
-    if (targetEpoch < _epoch) {
-      Point memory pointNext = pointHistory[targetEpoch + 1];
-      if (point.blk != pointNext.blk) {
-        dt = ((blk - point.blk) * (pointNext.ts - point.ts)) / (pointNext.blk - point.blk);
-      }
-    } else {
-      if (point.blk != block.number) {
-        dt = ((blk - point.blk) * (block.timestamp - point.ts)) / (block.number - point.blk);
-      }
-    }
-    // Now dt contains info on how far are we beyond point
-    return supplyAt(point, point.ts + dt);
-  }
 }
