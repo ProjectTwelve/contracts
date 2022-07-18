@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
@@ -101,6 +101,24 @@ contract P12V0FactoryUpgradeable is
 
   /**
    * @dev linear function to calculate the delay time
+   * @dev delayB is the minimum delay period, even someone mint zero token,
+   * @dev there still be delayB period before someone can really mint zero token
+   * @dev delayK is the parameter to take the ratio of new amount in to account
+   * @dev For example, the initial supply of Game Coin is 100k. If developer want
+   * @dev to mint 100k, developer needs to real mint it after `delayK + delayB`. If
+   * @dev developer want to mint 200k, developer has to real mint it after `2DelayK +
+   * @dev delayB`.
+          ^
+        t +            /
+          |          /
+          |        /
+      2k+b|      /
+          |    /
+       k+b|  / 
+          |/ 
+         b|
+          0----p---2p---------> amount
+            
    */
   function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
     public

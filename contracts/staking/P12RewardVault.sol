@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 pragma experimental ABIEncoderV2;
 
 import '../access/SafeOwnable.sol';
@@ -33,6 +33,6 @@ contract P12RewardVault is SafeOwnable, IP12RewardVault {
   function withdrawEmergency(address to) external virtual override onlyOwner {
     require(to != address(0), 'P12RewardVault: address can not be zero');
     IERC20(p12Token).safeTransfer(to, IERC20(p12Token).balanceOf(address(this)));
-    emit WithdrawEmergency(p12Token,IERC20(p12Token).balanceOf(address(this)));
+    emit WithdrawEmergency(p12Token, IERC20(p12Token).balanceOf(address(this)));
   }
 }

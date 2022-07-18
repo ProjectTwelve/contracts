@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 
 import '../../token/interfaces/IVotingEscrow.sol';
 import './IGaugeController.sol';
@@ -24,8 +24,8 @@ interface IP12MineUpgradeable {
   event WithdrawLpTokenEmergency(address lpToken, uint256 amount);
   event SetEmergency(bool emergencyStatus);
 
+  function getWithdrawUnlockTimestamp(address lpToken, uint256 amount) external returns (uint256);
 
-  function getWithdrawUnlockTimestamp(address lpToken, uint256 amount)external returns (uint256); 
   function withdrawEmergency() external;
 
   function withdrawLpTokenEmergency(address lpToken) external;

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 
 import './interfaces/IGaugeController.sol';
 import './interfaces/IP12RewardVault.sol';
@@ -19,7 +19,7 @@ contract P12MineStorage {
   // Info of each pool.
   PoolInfo[] public poolInfos;
 
-  bool public isEmergency ;
+  bool public isEmergency;
 
   mapping(address => uint256) public lpTokenRegistry;
   // Info of each user that stakes LP tokens.

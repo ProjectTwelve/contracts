@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // Refer to https://github.com/boringcrypto/BoringSolidity/blob/master/contracts/BoringOwnable.sol and https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/master/contracts/access/OwnableUpgradeable.sol
 
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
