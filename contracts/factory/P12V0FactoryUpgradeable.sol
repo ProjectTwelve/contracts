@@ -12,9 +12,9 @@ import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import './interfaces/IP12V0FactoryUpgradeable.sol';
-import './interfaces/IP12MineUpgradeable.sol';
+import '../staking/interfaces/IP12MineUpgradeable.sol';
 import './P12V0FactoryStorage.sol';
-import './interfaces/IGaugeController.sol';
+import '../staking/interfaces/IGaugeController.sol';
 import './P12V0ERC20.sol';
 import './interfaces/IP12V0ERC20.sol';
 

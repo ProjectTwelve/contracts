@@ -2,8 +2,8 @@
 pragma solidity 0.8.15;
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
-import './IP12MineUpgradeable.sol';
-import './IGaugeController.sol';
+import '../../staking/interfaces/IP12MineUpgradeable.sol';
+import '../../staking/interfaces/IGaugeController.sol';
 import './IP12V0ERC20.sol';
 
 interface IP12V0FactoryUpgradeable {
