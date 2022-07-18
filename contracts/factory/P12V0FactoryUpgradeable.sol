@@ -45,7 +45,7 @@ contract P12V0FactoryUpgradeable is
    * @dev set p12mine contract address
    * @param newP12Mine new p12mine address
    */
-  function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual onlyOwner {
+  function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual override onlyOwner {
     require(address(newP12Mine) != address(0), 'P12Factory: address cannot be zero');
     IP12MineUpgradeable oldP12Mine = p12Mine;
     p12Mine = newP12Mine;
@@ -428,7 +428,7 @@ contract P12V0FactoryUpgradeable is
   /**
    * @dev get current block's timestamp
    */
-  function getBlockTimestamp() internal view virtual returns (uint256) {
+  function getBlockTimestamp() internal view  virtual returns (uint256) {
     return block.timestamp;
   }
 
