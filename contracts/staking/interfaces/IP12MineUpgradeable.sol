@@ -24,6 +24,15 @@ interface IP12MineUpgradeable {
   event WithdrawLpTokenEmergency(address lpToken, uint256 amount);
   event SetEmergency(bool emergencyStatus);
 
+  
+  function poolLength() external returns (uint256);
+
+  function getPid(address lpToken) external returns (uint256);
+
+  function getUserLpBalance(address lpToken, address user) external returns (uint256);
+
+  function checkpointAll() external;
+
   function getWithdrawUnlockTimestamp(address lpToken, uint256 amount) external returns (uint256);
 
   function withdrawEmergency() external;
