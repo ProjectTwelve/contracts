@@ -7,5 +7,5 @@ interface IP12RewardVault {
 
   function withdrawEmergency(address to) external;
 
-  event WithdrawEmergency(address p12Token,uint256 amount);
+  event WithdrawEmergency(address p12Token, uint256 amount);
 }
