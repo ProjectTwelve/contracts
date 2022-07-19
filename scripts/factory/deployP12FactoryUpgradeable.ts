@@ -4,8 +4,8 @@ async function main() {
   if (env.network.name === 'p12TestNet') {
     const P12V0FactoryUpgradeable = await ethers.getContractFactory('P12V0FactoryUpgradeable');
     const p12Token = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
-    const uniswapV2Factory = '0x71A3B75A9A774EB793A44a36AF760ee2868912ac';
-    const uniswapV2Router = '0x8C2543578eFEd64343C63e9075ed70F1d255D1c6';
+    const uniswapV2Factory = '0x8C2543578eFEd64343C63e9075ed70F1d255D1c6';
+    const uniswapV2Router = '0x71A3B75A9A774EB793A44a36AF760ee2868912ac';
     const p12V0FactoryUpgradeable = await upgrades.deployProxy(
       P12V0FactoryUpgradeable,
       [p12Token, uniswapV2Factory, uniswapV2Router, 86400, ethers.utils.randomBytes(32)],
