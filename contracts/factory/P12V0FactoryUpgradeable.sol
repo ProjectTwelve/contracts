@@ -28,109 +28,7 @@ contract P12V0FactoryUpgradeable is
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
-  function pause() public onlyOwner {
-    _pause();
-  }
-
-  function unpause() public onlyOwner {
-    _unpause();
-  }
-
-  modifier onlyDev() {
-    require(msg.sender == dev, 'P12Factory: caller must be dev');
-    _;
-  }
-
-  function initialize(
-    address p12_,
-    IUniswapV2Factory uniswapFactory_,
-    IUniswapV2Router02 uniswapRouter_,
-    uint256 effectiveTime_,
-    bytes32 initHash_
-  ) public initializer {
-    p12 = p12_;
-    uniswapFactory = uniswapFactory_;
-    uniswapRouter = uniswapRouter_;
-    _initHash = initHash_;
-    addLiquidityEffectiveTime = effectiveTime_;
-    IERC20Upgradeable(p12).safeApprove(address(uniswapRouter), type(uint256).max);
-    __ReentrancyGuard_init_unchained();
-    __Pausable_init_unchained();
-    __Ownable_init_unchained();
-  }
-
-  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
-
-  /**
-   * @dev compare two string and judge whether they are the same
-   */
-  function compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
-    return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
-  }
-
-  /**
-   * @dev get current block's timestamp
-   */
-  function getBlockTimestamp() internal view virtual returns (uint256) {
-    return block.timestamp;
-  }
-
-  /**
-   * @dev calculate the MintFee in P12
-   */
-  function getMintFee(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
-    public
-    view
-    virtual
-    override
-    returns (uint256 amountP12)
-  {
-    uint256 gameCoinReserved;
-    uint256 p12Reserved;
-    if (p12 < address(gameCoinAddress)) {
-      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
-    } else {
-      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
-    }
-
-    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
-    amountP12 = (p12Reserved * amountGameCoin) / (gameCoinReserved * 100);
-
-    return amountP12;
-  }
-
-  /**
-   * @dev linear function to calculate the delay time
-   * @dev delayB is the minimum delay period, even someone mint zero token,
-   * @dev there still be delayB period before someone can really mint zero token
-   * @dev delayK is the parameter to take the ratio of new amount in to account
-   * @dev For example, the initial supply of Game Coin is 100k. If developer want
-   * @dev to mint 100k, developer needs to real mint it after `delayK + delayB`. If
-   * @dev developer want to mint 200k, developer has to real mint it after `2DelayK +
-   * @dev delayB`.
-          ^
-        t +            /
-          |          /
-          |        /
-      2k+b|      /
-          |    /
-       k+b|  / 
-          |/ 
-         b|
-          0----p---2p---------> amount
-            
-   */
-  function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
-    public
-    view
-    virtual
-    override
-    returns (uint256 time)
-  {
-    time = (amountGameCoin * delayK) / (IP12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
-    return time;
-  }
-
+  //============ External ============
   /**
    * @dev set dev address
    * @param newDev new dev address
@@ -146,7 +44,7 @@ contract P12V0FactoryUpgradeable is
    * @dev set p12mine contract address
    * @param newP12Mine new p12mine address
    */
-  function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual onlyOwner {
+  function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual override onlyOwner {
     require(address(newP12Mine) != address(0), 'P12Factory: address cannot be zero');
     IP12MineUpgradeable oldP12Mine = p12Mine;
     p12Mine = newP12Mine;
@@ -361,6 +259,33 @@ contract P12V0FactoryUpgradeable is
     return true;
   }
 
+  //============ Public ============
+  function pause() public onlyOwner {
+    _pause();
+  }
+
+  function unpause() public onlyOwner {
+    _unpause();
+  }
+
+  function initialize(
+    address p12_,
+    IUniswapV2Factory uniswapFactory_,
+    IUniswapV2Router02 uniswapRouter_,
+    uint256 effectiveTime_,
+    bytes32 initHash_
+  ) public initializer {
+    p12 = p12_;
+    uniswapFactory = uniswapFactory_;
+    uniswapRouter = uniswapRouter_;
+    _initHash = initHash_;
+    addLiquidityEffectiveTime = effectiveTime_;
+    IERC20Upgradeable(p12).safeApprove(address(uniswapRouter), type(uint256).max);
+    __ReentrancyGuard_init_unchained();
+    __Pausable_init_unchained();
+    __Ownable_init_unchained();
+  }
+
   /**
    * @dev set linear function's K parameter
    * @param newDelayK new K parameter
@@ -382,6 +307,64 @@ contract P12V0FactoryUpgradeable is
     emit SetDelayB(oldDelayB, delayB);
     return true;
   }
+
+  /**
+   * @dev calculate the MintFee in P12
+   */
+  function getMintFee(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
+    public
+    view
+    virtual
+    override
+    returns (uint256 amountP12)
+  {
+    uint256 gameCoinReserved;
+    uint256 p12Reserved;
+    if (p12 < address(gameCoinAddress)) {
+      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
+    } else {
+      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
+    }
+
+    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
+    amountP12 = (p12Reserved * amountGameCoin) / (gameCoinReserved * 100);
+
+    return amountP12;
+  }
+
+  /**
+   * @dev linear function to calculate the delay time
+   * @dev delayB is the minimum delay period, even someone mint zero token,
+   * @dev there still be delayB period before someone can really mint zero token
+   * @dev delayK is the parameter to take the ratio of new amount in to account
+   * @dev For example, the initial supply of Game Coin is 100k. If developer want
+   * @dev to mint 100k, developer needs to real mint it after `delayK + delayB`. If
+   * @dev developer want to mint 200k, developer has to real mint it after `2DelayK +
+   * @dev delayB`.
+          ^
+        t +            /
+          |          /
+          |        /
+      2k+b|      /
+          |    /
+       k+b|  / 
+          |/ 
+         b|
+          0----p---2p---------> amount
+            
+   */
+  function getMintDelay(IP12V0ERC20 gameCoinAddress, uint256 amountGameCoin)
+    public
+    view
+    virtual
+    override
+    returns (uint256 time)
+  {
+    time = (amountGameCoin * delayK) / (IP12V0ERC20(gameCoinAddress).totalSupply()) + delayB;
+    return time;
+  }
+
+  //============ Internal ============
 
   /**
    * @dev function to create a game coin contract
@@ -423,5 +406,27 @@ contract P12V0FactoryUpgradeable is
     bytes32 preMintIdNew = keccak256(abi.encode(gameCoinAddress, declarer, amount, timestamp, preMintId, salt));
     preMintIds[gameCoinAddress] = preMintIdNew;
     return preMintIdNew;
+  }
+
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  /**
+   * @dev get current block's timestamp
+   */
+  function getBlockTimestamp() internal view virtual returns (uint256) {
+    return block.timestamp;
+  }
+
+  /**
+   * @dev compare two string and judge whether they are the same
+   */
+  function compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
+    return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
+  }
+
+  // ============= Modifier ================
+  modifier onlyDev() {
+    require(msg.sender == dev, 'P12Factory: caller must be dev');
+    _;
   }
 }
