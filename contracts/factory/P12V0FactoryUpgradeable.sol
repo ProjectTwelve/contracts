@@ -28,7 +28,6 @@ contract P12V0FactoryUpgradeable is
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
-
   //============ External ============
   /**
    * @dev set dev address
@@ -260,8 +259,6 @@ contract P12V0FactoryUpgradeable is
     return true;
   }
 
-
-
   //============ Public ============
   function pause() public onlyOwner {
     _pause();
@@ -271,7 +268,6 @@ contract P12V0FactoryUpgradeable is
     _unpause();
   }
 
-  
   function initialize(
     address p12_,
     IUniswapV2Factory uniswapFactory_,
@@ -290,7 +286,6 @@ contract P12V0FactoryUpgradeable is
     __Ownable_init_unchained();
   }
 
-  
   /**
    * @dev set linear function's K parameter
    * @param newDelayK new K parameter
@@ -312,8 +307,7 @@ contract P12V0FactoryUpgradeable is
     emit SetDelayB(oldDelayB, delayB);
     return true;
   }
-  
-  
+
   /**
    * @dev calculate the MintFee in P12
    */
@@ -370,10 +364,7 @@ contract P12V0FactoryUpgradeable is
     return time;
   }
 
-  
-  
-
-  //============ Internal ============   
+  //============ Internal ============
 
   /**
    * @dev function to create a game coin contract
@@ -418,20 +409,20 @@ contract P12V0FactoryUpgradeable is
   }
 
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  /**
+   * @dev get current block's timestamp
+   */
+  function getBlockTimestamp() internal view virtual returns (uint256) {
+    return block.timestamp;
+  }
+
   /**
    * @dev compare two string and judge whether they are the same
    */
   function compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
     return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
   }
-
-  /**
-   * @dev get current block's timestamp
-   */
-  function getBlockTimestamp() internal view  virtual returns (uint256) {
-    return block.timestamp;
-  }
-
 
   // ============= Modifier ================
   modifier onlyDev() {
