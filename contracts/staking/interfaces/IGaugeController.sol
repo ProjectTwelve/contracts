@@ -23,6 +23,18 @@ interface IGaugeController {
 
   event SetP12Factory(address oldP12Factory, address newP12Factory);
 
+  function getGaugeTypes(address addr) external returns (int128);
+
+  function checkpoint() external;
+
+  function gaugeRelativeWeightWrite(address addr, uint256 time) external returns (uint256);
+
+  function changeTypeWeight(int128 typeId, uint256 weight) external;
+
+  function changeGaugeWeight(address addr, uint256 weight) external;
+
+  function voteForGaugeWeights(address gaugeAddr, uint256 userWeight) external;
+
   function checkpointGauge(address addr) external;
 
   function gaugeRelativeWeight(address lpToken, uint256 time) external returns (uint256);

@@ -36,7 +36,7 @@ contract P12MineUpgradeable is
   @notice set new p12Factory
   @param newP12Factory address of p12Factory
    */
-  function setP12Factory(address newP12Factory) external virtual onlyOwner {
+  function setP12Factory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12Factory;
     require(newP12Factory != address(0), 'P12Mine: p12Factory can not zero');
     p12Factory = newP12Factory;
@@ -47,7 +47,7 @@ contract P12MineUpgradeable is
   @notice set new gaugeController
   @param newGaugeController address of gaugeController
    */
-  function setGaugeController(IGaugeController newGaugeController) external virtual onlyOwner {
+  function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
     IGaugeController oldGaugeController = gaugeController;
     require(address(newGaugeController) != address(0), 'P12Mine: gaugeController can not zero');
     gaugeController = newGaugeController;
@@ -57,7 +57,7 @@ contract P12MineUpgradeable is
   /**
     @notice Get pool len
    */
-  function poolLength() external view virtual returns (uint256) {
+  function poolLength() external view virtual override returns (uint256) {
     return poolInfos.length;
   }
 
@@ -130,7 +130,7 @@ contract P12MineUpgradeable is
     @notice Get pool id
     @param lpToken Address of lpToken
    */
-  function getPid(address lpToken) public view virtual lpTokenExist(lpToken) returns (uint256) {
+  function getPid(address lpToken) public view virtual override lpTokenExist(lpToken) returns (uint256) {
     return lpTokenRegistry[lpToken] - 1;
   }
 
@@ -140,7 +140,7 @@ contract P12MineUpgradeable is
     @param user LpToken holder
     @return Get lpToken balance 
    */
-  function getUserLpBalance(address lpToken, address user) public view virtual returns (uint256) {
+  function getUserLpBalance(address lpToken, address user) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
     return userInfo[pid][user].amount;
   }
@@ -231,7 +231,7 @@ contract P12MineUpgradeable is
       @notice update checkpoint for pool
       @param pid Pool Id
   */
-  function checkpoint(uint256 pid) public virtual whenNotPaused {
+  function checkpoint(uint256 pid) public virtual override whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     uint256 _accP12PerShare = pool.accP12PerShare;
@@ -265,7 +265,7 @@ contract P12MineUpgradeable is
   /**
     @notice update checkpoint for all pool
    */
-  function checkpointAll() public virtual {
+  function checkpointAll() public virtual override{
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; pid++) {
       checkpoint(pid);
@@ -359,7 +359,7 @@ contract P12MineUpgradeable is
     @param lpToken Address of lpToken
     @param id Withdraw id 
    */
-  function executeWithdraw(address lpToken, bytes32 id) public virtual nonReentrant whenNotPaused {
+  function executeWithdraw(address lpToken, bytes32 id) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
     address _who = withdrawInfos[lpToken][id].who;
     require(msg.sender == _who, 'P12Mine: withdraw the lpToken requires its owner');
