@@ -34,7 +34,7 @@ contract P12V0FactoryUpgradeable is
    * @param newDev new dev address
    */
   function setDev(address newDev) external virtual override onlyOwner {
-    require(newDev != address(0), 'P12Factory: address cannot be zero');
+    require(newDev != address(0), 'P12Factory: address cannot be 0');
     address oldDev = dev;
     dev = newDev;
     emit SetDev(oldDev, newDev);
@@ -45,7 +45,7 @@ contract P12V0FactoryUpgradeable is
    * @param newP12Mine new p12mine address
    */
   function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual override onlyOwner {
-    require(address(newP12Mine) != address(0), 'P12Factory: address cannot be zero');
+    require(address(newP12Mine) != address(0), 'P12Factory: address cannot be 0');
     IP12MineUpgradeable oldP12Mine = p12Mine;
     p12Mine = newP12Mine;
     emit SetP12Mine(oldP12Mine, newP12Mine);
@@ -56,7 +56,7 @@ contract P12V0FactoryUpgradeable is
    * @param newGaugeController new gaugeController address
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
-    require(address(newGaugeController) != address(0), 'P12Factory: address cannot be zero');
+    require(address(newGaugeController) != address(0), 'P12Factory: address cannot be 0');
     IGaugeController oldGaugeController = gaugeController;
     gaugeController = newGaugeController;
     emit SetGaugeController(oldGaugeController, newGaugeController);
@@ -68,7 +68,7 @@ contract P12V0FactoryUpgradeable is
    * @param newP12Token new p12Token address
    */
   function setP12Token(address newP12Token) external virtual override onlyOwner {
-    require(newP12Token != address(0), 'P12Factory: address cannot be zero');
+    require(newP12Token != address(0), 'P12Factory: address cannot be 0');
     address oldP12Token = p12;
     p12 = newP12Token;
     emit SetP12Token(oldP12Token, newP12Token);
@@ -80,7 +80,7 @@ contract P12V0FactoryUpgradeable is
    * @param newUniswapFactory new UniswapFactory address
    */
   function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external virtual override onlyOwner {
-    require(address(newUniswapFactory) != address(0), 'P12Factory: address cannot be zero');
+    require(address(newUniswapFactory) != address(0), 'P12Factory: address cannot be 0');
     IUniswapV2Factory oldUniswapFactory = uniswapFactory;
     uniswapFactory = newUniswapFactory;
     emit SetUniswapFactory(oldUniswapFactory, newUniswapFactory);
@@ -92,7 +92,7 @@ contract P12V0FactoryUpgradeable is
    * @param newUniswapRouter new uniswapRouter address
    */
   function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external virtual override onlyOwner {
-    require(address(newUniswapRouter) != address(0), 'P12Factory: address cannot be zero');
+    require(address(newUniswapRouter) != address(0), 'P12Factory: address cannot be 0');
     IUniswapV2Router02 oldUniswapRouter = uniswapRouter;
     uniswapRouter = newUniswapRouter;
     emit SetUniswapRouter(oldUniswapRouter, newUniswapRouter);
@@ -126,8 +126,8 @@ contract P12V0FactoryUpgradeable is
     uint256 amountGameCoin,
     uint256 amountP12
   ) external virtual override nonReentrant whenNotPaused returns (IP12V0ERC20 gameCoinAddress) {
-    require(msg.sender == allGames[gameId], 'FORBIDDEN: no permit to create');
-    require(amountP12 > 0, 'FORBIDDEN: not enough p12');
+    require(msg.sender == allGames[gameId], 'P12Factory: no permit to create');
+    require(amountP12 > 0, 'P12Factory: not enough p12');
     gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
@@ -179,8 +179,8 @@ contract P12V0FactoryUpgradeable is
     IP12V0ERC20 gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
-    require(msg.sender == allGames[gameId], 'FORBIDDEN: have no permission');
-    require(compareStrings(allGameCoins[gameCoinAddress], gameId), 'FORBIDDEN');
+    require(msg.sender == allGames[gameId], 'P12Factory: have no permission');
+    require(compareStrings(allGameCoins[gameCoinAddress], gameId), 'P12Factory: wrong game id');
     // Set the correct unlock time
     uint256 time;
     uint256 currentTimestamp = getBlockTimestamp();
@@ -224,12 +224,12 @@ contract P12V0FactoryUpgradeable is
     returns (bool)
   {
     // check if it has been executed
-    require(!coinMintRecords[gameCoinAddress][mintId].executed, 'this mint has been executed');
+    require(!coinMintRecords[gameCoinAddress][mintId].executed, 'P12Factory: mint executed');
 
     uint256 time = getBlockTimestamp();
 
     // check that the current time is greater than the unlock time
-    require(time > coinMintRecords[gameCoinAddress][mintId].unlockTimestamp, 'Not time to Mint');
+    require(time > coinMintRecords[gameCoinAddress][mintId].unlockTimestamp, 'P12Factory: not time to mint');
 
     // Modify status
     coinMintRecords[gameCoinAddress][mintId].executed = true;
