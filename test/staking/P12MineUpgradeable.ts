@@ -116,7 +116,7 @@ describe('p12Mine', function () {
       core.p12Mine
         .connect(user)
         .executeWithdraw(pair.address, '0x686a653b3b000000000000000000000000000000000000000000000000000000'),
-    ).to.be.revertedWith('P12Mine: withdraw the lpToken requires its owner');
+    ).to.be.revertedWith('P12Mine: caller not token owner');
     expect(await core.p12Token.balanceOf(user.address)).to.be.equal(balanceOfReward);
     expect(await core.p12Mine.getUserLpBalance(pair.address, user.address)).to.be.equal(balanceOfLpToken);
   });
@@ -205,9 +205,7 @@ describe('p12Mine', function () {
   // claim  pending p12Token with fake account
   it('show claim nothing', async function () {
     const balanceOfReward = await core.p12Token.balanceOf(admin.address);
-    await expect(core.p12Mine.connect(admin).claim(pair.address)).to.be.revertedWith(
-      'P12Mine: you have not pledged any lpTokens',
-    );
+    await expect(core.p12Mine.connect(admin).claim(pair.address)).to.be.revertedWith('P12Mine: no staked token');
     expect(await core.p12Token.balanceOf(admin.address)).to.be.equal(balanceOfReward);
   });
 
@@ -281,7 +279,7 @@ describe('p12Mine', function () {
 
   // withdraw lpTokens Emergency
   it('show withdraw lpTokens Emergency successfully', async function () {
-    await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: isEmergency must be true');
+    await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: no emergency now');
     await core.p12Mine.setEmergency(true);
     await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: unlock time not yet');
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;

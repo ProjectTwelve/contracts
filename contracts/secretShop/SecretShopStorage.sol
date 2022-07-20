@@ -6,6 +6,19 @@ import './MarketConsts.sol';
 
 abstract contract SecretShopStorage {
   /**
+   * @dev fee Cap
+   */
+  uint256 public feeCapPct;
+  /**
+   * @dev DOMAIN_SEPARATOR for EIP712
+   */
+  bytes32 public domainSeparator;
+
+  IWETHUpgradable public weth;
+
+  uint256[47] private __gap;
+
+  /**
    * @dev store delegator contract status
    */
   mapping(address => bool) public delegates;
@@ -19,17 +32,4 @@ abstract contract SecretShopStorage {
    * @dev store itemHash status
    */
   mapping(bytes32 => Market.InvStatus) public inventoryStatus;
-
-  /**
-   * @dev fee Cap
-   */
-  uint256 public feeCapPct;
-  /**
-   * @dev DOMAIN_SEPARATOR for EIP712
-   */
-  bytes32 public domainSeparator;
-
-  IWETHUpgradable public weth;
-
-  uint256[47] private __gap;
 }

@@ -33,7 +33,7 @@ contract GaugeControllerUpgradeable is
    */
   function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual override onlyOwner {
     IVotingEscrow oldVotingEscrow = votingEscrow;
-    require(address(newVotingEscrow) != address(0), 'GaugeController: votingEscrow can not zero');
+    require(address(newVotingEscrow) != address(0), 'GC: ve can not zero');
     votingEscrow = newVotingEscrow;
     emit SetVotingEscrow(oldVotingEscrow, newVotingEscrow);
   }
@@ -44,7 +44,7 @@ contract GaugeControllerUpgradeable is
    */
   function setP12Factory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'GaugeController: votingEscrow can not zero');
+    require(newP12Factory != address(0), 'GC: ve can not zero');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
@@ -56,7 +56,7 @@ contract GaugeControllerUpgradeable is
   */
   function getGaugeTypes(address addr) external view virtual override returns (int128) {
     int128 gaugeType = gaugeTypes[addr];
-    require(gaugeType != 0, 'GaugeController: gauge type not add');
+    require(gaugeType != 0, 'GC: wrong gauge type');
     return gaugeType - 1;
   }
 
@@ -71,9 +71,10 @@ contract GaugeControllerUpgradeable is
     int128 gaugeType,
     uint256 weight
   ) external virtual override {
-    require(msg.sender == owner() || msg.sender == address(p12Factory), 'GaugeController: only admin or p12Factory');
-    require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GaugeController: gaugeType error');
-    require(gaugeTypes[addr] == 0, 'GaugeController: cannot add the same gauge twice'); //dev: cannot add the same gauge twice
+    require(msg.sender == owner() || msg.sender == address(p12Factory), 'GC: only admin or p12Factory');
+    require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GC: gaugeType error');
+    require(gaugeTypes[addr] == 0, 'GC: duplicated gauge type'); //dev: cannot add the same gauge twice
+
 
     int128 n = nGauges;
     nGauges = n + 1;
@@ -188,16 +189,13 @@ contract GaugeControllerUpgradeable is
     uint256 lockEnd = votingEscrow.lockedEnd(msg.sender);
     uint256 nextTime = ((block.timestamp + WEEK) / WEEK) * WEEK;
 
-    require(lockEnd > nextTime, ' GaugeController: Your token lock expires too soon');
-    require(userWeight >= 0 && userWeight <= 10000, 'GaugeController: You used all your voting power');
-    require(
-      block.timestamp >= lastUserVote[msg.sender][gaugeAddr] + WEIGHT_VOTE_DELAY,
-      'GaugeController: Cannot vote so often'
-    );
+    require(lockEnd > nextTime, 'GC: no valid ve');
+    require(userWeight >= 0 && userWeight <= 10000, 'GC: no enough voting power');
+    require(block.timestamp >= lastUserVote[msg.sender][gaugeAddr] + WEIGHT_VOTE_DELAY, 'GC: Cannot vote so often');
 
     TmpBias memory tmp1;
     int128 gaugeType = gaugeTypes[gaugeAddr] - 1;
-    require(gaugeType >= 0, 'GaugeController: Gauge not added');
+    require(gaugeType >= 0, 'GC: Gauge not added');
     // Prepare slopes and biases in memory
     VotedSlope memory oldSlope = voteUserSlopes[msg.sender][gaugeAddr];
     uint256 oldDt = 0;
@@ -211,7 +209,7 @@ contract GaugeControllerUpgradeable is
 
     // Check and update powers (weights) used
     voteUserPower[msg.sender] = voteUserPower[msg.sender] + newSlope.power - oldSlope.power;
-    require(voteUserPower[msg.sender] >= 0 && voteUserPower[msg.sender] <= 10000, 'GaugeController: Used too much power');
+    require(voteUserPower[msg.sender] >= 0 && voteUserPower[msg.sender] <= 10000, 'GC: Used too much power');
 
     // Remove old and schedule new slope changes
     // Remove slope changes for old slopes
@@ -303,7 +301,7 @@ contract GaugeControllerUpgradeable is
   }
 
   function initialize(address votingEscrow_, address p12Factory_) public initializer {
-    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GaugeController: address can not zero');
+    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GC: address can not zero');
     votingEscrow = IVotingEscrow(votingEscrow_);
     p12Factory = p12Factory_;
 

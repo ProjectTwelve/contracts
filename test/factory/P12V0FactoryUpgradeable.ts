@@ -113,7 +113,7 @@ describe('p12V0Factory', function () {
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await expect(core.p12V0Factory.executeMintCoin(gameCoinAddress, mintId)).to.be.revertedWith('this mint has been executed');
+    await expect(core.p12V0Factory.executeMintCoin(gameCoinAddress, mintId)).to.be.revertedWith('P12Factory: mint executed');
   });
 
   it('Should show change game gameDeveloper successfully !', async function () {
@@ -141,7 +141,7 @@ describe('p12V0Factory', function () {
 
     await expect(
       core.p12V0Factory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
-    ).to.be.revertedWith('SafeOwnable: caller not the owner');
+    ).to.be.revertedWith('SafeOwnable: caller not owner');
 
     await core.p12V0Factory.connect(admin2).claimOwnership();
     await core.p12V0Factory.connect(admin2).transferOwnership(admin.address, false);

@@ -31,7 +31,7 @@ contract P12RewardVault is SafeOwnable, IP12RewardVault {
     @notice withdraw token Emergency
    */
   function withdrawEmergency(address to) external virtual override onlyOwner {
-    require(to != address(0), 'P12RewardVault: address can not be zero');
+    require(to != address(0), 'P12RewardVault: address cannot be 0');
     IERC20(p12Token).safeTransfer(to, IERC20(p12Token).balanceOf(address(this)));
     emit WithdrawEmergency(p12Token, IERC20(p12Token).balanceOf(address(this)));
   }

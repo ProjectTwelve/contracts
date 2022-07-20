@@ -14,6 +14,9 @@ contract ControllerStorage {
   int128 public nGauges;
   uint256 public timeTotal; // last scheduled time
 
+  uint256[45] private __gap;
+
+
   mapping(int128 => string) public gaugeTypeNames;
   // Needed for enumeration
   mapping(int128 => address) public gauges;
@@ -68,5 +71,4 @@ contract ControllerStorage {
     uint256 newBias;
   }
 
-  uint256[45] private __gap;
 }
