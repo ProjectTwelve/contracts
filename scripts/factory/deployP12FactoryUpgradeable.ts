@@ -12,7 +12,7 @@ async function main() {
       { kind: 'uups' },
     );
     console.log('proxy contract', p12V0FactoryUpgradeable.address);
-    // 0xD3a76F2B93b093E89E0B753a4E8D2263680D6302
+    // 0xaA65e38dC95c8709511440039d880232819406c4
   } else if (env.network.name === 'rinkeby') {
     const P12V0FactoryUpgradeable = await ethers.getContractFactory('P12V0FactoryUpgradeable');
     const p12Token = '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086';

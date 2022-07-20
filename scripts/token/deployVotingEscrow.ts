@@ -6,7 +6,7 @@ async function main() {
     const VotingEscrow = await ethers.getContractFactory('VotingEscrow');
     const votingEscrow = await VotingEscrow.deploy(p12Token, 'Vote-escrowed P12', 'veP12');
     console.log('VotingEscrow contract', votingEscrow.address);
-    // 0x1d8C8fd6762047d0eA81a8Da301D71249b00156c
+    // 0xd583619d365E150E81804DC9aa2276F1b2d44D11
   } else if (env.network.name === 'rinkeby') {
     const p12Token = '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086';
     const VotingEscrow = await ethers.getContractFactory('VotingEscrow');
