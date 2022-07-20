@@ -265,7 +265,7 @@ contract P12MineUpgradeable is
   /**
     @notice update checkpoint for all pool
    */
-  function checkpointAll() public virtual override{
+  function checkpointAll() public virtual override {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; pid++) {
       checkpoint(pid);
