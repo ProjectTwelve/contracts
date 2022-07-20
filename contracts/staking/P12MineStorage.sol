@@ -20,6 +20,7 @@ contract P12MineStorage {
   PoolInfo[] public poolInfos;
 
   bool public isEmergency;
+  uint256 public emergencyUnlockTime;
 
   mapping(address => uint256) public lpTokenRegistry;
   // Info of each user that stakes LP tokens.
@@ -64,5 +65,5 @@ contract P12MineStorage {
     uint256 unlockTimestamp;
     bool executed;
   }
-  uint256[41] private __gap;
+  uint256[40] private __gap;
 }

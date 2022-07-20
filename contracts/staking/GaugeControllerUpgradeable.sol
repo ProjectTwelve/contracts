@@ -70,7 +70,7 @@ contract GaugeControllerUpgradeable is
     address addr,
     int128 gaugeType,
     uint256 weight
-  ) external virtual override{
+  ) external virtual override {
     require(msg.sender == owner() || msg.sender == address(p12Factory), 'GaugeController: only admin or p12Factory');
     require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GaugeController: gaugeType error');
     require(gaugeTypes[addr] == 0, 'GaugeController: cannot add the same gauge twice'); //dev: cannot add the same gauge twice
@@ -106,7 +106,7 @@ contract GaugeControllerUpgradeable is
   /**
     @notice Checkpoint to fill data common for all gauges
      */
-  function checkpoint() external virtual override{
+  function checkpoint() external virtual override {
     _getTotal();
   }
 
@@ -114,7 +114,7 @@ contract GaugeControllerUpgradeable is
     @notice Checkpoint to fill data for both a specific gauge and common for all gauges
     @param addr Gauge address
      */
-  function checkpointGauge(address addr) external virtual override{
+  function checkpointGauge(address addr) external virtual override {
     _getWeight(addr);
     _getTotal();
   }

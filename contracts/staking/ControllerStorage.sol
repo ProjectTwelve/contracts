@@ -12,6 +12,7 @@ contract ControllerStorage {
   // All numbers are "fixed point" on the basis of 1e18
   int128 public nGaugeTypes;
   int128 public nGauges;
+  uint256 public timeTotal; // last scheduled time
 
   mapping(int128 => string) public gaugeTypeNames;
   // Needed for enumeration
@@ -40,7 +41,6 @@ contract ControllerStorage {
   mapping(int128 => uint256) public timeSum; // type_id -> last scheduled time (next week)
 
   mapping(uint256 => uint256) public pointsTotal; // time -> total weight
-  uint256 public timeTotal; // last scheduled time
 
   mapping(int128 => mapping(uint256 => uint256)) public pointsTypeWeight; // type_id -> time -> type weight
   mapping(int128 => uint256) public timeTypeWeight; // type_id -> last scheduled time (next week)
@@ -68,5 +68,5 @@ contract ControllerStorage {
     uint256 newBias;
   }
 
-  uint256[46] private __gap;
+  uint256[45] private __gap;
 }

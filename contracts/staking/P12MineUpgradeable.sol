@@ -64,7 +64,7 @@ contract P12MineUpgradeable is
   /**
 ​    @notice withdraw token Emergency
   */
-  function withdrawEmergency() external virtual override onlyOwner {
+  function withdrawEmergency() external virtual override onlyEmergency onlyOwner {
     p12RewardVault.withdrawEmergency(msg.sender);
   }
 
@@ -177,7 +177,13 @@ contract P12MineUpgradeable is
   function setEmergency(bool emergencyStatus) public virtual override onlyOwner {
     require(isEmergency != emergencyStatus, 'P12Mine: already exists');
     isEmergency = emergencyStatus;
-    emit SetEmergency(emergencyStatus);
+    if (isEmergency) {
+      uint256 delayTime = 86400;
+      emergencyUnlockTime = block.timestamp + delayTime;
+      emit SetEmergency(emergencyStatus, delayTime, emergencyUnlockTime);
+    } else {
+      emit SetEmergency(emergencyStatus, 0, 0);
+    }
   }
 
   /**
@@ -226,46 +232,10 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  // ============ checkpoint ============
-  /**
-      @notice update checkpoint for pool
-      @param pid Pool Id
-  */
-  function checkpoint(uint256 pid) public virtual override whenNotPaused {
-    PoolInfo storage pool = poolInfos[pid];
-    UserInfo storage user = userInfo[pid][msg.sender];
-    uint256 _accP12PerShare = pool.accP12PerShare;
-    uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
-    gaugeController.checkpointGauge(address(pool.lpToken));
-    require(block.timestamp > _periodTime, 'P12Mine: need current timestamp > _periodTime');
-    if (pool.amount == 0) {
-      pool.period += 1;
-      periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-      return;
-    }
-    uint256 prevWeekTime = _periodTime;
-    uint256 weekTime = Math.min(((_periodTime + WEEK) / WEEK) * WEEK, block.timestamp);
-    for (uint256 i = 0; i < 500; i++) {
-      uint256 dt = weekTime - prevWeekTime;
-      uint256 w = gaugeController.gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
-      if (user.amount > 0) {
-        _accP12PerShare += (rate * w * dt) / pool.amount;
-      }
-      if (weekTime == block.timestamp) {
-        break;
-      }
-      prevWeekTime = weekTime;
-      weekTime = Math.min(weekTime + WEEK, block.timestamp);
-    }
-    pool.accP12PerShare = _accP12PerShare;
-    pool.period += 1;
-    periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-  }
-
   /**
     @notice update checkpoint for all pool
    */
-  function checkpointAll() public virtual override{
+  function checkpointAll() public virtual override {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; pid++) {
       checkpoint(pid);
@@ -445,6 +415,43 @@ contract P12MineUpgradeable is
     return withdrawId;
   }
 
+  // ============ checkpoint ============
+  /**
+      @notice update checkpoint for pool
+      @param pid Pool Id
+  */
+  function checkpoint(uint256 pid) public virtual override whenNotPaused {
+    PoolInfo storage pool = poolInfos[pid];
+    UserInfo storage user = userInfo[pid][msg.sender];
+    uint256 _accP12PerShare = pool.accP12PerShare;
+    uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
+    gaugeController.checkpointGauge(address(pool.lpToken));
+    require(block.timestamp > _periodTime, 'P12Mine: need current timestamp > _periodTime');
+    if (pool.amount == 0) {
+      pool.period += 1;
+      periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
+      return;
+    }
+    uint256 prevWeekTime = _periodTime;
+    uint256 weekTime = Math.min(((_periodTime + WEEK) / WEEK) * WEEK, block.timestamp);
+    for (uint256 i = 0; i < 500; i++) {
+      uint256 dt = weekTime - prevWeekTime;
+      uint256 w = gaugeController.gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
+      if (user.amount > 0) {
+        _accP12PerShare += (rate * w * dt) / pool.amount;
+      }
+      if (weekTime == block.timestamp) {
+        break;
+      }
+      prevWeekTime = weekTime;
+      weekTime = Math.min(weekTime + WEEK, block.timestamp);
+    }
+    pool.accP12PerShare = _accP12PerShare;
+    pool.period += 1;
+    periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
+    emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
+  }
+
   // ============ Modifiers ============
 
   // check if lpToken exists
@@ -473,6 +480,7 @@ contract P12MineUpgradeable is
   // check Emergency
   modifier onlyEmergency() {
     require(isEmergency, 'P12Mine: isEmergency must be true');
+    require(block.timestamp >= emergencyUnlockTime, 'P12Mine: unlock time not yet');
     _;
   }
 }
