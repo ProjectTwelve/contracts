@@ -205,9 +205,7 @@ describe('p12Mine', function () {
   // claim  pending p12Token with fake account
   it('show claim nothing', async function () {
     const balanceOfReward = await core.p12Token.balanceOf(admin.address);
-    await expect(core.p12Mine.connect(admin).claim(pair.address)).to.be.revertedWith(
-      'P12Mine: you have not pledged any lpTokens',
-    );
+    await expect(core.p12Mine.connect(admin).claim(pair.address)).to.be.revertedWith('P12Mine: no staked token');
     expect(await core.p12Token.balanceOf(admin.address)).to.be.equal(balanceOfReward);
   });
 
