@@ -41,7 +41,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
    * @dev Throws if called by any account other than the owner.
    */
   modifier onlyOwner() {
-    require(owner() == _msgSender(), 'SafeOwnable: caller not the owner');
+    require(owner() == _msgSender(), 'SafeOwnable: caller not owner');
     _;
   }
 

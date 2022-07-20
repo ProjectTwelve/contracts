@@ -116,7 +116,7 @@ describe('p12Mine', function () {
       core.p12Mine
         .connect(user)
         .executeWithdraw(pair.address, '0x686a653b3b000000000000000000000000000000000000000000000000000000'),
-    ).to.be.revertedWith('P12Mine: withdraw the lpToken requires its owner');
+    ).to.be.revertedWith('P12Mine: caller not token owner');
     expect(await core.p12Token.balanceOf(user.address)).to.be.equal(balanceOfReward);
     expect(await core.p12Mine.getUserLpBalance(pair.address, user.address)).to.be.equal(balanceOfLpToken);
   });
@@ -267,7 +267,7 @@ describe('p12Mine', function () {
 
   // withdraw p12token Emergency by admin
   it('show withdraw p12token Emergency successfully', async function () {
-    await expect(core.p12Mine.connect(developer).withdrawEmergency()).to.be.revertedWith('SafeOwnable: caller not the owner');
+    await expect(core.p12Mine.connect(developer).withdrawEmergency()).to.be.revertedWith('SafeOwnable: caller not owner');
     const balanceOf = await core.p12Token.balanceOf(p12RewardVault.address);
     const balanceOfAdmin = await core.p12Token.balanceOf(admin.address);
     await core.p12Mine.withdrawEmergency();
@@ -276,7 +276,7 @@ describe('p12Mine', function () {
 
   // withdraw lpTokens Emergency
   it('show withdraw lpTokens Emergency successfully', async function () {
-    await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: isEmergency must be true');
+    await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: no emergency now');
     await core.p12Mine.setEmergency(true);
     await expect(core.p12Mine.withdrawLpTokenEmergency(pair.address)).to.be.revertedWith('P12Mine: without any lpToken');
     const balanceOf = await pair.balanceOf(developer.address);

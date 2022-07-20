@@ -110,7 +110,7 @@ describe('SecretShopUpgradable', function () {
     await p12asset.transferOwnership(passerby.address, false);
 
     await expect(p12asset.connect(passerby).mint(passerby.address, 3, 1, '0x')).to.be.revertedWith(
-      'SafeOwnable: caller not the owner',
+      'SafeOwnable: caller not owner',
     );
 
     await p12asset.connect(passerby).claimOwnership();
