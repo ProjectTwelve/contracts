@@ -7,7 +7,7 @@ async function main() {
     const p12V0Factory = '0xaA65e38dC95c8709511440039d880232819406c4';
     const gaugeController = await upgrades.deployProxy(GaugeController, [votingEscrow, p12V0Factory]);
     console.log('gaugeController contract', gaugeController.address);
-    // 0x2Ad82033AFD731CdD877462218d5eadD992f5723
+    // 0xE01279C545b594960E45bD8f81043d62Aabd83F3
   } else if (env.network.name === 'rinkeby') {
     const votingEscrow = '0x427fbf5ae3b2684D6136a63D14BC7ABf963f6E7c';
     const p12V0Factory = '0x5dceAa4A7aCFc938a6Ea121EEE976358e0df41E8';

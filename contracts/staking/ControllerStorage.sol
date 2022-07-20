@@ -68,5 +68,5 @@ contract ControllerStorage {
     uint256 newBias;
   }
 
-  uint256[46] private __gap;
+  uint256[45] private __gap;
 }
