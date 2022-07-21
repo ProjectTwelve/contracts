@@ -16,7 +16,6 @@ contract ControllerStorage {
 
   uint256[45] private __gap;
 
-
   mapping(int128 => string) public gaugeTypeNames;
   // Needed for enumeration
   mapping(int128 => address) public gauges;
@@ -70,5 +69,4 @@ contract ControllerStorage {
     uint256 oldBias;
     uint256 newBias;
   }
-
 }

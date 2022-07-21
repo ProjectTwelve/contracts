@@ -232,7 +232,6 @@ contract P12MineUpgradeable is
     return true;
   }
 
-
   /**
     @notice update checkpoint for all pool
    */
@@ -481,7 +480,7 @@ contract P12MineUpgradeable is
   // check Emergency
   modifier onlyEmergency() {
     require(isEmergency, 'P12Mine: no emergency now');
-    require(block.timestamp >= emergencyUnlockTime, 'P12Mine: unlock time not yet');
+    require(block.timestamp >= emergencyUnlockTime, 'P12Mine: not unlocked yet');
     _;
   }
 }

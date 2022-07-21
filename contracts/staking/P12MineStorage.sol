@@ -67,5 +67,4 @@ contract P12MineStorage {
     uint256 unlockTimestamp;
     bool executed;
   }
-
 }

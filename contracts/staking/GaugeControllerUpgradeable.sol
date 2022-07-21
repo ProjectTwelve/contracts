@@ -75,7 +75,6 @@ contract GaugeControllerUpgradeable is
     require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GC: gaugeType error');
     require(gaugeTypes[addr] == 0, 'GC: duplicated gauge type'); //dev: cannot add the same gauge twice
 
-
     int128 n = nGauges;
     nGauges = n + 1;
     gauges[n] = addr;
