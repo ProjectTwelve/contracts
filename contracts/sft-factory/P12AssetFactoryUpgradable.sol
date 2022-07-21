@@ -20,8 +20,7 @@ contract P12AssetFactoryUpgradable is
   PausableUpgradeable,
   UUPSUpgradeable
 {
-  /** upgrade function */
-  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+ 
 
   function pause() public onlyOwner {
     _pause();
@@ -37,16 +36,6 @@ contract P12AssetFactoryUpgradable is
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
     __Ownable_init_unchained();
-  }
-
-  modifier onlyDeveloper(string memory gameId) {
-    require(P12V0FactoryUpgradeable(p12factory).allGames(gameId) == msg.sender, 'P12Asset: not game developer');
-    _;
-  }
-
-  modifier onlyCollectionDeveloper(address collection) {
-    require(P12V0FactoryUpgradeable(p12factory).allGames(registry[collection]) == msg.sender, 'P12Asset: not game developer');
-    _;
   }
 
   /**
@@ -112,5 +101,18 @@ contract P12AssetFactoryUpgradable is
     string calldata newUri
   ) public override onlyCollectionDeveloper(collection) whenNotPaused {
     P12Asset(collection).setUri(tokenId, newUri);
+  }
+
+   /** upgrade function */
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  modifier onlyDeveloper(string memory gameId) {
+    require(P12V0FactoryUpgradeable(p12factory).allGames(gameId) == msg.sender, 'P12Asset: not game developer');
+    _;
+  }
+
+  modifier onlyCollectionDeveloper(address collection) {
+    require(P12V0FactoryUpgradeable(p12factory).allGames(registry[collection]) == msg.sender, 'P12Asset: not game developer');
+    _;
   }
 }

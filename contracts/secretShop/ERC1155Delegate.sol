@@ -24,29 +24,17 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     uint256 amount;
   }
 
+
+
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
-  function pause() public onlyRole(PAUSABLE_CALLER) {
-    _pause();
-  }
-
-  function unpause() public onlyRole(PAUSABLE_CALLER) {
-    _unpause();
-  }
-
   /**
-   * @dev Received function
+   * @return delegateType the delegate's type
    */
-  function onERC1155Received(
-    address,
-    address,
-    uint256,
-    uint256,
-    bytes calldata
-  ) external pure override returns (bytes4) {
-    return this.onERC1155Received.selector;
+  function delegateType() external pure override returns (uint256) {
+    return uint256(Market.DelegationType.ERC1155);
   }
 
   /**
@@ -63,18 +51,38 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
   }
 
   /**
+   * @dev Received function
+   */
+  function onERC1155Received(
+    address,
+    address,
+    uint256,
+    uint256,
+    bytes calldata
+  ) external pure override returns (bytes4) {
+    return this.onERC1155Received.selector;
+  }
+
+
+  function pause() public onlyRole(PAUSABLE_CALLER) {
+    _pause();
+  }
+
+  function unpause() public onlyRole(PAUSABLE_CALLER) {
+    _unpause();
+  }
+
+  
+  
+
+  /**
    * @dev decode data to the array of Pair
    */
   function decode(bytes calldata data) public pure returns (Pair[] memory) {
     return abi.decode(data, (Pair[]));
   }
 
-  /**
-   * @return delegateType the delegate's type
-   */
-  function delegateType() external pure override returns (uint256) {
-    return uint256(Market.DelegationType.ERC1155);
-  }
+  
 
   /**
    * @dev run the sell to transfer item
