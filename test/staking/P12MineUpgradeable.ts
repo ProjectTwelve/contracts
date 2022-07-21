@@ -101,7 +101,7 @@ describe('p12Mine', function () {
 
   // claim p12Token
   it('show claim p12Token successfully', async function () {
-    await core.p12Mine.connect(developer).checkpoint(await core.p12Mine.getPid(pair.address));
+    await core.p12Mine.connect(developer).checkpoint(pair.address);
     expect(await core.p12Mine.getPid(pair.address)).to.be.equal(1);
     const balanceOf = await core.p12Token.balanceOf(developer.address);
     await core.p12Mine.connect(developer).claim(pair.address);
@@ -218,6 +218,20 @@ describe('p12Mine', function () {
     expect(await core.p12Token.balanceOf(developer.address)).to.be.above(balanceOfReward);
   });
 
+  // update checkpoint
+  it('show checkpoint  success', async function () {
+    const res = await core.p12Mine.poolInfos(1);
+    const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    await ethers.provider.send('evm_mine', [timestampBefore + 86400 * 10]);
+    await core.p12Mine.checkpoint(pair.address);
+    expect((await core.p12Mine.poolInfos(1)).accP12PerShare).to.be.above(res.accP12PerShare);
+  });
+
+  // update checkpoint all
+  it('show checkpoint  success', async function () {
+    await core.p12Mine.checkpointAll();
+  });
+
   it('show withdraw successfully', async function () {
     // time goes by
     const balanceOf = await core.p12Token.balanceOf(developer.address);
@@ -253,15 +267,7 @@ describe('p12Mine', function () {
     expect(pid).to.be.equal(tmp.sub(1));
   });
 
-  // update checkpoint
-  it('show checkpoint  success', async function () {
-    await core.p12Mine.checkpoint(0);
-  });
-
-  // update checkpoint all
-  it('show checkpoint  success', async function () {
-    await core.p12Mine.checkpointAll();
-  });
+ 
 
   // withdraw p12token Emergency by admin
   it('show withdraw p12token Emergency successfully', async function () {
