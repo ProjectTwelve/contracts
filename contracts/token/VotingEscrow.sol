@@ -184,14 +184,14 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
 
   /** 
     @notice Withdraw all tokens for `msg.sender`
-    @dev Only possible if the lock has expired
+    @dev Only possible if the lock has expired or contract expired
   */
   function withdraw() external nonReentrant whenNotPaused {
     LockedBalance memory _locked = locked[msg.sender];
     require(_locked.amount > 0, 'VotingEscrow: no locked token');
-    require(block.timestamp >= _locked.end, 'VotingEscrow: lock not expire');
+    // Check if the contract is expired or unlocked
+    require(block.timestamp >= _locked.end || expired, 'VotingEscrow: condition not met');
     uint256 value = uint256(_locked.amount);
-
     LockedBalance memory oldLocked = _locked;
     _locked.end = 0;
     _locked.amount = 0;
