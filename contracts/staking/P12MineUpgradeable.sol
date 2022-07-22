@@ -234,7 +234,7 @@ contract P12MineUpgradeable is
   
   /**
       @notice update checkpoint for pool
-      @param pid Pool Id
+      @param lpToken Address of lpToken
   */
   function checkpoint(address lpToken)external{
     uint256 pid = getPid(lpToken);
