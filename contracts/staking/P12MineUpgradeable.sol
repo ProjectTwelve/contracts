@@ -64,7 +64,7 @@ contract P12MineUpgradeable is
   /**
 ​    @notice withdraw token Emergency
   */
-  function withdrawEmergency() external virtual override onlyEmergency onlyOwner {
+  function withdrawEmergency() external virtual override  onlyOwner emergency{
     p12RewardVault.withdrawEmergency(msg.sender);
   }
 
@@ -172,18 +172,15 @@ contract P12MineUpgradeable is
   // ============ Ownable ============
 
   /**
-    @notice set the isEmergency status
+    @notice set the isEmergency to true
   */
-  function setEmergency(bool emergencyStatus) public virtual override onlyOwner {
-    require(isEmergency != emergencyStatus, 'P12Mine: already exists');
-    isEmergency = emergencyStatus;
-    if (isEmergency) {
-      uint256 delayTime = 86400;
-      emergencyUnlockTime = block.timestamp + delayTime;
-      emit SetEmergency(emergencyStatus, delayTime, emergencyUnlockTime);
-    } else {
-      emit SetEmergency(emergencyStatus, 0, 0);
-    }
+ 
+  function emergency() public virtual override onlyOwner {
+    require(!isEmergency,'P12Mine: already exists');
+    isEmergency = true;
+    uint256 delayTime = 86400;
+    emergencyUnlockTime = block.timestamp + delayTime;
+    emit Emergency(msg.sender, delayTime, emergencyUnlockTime);
   }
 
   /**
@@ -354,7 +351,7 @@ contract P12MineUpgradeable is
 ​    @notice withdraw lpToken Emergency
   */
 
-  function withdrawAllLpTokenEmergency() public virtual override onlyEmergency {
+  function withdrawAllLpTokenEmergency() public virtual override  {
     uint256 length = poolInfos.length;
 
     for (uint256 pid = 0; pid < length; pid++) {
@@ -370,7 +367,7 @@ contract P12MineUpgradeable is
 ​    @notice withdraw all lpToken Emergency
     @param lpToken address of lpToken
   */
-  function withdrawLpTokenEmergency(address lpToken) public virtual override nonReentrant onlyEmergency {
+  function withdrawLpTokenEmergency(address lpToken) public virtual override nonReentrant contractEmergency {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
@@ -477,8 +474,9 @@ contract P12MineUpgradeable is
     _;
   }
 
+ 
   // check Emergency
-  modifier onlyEmergency() {
+  modifier contractEmergency() {
     require(isEmergency, 'P12Mine: no emergency now');
     require(block.timestamp >= emergencyUnlockTime, 'P12Mine: not unlocked yet');
     _;
