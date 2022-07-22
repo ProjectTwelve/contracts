@@ -64,8 +64,17 @@ contract P12MineUpgradeable is
   /**
 ​    @notice withdraw token Emergency
   */
-  function withdrawEmergency() external virtual override onlyOwner {
+  function withdrawEmergency() external virtual override onlyOwner onlyEmergency {
     p12RewardVault.withdrawEmergency(msg.sender);
+  }
+
+  /**
+    @notice update checkpoint for pool
+    @param lpToken Address of lpToken
+  */
+  function checkpoint(address lpToken) external {
+    uint256 pid = getPid(lpToken);
+    _checkpoint(pid);
   }
 
   // ============ Public ============
@@ -175,12 +184,15 @@ contract P12MineUpgradeable is
   // ============ Ownable ============
 
   /**
-    @notice set the isEmergency status
+    @notice set the isEmergency to true
   */
-  function setEmergency(bool emergencyStatus) public virtual override onlyOwner {
-    require(isEmergency != emergencyStatus, 'P12Mine: already exists');
-    isEmergency = emergencyStatus;
-    emit SetEmergency(emergencyStatus);
+
+  function emergency() public virtual override onlyOwner {
+    require(!isEmergency, 'P12Mine: already exists');
+    isEmergency = true;
+    uint256 delayTime = 86400;
+    emergencyUnlockTime = block.timestamp + delayTime;
+    emit Emergency(msg.sender, emergencyUnlockTime);
   }
 
   /**
@@ -229,10 +241,7 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  function checkpoint(address lpToken)external{
-    uint256 pid = getPid(lpToken);
-    _checkpoint(pid);
-  }
+  
 
   /**
     @notice update checkpoint for all pool
@@ -356,7 +365,7 @@ contract P12MineUpgradeable is
 ​    @notice withdraw lpToken Emergency
   */
 
-  function withdrawAllLpTokenEmergency() public virtual override onlyEmergency {
+  function withdrawAllLpTokenEmergency() public virtual override {
     uint256 length = poolInfos.length;
 
     for (uint256 pid = 0; pid < length; pid++) {
@@ -372,15 +381,15 @@ contract P12MineUpgradeable is
 ​    @notice withdraw all lpToken Emergency
     @param lpToken address of lpToken
   */
-  function withdrawLpTokenEmergency(address lpToken) public virtual override onlyEmergency {
+  function withdrawLpTokenEmergency(address lpToken) public virtual override nonReentrant onlyEmergency {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     require(user.amount > 0, 'P12Mine: without any lpToken');
-    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
     uint256 amount = user.amount;
     user.amount = 0;
     user.rewardDebt = 0;
+    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), amount);
     emit WithdrawLpTokenEmergency(lpToken, amount);
   }
 
@@ -422,12 +431,13 @@ contract P12MineUpgradeable is
       @notice update checkpoint for pool
       @param pid Pool Id
   */
-  function _checkpoint(uint256 pid) internal virtual  whenNotPaused {
+  function _checkpoint(uint256 pid) internal virtual whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     uint256 _accP12PerShare = pool.accP12PerShare;
     uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
     gaugeController.checkpointGauge(address(pool.lpToken));
     require(block.timestamp > _periodTime, 'P12Mine: not time to check');
+
     if (pool.amount == 0) {
       pool.period += 1;
       periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
@@ -448,7 +458,8 @@ contract P12MineUpgradeable is
     pool.accP12PerShare = _accP12PerShare;
     pool.period += 1;
     periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-    emit Checkpoint(pool.lpToken,pool.amount,pool.accP12PerShare);
+
+    emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
   }
 
   // ============ Modifiers ============
@@ -479,6 +490,7 @@ contract P12MineUpgradeable is
   // check Emergency
   modifier onlyEmergency() {
     require(isEmergency, 'P12Mine: no emergency now');
+    require(block.timestamp >= emergencyUnlockTime, 'P12Mine: not unlocked yet');
     _;
   }
 }

@@ -10,7 +10,6 @@ import './interfaces/IGaugeController.sol';
 import '../token/interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
-import 'hardhat/console.sol';
 
 contract GaugeControllerUpgradeable is
   ControllerStorage,
@@ -189,7 +188,7 @@ contract GaugeControllerUpgradeable is
     uint256 nextTime = ((block.timestamp + WEEK) / WEEK) * WEEK;
 
     require(lockEnd > nextTime, 'GC: no valid ve');
-    require(userWeight >= 0 && userWeight <= 10000, 'GC: no enough voting power');
+    require(userWeight <= 10000, 'GC: no enough voting power');
     require(block.timestamp >= lastUserVote[msg.sender][gaugeAddr] + WEIGHT_VOTE_DELAY, 'GC: Cannot vote so often');
 
     TmpBias memory tmp1;
@@ -208,7 +207,7 @@ contract GaugeControllerUpgradeable is
 
     // Check and update powers (weights) used
     voteUserPower[msg.sender] = voteUserPower[msg.sender] + newSlope.power - oldSlope.power;
-    require(voteUserPower[msg.sender] >= 0 && voteUserPower[msg.sender] <= 10000, 'GC: Used too much power');
+    require(voteUserPower[msg.sender] <= 10000, 'GC: Used too much power');
 
     // Remove old and schedule new slope changes
     // Remove slope changes for old slopes
