@@ -23,6 +23,7 @@ interface IP12MineUpgradeable {
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
   event WithdrawLpTokenEmergency(address lpToken, uint256 amount);
   event SetEmergency(bool emergencyStatus);
+  event Checkpoint(address lpToken,uint256 poolAmount, uint256 accP12PerShare);
 
   function poolLength() external returns (uint256);
 
@@ -70,5 +71,5 @@ interface IP12MineUpgradeable {
 
   function claimAll() external; // get all pending rewards
 
-  function checkpoint(uint256 pid) external;
+  function checkpoint(address lpToken) external;
 }
