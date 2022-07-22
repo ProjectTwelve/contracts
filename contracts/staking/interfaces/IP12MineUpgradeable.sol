@@ -22,7 +22,7 @@ interface IP12MineUpgradeable {
   event SetP12Factory(address oldP12Factory, address newP12Factory);
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
   event WithdrawLpTokenEmergency(address lpToken, uint256 amount);
-  event SetEmergency(bool emergencyStatus, uint256 delayTime, uint256 emergencyUnlockTime);
+  event Emergency(address executor, uint256 emergencyUnlockTime);
   event Checkpoint(address indexed lpToken, uint256 indexed poolAmount, uint256 accP12PerShare);
 
   function poolLength() external returns (uint256);
@@ -41,7 +41,7 @@ interface IP12MineUpgradeable {
 
   function withdrawAllLpTokenEmergency() external;
 
-  function setEmergency(bool emergencyStatus) external;
+  function emergency() external;
 
   function createPool(address lpToken) external; // new pool
 

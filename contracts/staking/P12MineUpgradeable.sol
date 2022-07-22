@@ -64,7 +64,7 @@ contract P12MineUpgradeable is
   /**
 ​    @notice withdraw token Emergency
   */
-  function withdrawEmergency() external virtual override  onlyOwner emergency{
+  function withdrawEmergency() external virtual override onlyOwner contractEmergency {
     p12RewardVault.withdrawEmergency(msg.sender);
   }
 
@@ -174,13 +174,13 @@ contract P12MineUpgradeable is
   /**
     @notice set the isEmergency to true
   */
- 
-  function emergency() public virtual override onlyOwner {
-    require(!isEmergency,'P12Mine: already exists');
+
+  function emergency() public virtual override  onlyOwner{
+    require(!isEmergency, 'P12Mine: already exists');
     isEmergency = true;
     uint256 delayTime = 86400;
     emergencyUnlockTime = block.timestamp + delayTime;
-    emit Emergency(msg.sender, delayTime, emergencyUnlockTime);
+    emit Emergency(msg.sender, emergencyUnlockTime);
   }
 
   /**
@@ -351,7 +351,7 @@ contract P12MineUpgradeable is
 ​    @notice withdraw lpToken Emergency
   */
 
-  function withdrawAllLpTokenEmergency() public virtual override  {
+  function withdrawAllLpTokenEmergency() public virtual override {
     uint256 length = poolInfos.length;
 
     for (uint256 pid = 0; pid < length; pid++) {
@@ -474,7 +474,6 @@ contract P12MineUpgradeable is
     _;
   }
 
- 
   // check Emergency
   modifier contractEmergency() {
     require(isEmergency, 'P12Mine: no emergency now');
