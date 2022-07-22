@@ -194,7 +194,6 @@ contract P12V0FactoryUpgradeable is
 
     // minting fee for p12
     uint256 p12Fee = getMintFee(gameCoinAddress, amountGameCoin);
-    // require(p12Needed < amountP12, "p12 not enough");
 
     // transfer the p12 to this contract
     IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), p12Fee);
