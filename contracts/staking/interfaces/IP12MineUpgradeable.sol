@@ -23,7 +23,7 @@ interface IP12MineUpgradeable {
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
   event WithdrawLpTokenEmergency(address lpToken, uint256 amount);
   event SetEmergency(bool emergencyStatus);
-  event Checkpoint(address lpToken,uint256 poolAmount, uint256 accP12PerShare);
+  event Checkpoint(address lpToken, uint256 poolAmount, uint256 accP12PerShare);
 
   function poolLength() external returns (uint256);
 

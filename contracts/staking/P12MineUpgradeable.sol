@@ -229,7 +229,7 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  function checkpoint(address lpToken)external{
+  function checkpoint(address lpToken) external {
     uint256 pid = getPid(lpToken);
     _checkpoint(pid);
   }
@@ -422,7 +422,7 @@ contract P12MineUpgradeable is
       @notice update checkpoint for pool
       @param pid Pool Id
   */
-  function _checkpoint(uint256 pid) internal virtual  whenNotPaused {
+  function _checkpoint(uint256 pid) internal virtual whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     uint256 _accP12PerShare = pool.accP12PerShare;
     uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
@@ -448,7 +448,7 @@ contract P12MineUpgradeable is
     pool.accP12PerShare = _accP12PerShare;
     pool.period += 1;
     periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-    emit Checkpoint(pool.lpToken,pool.amount,pool.accP12PerShare);
+    emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
   }
 
   // ============ Modifiers ============
