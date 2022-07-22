@@ -138,11 +138,11 @@ describe('P12AssetFactoryUpgradable', function () {
 
     const p12AssetFactoryAlter = await upgrades.upgradeProxy(p12AssetFactory.address, P12AssetFactoryAlter);
 
-    await expect(p12AssetFactoryAlter.setP12factory(ethers.constants.AddressZero)).to.be.revertedWith(
-      'P12AssetF: address cannot be 0',
+    await expect(p12AssetFactoryAlter.setP12Factory(ethers.constants.AddressZero)).to.be.revertedWith(
+      'P12AssetF: p12Factory cannot be 0',
     );
     const randomAddr = ethers.utils.computeAddress(ethers.utils.randomBytes(32));
-    await p12AssetFactoryAlter.setP12factory(randomAddr);
-    expect(await p12AssetFactoryAlter.p12factory()).to.be.equal(randomAddr);
+    await p12AssetFactoryAlter.setP12Factory(randomAddr);
+    expect(await p12AssetFactoryAlter.p12Factory()).to.be.equal(randomAddr);
   });
 });

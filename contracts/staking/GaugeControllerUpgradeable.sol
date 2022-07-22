@@ -32,7 +32,7 @@ contract GaugeControllerUpgradeable is
    */
   function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual override onlyOwner {
     IVotingEscrow oldVotingEscrow = votingEscrow;
-    require(address(newVotingEscrow) != address(0), 'GC: ve can not zero');
+    require(address(newVotingEscrow) != address(0), 'GC: ve can not 0');
     votingEscrow = newVotingEscrow;
     emit SetVotingEscrow(oldVotingEscrow, newVotingEscrow);
   }
@@ -43,7 +43,7 @@ contract GaugeControllerUpgradeable is
    */
   function setP12Factory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'GC: ve can not zero');
+    require(newP12Factory != address(0), 'GC: ve can not 0');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
@@ -299,7 +299,7 @@ contract GaugeControllerUpgradeable is
   }
 
   function initialize(address votingEscrow_, address p12Factory_) public initializer {
-    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GC: address can not zero');
+    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GC: address can not 0');
     votingEscrow = IVotingEscrow(votingEscrow_);
     p12Factory = p12Factory_;
 

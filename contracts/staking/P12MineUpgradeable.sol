@@ -38,7 +38,7 @@ contract P12MineUpgradeable is
    */
   function setP12Factory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'P12Mine: p12Factory can not zero');
+    require(newP12Factory != address(0), 'P12Mine: p12Factory cannot be 0');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
@@ -49,7 +49,7 @@ contract P12MineUpgradeable is
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
     IGaugeController oldGaugeController = gaugeController;
-    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be zero');
+    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be 0');
     gaugeController = newGaugeController;
     emit SetGaugeController(oldGaugeController, newGaugeController);
   }
@@ -103,8 +103,8 @@ contract P12MineUpgradeable is
     uint256 delayB_,
     uint256 rate_
   ) public initializer {
-    require(p12Token_ != address(0), 'P12Mine: p12Token cannot zero');
-    require(p12Factory_ != address(0), 'P12Mine: p12Factory cannot zero');
+    require(p12Token_ != address(0), 'P12Mine: p12Token cannot be 0');
+    require(p12Factory_ != address(0), 'P12Mine: p12Factory cannot be 0');
 
     p12Token = p12Token_;
     p12Factory = p12Factory_;
@@ -240,8 +240,6 @@ contract P12MineUpgradeable is
     emit SetRate(oldRate, newRate);
     return true;
   }
-
-  
 
   /**
     @notice update checkpoint for all pool
@@ -458,7 +456,6 @@ contract P12MineUpgradeable is
     pool.accP12PerShare = _accP12PerShare;
     pool.period += 1;
     periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-
     emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
   }
 

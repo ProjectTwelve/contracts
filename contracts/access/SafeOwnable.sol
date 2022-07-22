@@ -58,7 +58,7 @@ contract SafeOwnable is Context {
    * only happens when the pending owner claim the ownership
    */
   function transferOwnership(address newOwner, bool direct) public virtual onlyOwner {
-    require(newOwner != address(0), 'SafeOwnable: new owner is zero');
+    require(newOwner != address(0), 'SafeOwnable: new owner is 0');
 
     if (direct) {
       _transferOwnership(newOwner);
