@@ -267,8 +267,6 @@ describe('p12Mine', function () {
     expect(pid).to.be.equal(tmp.sub(1));
   });
 
- 
-
   // withdraw p12token Emergency by admin
   it('show withdraw p12token Emergency successfully', async function () {
     await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('no emergency now');

@@ -68,6 +68,15 @@ contract P12MineUpgradeable is
     p12RewardVault.withdrawEmergency(msg.sender);
   }
 
+  /**
+    @notice update checkpoint for pool
+    @param lpToken Address of lpToken
+  */
+  function checkpoint(address lpToken) external {
+    uint256 pid = getPid(lpToken);
+    _checkpoint(pid);
+  }
+
   // ============ Public ============
 
   function pause() public onlyOwner {
@@ -231,15 +240,8 @@ contract P12MineUpgradeable is
     emit SetRate(oldRate, newRate);
     return true;
   }
+
   
-  /**
-      @notice update checkpoint for pool
-      @param lpToken Address of lpToken
-  */
-  function checkpoint(address lpToken)external{
-    uint256 pid = getPid(lpToken);
-    _checkpoint(pid);
-  }
 
   /**
     @notice update checkpoint for all pool
@@ -429,7 +431,7 @@ contract P12MineUpgradeable is
       @notice update checkpoint for pool
       @param pid Pool Id
   */
-  function _checkpoint(uint256 pid) internal virtual  whenNotPaused {
+  function _checkpoint(uint256 pid) internal virtual whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     uint256 _accP12PerShare = pool.accP12PerShare;
     uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
@@ -457,8 +459,7 @@ contract P12MineUpgradeable is
     pool.period += 1;
     periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
 
-    emit Checkpoint(pool.lpToken,pool.amount,pool.accP12PerShare);
-
+    emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
   }
 
   // ============ Modifiers ============
