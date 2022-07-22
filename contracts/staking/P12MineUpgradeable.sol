@@ -49,7 +49,7 @@ contract P12MineUpgradeable is
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
     IGaugeController oldGaugeController = gaugeController;
-    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be zero');
+    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be 0');
     gaugeController = newGaugeController;
     emit SetGaugeController(oldGaugeController, newGaugeController);
   }

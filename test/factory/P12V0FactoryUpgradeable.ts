@@ -131,7 +131,7 @@ describe('p12V0Factory', function () {
   });
   it('should transfer ownership successfully', async () => {
     await expect(core.p12V0Factory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
-      'SafeOwnable: new owner is zero',
+      'SafeOwnable: new owner is 0',
     );
 
     await expect(core.p12V0Factory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
