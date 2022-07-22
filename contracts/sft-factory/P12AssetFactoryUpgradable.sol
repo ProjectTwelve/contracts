@@ -20,9 +20,6 @@ contract P12AssetFactoryUpgradable is
   PausableUpgradeable,
   UUPSUpgradeable
 {
-  /** upgrade function */
-  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
-
   function pause() public onlyOwner {
     _pause();
   }
@@ -32,21 +29,12 @@ contract P12AssetFactoryUpgradable is
   }
 
   function initialize(address p12factory_) public initializer {
+    require(p12factory_ != address(0), 'P12AssetF: address cannot be 0');
     p12factory = p12factory_;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
     __Ownable_init_unchained();
-  }
-
-  modifier onlyDeveloper(string memory gameId) {
-    require(P12V0FactoryUpgradeable(p12factory).allGames(gameId) == msg.sender, 'P12Asset: not game developer');
-    _;
-  }
-
-  modifier onlyCollectionDeveloper(address collection) {
-    require(P12V0FactoryUpgradeable(p12factory).allGames(registry[collection]) == msg.sender, 'P12Asset: not game developer');
-    _;
   }
 
   /**
@@ -112,5 +100,18 @@ contract P12AssetFactoryUpgradable is
     string calldata newUri
   ) public override onlyCollectionDeveloper(collection) whenNotPaused {
     P12Asset(collection).setUri(tokenId, newUri);
+  }
+
+  /** upgrade function */
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  modifier onlyDeveloper(string memory gameId) {
+    require(P12V0FactoryUpgradeable(p12factory).allGames(gameId) == msg.sender, 'P12AssetF: not game developer');
+    _;
+  }
+
+  modifier onlyCollectionDeveloper(address collection) {
+    require(P12V0FactoryUpgradeable(p12factory).allGames(registry[collection]) == msg.sender, 'P12AssetF: not game developer');
+    _;
   }
 }

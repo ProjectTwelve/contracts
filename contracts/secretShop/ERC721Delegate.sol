@@ -27,12 +27,11 @@ contract ERC721Delegate is IDelegate, AccessControl, IERC721Receiver, Reentrancy
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
 
-  function pause() public onlyRole(PAUSABLE_CALLER) {
-    _pause();
-  }
-
-  function unpause() public onlyRole(PAUSABLE_CALLER) {
-    _unpause();
+  /**
+   * @return delegateType the delegate's type
+   */
+  function delegateType() external pure override returns (uint256) {
+    return uint256(Market.DelegationType.ERC721);
   }
 
   /**
@@ -47,18 +46,19 @@ contract ERC721Delegate is IDelegate, AccessControl, IERC721Receiver, Reentrancy
     return this.onERC721Received.selector;
   }
 
+  function pause() public onlyRole(PAUSABLE_CALLER) {
+    _pause();
+  }
+
+  function unpause() public onlyRole(PAUSABLE_CALLER) {
+    _unpause();
+  }
+
   /**
    * @dev decode data to the array of Pair
    */
   function decode(bytes calldata data) public pure returns (Pair[] memory) {
     return abi.decode(data, (Pair[]));
-  }
-
-  /**
-   * @return delegateType the delegate's type
-   */
-  function delegateType() external pure override returns (uint256) {
-    return uint256(Market.DelegationType.ERC721);
   }
 
   /**

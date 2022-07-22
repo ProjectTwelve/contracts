@@ -74,6 +74,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     string memory name_,
     string memory symbol_
   ) {
+    require(p12TokenAddr_ != address(0), 'VotingEscrow: token cannot be 0');
     name = name_;
     symbol = symbol_;
     p12Token = p12TokenAddr_;

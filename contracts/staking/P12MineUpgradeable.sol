@@ -94,6 +94,9 @@ contract P12MineUpgradeable is
     uint256 delayB_,
     uint256 rate_
   ) public initializer {
+    require(p12Token_ != address(0), 'P12Mine: p12Token cannot zero');
+    require(p12Factory_ != address(0), 'P12Mine: p12Factory cannot zero');
+
     p12Token = p12Token_;
     p12Factory = p12Factory_;
     gaugeController = IGaugeController(gaugeController_);
@@ -228,6 +231,15 @@ contract P12MineUpgradeable is
     emit SetRate(oldRate, newRate);
     return true;
   }
+  
+  /**
+      @notice update checkpoint for pool
+      @param pid Pool Id
+  */
+  function checkpoint(address lpToken)external{
+    uint256 pid = getPid(lpToken);
+    _checkpoint(pid);
+  }
 
   /**
     @notice update checkpoint for all pool
@@ -235,7 +247,7 @@ contract P12MineUpgradeable is
   function checkpointAll() public virtual override {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; pid++) {
-      checkpoint(pid);
+      _checkpoint(pid);
     }
   }
 
@@ -252,7 +264,7 @@ contract P12MineUpgradeable is
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
 
-    checkpoint(pid);
+    _checkpoint(pid);
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
@@ -275,7 +287,7 @@ contract P12MineUpgradeable is
     PoolInfo memory pool = poolInfos[pid];
     UserInfo memory user = userInfo[pid][msg.sender];
     require(user.amount >= amount, 'P12Mine: withdraw too much');
-    checkpoint(pid);
+    _checkpoint(pid);
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
@@ -296,7 +308,7 @@ contract P12MineUpgradeable is
     require(userInfo[pid][msg.sender].amount > 0, 'P12Mine: no staked token');
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    checkpoint(pid);
+    _checkpoint(pid);
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     _safeP12Transfer(msg.sender, pending);
@@ -314,7 +326,7 @@ contract P12MineUpgradeable is
       }
       PoolInfo storage pool = poolInfos[pid];
       UserInfo storage user = userInfo[pid][msg.sender];
-      checkpoint(pid);
+      _checkpoint(pid);
       pending += (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     }
@@ -336,7 +348,7 @@ contract P12MineUpgradeable is
     require(block.timestamp >= withdrawInfos[lpToken][id].unlockTimestamp, 'P12Mine: unlock time not reached');
     require(!withdrawInfos[lpToken][id].executed, 'P12Mine: already withdrawn');
     withdrawInfos[lpToken][id].executed = true;
-    checkpoint(pid);
+    _checkpoint(pid);
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
     _safeP12Transfer(_who, pending);
     uint256 amount = withdrawInfos[lpToken][id].amount;
@@ -417,13 +429,13 @@ contract P12MineUpgradeable is
       @notice update checkpoint for pool
       @param pid Pool Id
   */
-  function checkpoint(uint256 pid) public virtual override whenNotPaused {
+  function _checkpoint(uint256 pid) internal virtual  whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
-    UserInfo storage user = userInfo[pid][msg.sender];
     uint256 _accP12PerShare = pool.accP12PerShare;
     uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
     gaugeController.checkpointGauge(address(pool.lpToken));
-    require(block.timestamp > _periodTime, 'P12Mine: need current timestamp > _periodTime');
+    require(block.timestamp > _periodTime, 'P12Mine: not time to check');
+
     if (pool.amount == 0) {
       pool.period += 1;
       periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
@@ -434,9 +446,7 @@ contract P12MineUpgradeable is
     for (uint256 i = 0; i < 500; i++) {
       uint256 dt = weekTime - prevWeekTime;
       uint256 w = gaugeController.gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
-      if (user.amount > 0) {
-        _accP12PerShare += (rate * w * dt) / pool.amount;
-      }
+      _accP12PerShare += (rate * w * dt) / pool.amount;
       if (weekTime == block.timestamp) {
         break;
       }
@@ -446,7 +456,9 @@ contract P12MineUpgradeable is
     pool.accP12PerShare = _accP12PerShare;
     pool.period += 1;
     periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-    emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
+
+    emit Checkpoint(pool.lpToken,pool.amount,pool.accP12PerShare);
+
   }
 
   // ============ Modifiers ============
