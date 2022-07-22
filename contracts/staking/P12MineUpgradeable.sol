@@ -370,15 +370,15 @@ contract P12MineUpgradeable is
 ​    @notice withdraw all lpToken Emergency
     @param lpToken address of lpToken
   */
-  function withdrawLpTokenEmergency(address lpToken) public virtual override onlyEmergency {
+  function withdrawLpTokenEmergency(address lpToken) public virtual override nonReentrant onlyEmergency {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     require(user.amount > 0, 'P12Mine: without any lpToken');
-    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
     uint256 amount = user.amount;
     user.amount = 0;
     user.rewardDebt = 0;
+    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), amount);
     emit WithdrawLpTokenEmergency(lpToken, amount);
   }
 
