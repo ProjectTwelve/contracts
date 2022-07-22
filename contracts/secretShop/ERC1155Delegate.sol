@@ -24,8 +24,6 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     uint256 amount;
   }
 
-
-
   constructor() {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
   }
@@ -63,7 +61,6 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     return this.onERC1155Received.selector;
   }
 
-
   function pause() public onlyRole(PAUSABLE_CALLER) {
     _pause();
   }
@@ -72,17 +69,12 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     _unpause();
   }
 
-  
-  
-
   /**
    * @dev decode data to the array of Pair
    */
   function decode(bytes calldata data) public pure returns (Pair[] memory) {
     return abi.decode(data, (Pair[]));
   }
-
-  
 
   /**
    * @dev run the sell to transfer item
