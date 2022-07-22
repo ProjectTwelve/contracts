@@ -4,9 +4,4 @@ pragma solidity 0.8.15;
 
 import '../staking/P12MineUpgradeable.sol';
 
-contract P12MineUpgradeableAlter is P12MineUpgradeable {
-  function setP12factory(address newAddr) public onlyOwner {
-    require(newAddr != address(0), 'P12Mine: p12Factory cannot zero');
-    p12Factory = newAddr;
-  }
-}
+contract P12MineUpgradeableAlter is P12MineUpgradeable {}
