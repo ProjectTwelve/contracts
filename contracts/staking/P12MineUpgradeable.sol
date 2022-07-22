@@ -94,6 +94,9 @@ contract P12MineUpgradeable is
     uint256 delayB_,
     uint256 rate_
   ) public initializer {
+    require(p12Token_ != address(0), 'P12Mine: p12Token cannot zero');
+    require(p12Factory_ != address(0), 'P12Mine: p12Factory cannot zero');
+
     p12Token = p12Token_;
     p12Factory = p12Factory_;
     gaugeController = IGaugeController(gaugeController_);

@@ -275,6 +275,10 @@ contract P12V0FactoryUpgradeable is
     uint256 effectiveTime_,
     bytes32 initHash_
   ) public initializer {
+    require(p12_ != address(0), 'P12Mine: p12 token cannot be 0');
+    require(address(uniswapFactory_) != address(0), 'P12Mine: uniswapF cannot be 0');
+    require(address(uniswapRouter_) != address(0), 'P12Mine: uniswapR cannot be 0');
+
     p12 = p12_;
     uniswapFactory = uniswapFactory_;
     uniswapRouter = uniswapRouter_;
