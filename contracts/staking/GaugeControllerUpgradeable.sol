@@ -10,7 +10,7 @@ import './interfaces/IGaugeController.sol';
 import '../token/interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
-import 'hardhat/console.sol';
+
 
 contract GaugeControllerUpgradeable is
   ControllerStorage,
