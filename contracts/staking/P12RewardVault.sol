@@ -15,7 +15,7 @@ contract P12RewardVault is SafeOwnable, IP12RewardVault {
   address public p12Token;
 
   constructor(address p12Token_) {
-    require(p12Token_ != address(0),'P12RV: address cannot be 0');
+    require(p12Token_ != address(0), 'P12RV: address cannot be 0');
     p12Token = p12Token_;
   }
 
