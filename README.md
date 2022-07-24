@@ -19,22 +19,21 @@ Learn More:
 
 The contracts are in development and test currently, some will be changed until deployed to production network. Here are some explainations in brief detail below.
 
-factory
+assetFactory
 
-> Game token creation factory which allow developer to create game coin and manage minting process. Cast delay is included here.
+> Game Assets creation factory. Developers make their game props on chain.
+
+coinFactory
+
+> Game coin creation factory which allow developer to create game coin and manage minting process. Cast delay is included here.
 
 secretShop
 
-> Nft exchange contract which allows users to trade nft with token.
-
-sftFactory
-
-> Semi fungible token (sft) creation factory. Developers make their game assets on chain.
+> Assets exchange contract which allows users to trade assets with coin.
 
 staking
 
 > Lp token holders stake their lp token to earn rewards. The reward is determined according to the proportion of their own lpToken in the pledge pool. The reward distribution weight for each staking pool is voted by veP12 according to the GaugeContoller contract.
-
 
 # Get Started
 
