@@ -20,8 +20,6 @@ contract P12AssetFactoryUpgradable is
   PausableUpgradeable,
   UUPSUpgradeable
 {
- 
-
   function pause() public onlyOwner {
     _pause();
   }
@@ -103,7 +101,7 @@ contract P12AssetFactoryUpgradable is
     P12Asset(collection).setUri(tokenId, newUri);
   }
 
-   /** upgrade function */
+  /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   modifier onlyDeveloper(string memory gameId) {

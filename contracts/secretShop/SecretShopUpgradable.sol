@@ -32,8 +32,7 @@ contract SecretShopUpgradable is
    */
   receive() external payable {}
 
-
-   /**
+  /**
    * @dev run a single order
    * @param order order by the maker
    * @param shared some option of the taker
@@ -85,7 +84,6 @@ contract SecretShopUpgradable is
     __Ownable_init_unchained();
   }
 
-  
   /**
    * @param val new Fee Cap
    */
@@ -324,7 +322,6 @@ contract SecretShopUpgradable is
     emit EvProfit(itemHash, address(currency), seller, payment);
   }
 
-
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
@@ -354,7 +351,7 @@ contract SecretShopUpgradable is
     require(orderSigner == order.user, 'SecretShop: sig not match');
   }
 
-   /**
+  /**
    * @dev hash an item Data to calculate itemHash
    * @param order order by the maker
    * @param item which item to be hashed in the order
@@ -384,7 +381,6 @@ contract SecretShopUpgradable is
   function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
     require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
   }
-
 
   /**
    * @dev hash typed data of an Order
@@ -433,6 +429,4 @@ contract SecretShopUpgradable is
   function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
     return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
   }
-
-
 }

@@ -54,7 +54,6 @@ contract ERC721Delegate is IDelegate, AccessControl, IERC721Receiver, Reentrancy
     _unpause();
   }
 
-
   /**
    * @dev decode data to the array of Pair
    */
@@ -62,7 +61,6 @@ contract ERC721Delegate is IDelegate, AccessControl, IERC721Receiver, Reentrancy
     return abi.decode(data, (Pair[]));
   }
 
-  
   /**
    * @dev run the sell to transfer item
    * @param seller address which sell the item
