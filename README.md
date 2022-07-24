@@ -33,7 +33,8 @@ sftFactory
 
 staking
 
-> lp token holders stake their lp token to earn rewards. Rewards are decided by veP12 staked.
+> Lp token holders stake their lp token to earn rewards. The reward is determined according to the proportion of their own lpToken in the pledge pool. The reward distribution weight for each staking pool is voted by veP12 according to the GaugeContoller contract.
+
 
 # Get Started
 
