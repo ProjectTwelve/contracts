@@ -46,11 +46,11 @@ describe('P12AssetFactoryUpgradable', function () {
     // );
 
     // deploy p12factory
-    const P12CoinFACTORY = await ethers.getContractFactory('P12CoinFactoryUpgradeable');
+    const P12CoinFactory = await ethers.getContractFactory('P12CoinFactoryUpgradeable');
     // not fully use, so set random address args
 
     p12CoinFactory = await upgrades.deployProxy(
-      P12CoinFACTORY,
+      P12CoinFactory,
       [p12Token.address, p12Token.address, p12Token.address, 0n, ethers.utils.randomBytes(32)],
       {
         kind: 'uups',
