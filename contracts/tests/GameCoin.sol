@@ -5,7 +5,7 @@ import '../access/SafeOwnable.sol';
 
 pragma solidity 0.8.15;
 
-contract GameCoin is ERC20, SafeOwnable {
+contract TestGameCoin is ERC20, SafeOwnable {
   constructor(
     string memory name,
     string memory symbol,

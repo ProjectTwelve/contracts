@@ -7,7 +7,7 @@ import '../token/interfaces/IVotingEscrow.sol';
 
 contract ControllerStorage {
   IVotingEscrow public votingEscrow; // Voting escrow
-  address public p12Factory;
+  address public p12CoinFactory;
   // Gauge parameters
   // All numbers are "fixed point" on the basis of 1e18
   int128 public nGaugeTypes;

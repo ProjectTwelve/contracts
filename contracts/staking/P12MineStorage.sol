@@ -7,7 +7,7 @@ import './interfaces/IP12RewardVault.sol';
 import '../token/interfaces/IP12Token.sol';
 
 contract P12MineStorage {
-  address public p12Factory;
+  address public p12CoinFactory;
   address public p12Token;
   IGaugeController public gaugeController;
   IP12RewardVault public p12RewardVault;

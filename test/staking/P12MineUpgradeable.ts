@@ -5,7 +5,7 @@ import { deployAll, EconomyContract, ExternalContract } from '../../scripts/depl
 import { Contract } from 'ethers/lib/ethers';
 import * as compiledUniswapPair from '@uniswap/v2-core/build/UniswapV2Pair.json';
 
-describe('p12Mine', function () {
+describe('P12Mine', function () {
   let admin: SignerWithAddress;
   let developer: SignerWithAddress;
   let user: SignerWithAddress;
@@ -24,7 +24,7 @@ describe('p12Mine', function () {
     developer = accounts[1];
     user = accounts[2];
     core = await deployAll();
-    await core.p12V0Factory.setDev(p12Dev.address);
+    await core.p12CoinFactory.setDev(p12Dev.address);
   });
 
   // pause
@@ -46,14 +46,14 @@ describe('p12Mine', function () {
 
   it('Should show developer register successfully', async function () {
     const gameId = '1101';
-    await core.p12V0Factory.connect(p12Dev).register(gameId, developer.address);
-    expect(await core.p12V0Factory.allGames('1101')).to.be.equal(developer.address);
+    await core.p12CoinFactory.connect(p12Dev).register(gameId, developer.address);
+    expect(await core.p12CoinFactory.allGames('1101')).to.be.equal(developer.address);
   });
 
   it('Give developer p12 and approve p12 token to p12V0factory', async function () {
     await core.p12Token.connect(admin).transfer(developer.address, BigInt(3) * 10n ** 18n);
     expect(await core.p12Token.balanceOf(developer.address)).to.be.equal(3n * 10n ** 18n);
-    await core.p12Token.connect(developer).approve(core.p12V0Factory.address, 3n * 10n ** 18n);
+    await core.p12Token.connect(developer).approve(core.p12CoinFactory.address, 3n * 10n ** 18n);
   });
 
   it('Should show gameCoin create successfully!', async function () {
@@ -65,8 +65,8 @@ describe('p12Mine', function () {
     const amountGameCoin = BigInt(10) * BigInt(10) ** 18n;
     const amountP12 = BigInt(1) * BigInt(10) ** 18n;
 
-    await core.p12Token.connect(developer).approve(core.p12V0Factory.address, amountP12);
-    const createInfo = await core.p12V0Factory
+    await core.p12Token.connect(developer).approve(core.p12CoinFactory.address, amountP12);
+    const createInfo = await core.p12CoinFactory
       .connect(developer)
       .create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
 
