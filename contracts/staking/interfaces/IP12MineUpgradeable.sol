@@ -54,7 +54,7 @@ interface IP12MineUpgradeable {
 
   function setRate(uint256 newRate) external returns (bool);
 
-  function setP12Factory(address newP12Factory) external;
+  function setP12CoinFactory(address newP12Factory) external;
 
   function setGaugeController(IGaugeController newGaugeController) external;
 

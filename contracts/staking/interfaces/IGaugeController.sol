@@ -57,5 +57,5 @@ interface IGaugeController {
 
   function setVotingEscrow(IVotingEscrow newVotingEscrow) external;
 
-  function setP12Factory(address newP12Factory) external;
+  function setP12CoinFactory(address newP12Factory) external;
 }
