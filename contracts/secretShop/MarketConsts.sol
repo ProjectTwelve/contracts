@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: Unlicensed
+// SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 
 import './interfaces/IDelegate.sol';
 import './interfaces/IWETHUpgradable.sol';
@@ -113,6 +113,7 @@ library Market {
 
   enum DelegationType {
     INVALID,
-    ERC1155
+    ERC1155,
+    ERC721
   }
 }

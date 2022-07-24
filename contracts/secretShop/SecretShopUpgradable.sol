@@ -1,13 +1,10 @@
-// SPDX-License-Identifier: Unlicensed
-pragma solidity 0.8.13;
+// SPDX-License-Identifier: GPL-3.0-only
+pragma solidity 0.8.15;
 
 import './interfaces/IDelegate.sol';
 import './interfaces/IWETHUpgradable.sol';
 
 import './interfaces/ISecretShopUpgradable.sol';
-
-import '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
@@ -15,13 +12,13 @@ import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './SecretShopStorage.sol';
+import '../access/SafeOwnableUpgradeable.sol';
 
 contract SecretShopUpgradable is
   SecretShopStorage,
   ISecretShopUpgradable,
-  Initializable,
   ReentrancyGuardUpgradeable,
-  OwnableUpgradeable,
+  SafeOwnableUpgradeable,
   PausableUpgradeable,
   UUPSUpgradeable
 {
@@ -30,13 +27,26 @@ contract SecretShopUpgradable is
   /** @dev precision of the parameters */
   uint256 public constant RATE_BASE = 1e6;
 
-  /** upgrade function */
-  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
-
   /**
    * @dev for contract to receive native token
    */
   receive() external payable {}
+
+  /**
+   * @dev run a single order
+   * @param order order by the maker
+   * @param shared some option of the taker
+   * @param detail detail by the taker
+   */
+  function runSingle(
+    Market.Order memory order,
+    Market.SettleShared memory shared,
+    Market.SettleDetail memory detail
+  ) external virtual override returns (uint256) {
+    require(msg.sender == address(this), 'SecretShop: unsafe call');
+
+    return _run(order, shared, detail);
+  }
 
   function pause() public onlyOwner {
     _pause();
@@ -72,111 +82,6 @@ contract SecretShopUpgradable is
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
     __Ownable_init_unchained();
-  }
-
-  /**
-   * @dev judge delegate type
-   * @param order order by the maker
-   * @param detail settle detail by the taker
-   */
-  function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
-  }
-
-  /**
-   * @dev hash an item Data to calculate itemHash
-   * @param order order by the maker
-   * @param item which item to be hashed in the order
-   * @return hash the item's hash, which is unique
-   */
-  function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          order.salt,
-          order.user,
-          order.network,
-          order.intent,
-          order.delegateType,
-          order.deadline,
-          order.currency,
-          item
-        )
-      );
-  }
-
-  /**
-   * @dev hash typed data of an Order
-   * @param order order by the maker
-   * @return hash typed data hash
-   */
-  function _hash(Market.Order memory order) private pure returns (bytes32) {
-    return
-      keccak256(
-        abi.encode(
-          keccak256(
-            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
-          ),
-          order.salt,
-          order.user,
-          order.network,
-          order.intent,
-          order.delegateType,
-          order.deadline,
-          order.currency,
-          order.items.length,
-          _hash(order.items)
-        )
-      );
-  }
-
-  /**
-   * @dev hash typed data of a array of orderItem
-   * @param orderItems[] the array of the orderItem
-   * @return hash typed data hash
-   */
-  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
-    bytes memory h;
-    for (uint256 i = 0; i < orderItems.length; i++) {
-      h = abi.encodePacked(h, _hash(orderItems[i]));
-    }
-    return keccak256(h);
-  }
-
-  /**
-   * @dev hash typed data of an orderItem
-   * @param orderItem orderItem
-   * @return hash typed data hash
-   */
-
-  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
-    return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
-  }
-
-  /**
-   * @dev verify whether the order data is real, necessary for security
-   * @param order order by the maker
-   */
-  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
-    address orderSigner;
-
-    if (order.signVersion == Market.SIGN_V1) {
-      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
-      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
-    } else {
-      revert('SecretShop: wrong sig version');
-    }
-
-    require(orderSigner == order.user, 'SecretShop: sig not match');
-  }
-
-  /**
-   * @dev judge whether token is chain native token
-   * @param currency address of the currency, 0 for native token
-   * @return bool whether the token is a native token
-   */
-  function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
-    return address(currency) == address(0);
   }
 
   /**
@@ -254,22 +159,6 @@ contract SecretShopUpgradable is
         amountEth -= _run(order, input.shared, detail);
       }
     }
-  }
-
-  /**
-   * @dev run a single order
-   * @param order order by the maker
-   * @param shared some option of the taker
-   * @param detail detail by the taker
-   */
-  function runSingle(
-    Market.Order memory order,
-    Market.SettleShared memory shared,
-    Market.SettleDetail memory detail
-  ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'SecretShop: unsafe call');
-
-    return _run(order, shared, detail);
   }
 
   function _emitInventory(
@@ -431,5 +320,113 @@ contract SecretShopUpgradable is
      */
     _transferTo(currency, seller, payment);
     emit EvProfit(itemHash, address(currency), seller, payment);
+  }
+
+  /** upgrade function */
+  function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  /**
+   * @dev judge whether token is chain native token
+   * @param currency address of the currency, 0 for native token
+   * @return bool whether the token is a native token
+   */
+  function _isNative(IERC20Upgradeable currency) internal view virtual returns (bool) {
+    return address(currency) == address(0);
+  }
+
+  /**
+   * @dev verify whether the order data is real, necessary for security
+   * @param order order by the maker
+   */
+  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
+    address orderSigner;
+
+    if (order.signVersion == Market.SIGN_V1) {
+      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
+      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
+    } else {
+      revert('SecretShop: wrong sig version');
+    }
+
+    require(orderSigner == order.user, 'SecretShop: sig not match');
+  }
+
+  /**
+   * @dev hash an item Data to calculate itemHash
+   * @param order order by the maker
+   * @param item which item to be hashed in the order
+   * @return hash the item's hash, which is unique
+   */
+  function _hashItem(Market.Order memory order, Market.OrderItem memory item) internal view virtual returns (bytes32) {
+    return
+      keccak256(
+        abi.encode(
+          order.salt,
+          order.user,
+          order.network,
+          order.intent,
+          order.delegateType,
+          order.deadline,
+          order.currency,
+          item
+        )
+      );
+  }
+
+  /**
+   * @dev judge delegate type
+   * @param order order by the maker
+   * @param detail settle detail by the taker
+   */
+  function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
+    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
+  }
+
+  /**
+   * @dev hash typed data of an Order
+   * @param order order by the maker
+   * @return hash typed data hash
+   */
+  function _hash(Market.Order memory order) private pure returns (bytes32) {
+    return
+      keccak256(
+        abi.encode(
+          keccak256(
+            'Order(uint256 salt,address user,uint256 network,uint256 intent,uint256 delegateType,uint256 deadline,address currency,uint256 length,OrderItem[] items)OrderItem(uint256 price,bytes data)'
+          ),
+          order.salt,
+          order.user,
+          order.network,
+          order.intent,
+          order.delegateType,
+          order.deadline,
+          order.currency,
+          order.items.length,
+          _hash(order.items)
+        )
+      );
+  }
+
+  /**
+   * @dev hash typed data of a array of orderItem
+   * @param orderItems[] the array of the orderItem
+   * @return hash typed data hash
+   */
+  function _hash(Market.OrderItem[] memory orderItems) private pure returns (bytes32) {
+    bytes memory h;
+    for (uint256 i = 0; i < orderItems.length; i++) {
+      h = abi.encodePacked(h, _hash(orderItems[i]));
+    }
+    return keccak256(h);
+  }
+
+  /**
+   * @dev hash typed data of an orderItem
+   * @param orderItem orderItem
+   * @return hash typed data hash
+   */
+
+  function _hash(Market.OrderItem memory orderItem) private pure returns (bytes32) {
+    return keccak256(abi.encode(keccak256('OrderItem(uint256 price,bytes data)'), orderItem.price, keccak256(orderItem.data)));
   }
 }

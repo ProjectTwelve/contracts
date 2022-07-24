@@ -24,11 +24,13 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // You need to export an object to set up your config
 // Go to https://hardhat.org/config/ to learn more
 
+const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
+
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.8.13',
+        version: '0.8.15',
         settings: {
           optimizer: {
             enabled: true,
@@ -76,19 +78,30 @@ const config: HardhatUserConfig = {
     ],
   },
   networks: {
-    ropsten: {
-      url: process.env.ROPSTEN_URL || '',
-      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    },
     hardhat: {
+      // forking: {
+      //   url: 'https://testnet.p12.games/',
+      //   blockNumber: 997788,
+      // },
+      // The fork configuration can be turned on or off by itself according to the situation
       chainId: 44102,
     },
     p12TestNet: {
       url: 'https://testnet.p12.games/',
       chainId: 44010,
-      accounts: [],
+      accounts: accounts,
       gas: 'auto',
-      gasPrice: 'auto',
+      gasPrice: 3000000000,
+    },
+    forkP12TestNet: {
+      url: 'http://127.0.0.1:8545/',
+    },
+    rinkeby: {
+      url: process.env.RINKEBY_URL || '',
+      chainId: 4,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 3000000000, // 3 Gwei
     },
   },
   gasReporter: {

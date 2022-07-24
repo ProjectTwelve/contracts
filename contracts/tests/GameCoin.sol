@@ -1,9 +1,11 @@
+// SPDX-License-Identifier: MIT
+
 import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '@openzeppelin/contracts/access/Ownable.sol';
+import '../access/SafeOwnable.sol';
 
-pragma solidity 0.8.13;
+pragma solidity 0.8.15;
 
-contract GameCoin is ERC20, Ownable {
+contract TestGameCoin is ERC20, SafeOwnable {
   constructor(
     string memory name,
     string memory symbol,

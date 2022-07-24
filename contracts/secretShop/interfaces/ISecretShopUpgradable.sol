@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity 0.8.13;
+// SPDX-License-Identifier: GPL-3.0-only
+pragma solidity 0.8.15;
 import '../MarketConsts.sol';
 import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
 
