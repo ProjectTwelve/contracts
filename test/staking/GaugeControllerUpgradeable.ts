@@ -3,7 +3,7 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { ethers } from 'hardhat';
 import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 
-describe('gaugeController', function () {
+describe('GaugeController', function () {
   let admin: SignerWithAddress;
   let user: SignerWithAddress;
   let core: EconomyContract & ExternalContract;

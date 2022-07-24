@@ -33,14 +33,14 @@ contract P12MineUpgradeable is
   // ============ External ============
 
   /**
-  @notice set new p12Factory
-  @param newP12Factory address of p12Factory
+  @notice set new p12CoinFactory
+  @param newP12CoinFactory address of p12CoinFactory
    */
-  function setP12Factory(address newP12Factory) external virtual override onlyOwner {
-    address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'P12Mine: p12Factory cannot be 0');
-    p12Factory = newP12Factory;
-    emit SetP12Factory(oldP12Factory, newP12Factory);
+  function setP12Factory(address newP12CoinFactory) external virtual override onlyOwner {
+    address oldP12CoinFactory = p12CoinFactory;
+    require(newP12CoinFactory != address(0), 'P12Mine: p12CoinFactory cannot be 0');
+    p12CoinFactory = newP12CoinFactory;
+    emit SetP12Factory(oldP12CoinFactory, newP12CoinFactory);
   }
 
   /**
@@ -90,24 +90,24 @@ contract P12MineUpgradeable is
   /**
     @notice Contract initialization
     @param p12Token_ Address of p12Token
-    @param p12Factory_ Address of p12Factory
+    @param p12CoinFactory_ Address of p12CoinFactory
     @param gaugeController_ address of gaugeController
     @param delayK_ delayK_ is a coefficient
     @param delayB_ delayB_ is a coefficient
    */
   function initialize(
     address p12Token_,
-    address p12Factory_,
+    address p12CoinFactory_,
     IGaugeController gaugeController_,
     uint256 delayK_,
     uint256 delayB_,
     uint256 rate_
   ) public initializer {
     require(p12Token_ != address(0), 'P12Mine: p12Token cannot be 0');
-    require(p12Factory_ != address(0), 'P12Mine: p12Factory cannot be 0');
+    require(p12CoinFactory_ != address(0), 'P12Mine: p12CoinFactory cannot be 0');
 
     p12Token = p12Token_;
-    p12Factory = p12Factory_;
+    p12CoinFactory = p12CoinFactory_;
     gaugeController = IGaugeController(gaugeController_);
     p12RewardVault = IP12RewardVault(new P12RewardVault(p12Token_));
     delayK = delayK_;
@@ -158,7 +158,7 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice This method is only used when creating game coin in p12factory
+    @notice This method is only used when creating game coin in p12CoinFactory
     @param lpToken Address of lpToken
     @param gameCoinCreator user of game coin creator
    */
@@ -474,13 +474,13 @@ contract P12MineUpgradeable is
 
   // check the caller
   modifier onlyP12FactoryOrOwner() {
-    require(msg.sender == address(p12Factory) || msg.sender == owner(), 'P12Mine: not p12factory or owner');
+    require(msg.sender == address(p12CoinFactory) || msg.sender == owner(), 'P12Mine: not p12factory or owner');
     _;
   }
 
   // check the caller
   modifier onlyP12Factory() {
-    require(msg.sender == address(p12Factory), 'P12Mine: caller not p12factory');
+    require(msg.sender == address(p12CoinFactory), 'P12Mine: caller not p12factory');
     _;
   }
 

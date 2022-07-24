@@ -38,13 +38,13 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice set new p12Factory
+    @notice set new p12CoinFactory
     @param newP12Factory address of newP12Factory
    */
   function setP12Factory(address newP12Factory) external virtual override onlyOwner {
-    address oldP12Factory = p12Factory;
+    address oldP12Factory = p12CoinFactory;
     require(newP12Factory != address(0), 'GC: ve can not 0');
-    p12Factory = newP12Factory;
+    p12CoinFactory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
 
@@ -70,7 +70,7 @@ contract GaugeControllerUpgradeable is
     int128 gaugeType,
     uint256 weight
   ) external virtual override {
-    require(msg.sender == owner() || msg.sender == address(p12Factory), 'GC: only admin or p12Factory');
+    require(msg.sender == owner() || msg.sender == address(p12CoinFactory), 'GC: only admin or p12CoinFactory');
     require(gaugeType >= 0 && gaugeType < nGaugeTypes, 'GC: gaugeType error');
     require(gaugeTypes[addr] == 0, 'GC: duplicated gauge type'); //dev: cannot add the same gauge twice
 
@@ -298,10 +298,10 @@ contract GaugeControllerUpgradeable is
     _unpause();
   }
 
-  function initialize(address votingEscrow_, address p12Factory_) public initializer {
-    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GC: address can not 0');
+  function initialize(address votingEscrow_, address p12CoinFactory_) public initializer {
+    require(votingEscrow_ != address(0) && p12CoinFactory_ != address(0), 'GC: address can not 0');
     votingEscrow = IVotingEscrow(votingEscrow_);
-    p12Factory = p12Factory_;
+    p12CoinFactory = p12CoinFactory_;
 
     __Pausable_init_unchained();
     __Ownable_init_unchained();
