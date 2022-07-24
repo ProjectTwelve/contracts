@@ -14,7 +14,7 @@ describe('P12AssetFactoryUpgradable', function () {
   // user1: not Used Now
   // let user1: SignerWithAddress;
   // p12factory: Register Game and create GameCoin
-  let p12factory: Contract;
+  let p12CoinFactory: Contract;
   //
   let p12AssetFactoryAddr: Contract;
   let p12AssetFactory: P12AssetFactoryUpgradable;
@@ -46,25 +46,25 @@ describe('P12AssetFactoryUpgradable', function () {
     // );
 
     // deploy p12factory
-    const P12FACTORY = await ethers.getContractFactory('P12CoinFactoryUpgradeable');
+    const P12CoinFACTORY = await ethers.getContractFactory('P12CoinFactoryUpgradeable');
     // not fully use, so set random address args
 
-    p12factory = await upgrades.deployProxy(
-      P12FACTORY,
+    p12CoinFactory = await upgrades.deployProxy(
+      P12CoinFACTORY,
       [p12Token.address, p12Token.address, p12Token.address, 0n, ethers.utils.randomBytes(32)],
       {
         kind: 'uups',
       },
     );
-    await p12factory.setDev(p12Dev.address);
+    await p12CoinFactory.setDev(p12Dev.address);
 
     // register game
-    await p12factory.connect(p12Dev).register('gameId1', developer1.address);
+    await p12CoinFactory.connect(p12Dev).register('gameId1', developer1.address);
   });
 
   it('Should P12AssetFactoryUpgradable Deploy successfully', async function () {
     const P12AssetFactoryUpgradableF = await ethers.getContractFactory('P12AssetFactoryUpgradable');
-    p12AssetFactoryAddr = await upgrades.deployProxy(P12AssetFactoryUpgradableF, [p12factory.address], {
+    p12AssetFactoryAddr = await upgrades.deployProxy(P12AssetFactoryUpgradableF, [p12CoinFactory.address], {
       kind: 'uups',
     });
     p12AssetFactory = await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactoryAddr.address);
@@ -138,11 +138,11 @@ describe('P12AssetFactoryUpgradable', function () {
 
     const p12AssetFactoryAlter = await upgrades.upgradeProxy(p12AssetFactory.address, P12AssetFactoryAlter);
 
-    await expect(p12AssetFactoryAlter.setP12Factory(ethers.constants.AddressZero)).to.be.revertedWith(
+    await expect(p12AssetFactoryAlter.setP12CoinFactory(ethers.constants.AddressZero)).to.be.revertedWith(
       'P12AssetF: p12CoinFactory cannot be 0',
     );
     const randomAddr = ethers.utils.computeAddress(ethers.utils.randomBytes(32));
-    await p12AssetFactoryAlter.setP12Factory(randomAddr);
+    await p12AssetFactoryAlter.setP12CoinFactory(randomAddr);
     expect(await p12AssetFactoryAlter.p12CoinFactory()).to.be.equal(randomAddr);
   });
 });

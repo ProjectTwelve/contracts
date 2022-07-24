@@ -41,7 +41,7 @@ contract GaugeControllerUpgradeable is
     @notice set new p12CoinFactory
     @param newP12Factory address of newP12Factory
    */
-  function setP12Factory(address newP12Factory) external virtual override onlyOwner {
+  function setP12CoinFactory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12CoinFactory;
     require(newP12Factory != address(0), 'GC: ve can not 0');
     p12CoinFactory = newP12Factory;

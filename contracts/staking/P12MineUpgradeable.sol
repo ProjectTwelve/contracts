@@ -36,7 +36,7 @@ contract P12MineUpgradeable is
   @notice set new p12CoinFactory
   @param newP12CoinFactory address of p12CoinFactory
    */
-  function setP12Factory(address newP12CoinFactory) external virtual override onlyOwner {
+  function setP12CoinFactory(address newP12CoinFactory) external virtual override onlyOwner {
     address oldP12CoinFactory = p12CoinFactory;
     require(newP12CoinFactory != address(0), 'P12Mine: p12CoinFactory cannot be 0');
     p12CoinFactory = newP12CoinFactory;
