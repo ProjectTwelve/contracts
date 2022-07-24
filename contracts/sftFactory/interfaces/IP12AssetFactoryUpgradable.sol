@@ -12,6 +12,10 @@ interface IP12AssetFactoryUpgradable {
    */
   event SftCreated(address indexed collection, uint256 indexed tokenId, uint256 amount);
 
+  event SetP12Factory(address oldP12Factory, address newP12Factory);
+
+  function setP12Factory(address newP12Factory) external;
+
   function createCollection(string calldata gameId, string calldata) external;
 
   function createAssetAndMint(

@@ -20,6 +20,19 @@ contract P12AssetFactoryUpgradable is
   PausableUpgradeable,
   UUPSUpgradeable
 {
+  // ============ External ============
+
+  /**
+  @notice set new p12Factory
+  @param newP12Factory address of p12Factory
+   */
+  function setP12Factory(address newP12Factory) external virtual override onlyOwner {
+    address oldP12Factory = p12Factory;
+    require(newP12Factory != address(0), 'P12AssetF: p12Factory cannot be 0');
+    p12Factory = newP12Factory;
+    emit SetP12Factory(oldP12Factory, newP12Factory);
+  }
+
   function pause() public onlyOwner {
     _pause();
   }
@@ -28,8 +41,9 @@ contract P12AssetFactoryUpgradable is
     _unpause();
   }
 
-  function initialize(address p12factory_) public initializer {
-    p12factory = p12factory_;
+  function initialize(address p12Factory_) public initializer {
+    require(p12Factory_ != address(0), 'P12AssetF: p12Factory cannot be 0');
+    p12Factory = p12Factory_;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
@@ -105,12 +119,12 @@ contract P12AssetFactoryUpgradable is
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   modifier onlyDeveloper(string memory gameId) {
-    require(P12V0FactoryUpgradeable(p12factory).allGames(gameId) == msg.sender, 'P12Asset: not game developer');
+    require(P12V0FactoryUpgradeable(p12Factory).allGames(gameId) == msg.sender, 'P12AssetF: not game developer');
     _;
   }
 
   modifier onlyCollectionDeveloper(address collection) {
-    require(P12V0FactoryUpgradeable(p12factory).allGames(registry[collection]) == msg.sender, 'P12Asset: not game developer');
+    require(P12V0FactoryUpgradeable(p12Factory).allGames(registry[collection]) == msg.sender, 'P12AssetF: not game developer');
     _;
   }
 }

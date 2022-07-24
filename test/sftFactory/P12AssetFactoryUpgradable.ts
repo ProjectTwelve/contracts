@@ -96,7 +96,7 @@ describe('P12AssetFactoryUpgradable', function () {
 
   it('Should developer2 create collection fail', async () => {
     await expect(p12AssetFactory.connect(developer2).createCollection('gameId1', 'ipfs://')).to.be.revertedWith(
-      'P12Asset: not game developer',
+      'P12AssetF: not game developer',
     );
   });
 
@@ -129,7 +129,7 @@ describe('P12AssetFactoryUpgradable', function () {
     expect(await collection.uri(0)).to.be.equal('ar://');
 
     await expect(p12AssetFactory.connect(developer2).updateSftUri(collection.address, 0, 'ar://')).to.be.revertedWith(
-      'P12Asset: not game developer',
+      'P12AssetF: not game developer',
     );
   });
 
@@ -138,7 +138,11 @@ describe('P12AssetFactoryUpgradable', function () {
 
     const p12AssetFactoryAlter = await upgrades.upgradeProxy(p12AssetFactory.address, P12AssetFactoryAlter);
 
-    await p12AssetFactoryAlter.setP12factory(ethers.constants.AddressZero);
-    expect(await p12AssetFactoryAlter.p12factory()).to.be.equal(ethers.constants.AddressZero);
+    await expect(p12AssetFactoryAlter.setP12Factory(ethers.constants.AddressZero)).to.be.revertedWith(
+      'P12AssetF: p12Factory cannot be 0',
+    );
+    const randomAddr = ethers.utils.computeAddress(ethers.utils.randomBytes(32));
+    await p12AssetFactoryAlter.setP12Factory(randomAddr);
+    expect(await p12AssetFactoryAlter.p12Factory()).to.be.equal(randomAddr);
   });
 });

@@ -10,7 +10,6 @@ import './interfaces/IGaugeController.sol';
 import '../token/interfaces/IVotingEscrow.sol';
 import './ControllerStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
-import 'hardhat/console.sol';
 
 contract GaugeControllerUpgradeable is
   ControllerStorage,
@@ -33,7 +32,7 @@ contract GaugeControllerUpgradeable is
    */
   function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual override onlyOwner {
     IVotingEscrow oldVotingEscrow = votingEscrow;
-    require(address(newVotingEscrow) != address(0), 'GC: ve can not zero');
+    require(address(newVotingEscrow) != address(0), 'GC: ve can not 0');
     votingEscrow = newVotingEscrow;
     emit SetVotingEscrow(oldVotingEscrow, newVotingEscrow);
   }
@@ -44,7 +43,7 @@ contract GaugeControllerUpgradeable is
    */
   function setP12Factory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'GC: ve can not zero');
+    require(newP12Factory != address(0), 'GC: ve can not 0');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
@@ -189,7 +188,7 @@ contract GaugeControllerUpgradeable is
     uint256 nextTime = ((block.timestamp + WEEK) / WEEK) * WEEK;
 
     require(lockEnd > nextTime, 'GC: no valid ve');
-    require(userWeight >= 0 && userWeight <= 10000, 'GC: no enough voting power');
+    require(userWeight <= 10000, 'GC: no enough voting power');
     require(block.timestamp >= lastUserVote[msg.sender][gaugeAddr] + WEIGHT_VOTE_DELAY, 'GC: Cannot vote so often');
 
     TmpBias memory tmp1;
@@ -208,7 +207,7 @@ contract GaugeControllerUpgradeable is
 
     // Check and update powers (weights) used
     voteUserPower[msg.sender] = voteUserPower[msg.sender] + newSlope.power - oldSlope.power;
-    require(voteUserPower[msg.sender] >= 0 && voteUserPower[msg.sender] <= 10000, 'GC: Used too much power');
+    require(voteUserPower[msg.sender] <= 10000, 'GC: Used too much power');
 
     // Remove old and schedule new slope changes
     // Remove slope changes for old slopes
@@ -300,7 +299,7 @@ contract GaugeControllerUpgradeable is
   }
 
   function initialize(address votingEscrow_, address p12Factory_) public initializer {
-    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GC: address can not zero');
+    require(votingEscrow_ != address(0) && p12Factory_ != address(0), 'GC: address can not 0');
     votingEscrow = IVotingEscrow(votingEscrow_);
     p12Factory = p12Factory_;
 

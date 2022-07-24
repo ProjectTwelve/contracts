@@ -38,7 +38,7 @@ contract P12MineUpgradeable is
    */
   function setP12Factory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12Factory;
-    require(newP12Factory != address(0), 'P12Mine: p12Factory can not zero');
+    require(newP12Factory != address(0), 'P12Mine: p12Factory cannot be 0');
     p12Factory = newP12Factory;
     emit SetP12Factory(oldP12Factory, newP12Factory);
   }
@@ -49,7 +49,7 @@ contract P12MineUpgradeable is
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
     IGaugeController oldGaugeController = gaugeController;
-    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be zero');
+    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be 0');
     gaugeController = newGaugeController;
     emit SetGaugeController(oldGaugeController, newGaugeController);
   }
@@ -64,8 +64,17 @@ contract P12MineUpgradeable is
   /**
 ​    @notice withdraw token Emergency
   */
-  function withdrawEmergency() external virtual override onlyOwner {
+  function withdrawEmergency() external virtual override onlyOwner onlyEmergency {
     p12RewardVault.withdrawEmergency(msg.sender);
+  }
+
+  /**
+    @notice update checkpoint for pool
+    @param lpToken Address of lpToken
+  */
+  function checkpoint(address lpToken) external {
+    uint256 pid = getPid(lpToken);
+    _checkpoint(pid);
   }
 
   // ============ Public ============
@@ -94,6 +103,9 @@ contract P12MineUpgradeable is
     uint256 delayB_,
     uint256 rate_
   ) public initializer {
+    require(p12Token_ != address(0), 'P12Mine: p12Token cannot be 0');
+    require(p12Factory_ != address(0), 'P12Mine: p12Factory cannot be 0');
+
     p12Token = p12Token_;
     p12Factory = p12Factory_;
     gaugeController = IGaugeController(gaugeController_);
@@ -172,12 +184,15 @@ contract P12MineUpgradeable is
   // ============ Ownable ============
 
   /**
-    @notice set the isEmergency status
+    @notice set the isEmergency to true
   */
-  function setEmergency(bool emergencyStatus) public virtual override onlyOwner {
-    require(isEmergency != emergencyStatus, 'P12Mine: already exists');
-    isEmergency = emergencyStatus;
-    emit SetEmergency(emergencyStatus);
+
+  function emergency() public virtual override onlyOwner {
+    require(!isEmergency, 'P12Mine: already exists');
+    isEmergency = true;
+    uint256 delayTime = 86400;
+    emergencyUnlockTime = block.timestamp + delayTime;
+    emit Emergency(msg.sender, emergencyUnlockTime);
   }
 
   /**
@@ -226,49 +241,13 @@ contract P12MineUpgradeable is
     return true;
   }
 
-  // ============ checkpoint ============
-  /**
-      @notice update checkpoint for pool
-      @param pid Pool Id
-  */
-  function checkpoint(uint256 pid) public virtual override whenNotPaused {
-    PoolInfo storage pool = poolInfos[pid];
-    UserInfo storage user = userInfo[pid][msg.sender];
-    uint256 _accP12PerShare = pool.accP12PerShare;
-    uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
-    gaugeController.checkpointGauge(address(pool.lpToken));
-    require(block.timestamp > _periodTime, 'P12Mine: not time to check');
-    if (pool.amount == 0) {
-      pool.period += 1;
-      periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-      return;
-    }
-    uint256 prevWeekTime = _periodTime;
-    uint256 weekTime = Math.min(((_periodTime + WEEK) / WEEK) * WEEK, block.timestamp);
-    for (uint256 i = 0; i < 500; i++) {
-      uint256 dt = weekTime - prevWeekTime;
-      uint256 w = gaugeController.gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
-      if (user.amount > 0) {
-        _accP12PerShare += (rate * w * dt) / pool.amount;
-      }
-      if (weekTime == block.timestamp) {
-        break;
-      }
-      prevWeekTime = weekTime;
-      weekTime = Math.min(weekTime + WEEK, block.timestamp);
-    }
-    pool.accP12PerShare = _accP12PerShare;
-    pool.period += 1;
-    periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
-  }
-
   /**
     @notice update checkpoint for all pool
    */
   function checkpointAll() public virtual override {
     uint256 length = poolInfos.length;
     for (uint256 pid = 0; pid < length; pid++) {
-      checkpoint(pid);
+      _checkpoint(pid);
     }
   }
 
@@ -285,7 +264,7 @@ contract P12MineUpgradeable is
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
 
-    checkpoint(pid);
+    _checkpoint(pid);
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
@@ -308,7 +287,7 @@ contract P12MineUpgradeable is
     PoolInfo memory pool = poolInfos[pid];
     UserInfo memory user = userInfo[pid][msg.sender];
     require(user.amount >= amount, 'P12Mine: withdraw too much');
-    checkpoint(pid);
+    _checkpoint(pid);
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
@@ -329,7 +308,7 @@ contract P12MineUpgradeable is
     require(userInfo[pid][msg.sender].amount > 0, 'P12Mine: no staked token');
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    checkpoint(pid);
+    _checkpoint(pid);
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     _safeP12Transfer(msg.sender, pending);
@@ -347,7 +326,7 @@ contract P12MineUpgradeable is
       }
       PoolInfo storage pool = poolInfos[pid];
       UserInfo storage user = userInfo[pid][msg.sender];
-      checkpoint(pid);
+      _checkpoint(pid);
       pending += (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     }
@@ -369,7 +348,7 @@ contract P12MineUpgradeable is
     require(block.timestamp >= withdrawInfos[lpToken][id].unlockTimestamp, 'P12Mine: unlock time not reached');
     require(!withdrawInfos[lpToken][id].executed, 'P12Mine: already withdrawn');
     withdrawInfos[lpToken][id].executed = true;
-    checkpoint(pid);
+    _checkpoint(pid);
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
     _safeP12Transfer(_who, pending);
     uint256 amount = withdrawInfos[lpToken][id].amount;
@@ -384,7 +363,7 @@ contract P12MineUpgradeable is
 ​    @notice withdraw lpToken Emergency
   */
 
-  function withdrawAllLpTokenEmergency() public virtual override onlyEmergency {
+  function withdrawAllLpTokenEmergency() public virtual override {
     uint256 length = poolInfos.length;
 
     for (uint256 pid = 0; pid < length; pid++) {
@@ -400,15 +379,15 @@ contract P12MineUpgradeable is
 ​    @notice withdraw all lpToken Emergency
     @param lpToken address of lpToken
   */
-  function withdrawLpTokenEmergency(address lpToken) public virtual override onlyEmergency {
+  function withdrawLpTokenEmergency(address lpToken) public virtual override nonReentrant onlyEmergency {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     require(user.amount > 0, 'P12Mine: without any lpToken');
-    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), user.amount);
     uint256 amount = user.amount;
     user.amount = 0;
     user.rewardDebt = 0;
+    IERC20Upgradeable(pool.lpToken).safeTransfer(address(msg.sender), amount);
     emit WithdrawLpTokenEmergency(lpToken, amount);
   }
 
@@ -445,6 +424,41 @@ contract P12MineUpgradeable is
     return withdrawId;
   }
 
+  // ============ checkpoint ============
+  /**
+      @notice update checkpoint for pool
+      @param pid Pool Id
+  */
+  function _checkpoint(uint256 pid) internal virtual whenNotPaused {
+    PoolInfo storage pool = poolInfos[pid];
+    uint256 _accP12PerShare = pool.accP12PerShare;
+    uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
+    gaugeController.checkpointGauge(address(pool.lpToken));
+    require(block.timestamp > _periodTime, 'P12Mine: not time to check');
+
+    if (pool.amount == 0) {
+      pool.period += 1;
+      periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
+      return;
+    }
+    uint256 prevWeekTime = _periodTime;
+    uint256 weekTime = Math.min(((_periodTime + WEEK) / WEEK) * WEEK, block.timestamp);
+    for (uint256 i = 0; i < 500; i++) {
+      uint256 dt = weekTime - prevWeekTime;
+      uint256 w = gaugeController.gaugeRelativeWeight(pool.lpToken, (prevWeekTime / WEEK) * WEEK);
+      _accP12PerShare += (rate * w * dt) / pool.amount;
+      if (weekTime == block.timestamp) {
+        break;
+      }
+      prevWeekTime = weekTime;
+      weekTime = Math.min(weekTime + WEEK, block.timestamp);
+    }
+    pool.accP12PerShare = _accP12PerShare;
+    pool.period += 1;
+    periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
+    emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
+  }
+
   // ============ Modifiers ============
 
   // check if lpToken exists
@@ -473,6 +487,7 @@ contract P12MineUpgradeable is
   // check Emergency
   modifier onlyEmergency() {
     require(isEmergency, 'P12Mine: no emergency now');
+    require(block.timestamp >= emergencyUnlockTime, 'P12Mine: not unlocked yet');
     _;
   }
 }

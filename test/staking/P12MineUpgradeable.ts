@@ -101,7 +101,7 @@ describe('p12Mine', function () {
 
   // claim p12Token
   it('show claim p12Token successfully', async function () {
-    await core.p12Mine.connect(developer).checkpoint(await core.p12Mine.getPid(pair.address));
+    await core.p12Mine.connect(developer).checkpoint(pair.address);
     expect(await core.p12Mine.getPid(pair.address)).to.be.equal(1);
     const balanceOf = await core.p12Token.balanceOf(developer.address);
     await core.p12Mine.connect(developer).claim(pair.address);
@@ -218,6 +218,20 @@ describe('p12Mine', function () {
     expect(await core.p12Token.balanceOf(developer.address)).to.be.above(balanceOfReward);
   });
 
+  // update checkpoint
+  it('show checkpoint  success', async function () {
+    const res = await core.p12Mine.poolInfos(1);
+    const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    await ethers.provider.send('evm_mine', [timestampBefore + 86400 * 10]);
+    await core.p12Mine.checkpoint(pair.address);
+    expect((await core.p12Mine.poolInfos(1)).accP12PerShare).to.be.above(res.accP12PerShare);
+  });
+
+  // update checkpoint all
+  it('show checkpoint  success', async function () {
+    await core.p12Mine.checkpointAll();
+  });
+
   it('show withdraw successfully', async function () {
     // time goes by
     const balanceOf = await core.p12Token.balanceOf(developer.address);
@@ -253,29 +267,22 @@ describe('p12Mine', function () {
     expect(pid).to.be.equal(tmp.sub(1));
   });
 
-  // update checkpoint
-  it('show checkpoint  success', async function () {
-    await core.p12Mine.checkpoint(0);
-  });
-
-  // update checkpoint all
-  it('show checkpoint  success', async function () {
-    await core.p12Mine.checkpointAll();
-  });
-
   // withdraw p12token Emergency by admin
   it('show withdraw p12token Emergency successfully', async function () {
-    await expect(core.p12Mine.connect(developer).withdrawEmergency()).to.be.revertedWith('SafeOwnable: caller not owner');
+    await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('no emergency now');
+    await core.p12Mine.emergency();
+    await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('P12Mine: not unlocked yet');
     const balanceOf = await core.p12Token.balanceOf(p12RewardVault.address);
     const balanceOfAdmin = await core.p12Token.balanceOf(admin.address);
+    const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    await ethers.provider.send('evm_mine', [timestampBefore + 86400]);
     await core.p12Mine.withdrawEmergency();
     expect(await core.p12Token.balanceOf(admin.address)).be.be.equal(balanceOf.add(balanceOfAdmin));
+    await expect(core.p12Mine.emergency()).to.be.revertedWith('P12Mine: already exists');
   });
 
   // withdraw lpTokens Emergency
   it('show withdraw lpTokens Emergency successfully', async function () {
-    await expect(core.p12Mine.withdrawAllLpTokenEmergency()).to.be.revertedWith('P12Mine: no emergency now');
-    await core.p12Mine.setEmergency(true);
     await expect(core.p12Mine.withdrawLpTokenEmergency(pair.address)).to.be.revertedWith('P12Mine: without any lpToken');
     const balanceOf = await pair.balanceOf(developer.address);
     await pair.connect(developer).approve(core.p12Mine.address, balanceOf);
