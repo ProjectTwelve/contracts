@@ -104,6 +104,7 @@ contract P12CoinFactoryUpgradeable is
    * @param developer developer address, who own this game
    */
   function register(string memory gameId, address developer) external virtual override onlyDev {
+    require(developer != address(0), 'P12Factory: address cannot be 0');
     allGames[gameId] = developer;
     emit RegisterGame(gameId, developer);
   }
