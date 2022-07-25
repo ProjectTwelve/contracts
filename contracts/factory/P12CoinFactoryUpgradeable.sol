@@ -223,6 +223,7 @@ contract P12CoinFactoryUpgradeable is
     whenNotPaused
     returns (bool)
   {
+    require(coinMintRecords[gameCoinAddress][mintId].unlockTimestamp != 0, 'P12Factory: non-existent mint');
     // check if it has been executed
     require(!coinMintRecords[gameCoinAddress][mintId].executed, 'P12Factory: mint executed');
 
