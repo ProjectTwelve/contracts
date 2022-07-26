@@ -159,6 +159,9 @@ contract SecretShopUpgradable is
         amountEth -= _run(order, input.shared, detail);
       }
     }
+
+    // refund extra native token
+    require(payable(msg.sender).send(amountEth), 'SecretShop: refund token fail');
   }
 
   function _emitInventory(

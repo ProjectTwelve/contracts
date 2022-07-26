@@ -240,15 +240,6 @@ describe('SecretShopUpgradable', function () {
 
     await core.p12SecretShop.connect(developer).updateCurrencies([core.p12Token.address, ethers.constants.AddressZero], []);
 
-    // wrong op should fail
-    await expect(
-      core.p12SecretShop.connect(user1).run({
-        orders: [Order],
-        details: [{ ...SettleDetail, op: 2n }],
-        shared: SettleShared,
-      }),
-    ).to.be.revertedWith('SecretShop: unknown op');
-
     // wrong sig version should fail
     await expect(
       core.p12SecretShop.connect(user1).run({
@@ -443,7 +434,7 @@ describe('SecretShopUpgradable', function () {
         details: [SettleDetail],
         shared: SettleShared,
       },
-      { value: ethers.utils.parseEther('1.0') },
+      { value: ethers.utils.parseEther('7.0') },
     );
 
     // run order but allow failure
@@ -454,7 +445,7 @@ describe('SecretShopUpgradable', function () {
           details: [SettleDetail],
           shared: { ...SettleShared, canFail: true },
         },
-        { value: ethers.utils.parseEther('2.0') },
+        { value: ethers.utils.parseEther('4.0') },
       ),
     )
       .to.emit(core.p12SecretShop, 'EvFailure')
@@ -469,14 +460,19 @@ describe('SecretShopUpgradable', function () {
           details: [SettleDetail],
           shared: { ...SettleShared, canFail: true },
         },
-        { value: ethers.utils.parseEther('2.0') },
+        { value: ethers.utils.parseEther('4.0') },
       ),
     )
       .to.emit(core.p12SecretShop, 'EvFailure')
       .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: wrong currency')));
 
+    expect(await ethers.provider.getBalance(core.p12SecretShop.address)).to.be.equal(0);
     expect(await user1.getBalance()).to.be.equal(user1BalanceBefore.add(ethers.utils.parseEther('1')));
     expect(await user2.getBalance()).to.be.lte(user2BalanceBefore.sub(ethers.utils.parseEther('1'))); // due to gas
+    expect(await user2.getBalance()).to.be.gte(user2BalanceBefore.sub(ethers.utils.parseEther('1.1')));
+
+    expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(0);
+    expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
   });
 
   it('should cancel order successfully', async () => {
