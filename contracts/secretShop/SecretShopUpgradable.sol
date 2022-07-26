@@ -231,6 +231,24 @@ contract SecretShopUpgradable is
 
       _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price);
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
+    } else if (detail.op == Market.Op.COMPLETE_BUY_OFFER) {
+      /** @dev COMPLETE_BUY_OFFER */
+      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: sold or canceled');
+      require(order.intent == Market.INTENT_BUY, 'SecretShop: intent != sell');
+
+      _assertDelegation(order, detail);
+
+      require(order.deadline > block.timestamp, 'SecretShop: deadline reached');
+      require(detail.price >= item.price, 'SecretShop: underpaid');
+
+      /**
+       * @dev transfer token from buyer address to this contract
+       */
+      nativeAmount = _takePayment(order.currency, order.user, detail.price);
+      require(detail.executionDelegate.executeSell(shared.user, order.user, data), 'SecretShop: delegation error');
+
+      _distributeFeeAndProfit(itemHash, shared.user, order.currency, detail, detail.price);
+      inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
     } else if (detail.op == Market.Op.CANCEL_OFFER) {
       /** CANCEL_OFFER */
       require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: unable to cancel');

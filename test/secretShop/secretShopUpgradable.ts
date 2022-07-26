@@ -601,6 +601,112 @@ describe('SecretShopUpgradable', function () {
         shared: SettleShared,
       }),
     ).to.be.revertedWith('SecretShop: sold or canceled');
+  });
+
+  it('Should seller accept buyer buying erc1155 successfully', async function () {
+    // prepare for tx erc1155Data
+    const erc1155Data = [
+      {
+        salt: genSalt(),
+        token: p12asset.address,
+        tokenId: BigInt(0),
+        amount: BigInt(1),
+      },
+    ];
+
+    const orderInfo = {
+      salt: genSalt(),
+      user: user1.address,
+      network: BigInt(44102),
+      intent: BigInt(2),
+      delegateType: BigInt(1),
+      deadline: BigInt(new Date().getTime() + 100),
+      currency: core.p12Token.address,
+    };
+
+    const items = [
+      {
+        price: 10n * 10n ** 18n,
+        data: utils.defaultAbiCoder.encode([ERC1155DataType], [erc1155Data]),
+      },
+    ];
+
+    const signature = await user1._signTypedData(domain, types, {
+      ...orderInfo,
+      length: items.length,
+      items: items,
+    });
+
+    const Order = {
+      ...orderInfo,
+      items: items,
+      r: '0x' + signature.slice(2, 66),
+      s: '0x' + signature.slice(66, 130),
+      v: '0x' + signature.slice(130, 132),
+      signVersion: '0x01',
+    };
+
+    const itemHash = utils.keccak256(
+      '0x' + utils.defaultAbiCoder.encode([EIP721TypeEncoded], [{ ...orderInfo, item: items[0] }]).slice(66),
+    );
+
+    const SettleShared = {
+      salt: genSalt(),
+      user: user2.address,
+      deadline: BigInt(new Date().getTime() + 100),
+      canFail: false,
+    };
+
+    const SettleDetail = {
+      op: 2n,
+      orderIdx: 0n,
+      itemIdx: 0n,
+      price: 10n * 10n ** 18n,
+      itemHash: itemHash,
+      executionDelegate: core.erc1155delegate.address,
+      fees: [{ percentage: 10000n, to: recipient.address }],
+    };
+
+    // Buyer approve coin
+    await core.p12Token.connect(user1).approve(core.p12SecretShop.address, SettleDetail.price);
+
+    // seller approve
+    await p12asset.connect(user2).setApprovalForAll(core.erc1155delegate.address, true);
+
+    await core.p12SecretShop.connect(developer).updateCurrencies([core.p12Token.address, ethers.constants.AddressZero], []);
+
+    // wrong sig version should fail
+    await expect(
+      core.p12SecretShop.connect(user2).run({
+        orders: [{ ...Order, signVersion: '0x02' }],
+        details: [SettleDetail],
+        shared: SettleShared,
+      }),
+    ).to.be.revertedWith('SecretShop: wrong sig version');
+
+    // run order
+    await core.p12SecretShop.connect(user2).run({
+      orders: [Order],
+      details: [SettleDetail],
+      shared: SettleShared,
+    });
+
+    // run order but allow failure
+    await expect(
+      core.p12SecretShop.connect(user2).run({
+        orders: [Order],
+        details: [SettleDetail],
+        shared: { ...SettleShared, canFail: true },
+      }),
+    )
+      .to.emit(core.p12SecretShop, 'EvFailure')
+      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled'))); // WARNING
+
+    expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
+    expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);
+    expect(await core.p12Token.balanceOf(user1.address)).to.be.equal(90n * 10n ** 18n);
+    expect(await core.p12Token.balanceOf(user2.address)).to.be.equal(1098n * 10n ** 17n);
+    expect(await core.p12Token.balanceOf(recipient.address)).to.be.equal(2n * 10n ** 17n);
 
     // Should upgrade successfully
     const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlter');
