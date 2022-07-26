@@ -78,7 +78,6 @@ library Market {
   struct SettleShared {
     uint256 salt;
     uint256 deadline;
-    uint256 amountToEth;
     address user;
     /**
      * can one order fail

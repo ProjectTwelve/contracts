@@ -207,7 +207,6 @@ describe('SecretShopUpgradable', function () {
       salt: genSalt(),
       user: user1.address,
       deadline: BigInt(new Date().getTime() + 100),
-      amountToEth: 0n,
       canFail: false,
     };
 
@@ -334,7 +333,6 @@ describe('SecretShopUpgradable', function () {
       salt: genSalt(),
       user: user2.address,
       deadline: BigInt(new Date().getTime() + 100),
-      amountToEth: 0n,
       canFail: false,
     };
 
@@ -419,7 +417,6 @@ describe('SecretShopUpgradable', function () {
       salt: genSalt(),
       user: user2.address,
       deadline: BigInt(new Date().getTime() + 100),
-      amountToEth: 2n,
       canFail: true,
     };
 
@@ -539,7 +536,6 @@ describe('SecretShopUpgradable', function () {
       salt: genSalt(),
       user: user2.address,
       deadline: BigInt(new Date().getTime() + 100),
-      amountToEth: 0n,
       canFail: false,
     };
 
