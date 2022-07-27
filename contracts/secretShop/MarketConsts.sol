@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/token/ERC1155/IERC1155.sol';
 
 library Market {
   uint256 public constant INTENT_SELL = 1;
+  uint256 public constant INTENT_BUY = 2;
 
   uint8 public constant SIGN_V1 = 1;
 
@@ -78,7 +79,6 @@ library Market {
   struct SettleShared {
     uint256 salt;
     uint256 deadline;
-    uint256 amountToEth;
     address user;
     /**
      * can one order fail
