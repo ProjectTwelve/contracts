@@ -104,6 +104,7 @@ contract P12CoinFactoryUpgradeable is
    * @param developer developer address, who own this game
    */
   function register(string memory gameId, address developer) external virtual override onlyDev {
+    require(developer != address(0), 'P12Factory: address cannot be 0');
     allGames[gameId] = developer;
     emit RegisterGame(gameId, developer);
   }
@@ -222,6 +223,7 @@ contract P12CoinFactoryUpgradeable is
     whenNotPaused
     returns (bool)
   {
+    require(coinMintRecords[gameCoinAddress][mintId].unlockTimestamp != 0, 'P12Factory: non-existent mint');
     // check if it has been executed
     require(!coinMintRecords[gameCoinAddress][mintId].executed, 'P12Factory: mint executed');
 

@@ -33,6 +33,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
   mapping(uint256 => string) private _uri;
 
   constructor(string memory contractURI_) {
+    require(bytes(contractURI_).length != 0, 'P12Asset: empty contractURI');
     contractURI = contractURI_;
   }
 
@@ -71,6 +72,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
     uint256 amount,
     bytes memory data
   ) public override onlyOwner {
+    require(id < idx, 'P12Asset: id is not valid');
     require(amount + supply[id] <= maxSupply[id], 'P12Asset: exceed max supply');
     _mint(to, id, amount, data);
     supply[id] += amount;
@@ -91,6 +93,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    * @param newContractURI new Contract-level metadata uri
    */
   function setContractURI(string calldata newContractURI) public override onlyOwner {
+    require(bytes(newContractURI).length != 0, 'P12Asset: empty contractURI');
     string memory oldContractURI = contractURI;
     contractURI = newContractURI;
     emit SetContractURI(oldContractURI, contractURI);
@@ -102,6 +105,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    * @param newUri metadata uri
    */
   function _setUri(uint256 id, string calldata newUri) private {
+    require(bytes(newUri).length != 0, 'P12Asset: empty uri');
     require(id <= idx, 'P12Asset: id not exist');
     _uri[id] = newUri;
     emit SetUri(id, newUri);

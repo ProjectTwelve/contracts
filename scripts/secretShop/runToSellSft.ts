@@ -125,7 +125,6 @@ async function main() {
     salt: BigInt(Date.now()),
     user: user2.address,
     deadline: 1648656000n,
-    amountToEth: 0n,
     amountToWeth: 0n,
     canFail: false,
   };
