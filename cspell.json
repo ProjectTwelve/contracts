@@ -59,7 +59,8 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf"
+    "xwbf",
+    "ADDESSSES"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]
 }
