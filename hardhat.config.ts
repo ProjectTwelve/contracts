@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import { HardhatUserConfig, task } from 'hardhat/config';
 import { addFlatTask } from './flat';
 import '@nomiclabs/hardhat-etherscan';
+import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
 import 'hardhat-deploy';
