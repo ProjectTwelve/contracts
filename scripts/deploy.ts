@@ -88,13 +88,13 @@ export async function deployEconomyContract(externalContract: ExternalContract):
     5n * 10n ** 17n,
   ]);
   return {
-    p12Token: p12Token,
+    p12Token: await ethers.getContractAt('P12Token', p12Token.address),
     p12CoinFactory: await ethers.getContractAt('P12CoinFactoryUpgradeable', p12CoinFactory.address),
     p12AssetFactory: await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactory.address),
     p12SecretShop: await ethers.getContractAt('SecretShopUpgradable', p12SecretShop.address),
-    erc1155delegate: erc1155delegate,
-    erc721delegate: erc721delegate,
-    votingEscrow: votingEscrow,
+    erc1155delegate: await ethers.getContractAt('ERC1155Delegate', erc1155delegate.address),
+    erc721delegate: await ethers.getContractAt('ERC721Delegate', erc721delegate.address),
+    votingEscrow: await ethers.getContractAt('VotingEscrow', votingEscrow.address),
     gaugeController: await ethers.getContractAt('GaugeControllerUpgradeable', gaugeController.address),
     p12Mine: await ethers.getContractAt('P12MineUpgradeable', p12Mine.address),
   };

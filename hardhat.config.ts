@@ -3,8 +3,10 @@ import * as dotenv from 'dotenv';
 import { HardhatUserConfig, task } from 'hardhat/config';
 import { addFlatTask } from './flat';
 import '@nomiclabs/hardhat-etherscan';
+import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
+import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
 import '@openzeppelin/hardhat-upgrades';
@@ -25,6 +27,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
+const addresses = process.env.ADDESSSES ? process.env.ADDESSSES.split(',') : [];
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -37,43 +40,6 @@ const config: HardhatUserConfig = {
             runs: 200,
           },
         },
-      },
-      {
-        version: '0.8.4',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
-      {
-        version: '0.8.2',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 200,
-          },
-        },
-      },
-      {
-        version: '0.5.16',
-      },
-      {
-        version: '0.6.6',
-        settings: {
-          optimizer: {
-            enabled: true,
-            runs: 999999,
-          },
-          evmVersion: 'istanbul',
-        },
-      },
-      {
-        version: '0.4.18',
-      },
-      {
-        version: '0.4.0',
       },
     ],
   },
@@ -88,25 +54,48 @@ const config: HardhatUserConfig = {
     },
     p12TestNet: {
       url: 'https://testnet.p12.games/',
+      live: true,
       chainId: 44010,
       accounts: accounts,
       gas: 'auto',
       gasPrice: 3000000000,
+      // tags: ['test'],
+      deploy: ['deploy/p12TestNet'],
     },
     forkP12TestNet: {
       url: 'http://127.0.0.1:8545/',
     },
     rinkeby: {
       url: process.env.RINKEBY_URL || '',
+      live: true,
       chainId: 4,
       accounts: accounts,
       gas: 'auto',
       gasPrice: 3000000000, // 3 Gwei
+      tags: ['staging'],
+      deploy: ['deploy/rinkeby'],
     },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
     currency: 'USD',
+  },
+  namedAccounts: {
+    deployer: {
+      default: 0,
+      p12TestNet: addresses[0],
+    },
+  },
+
+  external: {
+    contracts: [
+      { artifacts: 'node_modules/@uniswap/v2-core/build/' },
+      { artifacts: 'node_modules/@uniswap/v2-periphery/build/' },
+      { artifacts: 'node_modules/canonical-weth/build/contracts/' },
+      {
+        artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
+      },
+    ],
   },
 };
 
