@@ -254,7 +254,7 @@ contract P12CoinFactoryUpgradeable is
     address userAddress,
     IP12GameCoin gameCoinAddress,
     uint256 amountGameCoin
-  ) external virtual override onlyOwner returns (bool) {
+  ) external virtual override onlyDev returns (bool) {
     IERC20Upgradeable(address(gameCoinAddress)).safeTransfer(userAddress, amountGameCoin);
     emit Withdraw(userAddress, gameCoinAddress, amountGameCoin);
     return true;
