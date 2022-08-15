@@ -9,7 +9,7 @@ interface IGaugeController {
 
   event ApplyOwnership(address admin);
 
-  event AddType(string, int128 typeId);
+  event AddType(string name, int128 typeId);
 
   event NewTypeWeight(int128 typeId, uint256 time, uint256 weight, uint256 totalWeight);
 
