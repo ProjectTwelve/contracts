@@ -123,7 +123,7 @@ describe('P12CoinFactory', function () {
   });
 
   it('Should show withdraw gameCoin successfully', async function () {
-    await core.p12CoinFactory.connect(admin).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
+    await core.p12CoinFactory.connect(p12Dev).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
     const P12GameCoin = await ethers.getContractFactory('TestGameCoin');
     const gameCoin = P12GameCoin.attach(gameCoinAddress);
 
