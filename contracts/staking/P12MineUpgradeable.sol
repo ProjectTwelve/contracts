@@ -284,8 +284,8 @@ contract P12MineUpgradeable is
   */
   function queueWithdraw(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
-    PoolInfo memory pool = poolInfos[pid];
-    UserInfo memory user = userInfo[pid][msg.sender];
+    PoolInfo storage pool = poolInfos[pid];
+    UserInfo storage user = userInfo[pid][msg.sender];
     require(user.amount >= amount, 'P12Mine: withdraw too much');
     _checkpoint(pid);
     if (user.amount > 0) {
