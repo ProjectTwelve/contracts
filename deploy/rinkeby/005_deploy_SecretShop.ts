@@ -1,10 +1,10 @@
 import { DeployFunction } from 'hardhat-deploy/types';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
-  const { deploy } = deployments;
+  const { get, deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const weth = '0xc778417e063141139fce010982780140aa0cd5ab';
+  const weth = await get('WETH9');
 
   await deploy('ERC721Delegate', {
     from: deployer,
@@ -25,7 +25,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [10 ** 5, weth],
+          args: [10 ** 5, weth.address],
         },
       },
     },
