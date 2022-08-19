@@ -1,17 +1,16 @@
 import { DeployFunction } from 'hardhat-deploy/types';
+import { parseEther } from 'ethers/lib/utils';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy } = deployments;
 
   const { deployer } = await getNamedAccounts();
 
-  const p12 = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
-
-  await deploy('VotingEscrow', {
+  await deploy('P12Token', {
     from: deployer,
-    args: [p12, 'Vote-escrowed P12', 'veP12'],
+    args: ['P12Token', 'P12', String(parseEther('10000'))],
     log: true,
   });
 };
-func.tags = ['veP12'];
+func.tags = ['P12Token'];
 export default func;

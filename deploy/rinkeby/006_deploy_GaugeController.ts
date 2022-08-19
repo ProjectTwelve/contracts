@@ -1,16 +1,14 @@
 import { DeployFunction } from 'hardhat-deploy/types';
-import { ethers } from 'hardhat';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy, get } = deployments;
 
   const { deployer } = await getNamedAccounts();
 
-  const p12 = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
   const p12CoinFactoryUpgradeable = await get('P12CoinFactoryUpgradeable');
-  const gaugeControllerUpgradeable = await get('GaugeControllerUpgradeable');
+  const veP12 = await get('VotingEscrow');
 
-  await deploy('P12MineUpgradeable', {
+  await deploy('GaugeControllerUpgradeable', {
     from: deployer,
     args: [],
     proxy: {
@@ -19,19 +17,12 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [
-            p12,
-            p12CoinFactoryUpgradeable.address,
-            gaugeControllerUpgradeable.address,
-            60,
-            60,
-            ethers.BigNumber.from(5n * 10n ** 17n),
-          ],
+          args: [veP12.address, p12CoinFactoryUpgradeable.address],
         },
       },
     },
     log: true,
   });
 };
-func.tags = ['Mine'];
+func.tags = ['GaugeController'];
 export default func;

@@ -6,7 +6,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
 
   const { deployer } = await getNamedAccounts();
 
-  const p12 = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
+  const p12 = await get('P12Token');
   const p12CoinFactoryUpgradeable = await get('P12CoinFactoryUpgradeable');
   const gaugeControllerUpgradeable = await get('GaugeControllerUpgradeable');
 
@@ -20,7 +20,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
         init: {
           methodName: 'initialize',
           args: [
-            p12,
+            p12.address,
             p12CoinFactoryUpgradeable.address,
             gaugeControllerUpgradeable.address,
             60,

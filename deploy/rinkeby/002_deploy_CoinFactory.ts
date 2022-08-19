@@ -2,12 +2,12 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
-  const { deploy } = deployments;
+  const { get, deploy } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  const p12Token = '0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0';
-  const uniswapFactory = '0x8C2543578eFEd64343C63e9075ed70F1d255D1c6';
-  const uniswapRouter = '0x71A3B75A9A774EB793A44a36AF760ee2868912ac';
+  const p12Token = await get('P12Token');
+  const uniswapFactory = '0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f';
+  const uniswapRouter = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D';
 
   // Be carefully: Check whether proxy contract is initialized successfully
   await deploy('P12CoinFactoryUpgradeable', {
@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [p12Token, uniswapFactory, uniswapRouter, 86400, ethers.utils.randomBytes(32)],
+          args: [p12Token.address, uniswapFactory, uniswapRouter, 86400, ethers.utils.randomBytes(32)],
         },
       },
     },
