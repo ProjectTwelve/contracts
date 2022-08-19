@@ -7,7 +7,14 @@ import './IGaugeController.sol';
 
 interface IP12MineUpgradeable {
   event Deposit(address indexed user, uint256 indexed pid, uint256 amount, uint256 userAmount, uint256 poolAmount); // deposit lpToken log
-  event ExecuteWithdraw(address indexed user, uint256 indexed pid,bytes32 indexed withdrawId, uint256 amount, uint256 userAmount, uint256 poolAmount); // withdraw lpToken log
+  event ExecuteWithdraw(
+    address indexed user,
+    uint256 indexed pid,
+    bytes32 indexed withdrawId,
+    uint256 amount,
+    uint256 userAmount,
+    uint256 poolAmount
+  ); // withdraw lpToken log
   event QueueWithdraw(
     address indexed user,
     uint256 pid,
@@ -72,5 +79,5 @@ interface IP12MineUpgradeable {
 
   function claimAll() external returns (uint256); // get all pending rewards
 
-  function checkpoint(address lpToken) external ;
+  function checkpoint(address lpToken) external;
 }

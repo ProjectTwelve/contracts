@@ -303,7 +303,7 @@ contract P12MineUpgradeable is
     @notice Get pending rewards
     @param lpToken Address of lpToken
    */
-  function claim(address lpToken) public virtual override nonReentrant whenNotPaused returns (uint256){
+  function claim(address lpToken) public virtual override nonReentrant whenNotPaused returns (uint256) {
     uint256 pid = getPid(lpToken);
     require(userInfo[pid][msg.sender].amount > 0, 'P12Mine: no staked token');
     PoolInfo storage pool = poolInfos[pid];
@@ -318,7 +318,7 @@ contract P12MineUpgradeable is
   /**
     @notice Get all pending rewards
    */
-  function claimAll() public virtual override nonReentrant whenNotPaused returns (uint256){
+  function claimAll() public virtual override nonReentrant whenNotPaused returns (uint256) {
     uint256 length = poolInfos.length;
     uint256 pending = 0;
     for (uint256 pid = 0; pid < length; pid++) {
@@ -358,7 +358,7 @@ contract P12MineUpgradeable is
     pool.amount -= amount;
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     IERC20Upgradeable(pool.lpToken).safeTransfer(address(_who), amount);
-    emit ExecuteWithdraw(_who, pid,id, amount, user.amount, pool.amount);
+    emit ExecuteWithdraw(_who, pid, id, amount, user.amount, pool.amount);
   }
 
   /**
