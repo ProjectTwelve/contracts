@@ -1,46 +1,25 @@
 {
-  "address": "0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0",
+  "address": "0xc778417e063141139fce010982780140aa0cd5ab",
   "abi": [
-    {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "internalType": "string",
-          "name": "symbol",
-          "type": "string"
-        },
-        {
-          "internalType": "uint256",
-          "name": "totalSupply",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "constructor"
-    },
     {
       "anonymous": false,
       "inputs": [
         {
           "indexed": true,
           "internalType": "address",
-          "name": "owner",
+          "name": "src",
           "type": "address"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "spender",
+          "name": "guy",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "value",
+          "name": "wad",
           "type": "uint256"
         }
       ],
@@ -53,17 +32,17 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "previousOwner",
+          "name": "dst",
           "type": "address"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "wad",
+          "type": "uint256"
         }
       ],
-      "name": "OwnershipTransferred",
+      "name": "Deposit",
       "type": "event"
     },
     {
@@ -72,19 +51,19 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "from",
+          "name": "src",
           "type": "address"
         },
         {
           "indexed": true,
           "internalType": "address",
-          "name": "to",
+          "name": "dst",
           "type": "address"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "value",
+          "name": "wad",
           "type": "uint256"
         }
       ],
@@ -92,15 +71,34 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "src",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "wad",
+          "type": "uint256"
+        }
+      ],
+      "name": "Withdrawal",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "address",
-          "name": "owner",
+          "name": "",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "spender",
+          "name": "",
           "type": "address"
         }
       ],
@@ -119,12 +117,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "spender",
+          "name": "guy",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "wad",
           "type": "uint256"
         }
       ],
@@ -143,7 +141,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "account",
+          "name": "",
           "type": "address"
         }
       ],
@@ -160,13 +158,6 @@
     },
     {
       "inputs": [],
-      "name": "claimOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "decimals",
       "outputs": [
         {
@@ -179,69 +170,10 @@
       "type": "function"
     },
     {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "subtractedValue",
-          "type": "uint256"
-        }
-      ],
-      "name": "decreaseAllowance",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "spender",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "addedValue",
-          "type": "uint256"
-        }
-      ],
-      "name": "increaseAllowance",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "recipient",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "mint",
+      "inputs": [],
+      "name": "deposit",
       "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "payable",
       "type": "function"
     },
     {
@@ -255,39 +187,6 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "owner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "pendingOwner",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "renounceOwnership",
-      "outputs": [],
-      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -320,12 +219,12 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "to",
+          "name": "dst",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "wad",
           "type": "uint256"
         }
       ],
@@ -344,17 +243,17 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "from",
+          "name": "src",
           "type": "address"
         },
         {
           "internalType": "address",
-          "name": "to",
+          "name": "dst",
           "type": "address"
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "wad",
           "type": "uint256"
         }
       ],
@@ -372,17 +271,12 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "direct",
-          "type": "bool"
+          "internalType": "uint256",
+          "name": "wad",
+          "type": "uint256"
         }
       ],
-      "name": "transferOwnership",
+      "name": "withdraw",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
