@@ -63,7 +63,10 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf"
+    "xwbf",
+    "ADDESSSES",
+    "docgen",
+    "sstore"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]
 }
