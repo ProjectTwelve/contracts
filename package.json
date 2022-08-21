@@ -8,6 +8,7 @@
     "prepare": "husky install",
     "compile": "hardhat compile",
     "deploy": "hardhat deploy",
+    "export": "hardhat run ./export.ts",
     "flat": "hardhat flat",
     "prettier": "prettier -w .",
     "test": "hardhat test",
