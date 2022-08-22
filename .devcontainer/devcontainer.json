@@ -20,7 +20,8 @@
     "JuanBlanco.solidity",
     "shakram02.bash-beautify",
     "esbenp.prettier-vscode",
-    "redjue.git-commit-plugin"
+    "redjue.git-commit-plugin",
+    "ZainChen.json"
   ],
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
