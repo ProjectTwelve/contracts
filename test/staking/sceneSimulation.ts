@@ -188,9 +188,9 @@ describe('sceneSimulation', function () {
     }
     console.log('nextWeekTime', nextWeekTime);
     console.log('timestamp', timestamp);
-    console.log('pool0 weight is:', await gaugeController.gaugeRelativeWeight(pool0, time));
-    console.log('pool1 weight is:', await gaugeController.gaugeRelativeWeight(pool1, time));
-    console.log('pool2 weight is:', await gaugeController.gaugeRelativeWeight(pool2, time));
+    console.log('pool0 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool0, time)));
+    console.log('pool1 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool1, time)));
+    console.log('pool2 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool2, time)));
     console.log('-------------------------');
 
     // fast forward to right time point and vote
