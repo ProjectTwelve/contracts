@@ -45,10 +45,10 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      // forking: {
-      //   url: 'https://testnet.p12.games/',
-      //   blockNumber: 997788,
-      // },
+      forking: {
+        url: 'https://testnet.p12.games/',
+        blockNumber: 1228941,
+      },
       // The fork configuration can be turned on or off by itself according to the situation
       chainId: 44102,
     },

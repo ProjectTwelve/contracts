@@ -2,11 +2,12 @@ import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { Wallet } from 'ethers';
 
 describe('P12CoinFactory', function () {
   let admin: SignerWithAddress;
   let p12Dev: SignerWithAddress;
-  let gameDeveloper: SignerWithAddress;
+  let gameDeveloper: Wallet;
   let admin2: SignerWithAddress;
   let user: SignerWithAddress;
   let mintId: string;
@@ -18,12 +19,21 @@ describe('P12CoinFactory', function () {
     const accounts = await ethers.getSigners();
     admin = accounts[0];
     admin2 = accounts[1];
-    gameDeveloper = accounts[2];
+    // gameDeveloper = accounts[2];
     user = accounts[3];
     p12Dev = accounts[8];
     test = accounts[9];
     core = await deployAll();
     await core.p12CoinFactory.setDev(p12Dev.address);
+    const adminPrivateKey = 'cf53da8e2fab30a115e2f8eadc4b774b9ef025b3b9cde5342e9ad90b47d7dbc3';
+    gameDeveloper = new ethers.Wallet(adminPrivateKey, ethers.provider);
+    core.p12Token.connect(admin).transfer(gameDeveloper.address, 100n * 10n ** 18n);
+    const tx = {
+      to: gameDeveloper.address,
+      // Convert currency unit from ether to wei
+      value: 10n * 10n ** 18n,
+    };
+    await admin.sendTransaction(tx);
   });
   it('Should pausable effective', async () => {
     await core.p12CoinFactory.pause();
