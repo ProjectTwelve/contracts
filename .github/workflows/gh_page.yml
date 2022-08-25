@@ -37,6 +37,7 @@ jobs:
       - run: npm ci
       - run: npm run "doc:gen"
       - run: npm run "doc:build"
+      - run: npm run lint
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
