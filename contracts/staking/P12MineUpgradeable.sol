@@ -33,8 +33,8 @@ contract P12MineUpgradeable is
   // ============ External ============
 
   /**
-  @notice set new p12CoinFactory
-  @param newP12CoinFactory address of p12CoinFactory
+   * @notice set new p12CoinFactory
+   *　@param newP12CoinFactory address of p12CoinFactory
    */
   function setP12CoinFactory(address newP12CoinFactory) external virtual override onlyOwner {
     address oldP12CoinFactory = p12CoinFactory;
@@ -44,8 +44,8 @@ contract P12MineUpgradeable is
   }
 
   /**
-  @notice set new gaugeController
-  @param newGaugeController address of gaugeController
+   * @notice set new gaugeController
+   * @param newGaugeController address of gaugeController
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
     IGaugeController oldGaugeController = gaugeController;
@@ -55,23 +55,23 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Get pool len
+   * @notice Get pool len
    */
   function poolLength() external view virtual override returns (uint256) {
     return poolInfos.length;
   }
 
   /**
-​    @notice withdraw token Emergency
-  */
+​   * @notice withdraw token Emergency
+   */
   function withdrawEmergency() external virtual override onlyOwner onlyEmergency {
     p12RewardVault.withdrawEmergency(msg.sender);
   }
 
   /**
-    @notice update checkpoint for pool
-    @param lpToken Address of lpToken
-  */
+   * @notice update checkpoint for pool
+   * @param lpToken Address of lpToken
+   */
   function checkpoint(address lpToken) external {
     uint256 pid = getPid(lpToken);
     _checkpoint(pid);
@@ -88,12 +88,12 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Contract initialization
-    @param p12Token_ Address of p12Token
-    @param p12CoinFactory_ Address of p12CoinFactory
-    @param gaugeController_ address of gaugeController
-    @param delayK_ delayK_ is a coefficient
-    @param delayB_ delayB_ is a coefficient
+   * @notice Contract initialization
+   * @param p12Token_ Address of p12Token
+   * @param p12CoinFactory_ Address of p12CoinFactory
+   * @param gaugeController_ address of gaugeController
+   * @param delayK_ delayK_ is a coefficient
+   * @param delayB_ delayB_ is a coefficient
    */
   function initialize(
     address p12Token_,
@@ -120,9 +120,9 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice get withdraw unlockTimestamp
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
+   * @notice get withdraw unlockTimestamp
+   * @param lpToken Address of lpToken
+   * @param amount Number of lpToken
    */
   function getWithdrawUnlockTimestamp(address lpToken, uint256 amount) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
@@ -139,18 +139,18 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Get pool id
-    @param lpToken Address of lpToken
+   * @notice Get pool id
+   * @param lpToken Address of lpToken
    */
   function getPid(address lpToken) public view virtual override lpTokenExist(lpToken) returns (uint256) {
     return lpTokenRegistry[lpToken] - 1;
   }
 
   /**
-    @notice Get user lpToken balance
-    @param lpToken Address of lpToken
-    @param user LpToken holder
-    @return Get lpToken balance 
+   * @notice Get user lpToken balance
+   * @param lpToken Address of lpToken
+   * @param user LpToken holder
+   * @return Get lpToken balance
    */
   function getUserLpBalance(address lpToken, address user) public view virtual override returns (uint256) {
     uint256 pid = getPid(lpToken);
@@ -158,9 +158,9 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice This method is only used when creating game coin in p12CoinFactory
-    @param lpToken Address of lpToken
-    @param gameCoinCreator user of game coin creator
+   * @notice This method is only used when creating game coin in p12CoinFactory
+   * @param lpToken Address of lpToken
+   * @param gameCoinCreator user of game coin creator
    */
   function addLpTokenInfoForGameCreator(
     address lpToken,
@@ -184,8 +184,8 @@ contract P12MineUpgradeable is
   // ============ Ownable ============
 
   /**
-    @notice set the isEmergency to true
-  */
+   * @notice set the isEmergency to true
+   */
 
   function emergency() public virtual override onlyOwner {
     require(!isEmergency, 'P12Mine: already exists');
@@ -196,8 +196,8 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Create a new pool
-    @param lpToken Address of lpToken
+   * @notice Create a new pool
+   * @param lpToken Address of lpToken
    */
   function createPool(address lpToken) public virtual override lpTokenNotExist(lpToken) whenNotPaused onlyP12FactoryOrOwner {
     poolInfos.push(PoolInfo({ lpToken: lpToken, accP12PerShare: 0, amount: 0, period: 0 }));
@@ -206,9 +206,9 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Set delayK value 
-    @param newDelayK Is a coefficient
-    @return Get bool result 
+   * @notice Set delayK value
+   * @param newDelayK Is a coefficient
+   * @return Get bool result
    */
   function setDelayK(uint256 newDelayK) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayK = delayK;
@@ -218,9 +218,9 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Set delayB value 
-    @param newDelayB Is a coefficient
-    @return Get bool result 
+   * @notice Set delayB value
+   * @param newDelayB Is a coefficient
+   * @return Get bool result
    */
   function setDelayB(uint256 newDelayB) public virtual override onlyOwner returns (bool) {
     uint256 oldDelayB = delayB;
@@ -230,8 +230,8 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice set new rate
-    @param newRate is p12 token inflation rate 
+   * @notice set new rate
+   * @param newRate is p12 token inflation rate
    */
   function setRate(uint256 newRate) public virtual override onlyOwner returns (bool) {
     uint256 oldRate = rate;
@@ -242,7 +242,7 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice update checkpoint for all pool
+   * @notice update checkpoint for all pool
    */
   function checkpointAll() public virtual override {
     uint256 length = poolInfos.length;
@@ -255,9 +255,9 @@ contract P12MineUpgradeable is
   // Deposit & withdraw will also trigger claim
 
   /**
-    @notice Deposit lpToken
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
+   * @notice Deposit lpToken
+   * @param lpToken Address of lpToken
+   * @param amount Number of lpToken
    */
   function deposit(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
@@ -278,10 +278,10 @@ contract P12MineUpgradeable is
   }
 
   /**
-  @notice Withdraw lpToken delay
-  @param lpToken Address of lpToken
-  @param amount Number of lpToken
-  */
+   * @notice Withdraw lpToken delay
+   * @param lpToken Address of lpToken
+   * @param amount Number of lpToken
+   */
   function queueWithdraw(address lpToken, uint256 amount) public virtual override whenNotPaused nonReentrant {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
@@ -300,8 +300,8 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Get pending rewards
-    @param lpToken Address of lpToken
+   * @notice Get pending rewards
+   * @param lpToken Address of lpToken
    */
   function claim(address lpToken) public virtual override nonReentrant whenNotPaused returns (uint256) {
     uint256 pid = getPid(lpToken);
@@ -316,7 +316,7 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Get all pending rewards
+   * @notice Get all pending rewards
    */
   function claimAll() public virtual override nonReentrant whenNotPaused returns (uint256) {
     uint256 length = poolInfos.length;
@@ -336,9 +336,9 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Withdraw lpToken
-    @param lpToken Address of lpToken
-    @param id Withdraw id 
+   * @notice Withdraw lpToken
+   * @param lpToken Address of lpToken
+   * @param id Withdraw id
    */
   function executeWithdraw(address lpToken, bytes32 id) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
@@ -362,9 +362,8 @@ contract P12MineUpgradeable is
   }
 
   /**
-​    @notice withdraw lpToken Emergency
-  */
-
+​   * @notice withdraw lpToken Emergency
+   */
   function withdrawAllLpTokenEmergency() public virtual override {
     uint256 length = poolInfos.length;
 
@@ -378,9 +377,9 @@ contract P12MineUpgradeable is
   }
 
   /**
-​    @notice withdraw all lpToken Emergency
-    @param lpToken address of lpToken
-  */
+​   * @notice withdraw all lpToken Emergency
+   * @param lpToken address of lpToken
+   */
   function withdrawLpTokenEmergency(address lpToken) public virtual override nonReentrant onlyEmergency {
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
@@ -395,12 +394,13 @@ contract P12MineUpgradeable is
 
   // ============ Internal ============
 
+  /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   /**
-    @notice Transfer p12 to user
-    @param  to The address of receiver
-    @param amount Number of p12
+   * @notice Transfer p12 to user
+   * @param  to The address of receiver
+   * @param amount Number of p12
    */
   function _safeP12Transfer(address to, uint256 amount) internal virtual {
     p12RewardVault.reward(to, amount);
@@ -409,11 +409,11 @@ contract P12MineUpgradeable is
   }
 
   /**
-    @notice Create withdraw id
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
-    @param to Address of receiver
-    @return hash Get a withdraw Id
+   * @notice Create withdraw id
+   * @param lpToken Address of lpToken
+   * @param amount Number of lpToken
+   * @param to Address of receiver
+   * @return hash Get a withdraw Id
    */
   function _createWithdrawId(
     address lpToken,
@@ -428,9 +428,9 @@ contract P12MineUpgradeable is
 
   // ============ checkpoint ============
   /**
-      @notice update checkpoint for pool
-      @param pid Pool Id
-  */
+   * @notice update checkpoint for pool
+   * @param pid Pool Id
+   */
   function _checkpoint(uint256 pid) internal virtual whenNotPaused {
     PoolInfo storage pool = poolInfos[pid];
     uint256 _accP12PerShare = pool.accP12PerShare;

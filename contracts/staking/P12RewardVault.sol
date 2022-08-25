@@ -20,16 +20,16 @@ contract P12RewardVault is SafeOwnable, IP12RewardVault {
   }
 
   /**
-    @notice Send reward to user
-    @param to The address of awards 
-    @param amount number of awards 
+   * @notice Send reward to user
+   * @param to The address of awards 
+   * @param amount number of awards 
    */
   function reward(address to, uint256 amount) external virtual override onlyOwner {
     IERC20(p12Token).safeTransfer(to, amount);
   }
 
   /**
-    @notice withdraw token Emergency
+   * @notice withdraw token Emergency
    */
   function withdrawEmergency(address to) external virtual override onlyOwner {
     require(to != address(0), 'P12RV: address cannot be 0');

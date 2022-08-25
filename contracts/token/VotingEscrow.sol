@@ -63,12 +63,12 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     uint256 _epoch;
   }
 
-  /** 
-    @notice Contract constructor
-    @param p12TokenAddr_ `ERC20P12` token address
-    @param name_ Token name
-    @param symbol_ Token symbol
-  */
+  /**
+   * @notice Contract constructor
+   * @param p12TokenAddr_ `ERC20P12` token address
+   * @param name_ Token name
+   * @param symbol_ Token symbol
+   */
   constructor(
     address p12TokenAddr_,
     string memory name_,
@@ -87,50 +87,50 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     emit Expired(msg.sender, block.timestamp);
   }
 
-  /** 
-    @notice Get the most recently recorded rate of voting power decrease for `addr`
-    @param addr Address of the user wallet
-    @return Value of the slope
-  */
+  /**
+   * @notice Get the most recently recorded rate of voting power decrease for `addr`
+   * @param addr Address of the user wallet
+   * @return Value of the slope
+   */
 
   function getLastUserSlope(address addr) external view returns (int256) {
     uint256 uEpoch = userPointEpoch[addr];
     return userPointHistory[addr][uEpoch].slope;
   }
 
-  /** 
-    @notice Get the timestamp for checkpoint `idx` for `addr`
-    @param addr User wallet address
-    @param idx User epoch number
-    @return Epoch time of the checkpoint
-  */
+  /**
+   * @notice Get the timestamp for checkpoint `idx` for `addr`
+   * @param addr User wallet address
+   * @param idx User epoch number
+   * @return Epoch time of the checkpoint
+   */
   function userPointHistoryTs(address addr, uint256 idx) external view returns (uint256) {
     return userPointHistory[addr][idx].ts;
   }
 
   /**
-    @notice Get timestamp when `addr`'s lock finishes
-    @param addr User wallet 
-    @return Epoch time of the lock end
-  */
+   * @notice Get timestamp when `addr`'s lock finishes
+   * @param addr User wallet
+   * @return Epoch time of the lock end
+   */
   function lockedEnd(address addr) external view returns (uint256) {
     return locked[addr].end;
   }
 
   /**
-    @notice Record global data to checkpoint
-  */
+   * @notice Record global data to checkpoint
+   */
   function checkPoint() external {
     _checkPoint(address(0), LockedBalance({ amount: 0, end: 0 }), LockedBalance({ amount: 0, end: 0 }));
   }
 
   /**
-    @notice Deposit `value` tokens for `addr` and add to the lock
-    @dev Anyone (even a smart contract) can deposit for someone else, but
-         cannot extend their lockTime and deposit for a brand new user
-    @param addr User's wallet address
-    @param value Amount to add to user's lock  
-  */
+   * @notice Deposit `value` tokens for `addr` and add to the lock
+   * @dev Anyone (even a smart contract) can deposit for someone else, but
+   *      cannot extend their lockTime and deposit for a brand new user
+   * @param addr User's wallet address
+   * @param value Amount to add to user's lock
+   */
   function depositFor(address addr, uint256 value) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[addr];
     require(value > 0, 'VotingEscrow: invalid value');
@@ -139,11 +139,11 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     _depositFor(addr, value, 0, locked[addr], OperationType.DEPOSIT_FOR_TYPE);
   }
 
-  /** 
-    @notice Deposit `value` tokens for `msg.sender` and lock until `unlock_time`
-    @param value Amount to deposit
-    @param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
-  */
+  /**
+   * @notice Deposit `value` tokens for `msg.sender` and lock until `unlock_time`
+   * @param value Amount to deposit
+   * @param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
+   */
   function createLock(uint256 value, uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
     //lockTime is rounded down to weeks
     uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
@@ -156,10 +156,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   }
 
   /**
-    @notice Deposit `value` additional tokens for `msg.sender`
-            without modifying the unlock time
-    @param value Amount of tokens to deposit and add to the lock
-  */
+   * @notice Deposit `value` additional tokens for `msg.sender`
+   *         without modifying the unlock time
+   * @param value Amount of tokens to deposit and add to the lock
+   */
   function increaseAmount(uint256 value) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[msg.sender];
     require(value > 0, 'VotingEscrow: invalid value');
@@ -168,10 +168,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     _depositFor(msg.sender, value, 0, _locked, OperationType.INCREASE_LOCK_AMOUNT);
   }
 
-  /** 
-    @notice Extend the unlock time for `msg.sender` to `unlock_time`
-    @param unlockTime New epoch time for unlocking
-  */
+  /**
+   * @notice Extend the unlock time for `msg.sender` to `unlock_time`
+   * @param unlockTime New epoch time for unlocking
+   */
   function increaseUnlockTime(uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[msg.sender];
     uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
@@ -182,10 +182,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     _depositFor(msg.sender, 0, _unlockTime, _locked, OperationType.INCREASE_LOCK_AMOUNT);
   }
 
-  /** 
-    @notice Withdraw all tokens for `msg.sender`
-    @dev Only possible if the lock has expired or contract expired
-  */
+  /**
+   * @notice Withdraw all tokens for `msg.sender`
+   * @dev Only possible if the lock has expired or contract expired
+   */
   function withdraw() external nonReentrant whenNotPaused {
     LockedBalance memory _locked = locked[msg.sender];
     require(_locked.amount > 0, 'VotingEscrow: no locked token');
@@ -210,12 +210,12 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     emit TotalLocked(totalLockedP12Before, totalLockedP12Before - value);
   }
 
-  /** 
-    @notice Get the current voting power for `msg.sender`
-    @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
-    @param addr User wallet address
-    @return User voting power
-  */
+  /**
+   * @notice Get the current voting power for `msg.sender`
+   * @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
+   * @param addr User wallet address
+   * @return User voting power
+   */
   function balanceOf(address addr) external view returns (int256) {
     uint256 _epoch = userPointEpoch[addr];
     if (_epoch == 0) {
@@ -230,13 +230,13 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     }
   }
 
-  /** 
-    @notice Measure voting power of `addr` at block height `_block`
-    @dev Adheres to MiniMe `balanceOfAt` interface: https://github.com/Giveth/minime
-    @param addr User's wallet address
-    @param blk Block to calculate the voting power at
-    @return Voting power
-  */
+  /**
+   * @notice Measure voting power of `addr` at block height `_block`
+   * @dev Adheres to MiniMe `balanceOfAt` interface: https://github.com/Giveth/minime
+   * @param addr User's wallet address
+   * @param blk Block to calculate the voting power at
+   * @return Voting power
+   */
   function balanceOfAt(address addr, uint256 blk) external view returns (int256) {
     require(blk <= block.number, 'VotingEscrow: invalid block');
     // Binary search
@@ -280,12 +280,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   }
 
   /**
-   
-    @notice Calculate total voting power
-    @dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
-    @return Total voting power
-  
-  */
+   * @notice Calculate total voting power
+   * @dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
+   * @return Total voting power
+   */
 
   function totalSupply() external view returns (uint256) {
     uint256 _epoch = epoch;
@@ -293,11 +291,11 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     return supplyAt(lastPoint, block.timestamp);
   }
 
-  /** 
-    @notice Calculate total voting power at some point in the past
-    @param blk Block to calculate the total voting power at
-    @return Total voting power at `_block`
-  */
+  /**
+   * @notice Calculate total voting power at some point in the past
+   * @param blk Block to calculate the total voting power at
+   * @return Total voting power at `_block`
+   */
   function totalSupplyAt(uint256 blk) external view returns (uint256) {
     require(blk <= block.number, 'VotingEscrow: invalid block');
     uint256 _epoch = epoch;
@@ -329,12 +327,12 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     _unpause();
   }
 
-  /** 
-    @notice Binary search to estimate timestamp for block number
-    @param blk Block to find
-    @param maxEpoch Don't go beyond this epoch
-    @return Approximate timestamp for block
-  */
+  /**
+   * @notice Binary search to estimate timestamp for block number
+   * @param blk Block to find
+   * @param maxEpoch Don't go beyond this epoch
+   * @return Approximate timestamp for block
+   */
 
   function findBlockEpoch(uint256 blk, uint256 maxEpoch) public view returns (uint256) {
     uint256 _min = 0;
@@ -356,11 +354,11 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   // -------------internal------------------
 
   /**
-    @notice Record global and per-user data to checkpoint
-    @param addr User's wallet address. No user checkpoint if 0x0
-    @param oldLocked Previous locked amount / end lock time for the user
-    @param newLocked New locked amount / end lock time for the user
-  */
+   * @notice Record global and per-user data to checkpoint
+   * @param addr User's wallet address. No user checkpoint if 0x0
+   * @param oldLocked Previous locked amount / end lock time for the user
+   * @param newLocked New locked amount / end lock time for the user
+   */
 
   function _checkPoint(
     address addr,
@@ -491,13 +489,13 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   }
 
   /**
-    @notice Deposit and lock tokens for a user
-    @param addr User's wallet address
-    @param value Amount to deposit
-    @param unlockTime New time when to unlock the tokens, or 0 if unchanged
-    @param lockedBalance Previous locked amount / timestamp
-    @param t Operation type 
-  */
+   * @notice Deposit and lock tokens for a user
+   * @param addr User's wallet address
+   * @param value Amount to deposit
+   * @param unlockTime New time when to unlock the tokens, or 0 if unchanged
+   * @param lockedBalance Previous locked amount / timestamp
+   * @param t Operation type
+   */
 
   function _depositFor(
     address addr,
@@ -529,12 +527,12 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     emit TotalLocked(totalLockedP12Before, totalLockedP12Before + value);
   }
 
-  /** 
-    @notice Calculate total voting power at some point in the past
-    @param point The point (bias/slope) to start search from
-    @param t Time to calculate the total voting power at
-    @return Total voting power at that time
-  */
+  /**
+   * @notice Calculate total voting power at some point in the past
+   * @param point The point (bias/slope) to start search from
+   * @param t Time to calculate the total voting power at
+   * @return Total voting power at that time
+   */
   function supplyAt(Point memory point, uint256 t) internal view returns (uint256) {
     Point memory lastPoint = point;
     uint256 ti = (lastPoint.ts / WEEK) * WEEK;
