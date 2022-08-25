@@ -9,7 +9,7 @@ const config = {
   title: 'Document',
   tagline: '',
   url: 'https://p12.network',
-  baseUrl: '/',
+  baseUrl: '/contracts/',
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
