@@ -35,9 +35,9 @@ constructor() public
 function delegateType() external pure returns (uint256)
 ```
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| [0] | uint256 | delegateType the delegate's type |
+| Name | Type    | Description                      |
+| ---- | ------- | -------------------------------- |
+| [0]  | uint256 | delegateType the delegate's type |
 
 ### onERC1155BatchReceived
 
@@ -83,9 +83,8 @@ function executeSell(address seller, address buyer, bytes data) public returns (
 
 _run the sell to transfer item_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| seller | address | address which sell the item |
-| buyer | address | address which buy the item |
-| data | bytes | the item's data, which will be decode as a array of Pair |
-
+| Name   | Type    | Description                                              |
+| ------ | ------- | -------------------------------------------------------- |
+| seller | address | address which sell the item                              |
+| buyer  | address | address which buy the item                               |
+| data   | bytes   | the item's data, which will be decode as a array of Pair |

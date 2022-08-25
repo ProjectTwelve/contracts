@@ -7,7 +7,7 @@ function setP12CoinFactory(address newP12CoinFactory) external virtual
 ```
 
 set new p12CoinFactory
-  @param newP12CoinFactory address of p12CoinFactory
+@param newP12CoinFactory address of p12CoinFactory
 
 ### pause
 
@@ -35,9 +35,9 @@ function createCollection(string gameId, string contractURI) public
 
 _create Collection_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| gameId | string | a off-chain game id |
+| Name        | Type   | Description                 |
+| ----------- | ------ | --------------------------- |
+| gameId      | string | a off-chain game id         |
 | contractURI | string | contract-level metadata uri |
 
 ### createAssetAndMint
@@ -48,11 +48,11 @@ function createAssetAndMint(address collection, uint256 amount, string uri) publ
 
 _create asset and mint to msg.sender address_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
+| Name       | Type    | Description                     |
+| ---------- | ------- | ------------------------------- |
 | collection | address | which collection want to create |
-| amount | uint256 | amount of asset |
-| uri | string | new asset's metadata uri |
+| amount     | uint256 | amount of asset                 |
+| uri        | string  | new asset's metadata uri        |
 
 ### updateCollectionUri
 
@@ -62,10 +62,10 @@ function updateCollectionUri(address collection, string newUri) public
 
 _update Collection Uri_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
-| collection | address | collection address |
-| newUri | string | new Contract-level metadata uri |
+| Name       | Type    | Description                     |
+| ---------- | ------- | ------------------------------- |
+| collection | address | collection address              |
+| newUri     | string  | new Contract-level metadata uri |
 
 ### updateSftUri
 
@@ -75,13 +75,13 @@ function updateSftUri(address collection, uint256 tokenId, string newUri) public
 
 _update Sft Uri_
 
-| Name | Type | Description |
-| ---- | ---- | ----------- |
+| Name       | Type    | Description        |
+| ---------- | ------- | ------------------ |
 | collection | address | collection address |
-| tokenId | uint256 | token id |
-| newUri | string | new metadata uri |
+| tokenId    | uint256 | token id           |
+| newUri     | string  | new metadata uri   |
 
-### _authorizeUpgrade
+### \_authorizeUpgrade
 
 ```solidity
 function _authorizeUpgrade(address newImplementation) internal
@@ -100,4 +100,3 @@ modifier onlyDeveloper(string gameId)
 ```solidity
 modifier onlyCollectionDeveloper(address collection)
 ```
-

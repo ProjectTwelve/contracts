@@ -39,7 +39,7 @@ delayK and delayB is the linear function's parameter which could be changed late
 uint256 delayB
 ```
 
-### _initHash
+### \_initHash
 
 ```solidity
 bytes32 _initHash
@@ -73,7 +73,7 @@ address dev
 contract IGaugeController gaugeController
 ```
 
-### __gap
+### \_\_gap
 
 ```solidity
 uint256[40] __gap
@@ -111,5 +111,5 @@ struct MintCoinInfo {
   uint256 unlockTimestamp;
   bool executed;
 }
-```
 
+```

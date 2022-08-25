@@ -16,9 +16,8 @@ address p12CoinFactory
 
 p12CoinFactory address, for reading game and developer relationship
 
-### __gap
+### \_\_gap
 
 ```solidity
 uint256[49] __gap
 ```
-

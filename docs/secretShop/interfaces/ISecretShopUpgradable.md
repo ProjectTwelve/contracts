@@ -85,4 +85,3 @@ function updateCurrencies(contract IERC20Upgradeable[], contract IERC20Upgradeab
 ```solidity
 function run(struct Market.RunInput input) external payable
 ```
-

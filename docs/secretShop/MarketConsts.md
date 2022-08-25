@@ -25,6 +25,7 @@ struct OrderItem {
   uint256 price;
   bytes data;
 }
+
 ```
 
 ### Order
@@ -53,6 +54,7 @@ struct Fee {
   uint256 percentage;
   address to;
 }
+
 ```
 
 ### SettleDetail
@@ -78,6 +80,7 @@ struct SettleShared {
   address user;
   bool canFail;
 }
+
 ```
 
 ### RunInput
@@ -98,6 +101,7 @@ enum InvStatus {
   COMPLETE,
   CANCELLED
 }
+
 ```
 
 ### Op
@@ -109,6 +113,7 @@ enum Op {
   COMPLETE_BUY_OFFER,
   CANCEL_OFFER
 }
+
 ```
 
 ### DelegationType
@@ -119,5 +124,5 @@ enum DelegationType {
   ERC1155,
   ERC721
 }
-```
 
+```

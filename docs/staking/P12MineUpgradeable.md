@@ -19,7 +19,7 @@ function setP12CoinFactory(address newP12CoinFactory) external virtual
 ```
 
 set new p12CoinFactory
-  @param newP12CoinFactory address of p12CoinFactory
+@param newP12CoinFactory address of p12CoinFactory
 
 ### setGaugeController
 
@@ -28,7 +28,7 @@ function setGaugeController(contract IGaugeController newGaugeController) extern
 ```
 
 set new gaugeController
-  @param newGaugeController address of gaugeController
+@param newGaugeController address of gaugeController
 
 ### poolLength
 
@@ -44,7 +44,7 @@ Get pool len
 function withdrawEmergency() external virtual
 ```
 
-​    @notice withdraw token Emergency
+​ @notice withdraw token Emergency
 
 ### checkpoint
 
@@ -53,7 +53,7 @@ function checkpoint(address lpToken) external
 ```
 
 update checkpoint for pool
-    @param lpToken Address of lpToken
+@param lpToken Address of lpToken
 
 ### pause
 
@@ -74,11 +74,11 @@ function initialize(address p12Token_, address p12CoinFactory_, contract IGaugeC
 ```
 
 Contract initialization
-    @param p12Token_ Address of p12Token
-    @param p12CoinFactory_ Address of p12CoinFactory
-    @param gaugeController_ address of gaugeController
-    @param delayK_ delayK_ is a coefficient
-    @param delayB_ delayB_ is a coefficient
+@param p12Token* Address of p12Token
+@param p12CoinFactory* Address of p12CoinFactory
+@param gaugeController* address of gaugeController
+@param delayK* delayK* is a coefficient
+@param delayB* delayB\_ is a coefficient
 
 ### getWithdrawUnlockTimestamp
 
@@ -87,8 +87,8 @@ function getWithdrawUnlockTimestamp(address lpToken, uint256 amount) public view
 ```
 
 get withdraw unlockTimestamp
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
+@param lpToken Address of lpToken
+@param amount Number of lpToken
 
 ### getPid
 
@@ -97,7 +97,7 @@ function getPid(address lpToken) public view virtual returns (uint256)
 ```
 
 Get pool id
-    @param lpToken Address of lpToken
+@param lpToken Address of lpToken
 
 ### getUserLpBalance
 
@@ -106,9 +106,9 @@ function getUserLpBalance(address lpToken, address user) public view virtual ret
 ```
 
 Get user lpToken balance
-    @param lpToken Address of lpToken
-    @param user LpToken holder
-    @return Get lpToken balance
+@param lpToken Address of lpToken
+@param user LpToken holder
+@return Get lpToken balance
 
 ### addLpTokenInfoForGameCreator
 
@@ -117,8 +117,8 @@ function addLpTokenInfoForGameCreator(address lpToken, uint256 amount, address g
 ```
 
 This method is only used when creating game coin in p12CoinFactory
-    @param lpToken Address of lpToken
-    @param gameCoinCreator user of game coin creator
+@param lpToken Address of lpToken
+@param gameCoinCreator user of game coin creator
 
 ### emergency
 
@@ -135,7 +135,7 @@ function createPool(address lpToken) public virtual
 ```
 
 Create a new pool
-    @param lpToken Address of lpToken
+@param lpToken Address of lpToken
 
 ### setDelayK
 
@@ -143,9 +143,9 @@ Create a new pool
 function setDelayK(uint256 newDelayK) public virtual returns (bool)
 ```
 
-Set delayK value 
-    @param newDelayK Is a coefficient
-    @return Get bool result
+Set delayK value
+@param newDelayK Is a coefficient
+@return Get bool result
 
 ### setDelayB
 
@@ -153,9 +153,9 @@ Set delayK value
 function setDelayB(uint256 newDelayB) public virtual returns (bool)
 ```
 
-Set delayB value 
-    @param newDelayB Is a coefficient
-    @return Get bool result
+Set delayB value
+@param newDelayB Is a coefficient
+@return Get bool result
 
 ### setRate
 
@@ -164,7 +164,7 @@ function setRate(uint256 newRate) public virtual returns (bool)
 ```
 
 set new rate
-    @param newRate is p12 token inflation rate
+@param newRate is p12 token inflation rate
 
 ### checkpointAll
 
@@ -181,8 +181,8 @@ function deposit(address lpToken, uint256 amount) public virtual
 ```
 
 Deposit lpToken
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
+@param lpToken Address of lpToken
+@param amount Number of lpToken
 
 ### queueWithdraw
 
@@ -191,8 +191,8 @@ function queueWithdraw(address lpToken, uint256 amount) public virtual
 ```
 
 Withdraw lpToken delay
-  @param lpToken Address of lpToken
-  @param amount Number of lpToken
+@param lpToken Address of lpToken
+@param amount Number of lpToken
 
 ### claim
 
@@ -201,7 +201,7 @@ function claim(address lpToken) public virtual returns (uint256)
 ```
 
 Get pending rewards
-    @param lpToken Address of lpToken
+@param lpToken Address of lpToken
 
 ### claimAll
 
@@ -218,8 +218,8 @@ function executeWithdraw(address lpToken, bytes32 id) public virtual
 ```
 
 Withdraw lpToken
-    @param lpToken Address of lpToken
-    @param id Withdraw id
+@param lpToken Address of lpToken
+@param id Withdraw id
 
 ### withdrawAllLpTokenEmergency
 
@@ -227,7 +227,7 @@ Withdraw lpToken
 function withdrawAllLpTokenEmergency() public virtual
 ```
 
-​    @notice withdraw lpToken Emergency
+​ @notice withdraw lpToken Emergency
 
 ### withdrawLpTokenEmergency
 
@@ -235,21 +235,21 @@ function withdrawAllLpTokenEmergency() public virtual
 function withdrawLpTokenEmergency(address lpToken) public virtual
 ```
 
-​    @notice withdraw all lpToken Emergency
-    @param lpToken address of lpToken
+​ @notice withdraw all lpToken Emergency
+@param lpToken address of lpToken
 
-### _authorizeUpgrade
+### \_authorizeUpgrade
 
 ```solidity
 function _authorizeUpgrade(address newImplementation) internal
 ```
 
-_Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
+\_Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
 {upgradeTo} and {upgradeToAndCall}.
 
 Normally, this function will use an xref:access.adoc[access control] modifier such as {Ownable-onlyOwner}.
 
-```solidity
+````solidity
 function _authorizeUpgrade(address) internal override onlyOwner {}
 ```_
 
@@ -257,32 +257,32 @@ function _authorizeUpgrade(address) internal override onlyOwner {}
 
 ```solidity
 function _safeP12Transfer(address to, uint256 amount) internal virtual
-```
+````
 
 Transfer p12 to user
-    @param  to The address of receiver
-    @param amount Number of p12
+@param to The address of receiver
+@param amount Number of p12
 
-### _createWithdrawId
+### \_createWithdrawId
 
 ```solidity
 function _createWithdrawId(address lpToken, uint256 amount, address to) internal virtual returns (bytes32 hash)
 ```
 
 Create withdraw id
-    @param lpToken Address of lpToken
-    @param amount Number of lpToken
-    @param to Address of receiver
-    @return hash Get a withdraw Id
+@param lpToken Address of lpToken
+@param amount Number of lpToken
+@param to Address of receiver
+@return hash Get a withdraw Id
 
-### _checkpoint
+### \_checkpoint
 
 ```solidity
 function _checkpoint(uint256 pid) internal virtual
 ```
 
 update checkpoint for pool
-      @param pid Pool Id
+@param pid Pool Id
 
 ### lpTokenExist
 
@@ -313,4 +313,3 @@ modifier onlyP12Factory()
 ```solidity
 modifier onlyEmergency()
 ```
-

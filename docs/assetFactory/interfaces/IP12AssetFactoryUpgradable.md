@@ -51,4 +51,3 @@ function updateCollectionUri(address, string) external
 ```solidity
 function updateSftUri(address, uint256, string) external
 ```
-

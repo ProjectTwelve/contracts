@@ -203,4 +203,3 @@ function claimAll() external returns (uint256)
 ```solidity
 function checkpoint(address lpToken) external
 ```
-

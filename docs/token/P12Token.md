@@ -11,4 +11,3 @@ constructor(string name, string symbol, uint256 totalSupply) public
 ```solidity
 function mint(address recipient, uint256 amount) public
 ```
-

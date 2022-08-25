@@ -30,7 +30,7 @@ int128 nGauges
 uint256 timeTotal
 ```
 
-### __gap
+### \_\_gap
 
 ```solidity
 uint256[45] __gap
@@ -133,6 +133,7 @@ struct Point {
   uint256 bias;
   uint256 slope;
 }
+
 ```
 
 ### VotedSlope
@@ -143,6 +144,7 @@ struct VotedSlope {
   uint256 power;
   uint256 end;
 }
+
 ```
 
 ### TmpBiasAndSlope
@@ -154,6 +156,7 @@ struct TmpBiasAndSlope {
   uint256 oldSumBias;
   uint256 oldSumSlope;
 }
+
 ```
 
 ### TmpBias
@@ -163,5 +166,5 @@ struct TmpBias {
   uint256 oldBias;
   uint256 newBias;
 }
-```
 
+```

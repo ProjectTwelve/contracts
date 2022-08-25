@@ -60,7 +60,7 @@ bool isEmergency
 uint256 emergencyUnlockTime
 ```
 
-### __gap
+### \_\_gap
 
 ```solidity
 uint256[40] __gap
@@ -109,6 +109,7 @@ struct UserInfo {
   uint256 amount;
   uint256 rewardDebt;
 }
+
 ```
 
 ### PoolInfo
@@ -120,6 +121,7 @@ struct PoolInfo {
   uint256 amount;
   uint256 period;
 }
+
 ```
 
 ### WithdrawInfo
@@ -131,5 +133,5 @@ struct WithdrawInfo {
   uint256 unlockTimestamp;
   bool executed;
 }
-```
 
+```

@@ -1,12 +1,12 @@
 ## SafeOwnable
 
-### _owner
+### \_owner
 
 ```solidity
 address _owner
 ```
 
-### _pendingOwner
+### \_pendingOwner
 
 ```solidity
 address _pendingOwner
@@ -56,11 +56,11 @@ _Throws if called by any account other than the owner._
 function renounceOwnership() public virtual
 ```
 
-_Leaves the contract without owner. It will not be possible to call
+\_Leaves the contract without owner. It will not be possible to call
 `onlyOwner` functions anymore. Can only be called by the current owner.
 
 NOTE: Renouncing ownership will leave the contract without an owner,
-thereby removing any functionality that is only available to the owner._
+thereby removing any functionality that is only available to the owner.\_
 
 ### transferOwnership
 
@@ -81,7 +81,7 @@ function claimOwnership() public
 
 _pending owner call this function to claim ownership_
 
-### _transferOwnership
+### \_transferOwnership
 
 ```solidity
 function _transferOwnership(address newOwner) internal virtual
@@ -90,7 +90,7 @@ function _transferOwnership(address newOwner) internal virtual
 _Transfers ownership of the contract to a new account (`newOwner`).
 Internal function without access restriction._
 
-### _transferPendingOwnership
+### \_transferPendingOwnership
 
 ```solidity
 function _transferPendingOwnership(address newOwner) internal virtual
@@ -99,7 +99,7 @@ function _transferPendingOwnership(address newOwner) internal virtual
 _set the pending owner address
 Internal function without access restriction._
 
-### _claimOwnership
+### \_claimOwnership
 
 ```solidity
 function _claimOwnership() internal virtual
@@ -107,4 +107,3 @@ function _claimOwnership() internal virtual
 
 _claim ownership of the contract to a new account (`newOwner`).
 Internal function without access restriction._
-
