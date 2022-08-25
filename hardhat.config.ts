@@ -101,6 +101,7 @@ const config: HardhatUserConfig = {
   docgen: {
     pages: 'files',
     exclude: ['tests'],
+    templates: 'theme/markdown',
   },
 };
 
