@@ -2,7 +2,7 @@
   "name": "@p12/contracts",
   "license": "GPL-3.0",
   "engines": {
-    "node": ">=14"
+    "node": ">=16"
   },
   "scripts": {
     "prepare": "husky install",
