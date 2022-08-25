@@ -11,3 +11,4 @@ function getLastUserSlope(address addr) external returns (int256)
 ```solidity
 function lockedEnd(address addr) external returns (uint256)
 ```
+

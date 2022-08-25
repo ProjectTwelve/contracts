@@ -19,8 +19,8 @@ function reward(address to, uint256 amount) external virtual
 ```
 
 Send reward to user
-@param to The address of awards
-@param amount number of awards
+    @param to The address of awards 
+    @param amount number of awards
 
 ### withdrawEmergency
 
@@ -29,3 +29,4 @@ function withdrawEmergency(address to) external virtual
 ```
 
 withdraw token Emergency
+

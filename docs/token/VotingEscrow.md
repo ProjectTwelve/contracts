@@ -99,7 +99,6 @@ enum OperationType {
   INCREASE_LOCK_AMOUNT,
   INCREASE_UNLOCK_TIME
 }
-
 ```
 
 ### Expired
@@ -135,7 +134,6 @@ struct Point {
   uint256 ts;
   uint256 blk;
 }
-
 ```
 
 ### LockedBalance
@@ -145,7 +143,6 @@ struct LockedBalance {
   int256 amount;
   uint256 end;
 }
-
 ```
 
 ### CheckPointState
@@ -156,7 +153,6 @@ struct CheckPointState {
   int256 newDslope;
   uint256 _epoch;
 }
-
 ```
 
 ### constructor
@@ -166,9 +162,9 @@ constructor(address p12TokenAddr_, string name_, string symbol_) public
 ```
 
 Contract constructor
-@param p12TokenAddr* `ERC20P12` token address
-@param name* Token name
-@param symbol\_ Token symbol
+    @param p12TokenAddr_ `ERC20P12` token address
+    @param name_ Token name
+    @param symbol_ Token symbol
 
 ### expire
 
@@ -183,8 +179,8 @@ function getLastUserSlope(address addr) external view returns (int256)
 ```
 
 Get the most recently recorded rate of voting power decrease for `addr`
-@param addr Address of the user wallet
-@return Value of the slope
+    @param addr Address of the user wallet
+    @return Value of the slope
 
 ### userPointHistoryTs
 
@@ -193,9 +189,9 @@ function userPointHistoryTs(address addr, uint256 idx) external view returns (ui
 ```
 
 Get the timestamp for checkpoint `idx` for `addr`
-@param addr User wallet address
-@param idx User epoch number
-@return Epoch time of the checkpoint
+    @param addr User wallet address
+    @param idx User epoch number
+    @return Epoch time of the checkpoint
 
 ### lockedEnd
 
@@ -204,8 +200,8 @@ function lockedEnd(address addr) external view returns (uint256)
 ```
 
 Get timestamp when `addr`'s lock finishes
-@param addr User wallet
-@return Epoch time of the lock end
+    @param addr User wallet 
+    @return Epoch time of the lock end
 
 ### checkPoint
 
@@ -222,10 +218,10 @@ function depositFor(address addr, uint256 value) external
 ```
 
 Deposit `value` tokens for `addr` and add to the lock
-@dev Anyone (even a smart contract) can deposit for someone else, but
-cannot extend their lockTime and deposit for a brand new user
-@param addr User's wallet address
-@param value Amount to add to user's lock
+    @dev Anyone (even a smart contract) can deposit for someone else, but
+         cannot extend their lockTime and deposit for a brand new user
+    @param addr User's wallet address
+    @param value Amount to add to user's lock
 
 ### createLock
 
@@ -234,8 +230,8 @@ function createLock(uint256 value, uint256 unlockTime) external
 ```
 
 Deposit `value` tokens for `msg.sender` and lock until `unlock_time`
-@param value Amount to deposit
-@param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
+    @param value Amount to deposit
+    @param unlockTime Epoch time when tokens unlock, rounded down to whole weeks
 
 ### increaseAmount
 
@@ -244,8 +240,8 @@ function increaseAmount(uint256 value) external
 ```
 
 Deposit `value` additional tokens for `msg.sender`
-without modifying the unlock time
-@param value Amount of tokens to deposit and add to the lock
+            without modifying the unlock time
+    @param value Amount of tokens to deposit and add to the lock
 
 ### increaseUnlockTime
 
@@ -254,7 +250,7 @@ function increaseUnlockTime(uint256 unlockTime) external
 ```
 
 Extend the unlock time for `msg.sender` to `unlock_time`
-@param unlockTime New epoch time for unlocking
+    @param unlockTime New epoch time for unlocking
 
 ### withdraw
 
@@ -263,7 +259,7 @@ function withdraw() external
 ```
 
 Withdraw all tokens for `msg.sender`
-@dev Only possible if the lock has expired or contract expired
+    @dev Only possible if the lock has expired or contract expired
 
 ### balanceOf
 
@@ -272,9 +268,9 @@ function balanceOf(address addr) external view returns (int256)
 ```
 
 Get the current voting power for `msg.sender`
-@dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
-@param addr User wallet address
-@return User voting power
+    @dev Adheres to the ERC20 `balanceOf` interface for Aragon compatibility
+    @param addr User wallet address
+    @return User voting power
 
 ### balanceOfAt
 
@@ -283,10 +279,10 @@ function balanceOfAt(address addr, uint256 blk) external view returns (int256)
 ```
 
 Measure voting power of `addr` at block height `_block`
-@dev Adheres to MiniMe `balanceOfAt` interface: https://github.com/Giveth/minime
-@param addr User's wallet address
-@param blk Block to calculate the voting power at
-@return Voting power
+    @dev Adheres to MiniMe `balanceOfAt` interface: https://github.com/Giveth/minime
+    @param addr User's wallet address
+    @param blk Block to calculate the voting power at
+    @return Voting power
 
 ### totalSupply
 
@@ -295,8 +291,8 @@ function totalSupply() external view returns (uint256)
 ```
 
 Calculate total voting power
-@dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
-@return Total voting power
+    @dev Adheres to the ERC20 `totalSupply` interface for Aragon compatibility
+    @return Total voting power
 
 ### totalSupplyAt
 
@@ -305,8 +301,8 @@ function totalSupplyAt(uint256 blk) external view returns (uint256)
 ```
 
 Calculate total voting power at some point in the past
-@param blk Block to calculate the total voting power at
-@return Total voting power at `_block`
+    @param blk Block to calculate the total voting power at
+    @return Total voting power at `_block`
 
 ### pause
 
@@ -327,33 +323,33 @@ function findBlockEpoch(uint256 blk, uint256 maxEpoch) public view returns (uint
 ```
 
 Binary search to estimate timestamp for block number
-@param blk Block to find
-@param maxEpoch Don't go beyond this epoch
-@return Approximate timestamp for block
+    @param blk Block to find
+    @param maxEpoch Don't go beyond this epoch
+    @return Approximate timestamp for block
 
-### \_checkPoint
+### _checkPoint
 
 ```solidity
 function _checkPoint(address addr, struct VotingEscrow.LockedBalance oldLocked, struct VotingEscrow.LockedBalance newLocked) internal
 ```
 
 Record global and per-user data to checkpoint
-@param addr User's wallet address. No user checkpoint if 0x0
-@param oldLocked Previous locked amount / end lock time for the user
-@param newLocked New locked amount / end lock time for the user
+    @param addr User's wallet address. No user checkpoint if 0x0
+    @param oldLocked Previous locked amount / end lock time for the user
+    @param newLocked New locked amount / end lock time for the user
 
-### \_depositFor
+### _depositFor
 
 ```solidity
 function _depositFor(address addr, uint256 value, uint256 unlockTime, struct VotingEscrow.LockedBalance lockedBalance, enum VotingEscrow.OperationType t) internal
 ```
 
 Deposit and lock tokens for a user
-@param addr User's wallet address
-@param value Amount to deposit
-@param unlockTime New time when to unlock the tokens, or 0 if unchanged
-@param lockedBalance Previous locked amount / timestamp
-@param t Operation type
+    @param addr User's wallet address
+    @param value Amount to deposit
+    @param unlockTime New time when to unlock the tokens, or 0 if unchanged
+    @param lockedBalance Previous locked amount / timestamp
+    @param t Operation type
 
 ### supplyAt
 
@@ -362,12 +358,13 @@ function supplyAt(struct VotingEscrow.Point point, uint256 t) internal view retu
 ```
 
 Calculate total voting power at some point in the past
-@param point The point (bias/slope) to start search from
-@param t Time to calculate the total voting power at
-@return Total voting power at that time
+    @param point The point (bias/slope) to start search from
+    @param t Time to calculate the total voting power at
+    @return Total voting power at that time
 
 ### contractNotExpired
 
 ```solidity
 modifier contractNotExpired()
 ```
+

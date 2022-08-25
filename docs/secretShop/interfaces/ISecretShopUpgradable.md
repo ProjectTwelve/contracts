@@ -56,12 +56,6 @@ event EvFailure(uint256 index, bytes error)
 
 _event to record a order failing_
 
-### recoverSigner
-
-```solidity
-function recoverSigner(struct Market.Order) external view returns (address)
-```
-
 ### runSingle
 
 ```solidity
@@ -91,3 +85,4 @@ function updateCurrencies(contract IERC20Upgradeable[], contract IERC20Upgradeab
 ```solidity
 function run(struct Market.RunInput input) external payable
 ```
+

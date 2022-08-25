@@ -25,7 +25,7 @@ function setVotingEscrow(contract IVotingEscrow newVotingEscrow) external virtua
 ```
 
 set new votingEscrow
-@param newVotingEscrow address of votingEscrow
+    @param newVotingEscrow address of votingEscrow
 
 ### setP12CoinFactory
 
@@ -34,7 +34,7 @@ function setP12CoinFactory(address newP12Factory) external virtual
 ```
 
 set new p12CoinFactory
-@param newP12Factory address of newP12Factory
+    @param newP12Factory address of newP12Factory
 
 ### getGaugeTypes
 
@@ -43,8 +43,8 @@ function getGaugeTypes(address addr) external view virtual returns (int128)
 ```
 
 Get gauge type for address
-@param addr Gauge address
-@return Gauge type id
+    @param addr Gauge address
+    @return Gauge type id
 
 ### addGauge
 
@@ -53,9 +53,9 @@ function addGauge(address addr, int128 gaugeType, uint256 weight) external virtu
 ```
 
 Add gauge `addr` of type `gaugeType` with weight `weight`
-@param addr Gauge address
-@param gaugeType Gauge type
-@param weight Gauge weight
+    @param addr Gauge address
+    @param gaugeType Gauge type
+    @param weight Gauge weight
 
 ### checkpoint
 
@@ -72,7 +72,7 @@ function checkpointGauge(address addr) external virtual
 ```
 
 Checkpoint to fill data for both a specific gauge and common for all gauges
-@param addr Gauge address
+    @param addr Gauge address
 
 ### gaugeRelativeWeight
 
@@ -81,11 +81,11 @@ function gaugeRelativeWeight(address addr, uint256 time) external view virtual r
 ```
 
 Get Gauge relative weight (not more than 1.0) normalized to 1e18
-(e.g. 1.0 == 1e18). Inflation which will be received by it is
-inflation_rate \* relative_weight / 1e18
-@param addr Gauge address
-@param time Relative weight at the specified timestamp in the past or present
-@return Value of relative weight normalized to 1e18
+            (e.g. 1.0 == 1e18). Inflation which will be received by it is
+            inflation_rate * relative_weight / 1e18
+    @param addr Gauge address
+    @param time Relative weight at the specified timestamp in the past or present
+    @return Value of relative weight normalized to 1e18
 
 ### gaugeRelativeWeightWrite
 
@@ -94,11 +94,11 @@ function gaugeRelativeWeightWrite(address addr, uint256 time) external virtual r
 ```
 
 Get gauge weight normalized to 1e18 and also fill all the unfilled
-values for type and gauge records
-@dev Any address can call, however nothing is recorded if the values are filled already
-@param addr Gauge address
-@param time Relative weight at the specified timestamp in the past or present
-@return Value of relative weight normalized to 1e18
+        values for type and gauge records
+    @dev Any address can call, however nothing is recorded if the values are filled already
+    @param addr Gauge address
+    @param time Relative weight at the specified timestamp in the past or present
+    @return Value of relative weight normalized to 1e18
 
 ### addType
 
@@ -107,8 +107,8 @@ function addType(string name, uint256 weight) external virtual
 ```
 
 Add gauge type with name `name` and weight `weight`
-@param name Name of gauge type
-@param weight Weight of gauge type
+    @param name Name of gauge type
+    @param weight Weight of gauge type
 
 ### changeTypeWeight
 
@@ -117,8 +117,8 @@ function changeTypeWeight(int128 typeId, uint256 weight) external virtual
 ```
 
 Change gauge type `typeId` weight to `weight`
-@param typeId Gauge type id
-@param weight New Gauge weight
+    @param typeId Gauge type id
+    @param weight New Gauge weight
 
 ### changeGaugeWeight
 
@@ -127,8 +127,8 @@ function changeGaugeWeight(address addr, uint256 weight) external virtual
 ```
 
 Change weight of gauge `addr` to `weight`
-@param addr `GaugeController` contract address
-@param weight New Gauge weight
+    @param addr `GaugeController` contract address
+    @param weight New Gauge weight
 
 ### voteForGaugeWeights
 
@@ -137,8 +137,8 @@ function voteForGaugeWeights(address gaugeAddr, uint256 userWeight) external vir
 ```
 
 Allocate voting power for changing pool weights
-@param gaugeAddr Gauge which `msg.sender` votes for
-@param userWeight Weight for a gauge in bps (units of 0.01%). Minimal is 0.01%. Ignored if 0
+        @param gaugeAddr Gauge which `msg.sender` votes for
+        @param userWeight Weight for a gauge in bps (units of 0.01%). Minimal is 0.01%. Ignored if 0
 
 ### getGaugeWeight
 
@@ -147,8 +147,8 @@ function getGaugeWeight(address addr) external view virtual returns (uint256)
 ```
 
 Get current gauge weight
-@param addr Gauge address
-@return Gauge weight
+        @param addr Gauge address
+        @return Gauge weight
 
 ### getTypeWeight
 
@@ -157,8 +157,8 @@ function getTypeWeight(int128 typeId) external view virtual returns (uint256)
 ```
 
 Get current type weight
-@param typeId Type id
-@return Type weight
+      @param typeId Type id
+      @return Type weight
 
 ### getTotalWeight
 
@@ -167,7 +167,7 @@ function getTotalWeight() external view virtual returns (uint256)
 ```
 
 Get current total (type-weighted) weight
-@return Total weight
+        @return Total weight
 
 ### getWeightsSumPerType
 
@@ -176,8 +176,8 @@ function getWeightsSumPerType(int128 typeId) external view virtual returns (uint
 ```
 
 Get sum of gauge weights per type
-@param typeId Type id
-@return Sum of gauge weights
+        @param typeId Type id
+        @return Sum of gauge weights
 
 ### pause
 
@@ -197,18 +197,18 @@ function unpause() public
 function initialize(address votingEscrow_, address p12CoinFactory_) public
 ```
 
-### \_authorizeUpgrade
+### _authorizeUpgrade
 
 ```solidity
 function _authorizeUpgrade(address newImplementation) internal
 ```
 
-\_Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
+_Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
 {upgradeTo} and {upgradeToAndCall}.
 
 Normally, this function will use an xref:access.adoc[access control] modifier such as {Ownable-onlyOwner}.
 
-````solidity
+```solidity
 function _authorizeUpgrade(address) internal override onlyOwner {}
 ```_
 
@@ -216,66 +216,67 @@ function _authorizeUpgrade(address) internal override onlyOwner {}
 
 ```solidity
 function _getTypeWeight(int128 gaugeType) internal virtual returns (uint256)
-````
+```
 
 Fill historic type weights week-over-week for missed checkins
-and return the type weight for the future week
-@param gaugeType Gauge type id
-@return Type weight
+        and return the type weight for the future week
+    @param gaugeType Gauge type id
+    @return Type weight
 
-### \_getSum
+### _getSum
 
 ```solidity
 function _getSum(int128 gaugeType) internal virtual returns (uint256)
 ```
 
 Fill sum of gauge weights for the same type week-over-week for
-missed checkins and return the sum for the future week
-@param gaugeType Gauge type id
-@return Sum of weights
+        missed checkins and return the sum for the future week
+    @param gaugeType Gauge type id
+    @return Sum of weights
 
-### \_getTotal
+### _getTotal
 
 ```solidity
 function _getTotal() internal virtual returns (uint256)
 ```
 
 Fill historic total weights week-over-week for missed checkins
-and return the total for the future week
-@return Total weight
+      and return the total for the future week
+    @return Total weight
 
-### \_getWeight
+### _getWeight
 
 ```solidity
 function _getWeight(address gaugeAddr) internal virtual returns (uint256)
 ```
 
 Fill historic gauge weights week-over-week for missed checkins
-and return the total for the future week
-@param gaugeAddr Address of the gauge
-@return Gauge weight
+        and return the total for the future week
+    @param gaugeAddr Address of the gauge
+    @return Gauge weight
 
-### \_gaugeRelativeWeight
+### _gaugeRelativeWeight
 
 ```solidity
 function _gaugeRelativeWeight(address addr, uint256 time) internal view virtual returns (uint256)
 ```
 
 Get Gauge relative weight (not more than 1.0) normalized to 1e18
-(e.g. 1.0 == 1e18). Inflation which will be received by it is
-inflation_rate \* relative_weight / 1e18
-@param addr Gauge address
-@param time Relative weight at the specified timestamp in the past or present
-@return Value of relative weight normalized to 1e18
+            (e.g. 1.0 == 1e18). Inflation which will be received by it is
+            inflation_rate * relative_weight / 1e18
+    @param addr Gauge address
+    @param time Relative weight at the specified timestamp in the past or present
+    @return Value of relative weight normalized to 1e18
 
-### \_changeTypeWeight
+### _changeTypeWeight
 
 ```solidity
 function _changeTypeWeight(int128 typeId, uint256 weight) internal virtual
 ```
 
-### \_changeGaugeWeight
+### _changeGaugeWeight
 
 ```solidity
 function _changeGaugeWeight(address addr, uint256 weight) internal virtual
 ```
+

@@ -8,8 +8,8 @@ function setDev(address newDev) external virtual
 
 _set dev address_
 
-| Name   | Type    | Description     |
-| ------ | ------- | --------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newDev | address | new dev address |
 
 ### setP12Mine
@@ -20,8 +20,8 @@ function setP12Mine(contract IP12MineUpgradeable newP12Mine) external virtual
 
 _set p12mine contract address_
 
-| Name       | Type                         | Description         |
-| ---------- | ---------------------------- | ------------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newP12Mine | contract IP12MineUpgradeable | new p12mine address |
 
 ### setGaugeController
@@ -32,8 +32,8 @@ function setGaugeController(contract IGaugeController newGaugeController) extern
 
 _set gaugeController contract address_
 
-| Name               | Type                      | Description                 |
-| ------------------ | ------------------------- | --------------------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newGaugeController | contract IGaugeController | new gaugeController address |
 
 ### setP12Token
@@ -45,8 +45,8 @@ function setP12Token(address newP12Token) external virtual
 _set p12Token address
 reserved only during development_
 
-| Name        | Type    | Description          |
-| ----------- | ------- | -------------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newP12Token | address | new p12Token address |
 
 ### setUniswapFactory
@@ -58,8 +58,8 @@ function setUniswapFactory(contract IUniswapV2Factory newUniswapFactory) externa
 _set uniswapFactory address
 reserved only during development_
 
-| Name              | Type                       | Description                |
-| ----------------- | -------------------------- | -------------------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newUniswapFactory | contract IUniswapV2Factory | new UniswapFactory address |
 
 ### setUniswapRouter
@@ -71,8 +71,8 @@ function setUniswapRouter(contract IUniswapV2Router02 newUniswapRouter) external
 _set uniswapRouter address
 reserved only during development_
 
-| Name             | Type                        | Description               |
-| ---------------- | --------------------------- | ------------------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newUniswapRouter | contract IUniswapV2Router02 | new uniswapRouter address |
 
 ### register
@@ -83,9 +83,9 @@ function register(string gameId, address developer) external virtual
 
 _create binding between game and developer, only called by p12 backend_
 
-| Name      | Type    | Description                          |
-| --------- | ------- | ------------------------------------ |
-| gameId    | string  | game id                              |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| gameId | string | game id |
 | developer | address | developer address, who own this game |
 
 ### create
@@ -96,17 +96,17 @@ function create(string name, string symbol, string gameId, string gameCoinIconUr
 
 _developer first create their game coin_
 
-| Name            | Type    | Description                             |
-| --------------- | ------- | --------------------------------------- |
-| name            | string  | new game coin's name                    |
-| symbol          | string  | game coin's symbol                      |
-| gameId          | string  | the game's id                           |
-| gameCoinIconUrl | string  | game coin icon's url                    |
-| amountGameCoin  | uint256 | how many coin first mint                |
-| amountP12       | uint256 | how many P12 coin developer would stake |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| name | string | new game coin's name |
+| symbol | string | game coin's symbol |
+| gameId | string | the game's id |
+| gameCoinIconUrl | string | game coin icon's url |
+| amountGameCoin | uint256 | how many coin first mint |
+| amountP12 | uint256 | how many P12 coin developer would stake |
 
-| Name            | Type                  | Description                      |
-| --------------- | --------------------- | -------------------------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | gameCoinAddress | contract IP12GameCoin | the address of the new game coin |
 
 ### queueMintCoin
@@ -117,11 +117,11 @@ function queueMintCoin(string gameId, contract IP12GameCoin gameCoinAddress, uin
 
 _if developer want to mint after create coin, developer must declare first_
 
-| Name            | Type                  | Description                     |
-| --------------- | --------------------- | ------------------------------- |
-| gameId          | string                | game's id                       |
-| gameCoinAddress | contract IP12GameCoin | game coin's address             |
-| amountGameCoin  | uint256               | how many developer want to mint |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| gameId | string | game's id |
+| gameCoinAddress | contract IP12GameCoin | game coin's address |
+| amountGameCoin | uint256 | how many developer want to mint |
 
 ### executeMintCoin
 
@@ -131,14 +131,14 @@ function executeMintCoin(contract IP12GameCoin gameCoinAddress, bytes32 mintId) 
 
 _when time is up, anyone can call this function to make the mint executed_
 
-| Name            | Type                  | Description                                                        |
-| --------------- | --------------------- | ------------------------------------------------------------------ |
-| gameCoinAddress | contract IP12GameCoin | address of the game coin                                           |
-| mintId          | bytes32               | a unique id to identify a mint, developer can get it after declare |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| gameCoinAddress | contract IP12GameCoin | address of the game coin |
+| mintId | bytes32 | a unique id to identify a mint, developer can get it after declare |
 
-| Name | Type | Description                        |
-| ---- | ---- | ---------------------------------- |
-| [0]  | bool | bool whether the operation success |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| [0] | bool | bool whether the operation success |
 
 ### withdraw
 
@@ -148,11 +148,11 @@ function withdraw(address userAddress, contract IP12GameCoin gameCoinAddress, ui
 
 called when user want to withdraw his game coin from custodian address
 
-| Name            | Type                  | Description                    |
-| --------------- | --------------------- | ------------------------------ |
-| userAddress     | address               | user's address                 |
-| gameCoinAddress | contract IP12GameCoin | gameCoin's address             |
-| amountGameCoin  | uint256               | how many user want to withdraw |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| userAddress | address | user's address |
+| gameCoinAddress | contract IP12GameCoin | gameCoin's address |
+| amountGameCoin | uint256 | how many user want to withdraw |
 
 ### pause
 
@@ -180,8 +180,8 @@ function setDelayK(uint256 newDelayK) public virtual returns (bool)
 
 _set linear function's K parameter_
 
-| Name      | Type    | Description     |
-| --------- | ------- | --------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newDelayK | uint256 | new K parameter |
 
 ### setDelayB
@@ -192,8 +192,8 @@ function setDelayB(uint256 newDelayB) public virtual returns (bool)
 
 _set linear function's B parameter_
 
-| Name      | Type    | Description     |
-| --------- | ------- | --------------- |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
 | newDelayB | uint256 | new B parameter |
 
 ### getMintFee
@@ -216,19 +216,20 @@ there still be delayB period before someone can really mint zero token
 delayK is the parameter to take the ratio of new amount in to account
 For example, the initial supply of Game Coin is 100k. If developer want
 to mint 100k, developer needs to real mint it after `delayK + delayB`. If
-developer want to mint 200k, developer has to real mint it after `2DelayK + delayB`.
-^
-t + /
-| /
-| /
-2k+b| /
-| /
-k+b| /
-|/
-b|
-0----p---2p---------> amount_
+developer want to mint 200k, developer has to real mint it after `2DelayK +
+delayB`.
+          ^
+        t +            /
+          |          /
+          |        /
+      2k+b|      /
+          |    /
+       k+b|  / 
+          |/ 
+         b|
+          0----p---2p---------> amount_
 
-### \_create
+### _create
 
 ```solidity
 function _create(string name, string symbol, string gameId, string gameCoinIconUrl, uint256 amountGameCoin) internal virtual returns (contract P12GameCoin gameCoinAddress)
@@ -236,15 +237,15 @@ function _create(string name, string symbol, string gameId, string gameCoinIconU
 
 _function to create a game coin contract_
 
-| Name            | Type    | Description             |
-| --------------- | ------- | ----------------------- |
-| name            | string  | game coin name          |
-| symbol          | string  | game coin symbol        |
-| gameId          | string  | game id                 |
-| gameCoinIconUrl | string  | game coin icon's url    |
-| amountGameCoin  | uint256 | how many for first mint |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| name | string | game coin name |
+| symbol | string | game coin symbol |
+| gameId | string | game id |
+| gameCoinIconUrl | string | game coin icon's url |
+| amountGameCoin | uint256 | how many for first mint |
 
-### \_hashOperation
+### _hashOperation
 
 ```solidity
 function _hashOperation(contract IP12GameCoin gameCoinAddress, address declarer, uint256 amount, uint256 timestamp, bytes32 salt) internal virtual returns (bytes32 hash)
@@ -252,30 +253,30 @@ function _hashOperation(contract IP12GameCoin gameCoinAddress, address declarer,
 
 _hash function to general mintId_
 
-| Name            | Type                  | Description                             |
-| --------------- | --------------------- | --------------------------------------- |
-| gameCoinAddress | contract IP12GameCoin | game coin address                       |
-| declarer        | address               | address which declare to mint game coin |
-| amount          | uint256               | how much to mint                        |
-| timestamp       | uint256               | time when declare                       |
-| salt            | bytes32               | a random bytes32                        |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| gameCoinAddress | contract IP12GameCoin | game coin address |
+| declarer | address | address which declare to mint game coin |
+| amount | uint256 | how much to mint |
+| timestamp | uint256 | time when declare |
+| salt | bytes32 | a random bytes32 |
 
-| Name | Type    | Description |
-| ---- | ------- | ----------- |
-| hash | bytes32 | mintId      |
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| hash | bytes32 | mintId |
 
-### \_authorizeUpgrade
+### _authorizeUpgrade
 
 ```solidity
 function _authorizeUpgrade(address newImplementation) internal
 ```
 
-\_Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
+_Function that should revert when `msg.sender` is not authorized to upgrade the contract. Called by
 {upgradeTo} and {upgradeToAndCall}.
 
 Normally, this function will use an xref:access.adoc[access control] modifier such as {Ownable-onlyOwner}.
 
-````solidity
+```solidity
 function _authorizeUpgrade(address) internal override onlyOwner {}
 ```_
 
@@ -283,7 +284,7 @@ function _authorizeUpgrade(address) internal override onlyOwner {}
 
 ```solidity
 function getBlockTimestamp() internal view virtual returns (uint256)
-````
+```
 
 _get current block's timestamp_
 
@@ -300,3 +301,4 @@ _compare two string and judge whether they are the same_
 ```solidity
 modifier onlyDev()
 ```
+

@@ -31,3 +31,4 @@ function gameCoinIconUrl() external view returns (string)
 ```solidity
 function transferWithAccount(address recipient, string account, uint256 amount) external
 ```
+

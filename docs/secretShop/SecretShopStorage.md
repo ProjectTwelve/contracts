@@ -22,7 +22,7 @@ _DOMAIN_SEPARATOR for EIP712_
 contract IWETHUpgradable weth
 ```
 
-### \_\_gap
+### __gap
 
 ```solidity
 uint256[47] __gap
@@ -51,3 +51,4 @@ mapping(bytes32 => enum Market.InvStatus) inventoryStatus
 ```
 
 _store itemHash status_
+

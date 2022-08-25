@@ -149,3 +149,4 @@ function setVotingEscrow(contract IVotingEscrow newVotingEscrow) external
 ```solidity
 function setP12CoinFactory(address newP12Factory) external
 ```
+
