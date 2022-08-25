@@ -5,8 +5,9 @@ pragma solidity 0.8.15;
 
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
+import '@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol';
 
-contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
+contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable, ERC1967UpgradeUpgradeable {
   address private _owner;
   address private _pendingOwner;
 
@@ -85,6 +86,11 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable {
    * Internal function without access restriction.
    */
   function _transferOwnership(address newOwner) internal virtual {
+    // compatible with hardhat-deploy, maybe removed later
+    assembly {
+      sstore(_ADMIN_SLOT, newOwner)
+    }
+
     address oldOwner = _owner;
     _owner = newOwner;
     emit OwnershipTransferred(oldOwner, newOwner);
