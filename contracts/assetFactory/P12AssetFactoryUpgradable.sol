@@ -7,7 +7,7 @@ import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.
 import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import '@openzeppelin/contracts/utils/cryptography/ECDSA.sol';
 import './P12Asset.sol';
-import '../factory/P12CoinFactoryUpgradeable.sol';
+import '../coinFactory/P12CoinFactoryUpgradeable.sol';
 import './interfaces/IP12AssetFactoryUpgradable.sol';
 import './P12AssetFactoryStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
