@@ -14,3 +14,4 @@ flatten
 .docusaurus
 scripts/tmp.ts
 build
+docs/**
