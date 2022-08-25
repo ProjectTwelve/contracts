@@ -10,6 +10,7 @@ import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
 import '@openzeppelin/hardhat-upgrades';
+import 'solidity-docgen';
 
 dotenv.config();
 addFlatTask();
@@ -96,6 +97,10 @@ const config: HardhatUserConfig = {
         artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
       },
     ],
+  },
+  docgen: {
+    pages: 'files',
+    exclude: ['tests'],
   },
 };
 

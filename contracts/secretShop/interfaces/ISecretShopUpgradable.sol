@@ -49,6 +49,8 @@ interface ISecretShopUpgradable {
    */
   event EvFailure(uint256 index, bytes error);
 
+  function recoverSigner(Market.Order memory) external view returns (address);
+
   function runSingle(
     Market.Order memory,
     Market.SettleShared memory,

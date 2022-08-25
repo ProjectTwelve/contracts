@@ -355,6 +355,16 @@ contract SecretShopUpgradable is
     return address(currency) == address(0);
   }
 
+  function recoverSigner(Market.Order memory order) external view override returns (address orderSigner) {
+    if (order.signVersion == Market.SIGN_V1) {
+      bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
+      orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
+    } else {
+      return orderSigner;
+    }
+    return orderSigner;
+  }
+
   /**
    * @dev verify whether the order data is real, necessary for security
    * @param order order by the maker
