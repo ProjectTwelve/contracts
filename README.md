@@ -39,7 +39,7 @@ staking
 
 Requirement:
 
-- Node >= 14
+- Node >= 16
 - yarn(recommend)
 
 Clone the repository

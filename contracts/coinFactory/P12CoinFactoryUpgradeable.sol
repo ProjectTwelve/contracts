@@ -413,6 +413,7 @@ contract P12CoinFactoryUpgradeable is
     return preMintIdNew;
   }
 
+  /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   /**

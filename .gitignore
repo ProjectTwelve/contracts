@@ -3,6 +3,7 @@ node_modules
 coverage
 coverage.json
 typechain
+doc
 
 #Hardhat files
 cache
@@ -10,3 +11,7 @@ artifacts
 .openzeppelin
 flatten
 .DS_Store
+.docusaurus
+scripts/tmp.ts
+build
+docs/**

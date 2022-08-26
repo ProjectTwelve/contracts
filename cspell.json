@@ -61,6 +61,7 @@
     "UUPS",
     "xwbf",
     "ADDESSSES",
+    "docgen",
     "sstore"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]

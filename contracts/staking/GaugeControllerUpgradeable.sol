@@ -27,8 +27,8 @@ contract GaugeControllerUpgradeable is
   uint256 public constant WEIGHT_VOTE_DELAY = 10 * 86400;
 
   /**
-    @notice set new votingEscrow
-    @param newVotingEscrow address of votingEscrow
+   * @notice set new votingEscrow
+   * @param newVotingEscrow address of votingEscrow
    */
   function setVotingEscrow(IVotingEscrow newVotingEscrow) external virtual override onlyOwner {
     IVotingEscrow oldVotingEscrow = votingEscrow;
@@ -38,8 +38,8 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice set new p12CoinFactory
-    @param newP12Factory address of newP12Factory
+   * @notice set new p12CoinFactory
+   * @param newP12Factory address of newP12Factory
    */
   function setP12CoinFactory(address newP12Factory) external virtual override onlyOwner {
     address oldP12Factory = p12CoinFactory;
@@ -49,10 +49,10 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Get gauge type for address
-    @param addr Gauge address
-    @return Gauge type id
-  */
+   * @notice Get gauge type for address
+   * @param addr Gauge address
+   * @return Gauge type id
+   */
   function getGaugeTypes(address addr) external view virtual override returns (int128) {
     int128 gaugeType = gaugeTypes[addr];
     require(gaugeType != 0, 'GC: wrong gauge type');
@@ -60,11 +60,11 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Add gauge `addr` of type `gaugeType` with weight `weight`
-    @param addr Gauge address
-    @param gaugeType Gauge type
-    @param weight Gauge weight
-     */
+   * @notice Add gauge `addr` of type `gaugeType` with weight `weight`
+   * @param addr Gauge address
+   * @param gaugeType Gauge type
+   * @param weight Gauge weight
+   */
   function addGauge(
     address addr,
     int128 gaugeType,
@@ -103,41 +103,41 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Checkpoint to fill data common for all gauges
-     */
+   * @notice Checkpoint to fill data common for all gauges
+   */
   function checkpoint() external virtual override {
     _getTotal();
   }
 
   /**
-    @notice Checkpoint to fill data for both a specific gauge and common for all gauges
-    @param addr Gauge address
-     */
+   * @notice Checkpoint to fill data for both a specific gauge and common for all gauges
+   * @param addr Gauge address
+   */
   function checkpointGauge(address addr) external virtual override {
     _getWeight(addr);
     _getTotal();
   }
 
   /**
-    @notice Get Gauge relative weight (not more than 1.0) normalized to 1e18
-            (e.g. 1.0 == 1e18). Inflation which will be received by it is
-            inflation_rate * relative_weight / 1e18
-    @param addr Gauge address
-    @param time Relative weight at the specified timestamp in the past or present
-    @return Value of relative weight normalized to 1e18
-     */
+   * @notice Get Gauge relative weight (not more than 1.0) normalized to 1e18
+   *        (e.g. 1.0 == 1e18). Inflation which will be received by it is
+   *        inflation_rate * relative_weight / 1e18
+   * @param addr Gauge address
+   * @param time Relative weight at the specified timestamp in the past or present
+   * @return Value of relative weight normalized to 1e18
+   */
   function gaugeRelativeWeight(address addr, uint256 time) external view virtual override returns (uint256) {
     return _gaugeRelativeWeight(addr, time);
   }
 
   /**
-    @notice Get gauge weight normalized to 1e18 and also fill all the unfilled
-        values for type and gauge records
-    @dev Any address can call, however nothing is recorded if the values are filled already
-    @param addr Gauge address
-    @param time Relative weight at the specified timestamp in the past or present
-    @return Value of relative weight normalized to 1e18
-     */
+   * @notice Get gauge weight normalized to 1e18 and also fill all the unfilled
+   *     values for type and gauge records
+   * @dev Any address can call, however nothing is recorded if the values are filled already
+   * @param addr Gauge address
+   * @param time Relative weight at the specified timestamp in the past or present
+   * @return Value of relative weight normalized to 1e18
+   */
   function gaugeRelativeWeightWrite(address addr, uint256 time) external virtual override returns (uint256) {
     _getWeight(addr);
     _getTotal(); // Also calculates get_sum
@@ -145,10 +145,10 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Add gauge type with name `name` and weight `weight`
-    @param name Name of gauge type
-    @param weight Weight of gauge type
-     */
+   * @notice Add gauge type with name `name` and weight `weight`
+   * @param name Name of gauge type
+   * @param weight Weight of gauge type
+   */
   function addType(string memory name, uint256 weight) external virtual override onlyOwner {
     int128 typeId = nGaugeTypes;
     gaugeTypeNames[typeId] = name;
@@ -160,28 +160,28 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Change gauge type `typeId` weight to `weight`
-    @param typeId Gauge type id
-    @param weight New Gauge weight
-     */
+   * @notice Change gauge type `typeId` weight to `weight`
+   * @param typeId Gauge type id
+   * @param weight New Gauge weight
+   */
   function changeTypeWeight(int128 typeId, uint256 weight) external virtual override onlyOwner {
     _changeTypeWeight(typeId, weight);
   }
 
   /**
-    @notice Change weight of gauge `addr` to `weight`
-    @param addr `GaugeController` contract address
-    @param weight New Gauge weight
-     */
+   * @notice Change weight of gauge `addr` to `weight`
+   * @param addr `GaugeController` contract address
+   * @param weight New Gauge weight
+   */
   function changeGaugeWeight(address addr, uint256 weight) external virtual override onlyOwner {
     _changeGaugeWeight(addr, weight);
   }
 
   /**
-        @notice Allocate voting power for changing pool weights
-        @param gaugeAddr Gauge which `msg.sender` votes for
-        @param userWeight Weight for a gauge in bps (units of 0.01%). Minimal is 0.01%. Ignored if 0
-     */
+   * @notice Allocate voting power for changing pool weights
+   * @param gaugeAddr Gauge which `msg.sender` votes for
+   * @param userWeight Weight for a gauge in bps (units of 0.01%). Minimal is 0.01%. Ignored if 0
+   */
   function voteForGaugeWeights(address gaugeAddr, uint256 userWeight) external virtual override whenNotPaused {
     uint256 slope = uint256(votingEscrow.getLastUserSlope(msg.sender));
     uint256 lockEnd = votingEscrow.lockedEnd(msg.sender);
@@ -254,36 +254,36 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-        @notice Get current gauge weight
-        @param addr Gauge address
-        @return Gauge weight
-     */
+   * @notice Get current gauge weight
+   * @param addr Gauge address
+   * @return Gauge weight
+   */
   function getGaugeWeight(address addr) external view virtual override returns (uint256) {
     return pointsWeight[addr][timeWeight[addr]].bias;
   }
 
   /**
-      @notice Get current type weight
-      @param typeId Type id
-      @return Type weight
-     */
+   * @notice Get current type weight
+   * @param typeId Type id
+   * @return Type weight
+   */
   function getTypeWeight(int128 typeId) external view virtual override returns (uint256) {
     return pointsTypeWeight[typeId][timeTypeWeight[typeId]];
   }
 
   /**
-        @notice Get current total (type-weighted) weight
-        @return Total weight
-    */
+   * @notice Get current total (type-weighted) weight
+   * @return Total weight
+   */
   function getTotalWeight() external view virtual override returns (uint256) {
     return pointsTotal[timeTotal];
   }
 
   /**
-        @notice Get sum of gauge weights per type
-        @param typeId Type id
-        @return Sum of gauge weights
-    */
+   * @notice Get sum of gauge weights per type
+   * @param typeId Type id
+   * @return Sum of gauge weights
+   */
   function getWeightsSumPerType(int128 typeId) external view virtual override returns (uint256) {
     return pointsSum[typeId][timeSum[typeId]].bias;
   }
@@ -308,14 +308,15 @@ contract GaugeControllerUpgradeable is
   }
 
   //-----------internal----------
+  /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   /**
-    @notice Fill historic type weights week-over-week for missed checkins
-        and return the type weight for the future week
-    @param gaugeType Gauge type id
-    @return Type weight
-  */
+   * @notice Fill historic type weights week-over-week for missed checkins
+   *     and return the type weight for the future week
+   * @param gaugeType Gauge type id
+   * @return Type weight
+   */
   function _getTypeWeight(int128 gaugeType) internal virtual returns (uint256) {
     uint256 t = timeTypeWeight[gaugeType];
     if (t > 0) {
@@ -337,11 +338,11 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Fill sum of gauge weights for the same type week-over-week for
-        missed checkins and return the sum for the future week
-    @param gaugeType Gauge type id
-    @return Sum of weights
-  */
+   * @notice Fill sum of gauge weights for the same type week-over-week for
+   *     missed checkins and return the sum for the future week
+   * @param gaugeType Gauge type id
+   * @return Sum of weights
+   */
   function _getSum(int128 gaugeType) internal virtual returns (uint256) {
     uint256 t = timeSum[gaugeType];
     if (t > 0) {
@@ -372,10 +373,10 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Fill historic total weights week-over-week for missed checkins
-      and return the total for the future week
-    @return Total weight
-  */
+   * @notice Fill historic total weights week-over-week for missed checkins
+   *  and return the total for the future week
+   * @return Total weight
+   */
   function _getTotal() internal virtual returns (uint256) {
     uint256 t = timeTotal;
     int128 _nGaugeTypes = nGaugeTypes;
@@ -419,11 +420,11 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Fill historic gauge weights week-over-week for missed checkins
-        and return the total for the future week
-    @param gaugeAddr Address of the gauge
-    @return Gauge weight
-  */
+   * @notice Fill historic gauge weights week-over-week for missed checkins
+   *     and return the total for the future week
+   * @param gaugeAddr Address of the gauge
+   * @return Gauge weight
+   */
   function _getWeight(address gaugeAddr) internal virtual returns (uint256) {
     uint256 t = timeWeight[gaugeAddr];
     if (t > 0) {
@@ -454,13 +455,13 @@ contract GaugeControllerUpgradeable is
   }
 
   /**
-    @notice Get Gauge relative weight (not more than 1.0) normalized to 1e18
-            (e.g. 1.0 == 1e18). Inflation which will be received by it is
-            inflation_rate * relative_weight / 1e18
-    @param addr Gauge address
-    @param time Relative weight at the specified timestamp in the past or present
-    @return Value of relative weight normalized to 1e18
-     */
+   * @notice Get Gauge relative weight (not more than 1.0) normalized to 1e18
+   *         (e.g. 1.0 == 1e18). Inflation which will be received by it is
+   *         inflation_rate * relative_weight / 1e18
+   * @param addr Gauge address
+   * @param time Relative weight at the specified timestamp in the past or present
+   * @return Value of relative weight normalized to 1e18
+   */
   function _gaugeRelativeWeight(address addr, uint256 time) internal view virtual returns (uint256) {
     uint256 t = (time / WEEK) * WEEK;
 
