@@ -7,9 +7,6 @@ describe('sceneSimulation', function () {
   let user0: SignerWithAddress;
   let user1: SignerWithAddress;
   let user2: SignerWithAddress;
-  let nextWeekTime: number;
-  // eslint-disable-next-line no-unused-vars
-  let nextOPTime: number;
   let votingEscrow: Contract;
   let coinFactoryUpgradeable: Contract;
   let gaugeController: Contract;
@@ -106,7 +103,7 @@ describe('sceneSimulation', function () {
     console.log('user2 vote pool0 info', await gaugeController.voteUserSlopes(user2.address, pool0));
     console.log('user2 vote pool1 info', await gaugeController.voteUserSlopes(user2.address, pool1));
     console.log('user2 vote pool2 info', await gaugeController.voteUserSlopes(user2.address, pool2));
-    console.log('-------------------------');
+    console.log('init info end');
   });
   it('should lock p12 vote successfully ', async function () {
     const timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
@@ -149,19 +146,15 @@ describe('sceneSimulation', function () {
     console.log('user2 vote pool0 info', await gaugeController.voteUserSlopes(user2.address, pool0));
     console.log('user2 vote pool1 info', await gaugeController.voteUserSlopes(user2.address, pool1));
     console.log('-------------------------');
-    const week = 86400 * 7;
-    nextWeekTime = Math.floor((timestamp + week) / week) * 86400 * 7;
-    nextOPTime = timestamp + 86400 * 10;
-    console.log('nextWeekTime', nextWeekTime);
-    console.log('nextOPTime', timestamp + 86400 * 10);
   });
   // Fast forward to the weight update time point
   it('show gauge weight info and lock ', async function () {
+    const nextWeekTime = Number(await gaugeController.timeTotal());
     await ethers.provider.send('evm_mine', [nextWeekTime]);
-    // const timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
-    console.log('pool0 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool0, nextWeekTime)));
-    console.log('pool1 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool1, nextWeekTime)));
-    console.log('pool2 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool2, nextWeekTime)));
+    const timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
+    console.log('pool0 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool0, timestamp)));
+    console.log('pool1 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool1, timestamp)));
+    console.log('pool2 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool2, timestamp)));
     console.log('-------------------------');
 
     // user0 try vote
@@ -182,6 +175,7 @@ describe('sceneSimulation', function () {
   it('show gauge weight info and vote ', async function () {
     let timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     // if nextWeekTime > current timestamp and need to Fast forward to the nextWeekTime point
+    const nextWeekTime = Number(await gaugeController.timeTotal());
     const time = nextWeekTime > timestamp ? nextWeekTime : timestamp;
     if (nextWeekTime > timestamp) {
       await ethers.provider.send('evm_mine', [nextWeekTime]);
@@ -196,8 +190,9 @@ describe('sceneSimulation', function () {
     // fast forward to right time point and vote
     // user0 vote
     const last1 = Number(await gaugeController.lastUserVote(user0.address, pool0));
-    await ethers.provider.send('evm_mine', [last1 + 10 * 86400]);
-
+    if (last1 + 10 * 86400 > time) {
+      await ethers.provider.send('evm_mine', [last1 + 10 * 86400]);
+    }
     await gaugeController.connect(user0).voteForGaugeWeights(pool0, 2000);
     console.log('user0 vote pool0 info', await gaugeController.voteUserSlopes(user0.address, pool0));
     console.log('-------------------------');
@@ -207,7 +202,7 @@ describe('sceneSimulation', function () {
       await ethers.provider.send('evm_mine', [last2 + 10 * 86400]);
     }
     await gaugeController.connect(user0).voteForGaugeWeights(pool1, 0);
-    console.log('user0 vote pool1 info', await gaugeController.voteUserSlopes(user0.address, pool1));
+    console.log('user0 vote pool1 info1234', await gaugeController.voteUserSlopes(user0.address, pool1));
     console.log('-------------------------');
 
     // user2 vote
@@ -217,7 +212,7 @@ describe('sceneSimulation', function () {
       await ethers.provider.send('evm_mine', [last3 + 10 * 86400]);
     }
     await gaugeController.connect(user2).voteForGaugeWeights(pool0, 3000);
-    console.log('user2 vote pool1 info', await gaugeController.voteUserSlopes(user0.address, pool1));
+    console.log('user2 vote pool0 info', await gaugeController.voteUserSlopes(user2.address, pool0));
     console.log('-------------------------');
     timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     const last4 = Number(await gaugeController.lastUserVote(user2.address, pool1));
@@ -227,21 +222,20 @@ describe('sceneSimulation', function () {
     await gaugeController.connect(user2).voteForGaugeWeights(pool1, 7000);
     console.log('user2 vote pool1 info', await gaugeController.voteUserSlopes(user2.address, pool1));
     console.log('-------------------------');
-    const week = 86400 * 7;
-    nextWeekTime = Math.floor((nextWeekTime + week) / week) * 86400 * 7;
-    console.log('nextWeekTime', nextWeekTime);
-    timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
-    console.log('timestamp is', timestamp);
-    nextOPTime = timestamp + 10 * 86400;
   });
   // Fast forward to the weight update time point (3 weeks)
   it('show gauge weight info and vote', async function () {
     let timestamp = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     // if nextWeekTime > current timestamp and need to Fast forward to the nextWeekTime point
+    const nextWeekTime = Number(await gaugeController.timeTotal());
     const time = nextWeekTime > timestamp ? nextWeekTime : timestamp;
     if (nextWeekTime > timestamp) {
       await ethers.provider.send('evm_mine', [nextWeekTime]);
     }
+    await gaugeController.checkpointGauge(pool2);
+    // await gaugeController.checkpointGauge(pool0);
+    // await gaugeController.checkpointGauge(pool1);
+    // await gaugeController.checkpoint();
     console.log('nextWeekTime', nextWeekTime);
     console.log('timestamp', timestamp);
     console.log('pool0 weight is:', ethers.utils.formatEther(await gaugeController.gaugeRelativeWeight(pool0, time)));
