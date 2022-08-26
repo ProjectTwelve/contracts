@@ -26,7 +26,7 @@ contract P12CoinFactoryUpgradeableAlter is P12CoinFactoryUpgradeable {
   /**
    * @dev this is used for test internal function upgrade
    */
-  function compareStrings(string memory, string memory) internal pure override returns (bool) {
+  function _compareStrings(string memory, string memory) internal pure override returns (bool) {
     return true;
   }
 
@@ -34,6 +34,6 @@ contract P12CoinFactoryUpgradeableAlter is P12CoinFactoryUpgradeable {
    * @dev public function to call internal function
    */
   function callWhiteBlack() public pure {
-    require(compareStrings('1', '2'), 'callWhiteBlack fail');
+    require(_compareStrings('1', '2'), 'callWhiteBlack fail');
   }
 }
