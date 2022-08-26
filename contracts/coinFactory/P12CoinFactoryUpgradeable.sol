@@ -145,7 +145,7 @@ contract P12CoinFactoryUpgradeable is
       amountP12,
       amountGameCoinDesired,
       address(p12Mine),
-      getBlockTimestamp() + addLiquidityEffectiveTime
+      _getBlockTimestamp() + addLiquidityEffectiveTime
     );
     //get pair contract address
     address pair = uniswapFactory.getPair(p12, address(gameCoinAddress));
@@ -181,10 +181,10 @@ contract P12CoinFactoryUpgradeable is
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
     require(msg.sender == allGames[gameId], 'P12Factory: have no permission');
-    require(compareStrings(allGameCoins[gameCoinAddress], gameId), 'P12Factory: wrong game id');
+    require(_compareStrings(allGameCoins[gameCoinAddress], gameId), 'P12Factory: wrong game id');
     // Set the correct unlock time
     uint256 time;
-    uint256 currentTimestamp = getBlockTimestamp();
+    uint256 currentTimestamp = _getBlockTimestamp();
     bytes32 _preMintId = preMintIds[gameCoinAddress];
     uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][_preMintId].unlockTimestamp;
     if (currentTimestamp >= lastUnlockTimestamp) {
@@ -227,7 +227,7 @@ contract P12CoinFactoryUpgradeable is
     // check if it has been executed
     require(!coinMintRecords[gameCoinAddress][mintId].executed, 'P12Factory: mint executed');
 
-    uint256 time = getBlockTimestamp();
+    uint256 time = _getBlockTimestamp();
 
     // check that the current time is greater than the unlock time
     require(time > coinMintRecords[gameCoinAddress][mintId].unlockTimestamp, 'P12Factory: not time to mint');
@@ -419,14 +419,14 @@ contract P12CoinFactoryUpgradeable is
   /**
    * @dev get current block's timestamp
    */
-  function getBlockTimestamp() internal view virtual returns (uint256) {
+  function _getBlockTimestamp() internal view virtual returns (uint256) {
     return block.timestamp;
   }
 
   /**
    * @dev compare two string and judge whether they are the same
    */
-  function compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
+  function _compareStrings(string memory a, string memory b) internal pure virtual returns (bool) {
     return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))));
   }
 
