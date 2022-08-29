@@ -74,8 +74,8 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
   ) public override onlyOwner {
     require(id < idx, 'P12Asset: id is not valid');
     require(amount + supply[id] <= maxSupply[id], 'P12Asset: exceed max supply');
-    _mint(to, id, amount, data);
     supply[id] += amount;
+    _mint(to, id, amount, data);
   }
 
   /**
