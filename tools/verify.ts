@@ -9,7 +9,7 @@ const list = [
   '/Users/snow/contracts/deployments/rinkeby/WETH9.json',
 ];
 async function main() {
-  const dir = path.join(__dirname, 'deployments') + '/' + env.network.name;
+  const dir = path.join(__dirname, '../deployments') + '/' + env.network.name;
   travel(dir, async function (fileName) {
     if (!list.includes(fileName)) {
       const re1 = /.chainId/gi;
