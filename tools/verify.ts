@@ -12,10 +12,8 @@ async function main() {
   const dir = path.join(__dirname, '../deployments') + '/' + env.network.name;
   travel(dir, async function (fileName) {
     if (!list.includes(fileName)) {
-      const re1 = /.chainId/gi;
-      const re2 = /solcInputs/gi;
-      const re3 = /_Proxy/gi;
-      if (fileName.search(re1) === -1 && fileName.search(re2) === -1 && fileName.search(re3) === -1) {
+      const re = /.chainId|solcInputs|_Proxy/gi;
+      if (fileName.search(re) === -1) {
         const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
         try {
           if (!content.implementation) {
