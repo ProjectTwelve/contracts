@@ -11,25 +11,23 @@ const list = [
 async function main() {
   const dir = path.join(__dirname, '../deployments') + '/' + env.network.name;
   travel(dir, async function (fileName) {
-    if (!list.includes(fileName)) {
-      const re = /.chainId|solcInputs|_Proxy/gi;
-      if (fileName.search(re) === -1) {
-        const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
-        try {
-          if (!content.implementation) {
-            if (content.storageLayout) {
-              await verify(content.address, content.args, content.storageLayout.storage[0].contract);
-            } else {
-              await verify(content.address, content.args);
-            }
-          }
-        } catch (err) {
-          const str: string = String(err);
-          if (str.includes('Reason: Already Verified') || str.includes('Contract source code already verified')) {
-            console.log(`${content.storageLayout.storage[0].contract} at ${content.address} Already Verified`);
+    const reg = /.chainId|solcInputs|_Proxy/gi;
+    if (!list.includes(fileName) && fileName.search(reg) === -1) {
+      const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
+      try {
+        if (!content.implementation) {
+          if (content.storageLayout) {
+            await verify(content.address, content.args, content.storageLayout.storage[0].contract);
           } else {
-            console.log(`verify the ${content.storageLayout.storage[0].contract} at ${content.address} fail`, err);
+            await verify(content.address, content.args);
           }
+        }
+      } catch (err) {
+        const str: string = String(err);
+        if (str.includes('Reason: Already Verified') || str.includes('Contract source code already verified')) {
+          console.log(`${content.storageLayout.storage[0].contract} at ${content.address} Already Verified`);
+        } else {
+          console.log(`verify the ${content.storageLayout.storage[0].contract} at ${content.address} fail`, err);
         }
       }
     }
