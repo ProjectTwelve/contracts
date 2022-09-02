@@ -1,7 +1,7 @@
 import * as dotenv from 'dotenv';
 
 import { HardhatUserConfig, task } from 'hardhat/config';
-import { addFlatTask } from './flat';
+import { addFlatTask } from './tools/flat';
 import '@nomiclabs/hardhat-etherscan';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
@@ -102,6 +102,11 @@ const config: HardhatUserConfig = {
     pages: 'files',
     exclude: ['tests'],
     templates: 'theme/markdown',
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: process.env.ETHERSCAN_API_KEY,
   },
 };
 
