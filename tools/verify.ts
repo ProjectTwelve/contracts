@@ -1,18 +1,25 @@
 import env from 'hardhat';
 import path from 'path';
 import fs from 'fs-extra';
+import { exit } from 'process';
 
-const list = [
-  '/Users/snow/contracts/deployments/rinkeby/P12Token.json',
-  '/Users/snow/contracts/deployments/rinkeby/UniswapV2Factory.json',
-  '/Users/snow/contracts/deployments/rinkeby/UniswapV2Router02.json',
-  '/Users/snow/contracts/deployments/rinkeby/WETH9.json',
-];
+// If the contract does not require verification, just add it here
+const whiteList = ['P12Token.json', 'UniswapV2Factory.json', 'UniswapV2Router02.json', 'WETH9.json'];
+
+function getNoVerifyFile() {
+  const files: string[] = [];
+  whiteList.forEach((l) => {
+    const pathFile = path.join(__dirname, '../deployments') + '/' + env.network.name + '/' + l;
+    files.push(pathFile);
+  });
+  return files;
+}
 async function main() {
   const dir = path.join(__dirname, '../deployments') + '/' + env.network.name;
   travel(dir, async function (fileName) {
     const reg = /.chainId|solcInputs|_Proxy/gi;
-    if (!list.includes(fileName) && fileName.search(reg) === -1) {
+    const whiteList = getNoVerifyFile();
+    if (!whiteList.includes(fileName) && fileName.search(reg) === -1) {
       const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
       try {
         if (!content.implementation) {
@@ -38,6 +45,7 @@ function travel(dir: string, callback: (arg0: string) => void) {
   fs.readdir(dir, (err, files) => {
     if (err) {
       console.log(err);
+      exit();
     } else {
       files.forEach((file) => {
         const pathname = path.join(dir, file);
