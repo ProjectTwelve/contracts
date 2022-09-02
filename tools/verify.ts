@@ -16,9 +16,10 @@ function getNoVerifyFile() {
 }
 async function main() {
   const dir = path.join(__dirname, '../deployments') + '/' + env.network.name;
+  const reg = /.chainId|solcInputs|_Proxy/gi;
+  const whiteList = getNoVerifyFile();
+  console.log(whiteList);
   travel(dir, async function (fileName) {
-    const reg = /.chainId|solcInputs|_Proxy/gi;
-    const whiteList = getNoVerifyFile();
     if (!whiteList.includes(fileName) && fileName.search(reg) === -1) {
       const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
       try {
