@@ -4,7 +4,7 @@
 FROM node:16-bullseye
 
 RUN apt update
-RUN apt install bash-completion -y
+RUN apt install bash-completion vim -y
 
 # [Optional] Uncomment this section to install additional OS packages.
 # RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \

@@ -106,7 +106,20 @@ const config: HardhatUserConfig = {
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      p12TestNet: 'p12',
+      rinkeby: process.env.ETHERSCAN_API_KEY!,
+    },
+    customChains: [
+      {
+        network: 'p12TestNet',
+        chainId: 44010,
+        urls: {
+          apiURL: 'https://blockscout.p12.games/api',
+          browserURL: 'https://blockscout.p12.games/',
+        },
+      },
+    ],
   },
 };
 
