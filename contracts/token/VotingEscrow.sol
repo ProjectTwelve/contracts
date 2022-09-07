@@ -521,7 +521,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
 
     _checkPoint(addr, oldLocked, _locked);
     if (value != 0) {
-      IERC20(p12Token).transferFrom(addr, address(this), value);
+      IERC20(p12Token).safeTransferFrom(addr, address(this), value);
     }
     emit Deposit(addr, value, _locked.end, t, block.timestamp);
     emit TotalLocked(totalLockedP12Before, totalLockedP12Before + value);
