@@ -26,11 +26,8 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    */
   uint256 private idx = 0;
 
-  // Mapping from token ID to account balances
-  mapping(uint256 => mapping(address => uint256)) private _balances;
-
   // metadata uri
-  mapping(uint256 => string) private _uri;
+  mapping(uint256 => string) private _uris;
 
   constructor(string memory contractURI_) {
     require(bytes(contractURI_).length != 0, 'P12Asset: empty contractURI');
@@ -85,7 +82,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    */
   function uri(uint256 id) public view virtual override returns (string memory) {
     require(id < idx, 'P12Asset: id not exist');
-    return _uri[id];
+    return _uris[id];
   }
 
   /**
@@ -107,7 +104,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
   function _setUri(uint256 id, string calldata newUri) private {
     require(bytes(newUri).length != 0, 'P12Asset: empty uri');
     require(id <= idx, 'P12Asset: id not exist');
-    _uri[id] = newUri;
+    _uris[id] = newUri;
     emit SetUri(id, newUri);
   }
 }
