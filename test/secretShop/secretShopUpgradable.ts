@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ethers, upgrades } from 'hardhat';
-import { P12AssetDemo, ERC721Demo } from '../../typechain';
+import { P12AssetDemo, ERC721Demo, P12Asset } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { utils } from 'ethers';
 import { genSalt } from './utils';
@@ -84,7 +84,7 @@ describe('SecretShopUpgradable', function () {
 
     // deploy ERC721
     const ERC721DemoF = await ethers.getContractFactory('ERC721Demo');
-    erc721demo = await ERC721DemoF.deploy();
+    erc721demo = (await ERC721DemoF.deploy()) as ERC721Demo;
 
     // mint ERC721
     await erc721demo.safeMint(user1.address, 0, []);
@@ -92,7 +92,7 @@ describe('SecretShopUpgradable', function () {
 
     // deploy ERC1155
     const P12AssetDemoF = await ethers.getContractFactory('P12AssetDemo');
-    p12asset = await P12AssetDemoF.deploy();
+    p12asset = (await P12AssetDemoF.deploy()) as P12Asset;
 
     // mint ERC1155
     await p12asset.mint(user2.address, 0, 1, []);

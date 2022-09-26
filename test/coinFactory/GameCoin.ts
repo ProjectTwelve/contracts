@@ -14,7 +14,13 @@ describe('P12GameCoin', function () {
 
   beforeEach(async function () {
     const P12GameCoin = await ethers.getContractFactory('P12GameCoin');
-    gameCoin = await P12GameCoin.deploy('testGameCoin001', 'GC001', gameId, gameCoinIconUrl, 200n * 10n ** 18n);
+    gameCoin = (await P12GameCoin.deploy(
+      'testGameCoin001',
+      'GC001',
+      gameId,
+      gameCoinIconUrl,
+      200n * 10n ** 18n,
+    )) as P12GameCoin;
     await gameCoin.connect(owner).deployed();
 
     [owner, address1] = await ethers.getSigners();
