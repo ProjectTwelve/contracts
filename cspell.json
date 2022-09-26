@@ -1,5 +1,6 @@
 {
   "words": [
+    "ADDESSSES",
     "adoc",
     "blockhash",
     "Blockhash",
@@ -7,11 +8,13 @@
     "chainid",
     "checkins",
     "checkpointed",
+    "clsx",
     "composability",
     "Consts",
     "Dapphub",
     "dedup",
     "delegatecall",
+    "docgen",
     "Dslope",
     "enumerability",
     "ethersproject",
@@ -46,6 +49,7 @@
     "SLOAD",
     "solhint",
     "solium",
+    "sstore",
     "staticcall",
     "struct",
     "structs",
@@ -59,10 +63,7 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf",
-    "ADDESSSES",
-    "docgen",
-    "sstore"
+    "xwbf"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]
 }
