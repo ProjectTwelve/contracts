@@ -4,6 +4,8 @@ coverage
 coverage.json
 typechain
 doc
+lib
+out
 
 #Hardhat files
 cache

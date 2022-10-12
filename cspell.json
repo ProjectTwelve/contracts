@@ -68,5 +68,5 @@
     "docgen",
     "sstore"
   ],
-  "ignorePaths": ["typechain/**", "flatten/**"]
+  "ignorePaths": ["typechain/**", "flatten/**", "lib/**", "out/**"]
 }
