@@ -10,3 +10,5 @@ theme
 pnpm-lock.yaml
 .docusaurus
 docs
+lib
+out
