@@ -76,6 +76,16 @@ const config: HardhatUserConfig = {
       tags: ['staging'],
       deploy: ['deploy/rinkeby'],
     },
+    goerli: {
+      url: process.env.GOERLI_URL || '',
+      live: true,
+      chainId: 5,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 3000000000, // 3 Gwei
+      tags: ['staging'],
+      deploy: ['deploy/goerli'],
+    },
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
@@ -109,6 +119,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       p12TestNet: 'p12',
       rinkeby: process.env.ETHERSCAN_API_KEY!,
+      goerli: process.env.ETHERSCAN_API_KEY!,
     },
     customChains: [
       {
