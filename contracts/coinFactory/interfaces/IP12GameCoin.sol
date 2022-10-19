@@ -8,6 +8,12 @@ interface IP12GameCoin is IERC20 {
    */
   event TransferWithAccount(address recipient, string account, uint256 amount);
 
+  event NameUpdated(string oldName, string newName);
+
+  event SymbolUpdated(string oldSymbol, string newSymbol);
+
+  event IconUrlUpdated(string oldUrl, string newUrl);
+
   function mint(address to, uint256 amount) external;
 
   function gameId() external view returns (string memory);
@@ -19,4 +25,10 @@ interface IP12GameCoin is IERC20 {
     string memory account,
     uint256 amount
   ) external;
+
+  function setName(string calldata newName) external;
+
+  function setSymbol(string calldata newSymbol) external;
+
+  function setGameCoinIconUrl(string calldata newUrl) external;
 }
