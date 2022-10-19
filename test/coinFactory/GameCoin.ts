@@ -31,8 +31,23 @@ describe('P12GameCoin', function () {
     expect(await gameCoin.gameCoinIconUrl()).to.be.equal(gameCoinIconUrl);
   });
 
-  it('Should deploy success', async function () {
-    // console.log('success!');
+  it('Should update token name successfully', async function () {
+    await expect(gameCoin.setName('testGameCoin002'))
+      .to.be.emit(gameCoin, 'NameUpdated')
+      .withArgs('testGameCoin001', 'testGameCoin002');
+    expect(await gameCoin.name()).to.be.equal('testGameCoin002');
+  });
+
+  it('Should update token symbol successfully', async function () {
+    await expect(gameCoin.setSymbol('GC002')).to.be.emit(gameCoin, 'SymbolUpdated').withArgs('GC001', 'GC002');
+    expect(await gameCoin.symbol()).to.be.equal('GC002');
+  });
+
+  it('Should update token icon url successfully', async function () {
+    await expect(gameCoin.setGameCoinIconUrl('https://example.com'))
+      .to.be.emit(gameCoin, 'IconUrlUpdated')
+      .withArgs(gameCoinIconUrl, 'https://example.com');
+    expect(await gameCoin.gameCoinIconUrl()).to.be.equal('https://example.com');
   });
 
   it('Should deploy with 10000 of supply for the owner of the contract', async function () {
