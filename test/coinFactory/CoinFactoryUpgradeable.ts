@@ -2,6 +2,7 @@ import { ethers, upgrades } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { P12GameCoin } from '../../typechain';
 
 describe('P12CoinFactory', function () {
   let admin: SignerWithAddress;
@@ -11,6 +12,7 @@ describe('P12CoinFactory', function () {
   let user: SignerWithAddress;
   let mintId: string;
   let gameCoinAddress: string;
+  let gameCoin: P12GameCoin;
   let core: EconomyContract & ExternalContract;
   let test: SignerWithAddress;
   this.beforeAll(async function () {
@@ -68,6 +70,7 @@ describe('P12CoinFactory', function () {
         gameCoinAddress = x.args!.gameCoinAddress;
       }
     });
+    gameCoin = await ethers.getContractAt('P12GameCoin', gameCoinAddress);
   });
 
   it('Should show set delay variable successfully! ', async function () {
@@ -86,14 +89,14 @@ describe('P12CoinFactory', function () {
   // });
 
   it('Check gameCoin mint delay time', async function () {
-    await core.p12CoinFactory.getMintDelay(gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
+    await core.p12CoinFactory.getMintDelay(gameCoin.address, BigInt(5) * BigInt(10) ** 18n);
   });
   it('Should show declare mint successfully!', async function () {
     const amountP12 = BigInt(6) * BigInt(10) ** 17n;
     await core.p12Token.connect(gameDeveloper).approve(core.p12CoinFactory.address, amountP12);
     const tx = await core.p12CoinFactory
       .connect(gameDeveloper)
-      .queueMintCoin('1101', gameCoinAddress, BigInt(5) * BigInt(10) ** 18n);
+      .queueMintCoin('1101', gameCoin.address, BigInt(5) * BigInt(10) ** 18n);
     (await tx.wait()).events!.forEach((x) => {
       if (x.event === 'QueueMintCoin') {
         mintId = x.args!.mintId;
@@ -106,14 +109,14 @@ describe('P12CoinFactory', function () {
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await core.p12CoinFactory.executeMintCoin(gameCoinAddress, mintId);
+    await core.p12CoinFactory.executeMintCoin(gameCoin.address, mintId);
   });
   it('Should show duplicate mint fail!', async function () {
     const blockNumBefore = await ethers.provider.getBlockNumber();
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await expect(core.p12CoinFactory.executeMintCoin(gameCoinAddress, mintId)).to.be.revertedWith('P12Factory: mint executed');
+    await expect(core.p12CoinFactory.executeMintCoin(gameCoin.address, mintId)).to.be.revertedWith('P12Factory: mint executed');
   });
 
   it('Should show change game gameDeveloper successfully !', async function () {
@@ -123,9 +126,7 @@ describe('P12CoinFactory', function () {
   });
 
   it('Should show withdraw gameCoin successfully', async function () {
-    await core.p12CoinFactory.connect(p12Dev).withdraw(user.address, gameCoinAddress, 1n * 10n ** 18n);
-    const P12GameCoin = await ethers.getContractFactory('TestGameCoin');
-    const gameCoin = P12GameCoin.attach(gameCoinAddress);
+    await core.p12CoinFactory.connect(p12Dev).withdraw(user.address, gameCoin.address, 1n * 10n ** 18n);
 
     expect(await gameCoin.balanceOf(user.address)).to.be.equal(1n * 10n ** 18n);
   });
@@ -146,6 +147,25 @@ describe('P12CoinFactory', function () {
     await core.p12CoinFactory.connect(admin2).claimOwnership();
     await core.p12CoinFactory.connect(admin2).transferOwnership(admin.address, false);
     await core.p12CoinFactory.claimOwnership();
+  });
+  it('Should update token name, symbol, iconUrl successfully', async function () {
+    await expect(core.p12CoinFactory.setTokenName(gameCoin.address, 'NewGameCoin'))
+      .to.be.emit(gameCoin, 'NameUpdated')
+      .withArgs('GameCoin', 'NewGameCoin');
+    expect(await gameCoin.name()).to.be.equal('NewGameCoin');
+
+    await expect(core.p12CoinFactory.setTokenSymbol(gameCoin.address, 'NGC'))
+      .to.be.emit(gameCoin, 'SymbolUpdated')
+      .withArgs('GC', 'NGC');
+    expect(await gameCoin.symbol()).to.be.equal('NGC');
+
+    await expect(core.p12CoinFactory.setTokenIconUrl(gameCoin.address, 'https://example.com'))
+      .to.emit(gameCoin, 'IconUrlUpdated')
+      .withArgs(
+        'https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/87c5b43b19d4065f837f54637d3932e680af9c9b.jpg',
+        'https://example.com',
+      );
+    expect(await gameCoin.gameCoinIconUrl()).to.be.equal('https://example.com');
   });
   it('Should contract upgrade successfully', async function () {
     const p12FactoryAlterF = await ethers.getContractFactory('P12CoinFactoryUpgradeableAlter');

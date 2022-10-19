@@ -313,6 +313,18 @@ contract P12CoinFactoryUpgradeable is
     return true;
   }
 
+  function setTokenName(IP12GameCoin token, string calldata newName) public onlyGameDev(token) {
+    token.setName(newName);
+  }
+
+  function setTokenSymbol(IP12GameCoin token, string calldata newSymbol) public onlyGameDev(token) {
+    token.setSymbol(newSymbol);
+  }
+
+  function setTokenIconUrl(IP12GameCoin token, string calldata newUrl) public onlyGameDev(token) {
+    token.setGameCoinIconUrl(newUrl);
+  }
+
   /**
    * @dev calculate the MintFee in P12
    */
@@ -433,6 +445,11 @@ contract P12CoinFactoryUpgradeable is
   // ============= Modifier ================
   modifier onlyDev() {
     require(msg.sender == dev, 'P12Factory: caller must be dev');
+    _;
+  }
+
+  modifier onlyGameDev(IP12GameCoin token) {
+    require(msg.sender == allGames[allGameCoins[token]], 'P12Factory: not game dev');
     _;
   }
 }
