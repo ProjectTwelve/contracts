@@ -82,7 +82,7 @@ const config: HardhatUserConfig = {
       chainId: 5,
       accounts: accounts,
       gas: 'auto',
-      gasPrice: 3000000000, // 3 Gwei
+      gasPrice: 'auto', //
       tags: ['staging'],
       deploy: ['deploy/goerli'],
     },
