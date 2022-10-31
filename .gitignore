@@ -16,3 +16,4 @@ scripts/tmp.ts
 build
 docs/**
 yarn-error.log
+solcInputs

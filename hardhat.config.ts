@@ -97,6 +97,20 @@ const config: HardhatUserConfig = {
       p12TestNet: addresses[0],
     },
   },
+  deterministicDeployment: {
+    44010: {
+      factory: '0xCB2c067Db41aB40Fe6583BE811C15FF190b05dAF',
+      deployer: '',
+      funding: '',
+      signedTx: '',
+    },
+    5: {
+      factory: '0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7',
+      deployer: '',
+      funding: '',
+      signedTx: '',
+    },
+  },
 
   external: {
     contracts: [
