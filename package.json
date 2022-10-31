@@ -1,5 +1,6 @@
 {
   "name": "@p12/contracts",
+  "version": "v0.0.3",
   "license": "GPL-3.0",
   "engines": {
     "node": ">=16"

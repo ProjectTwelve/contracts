@@ -1,9 +1,9 @@
 {
-  "name": "p12TestNet",
-  "chainId": "44010",
+  "name": "goerli",
+  "chainId": "5",
   "contracts": {
     "ERC1155Delegate": {
-      "address": "0x571A3EE9212806b3C8CF4e46D50D833028A903c3",
+      "address": "0x7C3ad1f15019ACfEd2C7b5f05905008f39e44560",
       "abi": [
         {
           "inputs": [],
@@ -457,7 +457,7 @@
       ]
     },
     "ERC721Delegate": {
-      "address": "0xA57422Bed77ff74cC20d7458B93FC2D978F12193",
+      "address": "0x47Ce8814257d598E126ae5CD8b933D28a4719B66",
       "abi": [
         {
           "inputs": [],
@@ -862,7 +862,7 @@
       ]
     },
     "GaugeControllerUpgradeable": {
-      "address": "0x92Ef99Db92b04C34D55b1C1537166dbeF130068e",
+      "address": "0x0CE1Eb4f32b5CFEeDDb375341175C81709716Cf7",
       "abi": [
         {
           "anonymous": false,
@@ -960,6 +960,19 @@
             }
           ],
           "name": "CommitOwnership",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -2003,7 +2016,7 @@
       ]
     },
     "GaugeControllerUpgradeable_Implementation": {
-      "address": "0xDD6708F8e9409b26da06924d9b9c35F42C32D93e",
+      "address": "0xF7fd4112CFf5da535BBFa3811D40fE9Aa61FA722",
       "abi": [
         {
           "anonymous": false,
@@ -2080,6 +2093,19 @@
             }
           ],
           "name": "CommitOwnership",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -3120,7 +3146,7 @@
       ]
     },
     "GaugeControllerUpgradeable_Proxy": {
-      "address": "0x92Ef99Db92b04C34D55b1C1537166dbeF130068e",
+      "address": "0x0CE1Eb4f32b5CFEeDDb375341175C81709716Cf7",
       "abi": [
         {
           "inputs": [
@@ -3194,7 +3220,7 @@
       ]
     },
     "P12AssetFactoryUpgradable": {
-      "address": "0x6CB86eBd560ca078BAAfBfecc21C2E7e0aa9010D",
+      "address": "0xd1190C53dFF162242EE5145cFb1C28dA75B921f3",
       "abi": [
         {
           "anonymous": false,
@@ -3266,6 +3292,19 @@
             }
           ],
           "name": "CollectionCreated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -3645,7 +3684,7 @@
       ]
     },
     "P12AssetFactoryUpgradable_Implementation": {
-      "address": "0x98Ed648CE19501eD0bd2B9293f82344412d2FdE6",
+      "address": "0xFf225Dde0d32b6CA68aCDc1f18bCd620DEcF95F6",
       "abi": [
         {
           "anonymous": false,
@@ -3696,6 +3735,19 @@
             }
           ],
           "name": "CollectionCreated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -4072,7 +4124,7 @@
       ]
     },
     "P12AssetFactoryUpgradable_Proxy": {
-      "address": "0x6CB86eBd560ca078BAAfBfecc21C2E7e0aa9010D",
+      "address": "0xd1190C53dFF162242EE5145cFb1C28dA75B921f3",
       "abi": [
         {
           "inputs": [
@@ -4146,7 +4198,7 @@
       ]
     },
     "P12CoinFactoryUpgradeable": {
-      "address": "0x2695eF03c7ea6A1F55463ee4b47E4E3DBCBcd6d1",
+      "address": "0x7154f7219F5E0F1EbF8C2dbBA1bCF8Fb36f2c5f3",
       "abi": [
         {
           "anonymous": false,
@@ -4249,6 +4301,19 @@
             }
           ],
           "name": "ExecuteMintCoin",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -5066,6 +5131,60 @@
             }
           ],
           "name": "setP12Token",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IP12GameCoin",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "newUrl",
+              "type": "string"
+            }
+          ],
+          "name": "setTokenIconUrl",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IP12GameCoin",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "newName",
+              "type": "string"
+            }
+          ],
+          "name": "setTokenName",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IP12GameCoin",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "newSymbol",
+              "type": "string"
+            }
+          ],
+          "name": "setTokenSymbol",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -5226,7 +5345,7 @@
       ]
     },
     "P12CoinFactoryUpgradeable_Implementation": {
-      "address": "0x2A0c13CcaEeAe5325fa487139944ECC1f93c9487",
+      "address": "0xda00fe766557ae056b1da6bcc5ee239c987fbe08",
       "abi": [
         {
           "anonymous": false,
@@ -5308,6 +5427,19 @@
             }
           ],
           "name": "ExecuteMintCoin",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -6145,6 +6277,60 @@
         {
           "inputs": [
             {
+              "internalType": "contract IP12GameCoin",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "newUrl",
+              "type": "string"
+            }
+          ],
+          "name": "setTokenIconUrl",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IP12GameCoin",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "newName",
+              "type": "string"
+            }
+          ],
+          "name": "setTokenName",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IP12GameCoin",
+              "name": "token",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "newSymbol",
+              "type": "string"
+            }
+          ],
+          "name": "setTokenSymbol",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "contract IUniswapV2Factory",
               "name": "newUniswapFactory",
               "type": "address"
@@ -6282,7 +6468,7 @@
       ]
     },
     "P12CoinFactoryUpgradeable_Proxy": {
-      "address": "0x2695eF03c7ea6A1F55463ee4b47E4E3DBCBcd6d1",
+      "address": "0x7154f7219F5E0F1EbF8C2dbBA1bCF8Fb36f2c5f3",
       "abi": [
         {
           "inputs": [
@@ -6356,7 +6542,7 @@
       ]
     },
     "P12MineUpgradeable": {
-      "address": "0xCf7d5E1a92b0F9d6AA594fb0aB6890384FaD6aB1",
+      "address": "0x1DEF93A65aD4F7578029A14Bf79565bB55099c2b",
       "abi": [
         {
           "anonymous": false,
@@ -6552,6 +6738,19 @@
             }
           ],
           "name": "ExecuteWithdraw",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -7601,7 +7800,7 @@
       ]
     },
     "P12MineUpgradeable_Implementation": {
-      "address": "0xdA10590765662DE4295122341638C01160D759FF",
+      "address": "0xb89eF0fD0360702a19378140848a1f2CF18BADca",
       "abi": [
         {
           "anonymous": false,
@@ -7776,6 +7975,19 @@
             }
           ],
           "name": "ExecuteWithdraw",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -8822,7 +9034,7 @@
       ]
     },
     "P12MineUpgradeable_Proxy": {
-      "address": "0xCf7d5E1a92b0F9d6AA594fb0aB6890384FaD6aB1",
+      "address": "0x1DEF93A65aD4F7578029A14Bf79565bB55099c2b",
       "abi": [
         {
           "inputs": [
@@ -8896,7 +9108,7 @@
       ]
     },
     "P12Token": {
-      "address": "0xeAc1F044C4b9B7069eF9F3eC05AC60Df76Fe6Cd0",
+      "address": "0x2844B158Bcffc0aD7d881a982D464c0ce38d8086",
       "abi": [
         {
           "inputs": [
@@ -9287,7 +9499,7 @@
       ]
     },
     "SecretShopUpgradable": {
-      "address": "0x76eDf742106828B2aDd50829142B84d3B337Fdd5",
+      "address": "0xF6BF8603D8ce7e094e06E49582a0A2eCCB0E7340",
       "abi": [
         {
           "anonymous": false,
@@ -9588,6 +9800,19 @@
             }
           ],
           "name": "EvProfit",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -10308,7 +10533,7 @@
       ]
     },
     "SecretShopUpgradable_Implementation": {
-      "address": "0x59d7Cab3aedD66A47B242752E599F5D557bdbc12",
+      "address": "0x800D5A6d040Ef3Cb2230E06b7dE26b638af7C5cA",
       "abi": [
         {
           "anonymous": false,
@@ -10588,6 +10813,19 @@
             }
           ],
           "name": "EvProfit",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
           "type": "event"
         },
         {
@@ -11309,7 +11547,7 @@
       ]
     },
     "SecretShopUpgradable_Proxy": {
-      "address": "0x76eDf742106828B2aDd50829142B84d3B337Fdd5",
+      "address": "0xF6BF8603D8ce7e094e06E49582a0A2eCCB0E7340",
       "abi": [
         {
           "inputs": [
@@ -11383,7 +11621,7 @@
       ]
     },
     "UniswapV2Factory": {
-      "address": "0x8C2543578eFEd64343C63e9075ed70F1d255D1c6",
+      "address": "0x5c69bee701ef814a2b6a3edd4b1652cb9cc5aa6f",
       "abi": [
         {
           "inputs": [
@@ -11579,7 +11817,7 @@
       ]
     },
     "UniswapV2Router02": {
-      "address": "0x71A3B75A9A774EB793A44a36AF760ee2868912ac",
+      "address": "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
       "abi": [
         {
           "inputs": [
@@ -12555,7 +12793,7 @@
       ]
     },
     "VotingEscrow": {
-      "address": "0xA7f7dee4E7a86b96dB09DAcBBbB13Da911462B20",
+      "address": "0xAb68c4ff93d1ba927979E22cc0c1Acf86E83ab0F",
       "abi": [
         {
           "inputs": [
@@ -13281,7 +13519,7 @@
       ]
     },
     "WETH9": {
-      "address": "0x0EE3F0848cA07E6342390C34FcC7Ea9D0217a47d",
+      "address": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
       "abi": [
         {
           "anonymous": false,
