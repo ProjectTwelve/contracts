@@ -9,6 +9,7 @@ import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
+import 'hardhat-contract-sizer';
 import '@openzeppelin/hardhat-upgrades';
 import 'solidity-docgen';
 
@@ -87,6 +88,12 @@ const config: HardhatUserConfig = {
       tags: ['staging'],
       deploy: ['deploy/goerli'],
     },
+  },
+  contractSizer: {
+    alphaSort: false,
+    disambiguatePaths: false,
+    runOnCompile: true,
+    strict: true,
   },
   gasReporter: {
     enabled: process.env.REPORT_GAS !== undefined,
