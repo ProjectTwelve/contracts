@@ -1,8 +1,8 @@
-import { ethers, upgrades } from 'hardhat';
+import { ethers } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
-import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
-import { P12GameCoin } from '../../typechain';
+import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { P12CoinFactoryUpgradeableAlter, P12GameCoin } from '../../typechain';
 
 describe('P12CoinFactory', function () {
   let admin: SignerWithAddress;
@@ -24,7 +24,7 @@ describe('P12CoinFactory', function () {
     user = accounts[3];
     p12Dev = accounts[8];
     test = accounts[9];
-    core = await deployAll();
+    core = await fixtureAll();
     await core.p12CoinFactory.setDev(p12Dev.address);
   });
   it('Should pausable effective', async () => {
@@ -170,8 +170,13 @@ describe('P12CoinFactory', function () {
   it('Should contract upgrade successfully', async function () {
     const p12FactoryAlterF = await ethers.getContractFactory('P12CoinFactoryUpgradeableAlter');
 
-    await upgrades.upgradeProxy(core.p12CoinFactory.address, p12FactoryAlterF);
-    const p12FactoryAlter = await ethers.getContractAt('P12CoinFactoryUpgradeableAlter', core.p12CoinFactory.address);
+    const newImplementation = await p12FactoryAlterF.deploy();
+
+    core.p12CoinFactory.upgradeTo(newImplementation.address);
+    const p12FactoryAlter = await ethers.getContractAt<P12CoinFactoryUpgradeableAlter>(
+      'P12CoinFactoryUpgradeableAlter',
+      core.p12CoinFactory.address,
+    );
 
     await p12FactoryAlter.callWhiteBlack();
   });

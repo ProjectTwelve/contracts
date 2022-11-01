@@ -16,7 +16,7 @@
     "doc:build": "docusaurus build",
     "flat": "hardhat flat",
     "prettier": "prettier -w .",
-    "test": "hardhat test",
+    "test": "hardhat test --deploy-fixture",
     "test:analysis": "REPORT_GAS=true hardhat test",
     "coverage": "hardhat coverage",
     "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\""

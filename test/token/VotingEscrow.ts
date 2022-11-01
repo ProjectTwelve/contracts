@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 
 describe('VotingEscrow', function () {
   let core: EconomyContract & ExternalContract;
@@ -10,7 +10,7 @@ describe('VotingEscrow', function () {
     // hardhat test accounts
     const accounts = await ethers.getSigners();
     test = accounts[1];
-    core = await deployAll();
+    core = await fixtureAll();
   });
   it('transfer p12Token to test account successfully', async function () {
     await core.p12Token.transfer(test.address, 100n * 10n ** 18n);

@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 import { Contract } from 'ethers/lib/ethers';
 import * as compiledUniswapPair from '@uniswap/v2-core/build/UniswapV2Pair.json';
 
@@ -23,7 +23,7 @@ describe('P12Mine', function () {
     p12Dev = accounts[9];
     developer = accounts[1];
     user = accounts[2];
-    core = await deployAll();
+    core = await fixtureAll();
     await core.p12CoinFactory.setDev(p12Dev.address);
   });
 

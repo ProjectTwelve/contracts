@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { ethers } from 'hardhat';
-import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 
 describe('GaugeController', function () {
   let admin: SignerWithAddress;
@@ -13,7 +13,7 @@ describe('GaugeController', function () {
     const accounts = await ethers.getSigners();
     admin = accounts[0];
     user = accounts[2];
-    core = await deployAll();
+    core = await fixtureAll();
   });
 
   it('show add gauge successfully', async function () {
