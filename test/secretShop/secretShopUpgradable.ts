@@ -1,10 +1,10 @@
 import { expect } from 'chai';
-import { ethers, upgrades } from 'hardhat';
+import { ethers } from 'hardhat';
 import { P12AssetDemo, ERC721Demo, P12Asset } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { utils } from 'ethers';
 import { genSalt } from './utils';
-import { deployAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
+import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 
 describe('SecretShopUpgradable', function () {
   let developer: SignerWithAddress;
@@ -69,14 +69,11 @@ describe('SecretShopUpgradable', function () {
 
   this.beforeAll(async () => {
     // distribute account
-    const accounts = await ethers.getSigners();
-    developer = accounts[0];
-    user1 = accounts[1];
-    user2 = accounts[2];
-    recipient = accounts[3];
-    passerby = accounts[4];
+    [developer, user1, user2, recipient, passerby] = await ethers.getSigners();
 
-    core = await deployAll();
+    core = await fixtureAll();
+
+    // grant role
 
     // mint p12Token
     await core.p12Token.mint(user1.address, 100n * 10n ** 18n);
@@ -711,18 +708,21 @@ describe('SecretShopUpgradable', function () {
     // Should upgrade successfully
     const SecretShopAlterF = await ethers.getContractFactory('SecretShopUpgradableAlter');
 
-    const secretShopAlter = await upgrades.upgradeProxy(core.p12SecretShop.address, SecretShopAlterF);
+    const newImplementation = await SecretShopAlterF.deploy();
 
+    await core.p12SecretShop.upgradeTo(newImplementation.address);
+
+    core.p12SecretShop = await ethers.getContractAt('SecretShopUpgradableAlter', core.p12SecretShop.address);
     // trigger revert failure log
     // run order but allow failure
     await expect(
-      secretShopAlter.connect(user2).run({
+      core.p12SecretShop.connect(user2).run({
         orders: [Order],
         details: [SettleDetail],
         shared: { ...SettleShared, canFail: true },
       }),
     )
-      .to.emit(secretShopAlter, 'EvFailure')
+      .to.emit(core.p12SecretShop, 'EvFailure')
       .withArgs(0, '0x');
   });
 });
