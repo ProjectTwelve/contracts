@@ -19,7 +19,8 @@
     "test": "hardhat test --deploy-fixture",
     "test:analysis": "REPORT_GAS=true hardhat test",
     "coverage": "hardhat coverage",
-    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\""
+    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\"",
+    "estimate-size": "hardhat size-contracts --max-memory 8096"
   },
   "devDependencies": {
     "@algolia/client-search": "^4.9.1",
@@ -55,6 +56,7 @@
     "ethers": "^5.6.9",
     "fs-extra": "^10.1.0",
     "hardhat": "2.9.5",
+    "hardhat-contract-sizer": "^2.6.1",
     "hardhat-deploy": "^0.11.15",
     "hardhat-gas-reporter": "^1.0.6",
     "husky": "^7.0.4",
