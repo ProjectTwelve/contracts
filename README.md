@@ -1,4 +1,4 @@
-![License: GPL](https://img.shields.io/badge/license-GPLv3-blue)
+![License: GPL](https://img.shields.io/badge/license-GPLv3-blue) [![CI](https://github.com/ProjectTwelve/contracts/actions/workflows/push.yml/badge.svg)](https://github.com/ProjectTwelve/contracts/actions/workflows/push.yml/)
 
 # Project Twelve Economy Contracts
 
@@ -35,12 +35,12 @@ staking
 
 > Lp token holders stake their lp token to earn rewards. The reward is determined according to the proportion of their own lpToken in the pledge pool. The reward distribution weight for each staking pool is voted by veP12 according to the GaugeContoller contract.
 
-# Get Started
+# Usage
 
 Requirement:
 
 - Node >= 16
-- yarn(recommend)
+- pnpm >= 7
 
 Clone the repository
 
@@ -51,14 +51,21 @@ $ git clone https://github.com/ProjectTwelve/contracts
 Install dependencies
 
 ```shell
-$ yarn -D
+$ pnpm i
 ```
 
 Run all test
 
 ```shell
-$ yarn test
+$ pnpm test
 ```
+
+## Audits
+
+Proud to be audited by:
+
+- [Yos Riady](https://yos.io/) (Report [here](https://github.com/ProjectTwelve/contracts/blob/main/audits/2022-07-pre-audit.pdf))
+- [Secure3](https://www.secure3.io/) (Report [here](https://github.com/ProjectTwelve/contracts/blob/main/audits/2022-08-secure3-audit.pdf))
 
 # Copyright
 
