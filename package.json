@@ -18,7 +18,7 @@
     "prettier": "prettier -w .",
     "test": "hardhat test --deploy-fixture",
     "test:analysis": "REPORT_GAS=true hardhat test",
-    "coverage": "hardhat coverage",
+    "coverage": "HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
     "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\"",
     "estimate-size": "hardhat size-contracts --max-memory 8096"
   },
@@ -67,7 +67,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "solhint": "^3.3.6",
-    "solidity-coverage": "^0.7.17",
+    "solidity-coverage": "0.7.22",
     "solidity-docgen": "^0.6.0-beta.22",
     "ts-node": "^10.4.0",
     "tsort": "^0.0.1",
