@@ -4,7 +4,7 @@ import { ethers } from 'hardhat';
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy, get } = deployments;
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer, owner } = await getNamedAccounts();
 
   const p12 = await get('P12Token');
   const p12CoinFactoryUpgradeable = await get('P12CoinFactoryUpgradeable');
@@ -20,6 +20,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
         init: {
           methodName: 'initialize',
           args: [
+            owner,
             p12.address,
             p12CoinFactoryUpgradeable.address,
             gaugeControllerUpgradeable.address,

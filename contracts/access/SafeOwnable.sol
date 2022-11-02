@@ -12,10 +12,10 @@ contract SafeOwnable is Context {
   event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
   /**
-   * @dev Initializes the contract setting the deployer as the initial owner.
+   * @dev Initializes the contract setting the owner manually.
    */
-  constructor() {
-    _transferOwnership(_msgSender());
+  constructor(address owner_) {
+    _transferOwnership(owner_);
   }
 
   /**

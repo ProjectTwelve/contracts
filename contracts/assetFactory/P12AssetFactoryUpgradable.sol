@@ -41,13 +41,13 @@ contract P12AssetFactoryUpgradable is
     _unpause();
   }
 
-  function initialize(address p12CoinFactory_) public initializer {
+  function initialize(address owner_, address p12CoinFactory_) public initializer {
     require(p12CoinFactory_ != address(0), 'P12AssetF: p12CoinFactory cannot be 0');
     p12CoinFactory = p12CoinFactory_;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
-    __Ownable_init_unchained();
+    __Ownable_init_unchained(owner_);
   }
 
   /**
@@ -61,7 +61,7 @@ contract P12AssetFactoryUpgradable is
     onlyDeveloper(gameId)
     whenNotPaused
   {
-    P12Asset collection = new P12Asset(contractURI);
+    P12Asset collection = new P12Asset(address(this), contractURI);
     // record creator
     registry[address(collection)] = gameId;
 

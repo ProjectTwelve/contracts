@@ -270,6 +270,7 @@ contract P12CoinFactoryUpgradeable is
   }
 
   function initialize(
+    address owner_,
     address p12_,
     IUniswapV2Factory uniswapFactory_,
     IUniswapV2Router02 uniswapRouter_,
@@ -288,7 +289,7 @@ contract P12CoinFactoryUpgradeable is
     IERC20Upgradeable(p12).safeApprove(address(uniswapRouter), type(uint256).max);
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
-    __Ownable_init_unchained();
+    __Ownable_init_unchained(owner_);
   }
 
   /**
@@ -398,7 +399,7 @@ contract P12CoinFactoryUpgradeable is
     string memory gameCoinIconUrl,
     uint256 amountGameCoin
   ) internal virtual returns (P12GameCoin gameCoinAddress) {
-    P12GameCoin gameCoin = new P12GameCoin(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
+    P12GameCoin gameCoin = new P12GameCoin(address(this), name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     gameCoinAddress = gameCoin;
   }
 

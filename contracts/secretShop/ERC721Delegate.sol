@@ -23,8 +23,8 @@ contract ERC721Delegate is IDelegate, AccessControl, IERC721Receiver, Reentrancy
     uint256 tokenId;
   }
 
-  constructor() {
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+  constructor(address admin_) {
+    _grantRole(DEFAULT_ADMIN_ROLE, admin_);
   }
 
   /**

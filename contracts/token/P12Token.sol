@@ -11,11 +11,12 @@ import './interfaces/IP12Token.sol';
 
 contract P12Token is IP12Token, ERC20, SafeOwnable {
   constructor(
+    address owner_,
     string memory name,
     string memory symbol,
     uint256 totalSupply
-  ) ERC20(name, symbol) {
-    _mint(msg.sender, totalSupply);
+  ) ERC20(name, symbol) SafeOwnable(owner_) {
+    _mint(owner_, totalSupply);
   }
 
   function mint(address recipient, uint256 amount) public override onlyOwner {

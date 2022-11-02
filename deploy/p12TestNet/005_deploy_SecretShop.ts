@@ -25,6 +25,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
+          // TODO: add owner args when deploy
           args: [10 ** 5, weth.address],
         },
       },

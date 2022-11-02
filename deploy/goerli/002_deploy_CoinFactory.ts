@@ -9,7 +9,6 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
   const uniswapFactory = await get('UniswapV2Factory');
   const uniswapRouter = await get('UniswapV2Router02');
 
-  // Be carefully: Check whether proxy contract is initialized successfully
   await deploy('P12CoinFactoryUpgradeable', {
     from: deployer,
     args: [],
@@ -19,6 +18,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
+          // TODO: add owner args when deploy
           args: [p12Token.address, uniswapFactory.address, uniswapRouter.address, 100, ethers.utils.randomBytes(32)],
         },
       },

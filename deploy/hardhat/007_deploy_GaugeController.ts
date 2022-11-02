@@ -3,7 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy, get } = deployments;
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer, owner } = await getNamedAccounts();
 
   const p12CoinFactoryUpgradeable = await get('P12CoinFactoryUpgradeable');
   const veP12 = await get('VotingEscrow');
@@ -17,7 +17,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [veP12.address, p12CoinFactoryUpgradeable.address],
+          args: [owner, veP12.address, p12CoinFactoryUpgradeable.address],
         },
       },
     },

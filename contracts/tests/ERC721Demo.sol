@@ -5,7 +5,7 @@ pragma solidity 0.8.15;
 import '@openzeppelin/contracts/token/ERC721/ERC721.sol';
 import '../access/SafeOwnable.sol';
 
-contract ERC721Demo is ERC721('', ''), SafeOwnable {
+contract ERC721Demo is ERC721('', ''), SafeOwnable(msg.sender) {
   /**
    * See {_mint}.
    */

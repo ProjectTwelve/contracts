@@ -3,7 +3,7 @@ import { ethers } from 'hardhat';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { get, deploy } = deployments;
-  const { deployer } = await getNamedAccounts();
+  const { deployer, owner } = await getNamedAccounts();
 
   const p12Token = await get('P12Token');
   const uniswapFactory = await get('UniswapV2Factory');
@@ -19,7 +19,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
-          args: [p12Token.address, uniswapFactory.address, uniswapRouter.address, 100, ethers.utils.randomBytes(32)],
+          args: [owner, p12Token.address, uniswapFactory.address, uniswapRouter.address, 100, ethers.utils.randomBytes(32)],
         },
       },
     },

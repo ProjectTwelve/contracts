@@ -9,6 +9,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
 
   await deploy('VotingEscrow', {
     from: deployer,
+    // TODO: add owner args when deploy
     args: [p12.address, 'Vote-escrowed P12', 'veP12'],
     log: true,
   });

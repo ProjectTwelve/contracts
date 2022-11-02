@@ -4,11 +4,11 @@ import { parseEther } from 'ethers/lib/utils';
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy } = deployments;
 
-  const { deployer } = await getNamedAccounts();
+  const { deployer, owner } = await getNamedAccounts();
 
   await deploy('P12Token', {
     from: deployer,
-    args: ['P12Token', 'P12', String(parseEther('10000'))],
+    args: [owner, 'P12Token', 'P12', String(parseEther('10000'))],
     log: true,
   });
 };

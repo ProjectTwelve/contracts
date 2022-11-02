@@ -60,7 +60,7 @@ Run all test
 $ pnpm test
 ```
 
-## Audits
+# Audits
 
 Proud to be audited by:
 

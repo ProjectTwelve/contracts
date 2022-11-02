@@ -70,10 +70,11 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
    * @param symbol_ Token symbol
    */
   constructor(
+    address owner_,
     address p12TokenAddr_,
     string memory name_,
     string memory symbol_
-  ) {
+  ) SafeOwnable(owner_) {
     require(p12TokenAddr_ != address(0), 'VotingEscrow: token cannot be 0');
     name = name_;
     symbol = symbol_;

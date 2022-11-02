@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { ethers, upgrades } from 'hardhat';
-import { P12AssetFactoryUpgradable, P12Asset } from '../../typechain';
+import { ethers } from 'hardhat';
+import { P12AssetFactoryUpgradable, P12Asset, P12CoinFactoryUpgradeable } from '../../typechain';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { Contract } from 'ethers';
+import { getContract } from '../../scripts/deploy';
 
 describe('P12AssetFactoryUpgradable', function () {
   // admin: Who deploy factory contract
@@ -14,9 +14,8 @@ describe('P12AssetFactoryUpgradable', function () {
   // user1: not Used Now
   // let user1: SignerWithAddress;
   // p12factory: Register Game and create GameCoin
-  let p12CoinFactory: Contract;
+  let p12CoinFactory: P12CoinFactoryUpgradeable;
   //
-  let p12AssetFactoryAddr: Contract;
   let p12AssetFactory: P12AssetFactoryUpgradable;
   let collectionAddr: string;
   let collection: P12Asset;
@@ -29,45 +28,15 @@ describe('P12AssetFactoryUpgradable', function () {
     developer1 = accounts[1];
     developer2 = accounts[2];
     p12Dev = accounts[9];
-    // user1 = accounts[3];
 
-    // deploy p12 coin
-    const P12TokenF = await ethers.getContractFactory('P12Token');
-    const p12Token = await P12TokenF.deploy('Project Twelve', 'P12', 0n);
+    p12CoinFactory = await getContract<P12CoinFactoryUpgradeable>('P12CoinFactoryUpgradeable');
 
-    // mint p12 Coin
-    // await p12coin.mint(user1.address, 100n * 10n ** 18n);
-    // await p12coin.mint(user2.address, 100n * 10n ** 18n);
-    // expect(await p12coin.balanceOf(user1.address)).to.be.equal(
-    //   100n * 10n ** 18n
-    // );
-    // expect(await p12coin.balanceOf(user2.address)).to.be.equal(
-    //   100n * 10n ** 18n
-    // );
-
-    // deploy p12factory
-    const P12CoinFactory = await ethers.getContractFactory('P12CoinFactoryUpgradeable');
-    // not fully use, so set random address args
-
-    p12CoinFactory = await upgrades.deployProxy(
-      P12CoinFactory,
-      [p12Token.address, p12Token.address, p12Token.address, 0n, ethers.utils.randomBytes(32)],
-      {
-        kind: 'uups',
-      },
-    );
+    // set dev
     await p12CoinFactory.setDev(p12Dev.address);
-
     // register game
     await p12CoinFactory.connect(p12Dev).register('gameId1', developer1.address);
-  });
 
-  it('Should P12AssetFactoryUpgradable Deploy successfully', async function () {
-    const P12AssetFactoryUpgradableF = await ethers.getContractFactory('P12AssetFactoryUpgradable');
-    p12AssetFactoryAddr = await upgrades.deployProxy(P12AssetFactoryUpgradableF, [p12CoinFactory.address], {
-      kind: 'uups',
-    });
-    p12AssetFactory = await ethers.getContractAt('P12AssetFactoryUpgradable', p12AssetFactoryAddr.address);
+    p12AssetFactory = await getContract<P12AssetFactoryUpgradable>('P12AssetFactoryUpgradable');
   });
 
   it('Should developer1 create collection successfully', async function () {
@@ -131,18 +100,5 @@ describe('P12AssetFactoryUpgradable', function () {
     await expect(p12AssetFactory.connect(developer2).updateSftUri(collection.address, 0, 'ar://')).to.be.revertedWith(
       'P12AssetF: not game developer',
     );
-  });
-
-  it('Should upgrade successfully', async () => {
-    const P12AssetFactoryAlter = await ethers.getContractFactory('P12AssetFactoryUpgradableAlter');
-
-    const p12AssetFactoryAlter = await upgrades.upgradeProxy(p12AssetFactory.address, P12AssetFactoryAlter);
-
-    await expect(p12AssetFactoryAlter.setP12CoinFactory(ethers.constants.AddressZero)).to.be.revertedWith(
-      'P12AssetF: p12CoinFactory cannot be 0',
-    );
-    const randomAddr = ethers.utils.computeAddress(ethers.utils.randomBytes(32));
-    await p12AssetFactoryAlter.setP12CoinFactory(randomAddr);
-    expect(await p12AssetFactoryAlter.p12CoinFactory()).to.be.equal(randomAddr);
   });
 });

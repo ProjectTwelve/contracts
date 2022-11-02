@@ -61,7 +61,11 @@ contract SecretShopUpgradable is
    * @param feeCapPct_ max fee percentage
    * @param weth_ address of wrapped eth
    */
-  function initialize(uint256 feeCapPct_, address weth_) public initializer {
+  function initialize(
+    address owner_,
+    uint256 feeCapPct_,
+    address weth_
+  ) public initializer {
     feeCapPct = feeCapPct_;
     weth = IWETHUpgradable(weth_);
     bytes32 eip712DomainTypeHash = keccak256(
@@ -81,7 +85,7 @@ contract SecretShopUpgradable is
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
-    __Ownable_init_unchained();
+    __Ownable_init_unchained(owner_);
   }
 
   /**

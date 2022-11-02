@@ -29,7 +29,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
   // metadata uri
   mapping(uint256 => string) private _uris;
 
-  constructor(string memory contractURI_) {
+  constructor(address owner_, string memory contractURI_) SafeOwnable(owner_) {
     require(bytes(contractURI_).length != 0, 'P12Asset: empty contractURI');
     contractURI = contractURI_;
   }

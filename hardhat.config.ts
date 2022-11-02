@@ -104,6 +104,9 @@ const config: HardhatUserConfig = {
       default: 0,
       p12TestNet: addresses[0],
     },
+    owner: {
+      default: 0,
+    },
   },
   deterministicDeployment: {
     44010: {

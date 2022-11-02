@@ -96,6 +96,7 @@ contract P12MineUpgradeable is
    * @param delayB_ delayB_ is a coefficient
    */
   function initialize(
+    address owner_,
     address p12Token_,
     address p12CoinFactory_,
     IGaugeController gaugeController_,
@@ -109,14 +110,14 @@ contract P12MineUpgradeable is
     p12Token = p12Token_;
     p12CoinFactory = p12CoinFactory_;
     gaugeController = IGaugeController(gaugeController_);
-    p12RewardVault = IP12RewardVault(new P12RewardVault(p12Token_));
+    p12RewardVault = IP12RewardVault(new P12RewardVault(address(this), p12Token_));
     delayK = delayK_;
     delayB = delayB_;
     rate = rate_;
 
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
-    __Ownable_init_unchained();
+    __Ownable_init_unchained(owner_);
   }
 
   /**

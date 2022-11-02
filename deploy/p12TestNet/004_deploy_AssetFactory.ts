@@ -15,6 +15,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       execute: {
         init: {
           methodName: 'initialize',
+          // TODO: add owner args when deploy
           args: [p12CoinFactoryUpgradeable.address],
         },
       },

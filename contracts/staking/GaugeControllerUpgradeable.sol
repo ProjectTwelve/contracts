@@ -298,13 +298,17 @@ contract GaugeControllerUpgradeable is
     _unpause();
   }
 
-  function initialize(address votingEscrow_, address p12CoinFactory_) public initializer {
+  function initialize(
+    address owner_,
+    address votingEscrow_,
+    address p12CoinFactory_
+  ) public initializer {
     require(votingEscrow_ != address(0) && p12CoinFactory_ != address(0), 'GC: address can not 0');
     votingEscrow = IVotingEscrow(votingEscrow_);
     p12CoinFactory = p12CoinFactory_;
 
     __Pausable_init_unchained();
-    __Ownable_init_unchained();
+    __Ownable_init_unchained(owner_);
   }
 
   //-----------internal----------

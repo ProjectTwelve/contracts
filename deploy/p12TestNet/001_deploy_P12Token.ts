@@ -8,6 +8,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
 
   await deploy('P12Token', {
     from: deployer,
+    // TODO: add owner args when deploy
     args: ['P12Token', 'P12', String(parseEther('10000'))],
     log: true,
   });

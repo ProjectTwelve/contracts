@@ -31,12 +31,13 @@ contract P12GameCoin is IP12GameCoin, ERC20, ERC20Burnable, SafeOwnable {
    * @param amount_ amount of first minting
    */
   constructor(
+    address owner_,
     string memory name_,
     string memory symbol_,
     string memory gameId_,
     string memory iconUrl_,
     uint256 amount_
-  ) ERC20(name_, symbol_) {
+  ) ERC20(name_, symbol_) SafeOwnable(owner_) {
     _name = name_;
     _symbol = symbol_;
     _gameId = gameId_;
