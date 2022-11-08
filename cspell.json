@@ -9,8 +9,10 @@
     "checkins",
     "checkpointed",
     "clsx",
+    "codeql",
     "composability",
     "Consts",
+    "crytic",
     "Dapphub",
     "dedup",
     "delegatecall",
@@ -45,6 +47,7 @@
     "reentrancy",
     "Reentrancy",
     "returndata",
+    "sarif",
     "secp256",
     "SLOAD",
     "solhint",
@@ -63,10 +66,7 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf",
-    "ADDESSSES",
-    "docgen",
-    "sstore"
+    "xwbf"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]
 }
