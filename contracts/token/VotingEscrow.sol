@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/security/Pausable.sol';
 
 import '../access/SafeOwnable.sol';
 import './interfaces/IVotingEscrow.sol';
+import '../libraries/CommonError.sol';
 
 contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   using SafeERC20 for IERC20;
@@ -75,7 +76,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     string memory name_,
     string memory symbol_
   ) SafeOwnable(owner_) {
-    require(p12TokenAddr_ != address(0), 'VotingEscrow: token cannot be 0');
+    if (p12TokenAddr_ == address(0)) revert CommonError.ZeroAddressSet();
     name = name_;
     symbol = symbol_;
     p12Token = p12TokenAddr_;
@@ -558,10 +559,17 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     return uint256(lastPoint.bias);
   }
 
+  /**
+   * @dev extract this function for saving gas
+   */
+  function _checkContractNotExpired() private view {
+    require(!expired, 'VotingEscrow: contract stopped');
+  }
+
   //------------modifier-------------
 
   modifier contractNotExpired() {
-    require(!expired, 'VotingEscrow: contract stopped');
+    _checkContractNotExpired();
     _;
   }
 }

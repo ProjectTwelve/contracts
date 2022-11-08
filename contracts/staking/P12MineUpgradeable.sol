@@ -15,6 +15,7 @@ import './interfaces/IP12MineUpgradeable.sol';
 import './P12MineStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
 import '../token/interfaces/IP12Token.sol';
+import '../libraries/CommonError.sol';
 
 contract P12MineUpgradeable is
   P12MineStorage,
@@ -38,7 +39,7 @@ contract P12MineUpgradeable is
    */
   function setP12CoinFactory(address newP12CoinFactory) external virtual override onlyOwner {
     address oldP12CoinFactory = p12CoinFactory;
-    require(newP12CoinFactory != address(0), 'P12Mine: p12CoinFactory cannot be 0');
+    if (newP12CoinFactory == address(0)) revert CommonError.ZeroAddressSet();
     p12CoinFactory = newP12CoinFactory;
     emit SetP12Factory(oldP12CoinFactory, newP12CoinFactory);
   }
@@ -49,7 +50,7 @@ contract P12MineUpgradeable is
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
     IGaugeController oldGaugeController = gaugeController;
-    require(address(newGaugeController) != address(0), 'P12Mine: gc cannot be 0');
+    if (address(newGaugeController) == address(0)) revert CommonError.ZeroAddressSet();
     gaugeController = newGaugeController;
     emit SetGaugeController(oldGaugeController, newGaugeController);
   }
@@ -104,9 +105,7 @@ contract P12MineUpgradeable is
     uint256 delayB_,
     uint256 rate_
   ) public initializer {
-    require(p12Token_ != address(0), 'P12Mine: p12Token cannot be 0');
-    require(p12CoinFactory_ != address(0), 'P12Mine: p12CoinFactory cannot be 0');
-
+    if (p12Token_ == address(0) || p12CoinFactory_ == address(0)) revert CommonError.ZeroAddressSet();
     p12Token = p12Token_;
     p12CoinFactory = p12CoinFactory_;
     gaugeController = IGaugeController(gaugeController_);
@@ -173,7 +172,7 @@ contract P12MineUpgradeable is
     uint256 totalLpStaked = IERC20Upgradeable(lpToken).balanceOf(address(this));
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][gameCoinCreator];
-    require(amount <= totalLpStaked - pool.amount && amount > 0, 'P12Mine: amount not met');
+    if (amount == 0 || amount > totalLpStaked - pool.amount) revert InvalidLpAmount(amount);
     pool.period += 1;
     periodTimestamp[pool.lpToken][pool.period] = block.timestamp;
     user.amount += amount;
@@ -189,7 +188,7 @@ contract P12MineUpgradeable is
    */
 
   function emergency() public virtual override onlyOwner {
-    require(!isEmergency, 'P12Mine: already exists');
+    if (isEmergency) revert EmergencyAlreadySet();
     isEmergency = true;
     uint256 delayTime = 86400;
     emergencyUnlockTime = block.timestamp + delayTime;
@@ -270,7 +269,7 @@ contract P12MineUpgradeable is
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
     }
-    require(amount != 0, 'P12Mine: need amount > 0');
+    if (amount == 0) revert CommonError.ZeroUintSet();
     user.amount += amount;
     pool.amount += amount;
     IERC20Upgradeable(pool.lpToken).safeTransferFrom(msg.sender, address(this), amount);
@@ -287,7 +286,7 @@ contract P12MineUpgradeable is
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    require(user.amount >= amount, 'P12Mine: withdraw too much');
+    if (user.amount < amount) revert WithDrawTooMuch(user.amount, amount);
     _checkpoint(pid);
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
@@ -306,7 +305,7 @@ contract P12MineUpgradeable is
    */
   function claim(address lpToken) public virtual override nonReentrant whenNotPaused returns (uint256) {
     uint256 pid = getPid(lpToken);
-    require(userInfo[pid][msg.sender].amount > 0, 'P12Mine: no staked token');
+    if (userInfo[pid][msg.sender].amount == 0) revert NotStakeTokenYet();
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
     _checkpoint(pid);
@@ -344,12 +343,12 @@ contract P12MineUpgradeable is
   function executeWithdraw(address lpToken, bytes32 id) public virtual override nonReentrant whenNotPaused {
     uint256 pid = getPid(lpToken);
     address _who = withdrawInfos[lpToken][id].who;
-    require(msg.sender == _who, 'P12Mine: caller not token owner');
+    if (msg.sender != _who) revert CommonError.NoPermission();
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][_who];
-    require(withdrawInfos[lpToken][id].amount <= user.amount, 'P12Mine: withdraw too much');
-    require(block.timestamp >= withdrawInfos[lpToken][id].unlockTimestamp, 'P12Mine: unlock time not reached');
-    require(!withdrawInfos[lpToken][id].executed, 'P12Mine: already withdrawn');
+    if (withdrawInfos[lpToken][id].amount > user.amount) revert WithDrawTooMuch(user.amount, withdrawInfos[lpToken][id].amount);
+    if (block.timestamp < withdrawInfos[lpToken][id].unlockTimestamp) revert TooEarlyToWithdrawn();
+    if (withdrawInfos[lpToken][id].executed) revert AlreadyWithdrawn();
     withdrawInfos[lpToken][id].executed = true;
     _checkpoint(pid);
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
@@ -385,7 +384,7 @@ contract P12MineUpgradeable is
     uint256 pid = getPid(lpToken);
     PoolInfo storage pool = poolInfos[pid];
     UserInfo storage user = userInfo[pid][msg.sender];
-    require(user.amount > 0, 'P12Mine: without any lpToken');
+    if (user.amount == 0) revert NotStakeTokenYet();
     uint256 amount = user.amount;
     user.amount = 0;
     user.rewardDebt = 0;
@@ -437,7 +436,7 @@ contract P12MineUpgradeable is
     uint256 _accP12PerShare = pool.accP12PerShare;
     uint256 _periodTime = periodTimestamp[pool.lpToken][pool.period];
     gaugeController.checkpointGauge(address(pool.lpToken));
-    require(block.timestamp > _periodTime, 'P12Mine: not time to check');
+    if (block.timestamp <= _periodTime) revert TooEarlyToCheck();
 
     if (pool.amount == 0) {
       pool.period += 1;
@@ -462,35 +461,42 @@ contract P12MineUpgradeable is
     emit Checkpoint(pool.lpToken, pool.amount, pool.accP12PerShare);
   }
 
+  /**
+   * @dev for saving gas, extract to a function to call in a modifier
+   */
+  function _checkEmergency() private view {
+    if (!isEmergency) revert NoEmergencyNow();
+    if (block.timestamp < emergencyUnlockTime) revert EmergencyUnlockYet();
+  }
+
   // ============ Modifiers ============
 
   // check if lpToken exists
   modifier lpTokenExist(address lpToken) {
-    require(lpTokenRegistry[lpToken] > 0, 'P12Mine: LP Token Not Exist');
+    if (lpTokenRegistry[lpToken] == 0) revert LpTokenNotExist();
     _;
   }
   // check if lpToken exists
   modifier lpTokenNotExist(address lpToken) {
-    require(lpTokenRegistry[lpToken] == 0, 'P12Mine: LP Token Already Exist');
+    if (lpTokenRegistry[lpToken] != 0) revert LpTokenExist();
     _;
   }
 
   // check the caller
   modifier onlyP12FactoryOrOwner() {
-    require(msg.sender == address(p12CoinFactory) || msg.sender == owner(), 'P12Mine: not p12factory or owner');
+    if (msg.sender != address(p12CoinFactory) && msg.sender != owner()) revert CommonError.NoPermission();
     _;
   }
 
   // check the caller
   modifier onlyP12Factory() {
-    require(msg.sender == address(p12CoinFactory), 'P12Mine: caller not p12factory');
+    if (msg.sender != address(p12CoinFactory)) revert CommonError.NoPermission();
     _;
   }
 
   // check Emergency
   modifier onlyEmergency() {
-    require(isEmergency, 'P12Mine: no emergency now');
-    require(block.timestamp >= emergencyUnlockTime, 'P12Mine: not unlocked yet');
+    _checkEmergency();
     _;
   }
 }

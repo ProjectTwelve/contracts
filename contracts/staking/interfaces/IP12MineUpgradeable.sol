@@ -33,6 +33,30 @@ interface IP12MineUpgradeable {
   event Emergency(address executor, uint256 emergencyUnlockTime);
   event Checkpoint(address indexed lpToken, uint256 indexed poolAmount, uint256 accP12PerShare);
 
+  // Emergency status is already set
+  error EmergencyAlreadySet();
+  // no emergency now
+  error NoEmergencyNow();
+  // emergency withdraw status unlock yet
+  error EmergencyUnlockYet();
+  // invalid lp amount to add
+  error InvalidLpAmount(uint256 amount);
+  // lp token pool already exist
+  error LpTokenExist();
+  // lp token pool not exist yet
+  error LpTokenNotExist();
+  // withdraw much more token than user can
+  error WithDrawTooMuch(uint256 max, uint256 request);
+  // user has not stake token yet
+  error NotStakeTokenYet();
+  // this withdraw deal is already executed
+  error AlreadyWithdrawn();
+  // it's too early to withdrawn
+  error TooEarlyToWithdrawn();
+  // it's too early to check point
+  error TooEarlyToCheck();
+
+
   function poolLength() external returns (uint256);
 
   function getPid(address lpToken) external returns (uint256);

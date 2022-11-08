@@ -11,6 +11,7 @@ import '../coinFactory/P12CoinFactoryUpgradeable.sol';
 import './interfaces/IP12AssetFactoryUpgradable.sol';
 import './P12AssetFactoryStorage.sol';
 import '../access/SafeOwnableUpgradeable.sol';
+import '../libraries/CommonError.sol';
 
 contract P12AssetFactoryUpgradable is
   P12AssetFactoryStorage,
@@ -28,7 +29,7 @@ contract P12AssetFactoryUpgradable is
    */
   function setP12CoinFactory(address newP12CoinFactory) external virtual override onlyOwner {
     address oldP12Factory = p12CoinFactory;
-    require(newP12CoinFactory != address(0), 'P12AssetF: p12CoinFactory cannot be 0');
+    if (newP12CoinFactory == address(0)) revert ZeroAddressSet();
     p12CoinFactory = newP12CoinFactory;
     emit SetP12Factory(oldP12Factory, newP12CoinFactory);
   }
@@ -42,7 +43,7 @@ contract P12AssetFactoryUpgradable is
   }
 
   function initialize(address owner_, address p12CoinFactory_) public initializer {
-    require(p12CoinFactory_ != address(0), 'P12AssetF: p12CoinFactory cannot be 0');
+    if (p12CoinFactory_ == address(0)) revert ZeroAddressSet();
     p12CoinFactory = p12CoinFactory_;
 
     __ReentrancyGuard_init_unchained();
@@ -119,15 +120,14 @@ contract P12AssetFactoryUpgradable is
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   modifier onlyDeveloper(string memory gameId) {
-    require(P12CoinFactoryUpgradeable(p12CoinFactory).allGames(gameId) == msg.sender, 'P12AssetF: not game developer');
+    if (P12CoinFactoryUpgradeable(p12CoinFactory).allGames(gameId) != msg.sender)
+      revert CommonError.NotGameDeveloper(msg.sender, gameId);
     _;
   }
 
   modifier onlyCollectionDeveloper(address collection) {
-    require(
-      P12CoinFactoryUpgradeable(p12CoinFactory).allGames(registry[collection]) == msg.sender,
-      'P12AssetF: not game developer'
-    );
+    if (P12CoinFactoryUpgradeable(p12CoinFactory).allGames(registry[collection]) != msg.sender)
+      revert CommonError.NotGameDeveloper(msg.sender, registry[collection]);
     _;
   }
 }

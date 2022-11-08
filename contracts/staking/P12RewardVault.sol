@@ -8,6 +8,7 @@ import '@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import './interfaces/IP12RewardVault.sol';
 import '../token/interfaces/IP12Token.sol';
+import '../libraries/CommonError.sol';
 
 contract P12RewardVault is SafeOwnable, IP12RewardVault {
   using SafeERC20 for IERC20;
@@ -15,7 +16,7 @@ contract P12RewardVault is SafeOwnable, IP12RewardVault {
   address public p12Token;
 
   constructor(address owner_, address p12Token_) SafeOwnable(owner_) {
-    require(p12Token_ != address(0), 'P12RV: address cannot be 0');
+    if (p12Token_ == address(0)) revert CommonError.ZeroAddressSet();
     p12Token = p12Token_;
   }
 
@@ -32,7 +33,7 @@ contract P12RewardVault is SafeOwnable, IP12RewardVault {
    * @notice withdraw token Emergency
    */
   function withdrawEmergency(address to) external virtual override onlyOwner {
-    require(to != address(0), 'P12RV: address cannot be 0');
+    if (to == address(0)) revert CommonError.ZeroAddressSet();
     IERC20(p12Token).safeTransfer(to, IERC20(p12Token).balanceOf(address(this)));
     emit WithdrawEmergency(p12Token, IERC20(p12Token).balanceOf(address(this)));
   }

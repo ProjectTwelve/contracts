@@ -116,7 +116,7 @@ describe('P12Mine', function () {
       core.p12Mine
         .connect(user)
         .executeWithdraw(pair.address, '0x686a653b3b000000000000000000000000000000000000000000000000000000'),
-    ).to.be.revertedWith('P12Mine: caller not token owner');
+    ).to.be.revertedWith('NoPermission');
     expect(await core.p12Token.balanceOf(user.address)).to.be.equal(balanceOfReward);
     expect(await core.p12Mine.getUserLpBalance(pair.address, user.address)).to.be.equal(balanceOfLpToken);
   });
@@ -136,9 +136,7 @@ describe('P12Mine', function () {
   it('show withdraw fail', async function () {
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 60]);
-    await expect(core.p12Mine.connect(developer).executeWithdraw(pair.address, id)).to.be.revertedWith(
-      'P12Mine: unlock time not reached',
-    );
+    await expect(core.p12Mine.connect(developer).executeWithdraw(pair.address, id)).to.be.revertedWith('TooEarlyToWithdrawn');
   });
 
   it('show withdraw successfully', async function () {
@@ -205,7 +203,7 @@ describe('P12Mine', function () {
   // claim  pending p12Token with fake account
   it('show claim nothing', async function () {
     const balanceOfReward = await core.p12Token.balanceOf(admin.address);
-    await expect(core.p12Mine.connect(admin).claim(pair.address)).to.be.revertedWith('P12Mine: no staked token');
+    await expect(core.p12Mine.connect(admin).claim(pair.address)).to.be.revertedWith('NotStakeTokenYet');
     expect(await core.p12Token.balanceOf(admin.address)).to.be.equal(balanceOfReward);
   });
 
@@ -246,15 +244,13 @@ describe('P12Mine', function () {
   it('show staking fail', async function () {
     const balance = await core.p12Token.balanceOf(user.address);
     await core.p12Token.connect(user).approve(core.p12Mine.address, balance);
-    await expect(core.p12Mine.connect(user).deposit(core.p12Token.address, balance)).to.be.revertedWith(
-      'P12Mine: LP Token Not Exist',
-    );
+    await expect(core.p12Mine.connect(user).deposit(core.p12Token.address, balance)).to.be.revertedWith('LpTokenNotExist');
   });
 
   // try create an existing pool
   it('show create an existing pool fail', async function () {
     const before = await core.p12Mine.poolLength();
-    await expect(core.p12Mine.connect(admin).createPool(pair.address)).to.be.revertedWith('P12Mine: LP Token Already Exist');
+    await expect(core.p12Mine.connect(admin).createPool(pair.address)).to.be.revertedWith('LpTokenExist');
     expect(await core.p12Mine.lpTokenRegistry(pair.address)).to.be.equal(before);
   });
 
@@ -269,21 +265,21 @@ describe('P12Mine', function () {
 
   // withdraw p12token Emergency by admin
   it('show withdraw p12token Emergency successfully', async function () {
-    await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('no emergency now');
+    await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('NoEmergencyNow');
     await core.p12Mine.emergency();
-    await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('P12Mine: not unlocked yet');
+    await expect(core.p12Mine.withdrawEmergency()).to.be.revertedWith('EmergencyUnlockYet');
     const balanceOf = await core.p12Token.balanceOf(p12RewardVault.address);
     const balanceOfAdmin = await core.p12Token.balanceOf(admin.address);
     const timestampBefore = (await ethers.provider.getBlock(await ethers.provider.getBlockNumber())).timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 86400]);
     await core.p12Mine.withdrawEmergency();
     expect(await core.p12Token.balanceOf(admin.address)).be.be.equal(balanceOf.add(balanceOfAdmin));
-    await expect(core.p12Mine.emergency()).to.be.revertedWith('P12Mine: already exists');
+    await expect(core.p12Mine.emergency()).to.be.revertedWith('EmergencyAlreadySet');
   });
 
   // withdraw lpTokens Emergency
   it('show withdraw lpTokens Emergency successfully', async function () {
-    await expect(core.p12Mine.withdrawLpTokenEmergency(pair.address)).to.be.revertedWith('P12Mine: without any lpToken');
+    await expect(core.p12Mine.withdrawLpTokenEmergency(pair.address)).to.be.revertedWith('NotStakeTokenYet');
     const balanceOf = await pair.balanceOf(developer.address);
     await pair.connect(developer).approve(core.p12Mine.address, balanceOf);
     await core.p12Mine.connect(developer).deposit(pair.address, balanceOf);

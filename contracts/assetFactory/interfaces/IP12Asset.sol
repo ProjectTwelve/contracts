@@ -13,6 +13,11 @@ interface IP12Asset {
    */
   event SetUri(uint256 id, string uri);
 
+  error EmptyContractURI();
+  error EmptyURI();
+  error InvalidTokenId(uint256 tokenId);
+  error MintExceedSupply(uint256 tokenId);
+
   function create(uint256, string calldata) external returns (uint256);
 
   function mint(

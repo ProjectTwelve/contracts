@@ -17,6 +17,7 @@ import './P12CoinFactoryStorage.sol';
 import '../staking/interfaces/IGaugeController.sol';
 import './P12GameCoin.sol';
 import './interfaces/IP12GameCoin.sol';
+import '../libraries/CommonError.sol';
 
 contract P12CoinFactoryUpgradeable is
   P12CoinFactoryStorage,
@@ -34,7 +35,7 @@ contract P12CoinFactoryUpgradeable is
    * @param newDev new dev address
    */
   function setDev(address newDev) external virtual override onlyOwner {
-    require(newDev != address(0), 'P12Factory: address cannot be 0');
+    if (newDev == address(0)) revert CommonError.ZeroAddressSet();
     address oldDev = dev;
     dev = newDev;
     emit SetDev(oldDev, newDev);
@@ -45,7 +46,7 @@ contract P12CoinFactoryUpgradeable is
    * @param newP12Mine new p12mine address
    */
   function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual override onlyOwner {
-    require(address(newP12Mine) != address(0), 'P12Factory: address cannot be 0');
+    if (address(newP12Mine) == address(0)) revert CommonError.ZeroAddressSet();
     IP12MineUpgradeable oldP12Mine = p12Mine;
     p12Mine = newP12Mine;
     emit SetP12Mine(oldP12Mine, newP12Mine);
@@ -56,7 +57,7 @@ contract P12CoinFactoryUpgradeable is
    * @param newGaugeController new gaugeController address
    */
   function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
-    require(address(newGaugeController) != address(0), 'P12Factory: address cannot be 0');
+    if (address(newGaugeController) == address(0)) revert CommonError.ZeroAddressSet();
     IGaugeController oldGaugeController = gaugeController;
     gaugeController = newGaugeController;
     emit SetGaugeController(oldGaugeController, newGaugeController);
@@ -68,7 +69,7 @@ contract P12CoinFactoryUpgradeable is
    * @param newP12Token new p12Token address
    */
   function setP12Token(address newP12Token) external virtual override onlyOwner {
-    require(newP12Token != address(0), 'P12Factory: address cannot be 0');
+    if (address(newP12Token) == address(0)) revert CommonError.ZeroAddressSet();
     address oldP12Token = p12;
     p12 = newP12Token;
     emit SetP12Token(oldP12Token, newP12Token);
@@ -80,7 +81,7 @@ contract P12CoinFactoryUpgradeable is
    * @param newUniswapFactory new UniswapFactory address
    */
   function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external virtual override onlyOwner {
-    require(address(newUniswapFactory) != address(0), 'P12Factory: address cannot be 0');
+    if (address(newUniswapFactory) == address(0)) revert CommonError.ZeroAddressSet();
     IUniswapV2Factory oldUniswapFactory = uniswapFactory;
     uniswapFactory = newUniswapFactory;
     emit SetUniswapFactory(oldUniswapFactory, newUniswapFactory);
@@ -92,7 +93,7 @@ contract P12CoinFactoryUpgradeable is
    * @param newUniswapRouter new uniswapRouter address
    */
   function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external virtual override onlyOwner {
-    require(address(newUniswapRouter) != address(0), 'P12Factory: address cannot be 0');
+    if (address(newUniswapRouter) == address(0)) revert CommonError.ZeroAddressSet();
     IUniswapV2Router02 oldUniswapRouter = uniswapRouter;
     uniswapRouter = newUniswapRouter;
     emit SetUniswapRouter(oldUniswapRouter, newUniswapRouter);
@@ -104,7 +105,7 @@ contract P12CoinFactoryUpgradeable is
    * @param developer developer address, who own this game
    */
   function register(string memory gameId, address developer) external virtual override onlyDev {
-    require(developer != address(0), 'P12Factory: address cannot be 0');
+    if (address(developer) == address(0)) revert CommonError.ZeroAddressSet();
     allGames[gameId] = developer;
     emit RegisterGame(gameId, developer);
   }
@@ -127,8 +128,8 @@ contract P12CoinFactoryUpgradeable is
     uint256 amountGameCoin,
     uint256 amountP12
   ) external virtual override nonReentrant whenNotPaused returns (IP12GameCoin gameCoinAddress) {
-    require(msg.sender == allGames[gameId], 'P12Factory: no permit to create');
-    require(amountP12 > 0, 'P12Factory: not enough p12');
+    if (msg.sender != allGames[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
+    if (amountP12 == 0) revert CommonError.NotEnoughP12();
     gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
@@ -151,11 +152,11 @@ contract P12CoinFactoryUpgradeable is
     address pair = uniswapFactory.getPair(p12, address(gameCoinAddress));
 
     // check address
-    require(pair != address(0), 'P12Factory: pair address error');
+    if (address(pair) == address(0)) revert CommonError.ZeroAddressSet();
 
     // get lpToken value
     uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12Mine));
-    require(liquidity0 == liquidity1, 'P12Factory: liquidities not =');
+    if (liquidity0 != liquidity1) revert InvalidLiquidity();
 
     // add pair address to Controller,100 is init weight
     gaugeController.addGauge(pair, 0, 100);
@@ -180,8 +181,8 @@ contract P12CoinFactoryUpgradeable is
     IP12GameCoin gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
-    require(msg.sender == allGames[gameId], 'P12Factory: have no permission');
-    require(_compareStrings(allGameCoins[gameCoinAddress], gameId), 'P12Factory: wrong game id');
+    if (msg.sender != allGames[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
+    if (!_compareStrings(allGameCoins[gameCoinAddress], gameId)) revert MisMatchCoinWithGameId(gameCoinAddress, gameId);
     // Set the correct unlock time
     uint256 time;
     uint256 currentTimestamp = _getBlockTimestamp();
@@ -223,14 +224,14 @@ contract P12CoinFactoryUpgradeable is
     whenNotPaused
     returns (bool)
   {
-    require(coinMintRecords[gameCoinAddress][mintId].unlockTimestamp != 0, 'P12Factory: non-existent mint');
+    if (coinMintRecords[gameCoinAddress][mintId].unlockTimestamp == 0) revert NonExistenceMintId(mintId);
     // check if it has been executed
-    require(!coinMintRecords[gameCoinAddress][mintId].executed, 'P12Factory: mint executed');
+    if (coinMintRecords[gameCoinAddress][mintId].executed) revert ExecutedMint(mintId);
 
     uint256 time = _getBlockTimestamp();
 
     // check that the current time is greater than the unlock time
-    require(time > coinMintRecords[gameCoinAddress][mintId].unlockTimestamp, 'P12Factory: not time to mint');
+    if (time <= coinMintRecords[gameCoinAddress][mintId].unlockTimestamp) revert NotTimeToMint(mintId);
 
     // Modify status
     coinMintRecords[gameCoinAddress][mintId].executed = true;
@@ -277,9 +278,9 @@ contract P12CoinFactoryUpgradeable is
     uint256 effectiveTime_,
     bytes32 initHash_
   ) public initializer {
-    require(p12_ != address(0), 'P12Mine: p12 token cannot be 0');
-    require(address(uniswapFactory_) != address(0), 'P12Mine: uniswapF cannot be 0');
-    require(address(uniswapRouter_) != address(0), 'P12Mine: uniswapR cannot be 0');
+    if (address(p12_) == address(0)) revert CommonError.ZeroAddressSet();
+    if (address(uniswapFactory_) == address(0)) revert CommonError.ZeroAddressSet();
+    if (address(uniswapRouter_) == address(0)) revert CommonError.ZeroAddressSet();
 
     p12 = p12_;
     uniswapFactory = uniswapFactory_;
@@ -436,6 +437,14 @@ contract P12CoinFactoryUpgradeable is
     return block.timestamp;
   }
 
+  function _verifyDev() internal view {
+    if (msg.sender != dev) revert NotP12Dev();
+  }
+
+  function _verifyGameDev(IP12GameCoin token) internal view {
+    if (msg.sender != allGames[allGameCoins[token]]) revert CommonError.NotGameDeveloper(msg.sender, allGameCoins[token]);
+  }
+
   /**
    * @dev compare two string and judge whether they are the same
    */
@@ -445,12 +454,12 @@ contract P12CoinFactoryUpgradeable is
 
   // ============= Modifier ================
   modifier onlyDev() {
-    require(msg.sender == dev, 'P12Factory: caller must be dev');
+    _verifyDev();
     _;
   }
 
   modifier onlyGameDev(IP12GameCoin token) {
-    require(msg.sender == allGames[allGameCoins[token]], 'P12Factory: not game dev');
+    _verifyGameDev(token);
     _;
   }
 }

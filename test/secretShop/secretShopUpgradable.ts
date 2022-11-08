@@ -233,7 +233,7 @@ describe('SecretShopUpgradable', function () {
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('SecretShop: wrong currency');
+    ).to.be.revertedWith('NotWhiteCurrency');
 
     await core.p12SecretShop.connect(developer).updateCurrencies([core.p12Token.address, ethers.constants.AddressZero], []);
 
@@ -244,7 +244,7 @@ describe('SecretShopUpgradable', function () {
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('SecretShop: wrong sig version');
+    ).to.be.revertedWith('SignatureVersionNotMatch');
 
     // run order
     await core.p12SecretShop.connect(user1).run({
@@ -262,7 +262,7 @@ describe('SecretShopUpgradable', function () {
       }),
     )
       .to.emit(core.p12SecretShop, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled')));
+      .withArgs(0, core.p12SecretShop.interface.encodeErrorResult('ItemNotListed', [SettleDetail.itemHash]));
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);
@@ -446,7 +446,7 @@ describe('SecretShopUpgradable', function () {
       ),
     )
       .to.emit(core.p12SecretShop, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled')));
+      .withArgs(0, core.p12SecretShop.interface.encodeErrorResult('ItemNotListed', [SettleDetail.itemHash]));
 
     // disallow native token, which cause a failure
     await core.p12SecretShop.updateCurrencies([], [ethers.constants.AddressZero]);
@@ -461,7 +461,7 @@ describe('SecretShopUpgradable', function () {
       ),
     )
       .to.emit(core.p12SecretShop, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: wrong currency')));
+      .withArgs(0, core.p12SecretShop.interface.encodeErrorResult('NotWhiteCurrency'));
 
     expect(await ethers.provider.getBalance(core.p12SecretShop.address)).to.be.equal(0);
     expect(await user1.getBalance()).to.be.equal(user1BalanceBefore.add(ethers.utils.parseEther('1')));
@@ -555,7 +555,7 @@ describe('SecretShopUpgradable', function () {
         details: [{ ...SettleDetail, op: 3n }],
         shared: { ...SettleShared, user: user2.address },
       }),
-    ).to.be.revertedWith('SecretShop: no permit cancel');
+    ).to.be.revertedWith('SenderNotMatch');
 
     // seller cancel
     await (await ethers.getContractAt('SecretShopUpgradable', core.p12SecretShop.address)).connect(user1).run({
@@ -570,7 +570,9 @@ describe('SecretShopUpgradable', function () {
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('SecretShop: sold or canceled');
+    )
+      .to.be.revertedWith('ItemNotListed')
+      .withArgs(SettleDetail.itemHash);
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(0);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(1);
@@ -597,7 +599,9 @@ describe('SecretShopUpgradable', function () {
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('SecretShop: sold or canceled');
+    )
+      .to.be.revertedWith('ItemNotListed')
+      .withArgs(SettleDetail.itemHash);
   });
 
   it('Should seller accept buyer buying erc1155 successfully', async function () {
@@ -679,7 +683,7 @@ describe('SecretShopUpgradable', function () {
         details: [SettleDetail],
         shared: SettleShared,
       }),
-    ).to.be.revertedWith('SecretShop: wrong sig version');
+    ).to.be.revertedWith('SignatureVersionNotMatch');
 
     // run order
     await core.p12SecretShop.connect(user2).run({
@@ -697,7 +701,7 @@ describe('SecretShopUpgradable', function () {
       }),
     )
       .to.emit(core.p12SecretShop, 'EvFailure')
-      .withArgs(0, utils.hexValue(utils.toUtf8Bytes('SecretShop: sold or canceled'))); // WARNING
+      .withArgs(0, core.p12SecretShop.interface.encodeErrorResult('ItemNotListed', [SettleDetail.itemHash]));
 
     expect(await p12asset.balanceOf(user1.address, 0)).to.be.equal(1);
     expect(await p12asset.balanceOf(user2.address, 0)).to.be.equal(0);

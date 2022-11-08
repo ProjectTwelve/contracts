@@ -30,7 +30,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
   mapping(uint256 => string) private _uris;
 
   constructor(address owner_, string memory contractURI_) SafeOwnable(owner_) {
-    require(bytes(contractURI_).length != 0, 'P12Asset: empty contractURI');
+    if (bytes(contractURI_).length == 0) revert EmptyContractURI();
     contractURI = contractURI_;
   }
 
@@ -69,8 +69,8 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
     uint256 amount,
     bytes memory data
   ) public override onlyOwner {
-    require(id < idx, 'P12Asset: id is not valid');
-    require(amount + supply[id] <= maxSupply[id], 'P12Asset: exceed max supply');
+    if (id >= idx) revert InvalidTokenId(id);
+    if (amount + supply[id] > maxSupply[id]) revert MintExceedSupply(id);
     supply[id] += amount;
     _mint(to, id, amount, data);
   }
@@ -81,7 +81,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    * @return uri metadata uri
    */
   function uri(uint256 id) public view virtual override returns (string memory) {
-    require(id < idx, 'P12Asset: id not exist');
+    if (id >= idx) revert InvalidTokenId(id);
     return _uris[id];
   }
 
@@ -90,7 +90,7 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    * @param newContractURI new Contract-level metadata uri
    */
   function setContractURI(string calldata newContractURI) public override onlyOwner {
-    require(bytes(newContractURI).length != 0, 'P12Asset: empty contractURI');
+    if (bytes(newContractURI).length == 0) revert EmptyContractURI();
     string memory oldContractURI = contractURI;
     contractURI = newContractURI;
     emit SetContractURI(oldContractURI, contractURI);
@@ -102,8 +102,8 @@ contract P12Asset is IP12Asset, ERC1155(''), SafeOwnable {
    * @param newUri metadata uri
    */
   function _setUri(uint256 id, string calldata newUri) private {
-    require(bytes(newUri).length != 0, 'P12Asset: empty uri');
-    require(id <= idx, 'P12Asset: id not exist');
+    if (bytes(newUri).length == 0) revert EmptyURI();
+    if (id > idx) revert InvalidTokenId(id);
     _uris[id] = newUri;
     emit SetUri(id, newUri);
   }

@@ -43,7 +43,7 @@ contract SecretShopUpgradable is
     Market.SettleShared memory shared,
     Market.SettleDetail memory detail
   ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'SecretShop: unsafe call');
+    if (msg.sender != address(this)) revert UnsafeCall();
 
     return _run(order, shared, detail);
   }
@@ -133,8 +133,8 @@ contract SecretShopUpgradable is
    * @param input a struct that contains all data
    */
   function run(Market.RunInput memory input) public payable virtual override nonReentrant whenNotPaused {
-    require(input.shared.deadline > block.timestamp, 'SecretShop: deadline reached');
-    require(msg.sender == input.shared.user, 'SecretShop: sender not match');
+    if (input.shared.deadline < block.timestamp) revert DeadlineReached();
+    if (msg.sender != input.shared.user) revert SenderNotMatch();
 
     uint256 amountEth = msg.value;
 
@@ -165,7 +165,7 @@ contract SecretShopUpgradable is
     }
 
     // refund extra native token
-    require(payable(msg.sender).send(amountEth), 'SecretShop: refund token fail');
+    if (!payable(msg.sender).send(amountEth)) revert ReFundTokenFail();
   }
 
   function _emitInventory(
@@ -208,52 +208,48 @@ contract SecretShopUpgradable is
     bytes32 itemHash = _hashItem(order, item);
 
     {
-      require(itemHash == detail.itemHash, 'SecretShop: hash not match');
-      require(order.network == block.chainid, 'SecretShop: wrong network');
-      require(
-        address(detail.executionDelegate) != address(0) && delegates[address(detail.executionDelegate)],
-        'SecretShop: unknown delegate'
-      );
-      require(currencies[order.currency], 'SecretShop: wrong currency');
+      if (itemHash != detail.itemHash) revert ItemHashNotMatch();
+      if (order.network != block.chainid) revert NetworkNotMatch();
+      if (address(detail.executionDelegate) == address(0) || !delegates[address(detail.executionDelegate)])
+        revert InvalidDelegate();
+      if (!currencies[order.currency]) revert NotWhiteCurrency();
     }
 
     bytes memory data = item.data;
 
     if (detail.op == Market.Op.COMPLETE_SELL_OFFER) {
       /** @dev COMPLETE_SELL_OFFER */
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: sold or canceled');
-      require(order.intent == Market.INTENT_SELL, 'SecretShop: intent != sell');
-      require(order.deadline > block.timestamp, 'SecretShop: deadline reached');
-      require(detail.price >= item.price, 'SecretShop: underpaid');
+      if (inventoryStatus[itemHash] != Market.InvStatus.NEW) revert ItemNotListed(itemHash);
+      if (order.intent != Market.INTENT_SELL) revert IntentNotMath();
+      if (order.deadline <= block.timestamp) revert DeadlineReached();
+      if (detail.price < item.price) revert ItemPriceNotMath();
 
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
 
       _assertDelegation(order, detail);
       // @dev transfer token from buyer address to this contract
       nativeAmount = _takePayment(order.currency, shared.user, detail.price);
-      require(detail.executionDelegate.executeSell(order.user, shared.user, data), 'SecretShop: delegation error');
-
+      if (!detail.executionDelegate.executeSell(order.user, shared.user, data)) revert ExecuteDelegateFail();
       _distributeFeeAndProfit(itemHash, order.user, order.currency, detail, detail.price);
     } else if (detail.op == Market.Op.COMPLETE_BUY_OFFER) {
       /** @dev COMPLETE_BUY_OFFER */
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: sold or canceled');
-      require(order.intent == Market.INTENT_BUY, 'SecretShop: intent != sell');
-      require(order.deadline > block.timestamp, 'SecretShop: deadline reached');
-      require(detail.price >= item.price, 'SecretShop: underpaid');
+      if (inventoryStatus[itemHash] != Market.InvStatus.NEW) revert ItemNotListed(itemHash);
+      if (order.intent != Market.INTENT_BUY) revert IntentNotMath();
+      if (order.deadline <= block.timestamp) revert DeadlineReached();
+      if (detail.price < item.price) revert ItemPriceNotMath();
 
       inventoryStatus[itemHash] = Market.InvStatus.COMPLETE;
 
       _assertDelegation(order, detail);
       // @dev transfer token from buyer address to this contract
       nativeAmount = _takePayment(order.currency, order.user, detail.price);
-      require(detail.executionDelegate.executeSell(shared.user, order.user, data), 'SecretShop: delegation error');
-
+      if (!detail.executionDelegate.executeSell(shared.user, order.user, data)) revert ExecuteDelegateFail();
       _distributeFeeAndProfit(itemHash, shared.user, order.currency, detail, detail.price);
     } else if (detail.op == Market.Op.CANCEL_OFFER) {
       /** CANCEL_OFFER */
-      require(inventoryStatus[itemHash] == Market.InvStatus.NEW, 'SecretShop: unable to cancel');
-      require(order.user == msg.sender, 'SecretShop: no permit cancel');
-      require(order.deadline > block.timestamp, 'SecretShop: deadline reached');
+      if (inventoryStatus[itemHash] != Market.InvStatus.NEW) revert ItemNotListed(itemHash);
+      if (order.user != msg.sender) revert SenderNotMatch();
+      if (order.deadline <= block.timestamp) revert DeadlineReached();
       inventoryStatus[itemHash] = Market.InvStatus.CANCELLED;
       emit EvCancel(itemHash);
     } else {
@@ -334,8 +330,7 @@ contract SecretShopUpgradable is
       _transferTo(currency, fee.to, amount);
     }
 
-    require(feeCapPct >= totalFeePct, 'total fee cap exceeded');
-
+    if (feeCapPct < totalFeePct) revert FeeCapExceed();
     /**
      * @dev give extra to seller
      */
@@ -366,10 +361,10 @@ contract SecretShopUpgradable is
       bytes32 dataHash = ECDSA.toTypedDataHash(domainSeparator, _hash(order));
       orderSigner = ECDSA.recover(dataHash, order.v, order.r, order.s);
     } else {
-      revert('SecretShop: wrong sig version');
+      revert SignatureVersionNotMatch();
     }
 
-    require(orderSigner == order.user, 'SecretShop: sig not match');
+    if (orderSigner != order.user) revert SignatureNotMatch();
   }
 
   /**
@@ -400,7 +395,7 @@ contract SecretShopUpgradable is
    * @param detail settle detail by the taker
    */
   function _assertDelegation(Market.Order memory order, Market.SettleDetail memory detail) internal view virtual {
-    require(detail.executionDelegate.delegateType() == order.delegateType, 'SecretShop: delegation error');
+    if (detail.executionDelegate.delegateType() != order.delegateType) revert InvalidDelegate();
   }
 
   /**

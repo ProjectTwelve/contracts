@@ -60,6 +60,18 @@ interface IP12CoinFactoryUpgradeable {
   // get delayB
   function setDelayB(uint256 delayB) external returns (bool);
 
+  error MisMatchCoinWithGameId(IP12GameCoin coin, string gameId);
+  // not existent mint id
+  error NonExistenceMintId(bytes32 mintId);
+  // mintId is already executed
+  error ExecutedMint(bytes32 mintId);
+  // it's not time to mint this batch of coins
+  error NotTimeToMint(bytes32 mintId);
+  // don't have p12 dev role
+  error NotP12Dev();
+  // invalid liquidity when first create coin and create swap pool
+  error InvalidLiquidity();
+
   // register Game developer log
   event RegisterGame(string gameId, address indexed developer);
 

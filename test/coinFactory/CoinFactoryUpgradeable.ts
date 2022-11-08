@@ -42,9 +42,7 @@ describe('P12CoinFactory', function () {
   });
   it('should show register fail by test account', async function () {
     const gameId2 = '1102';
-    await expect(core.p12CoinFactory.connect(test).register(gameId2, gameDeveloper.address)).to.be.revertedWith(
-      'P12Factory: caller must be dev',
-    );
+    await expect(core.p12CoinFactory.connect(test).register(gameId2, gameDeveloper.address)).to.be.revertedWith('NotP12Dev');
   });
   it('Give gameDeveloper p12 and approve p12 token to p12V0factory', async function () {
     await core.p12Token.connect(admin).transfer(gameDeveloper.address, BigInt(3) * 10n ** 18n);
@@ -116,7 +114,9 @@ describe('P12CoinFactory', function () {
     const blockBefore = await ethers.provider.getBlock(blockNumBefore);
     const timestampBefore = blockBefore.timestamp;
     await ethers.provider.send('evm_mine', [timestampBefore + 5000]);
-    await expect(core.p12CoinFactory.executeMintCoin(gameCoin.address, mintId)).to.be.revertedWith('P12Factory: mint executed');
+    await expect(core.p12CoinFactory.executeMintCoin(gameCoin.address, mintId))
+      .to.be.revertedWith('ExecutedMint')
+      .withArgs(mintId);
   });
 
   it('Should show change game gameDeveloper successfully !', async function () {

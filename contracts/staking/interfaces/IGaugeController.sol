@@ -23,6 +23,19 @@ interface IGaugeController {
 
   event SetP12Factory(address oldP12Factory, address newP12Factory);
 
+  // invalid gauge type
+  error InvalidGaugeType();
+  // duplicate gauge type
+  error DuplicatedGaugeType();
+  //
+  error AddGaugeFail();
+  // weight should be between 1,10000 
+  error InvalidWeight();
+  // user's token will be unlock util next epoch start
+  error UnLockTooSoon();
+  // user already vote for this epoch
+  error VoteTooOften();
+
   function getGaugeTypes(address addr) external returns (int128);
 
   function checkpoint() external;

@@ -49,6 +49,37 @@ interface ISecretShopUpgradable {
    */
   event EvFailure(uint256 index, bytes error);
 
+  // signature deadline reached
+  error DeadlineReached();
+  // msg.sender is not the address in data
+  error SenderNotMatch();
+  // signature not match to msg.sender;
+  error SignatureNotMatch();
+  // signature version not match
+  error SignatureVersionNotMatch();
+  // itemHash not match to data hashed
+  error ItemHashNotMatch();
+  // item cannot be traded because sold or cancelled;
+  error ItemNotListed(bytes32 itemHash);
+  // intent not match
+  error IntentNotMath();
+  // price not match, such as price given is lower than price offered now
+  error ItemPriceNotMath();
+  // chain Id not match
+  error NetworkNotMatch();
+  // wrong currency
+  error NotWhiteCurrency();
+  // invalid delegate parameter
+  error InvalidDelegate();
+  // delegate execute fail
+  error ExecuteDelegateFail();
+  // fee cap exceed
+  error FeeCapExceed();
+  // refund extra token fail
+  error ReFundTokenFail();
+  // restrict the caller must be address(this)
+  error UnsafeCall();
+
   function runSingle(
     Market.Order memory,
     Market.SettleShared memory,
