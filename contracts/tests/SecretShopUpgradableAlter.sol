@@ -18,7 +18,7 @@ contract SecretShopUpgradableAlter is SecretShopUpgradable {
     Market.SettleShared memory,
     Market.SettleDetail memory
   ) external virtual override returns (uint256) {
-    require(msg.sender == address(this), 'SecretShop: unsafe call');
+    if (msg.sender != address(this)) revert UnSafeCall();
     // force to revert
     revert();
   }

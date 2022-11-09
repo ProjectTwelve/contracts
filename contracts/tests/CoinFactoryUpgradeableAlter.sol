@@ -7,6 +7,8 @@ import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 
 // new contract for test
 contract P12CoinFactoryUpgradeableAlter is P12CoinFactoryUpgradeable {
+  error CallWhiteBlackFail();
+
   /**
    * @dev set UniswapFactory address
    * @param newAddr new UniswapFactory address
@@ -34,6 +36,6 @@ contract P12CoinFactoryUpgradeableAlter is P12CoinFactoryUpgradeable {
    * @dev public function to call internal function
    */
   function callWhiteBlack() public pure {
-    require(_compareStrings('1', '2'), 'callWhiteBlack fail');
+    if (!_compareStrings('1', '2')) revert CallWhiteBlackFail();
   }
 }

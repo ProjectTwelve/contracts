@@ -135,9 +135,9 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
    */
   function depositFor(address addr, uint256 value) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[addr];
-    require(value > 0, 'VotingEscrow: invalid value');
-    require(_locked.amount > 0, 'VotingEscrow: no existing lock');
-    require(_locked.end > block.timestamp, 'VotingEscrow: lock expired');
+    if (value == 0) revert InvalidValue();
+    if (_locked.amount == 0) revert NoExistedLock();
+    if (_locked.end <= block.timestamp) revert LockExpired();
     _depositFor(addr, value, 0, locked[addr], OperationType.DEPOSIT_FOR_TYPE);
   }
 
@@ -150,10 +150,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
     //lockTime is rounded down to weeks
     uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
     LockedBalance memory _locked = locked[msg.sender];
-    require(value > 0, 'VotingEscrow: invalid value');
-    require(_locked.amount == 0, 'VotingEscrow: old tokens locked');
-    require(_unlockTime > block.timestamp, 'VotingEscrow: lock later');
-    require(_unlockTime <= block.timestamp + MAXTIME, 'VotingEscrow: exceed cap period');
+    if (value == 0) revert InvalidValue();
+    if (_locked.amount != 0) revert LockExisted();
+    if (_unlockTime <= block.timestamp) revert LockTimeTooShort();
+    if (_unlockTime > block.timestamp + MAXTIME) revert LockTimeTooLong();
     _depositFor(msg.sender, value, _unlockTime, _locked, OperationType.CREATE_LOCK_TYPE);
   }
 
@@ -164,9 +164,9 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
    */
   function increaseAmount(uint256 value) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[msg.sender];
-    require(value > 0, 'VotingEscrow: invalid value');
-    require(_locked.amount > 0, 'VotingEscrow: no existing lock');
-    require(_locked.end > block.timestamp, 'VotingEscrow: lock expired');
+    if (value == 0) revert InvalidValue();
+    if (_locked.amount == 0) revert NoExistedLock();
+    if (_locked.end <= block.timestamp) revert LockExpired();
     _depositFor(msg.sender, value, 0, _locked, OperationType.INCREASE_LOCK_AMOUNT);
   }
 
@@ -177,10 +177,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   function increaseUnlockTime(uint256 unlockTime) external nonReentrant whenNotPaused contractNotExpired {
     LockedBalance memory _locked = locked[msg.sender];
     uint256 _unlockTime = (unlockTime / WEEK) * WEEK;
-    require(_locked.end > block.timestamp, 'VotingEscrow: Lock expired');
-    require(_locked.amount > 0, 'VotingEscrow: Nothing is locked');
-    require(_unlockTime > _locked.end, 'VotingEscrow: invalid unlockTime');
-    require(_unlockTime <= block.timestamp + MAXTIME, 'VotingEscrow: exceed cap period');
+    if (_locked.end <= block.timestamp) revert LockExpired();
+    if (_locked.amount == 0) revert NoExistedLock();
+    if (_unlockTime <= _locked.end) revert LockTimeTooShort();
+    if (_unlockTime > block.timestamp + MAXTIME) revert LockTimeTooLong();
     _depositFor(msg.sender, 0, _unlockTime, _locked, OperationType.INCREASE_LOCK_AMOUNT);
   }
 
@@ -190,9 +190,9 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
    */
   function withdraw() external nonReentrant whenNotPaused {
     LockedBalance memory _locked = locked[msg.sender];
-    require(_locked.amount > 0, 'VotingEscrow: no locked token');
+    if (_locked.amount == 0) revert NoExistedLock();
     // Check if the contract is expired or unlocked
-    require(block.timestamp >= _locked.end || expired, 'VotingEscrow: condition not met');
+    if (block.timestamp < _locked.end && !expired) revert CannotWithdraw();
     uint256 value = uint256(_locked.amount);
     LockedBalance memory oldLocked = _locked;
     _locked.end = 0;
@@ -240,7 +240,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
    * @return Voting power
    */
   function balanceOfAt(address addr, uint256 blk) external view returns (int256) {
-    require(blk <= block.number, 'VotingEscrow: invalid block');
+    if (blk > block.number) revert InValidBlockNumber();
     // Binary search
     uint256 _min = 0;
     uint256 _max = userPointEpoch[addr];
@@ -299,7 +299,7 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
    * @return Total voting power at `_block`
    */
   function totalSupplyAt(uint256 blk) external view returns (uint256) {
-    require(blk <= block.number, 'VotingEscrow: invalid block');
+    if (blk > block.number) revert InValidBlockNumber();
     uint256 _epoch = epoch;
     uint256 targetEpoch = findBlockEpoch(blk, _epoch);
 
@@ -560,10 +560,10 @@ contract VotingEscrow is ReentrancyGuard, SafeOwnable, Pausable, IVotingEscrow {
   }
 
   /**
-   * @dev extract this function for saving gas
+   * @dev throw error if the contract is stopped
    */
   function _checkContractNotExpired() private view {
-    require(!expired, 'VotingEscrow: contract stopped');
+    if (expired) revert ContractStopped();
   }
 
   //------------modifier-------------

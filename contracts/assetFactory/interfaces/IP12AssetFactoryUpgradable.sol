@@ -14,8 +14,6 @@ interface IP12AssetFactoryUpgradable {
 
   event SetP12Factory(address oldP12Factory, address newP12Factory);
 
-  error ZeroAddressSet();
-
   function setP12CoinFactory(address newP12Factory) external;
 
   function createCollection(string calldata gameId, string calldata) external;

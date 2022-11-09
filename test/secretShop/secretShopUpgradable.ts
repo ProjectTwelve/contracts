@@ -102,13 +102,11 @@ describe('SecretShopUpgradable', function () {
   it('should transfer ownership successfully', async () => {
     await p12asset.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
 
-    await expect(p12asset.connect(passerby).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
+    await expect(p12asset.connect(passerby).claimOwnership()).to.be.revertedWith('NoPermission');
 
     await p12asset.transferOwnership(passerby.address, false);
 
-    await expect(p12asset.connect(passerby).mint(passerby.address, 3, 1, '0x')).to.be.revertedWith(
-      'SafeOwnable: caller not owner',
-    );
+    await expect(p12asset.connect(passerby).mint(passerby.address, 3, 1, '0x')).to.be.revertedWith('NoPermission');
 
     await p12asset.connect(passerby).claimOwnership();
     await p12asset.connect(passerby).mint(passerby.address, 3, 1, '0x');

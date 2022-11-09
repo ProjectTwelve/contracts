@@ -78,7 +78,7 @@ interface ISecretShopUpgradable {
   // refund extra token fail
   error ReFundTokenFail();
   // restrict the caller must be address(this)
-  error UnsafeCall();
+  error UnSafeCall();
 
   function runSingle(
     Market.Order memory,

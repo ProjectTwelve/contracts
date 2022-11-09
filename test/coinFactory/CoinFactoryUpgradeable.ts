@@ -132,17 +132,17 @@ describe('P12CoinFactory', function () {
   });
   it('should transfer ownership successfully', async () => {
     await expect(core.p12CoinFactory.transferOwnership(ethers.constants.AddressZero, false)).to.be.revertedWith(
-      'SafeOwnable: new owner is 0',
+      'ZeroAddressSet',
     );
 
-    await expect(core.p12CoinFactory.connect(admin2).claimOwnership()).to.be.revertedWith('SafeOwnable: caller != pending');
+    await expect(core.p12CoinFactory.connect(admin2).claimOwnership()).to.be.revertedWith('NoPermission');
 
     await core.p12CoinFactory.transferOwnership(Buffer.from(ethers.utils.randomBytes(20)).toString('hex'), false);
     await core.p12CoinFactory.transferOwnership(admin2.address, false);
 
     await expect(
       core.p12CoinFactory.connect(admin2).upgradeTo(Buffer.from(ethers.utils.randomBytes(20)).toString('hex')),
-    ).to.be.revertedWith('SafeOwnable: caller not owner');
+    ).to.be.revertedWith('NoPermission');
 
     await core.p12CoinFactory.connect(admin2).claimOwnership();
     await core.p12CoinFactory.connect(admin2).transferOwnership(admin.address, false);

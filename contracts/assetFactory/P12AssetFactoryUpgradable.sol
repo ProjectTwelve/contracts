@@ -29,7 +29,7 @@ contract P12AssetFactoryUpgradable is
    */
   function setP12CoinFactory(address newP12CoinFactory) external virtual override onlyOwner {
     address oldP12Factory = p12CoinFactory;
-    if (newP12CoinFactory == address(0)) revert ZeroAddressSet();
+    if (newP12CoinFactory == address(0)) revert CommonError.ZeroAddressSet();
     p12CoinFactory = newP12CoinFactory;
     emit SetP12Factory(oldP12Factory, newP12CoinFactory);
   }
@@ -43,7 +43,7 @@ contract P12AssetFactoryUpgradable is
   }
 
   function initialize(address owner_, address p12CoinFactory_) public initializer {
-    if (p12CoinFactory_ == address(0)) revert ZeroAddressSet();
+    if (p12CoinFactory_ == address(0)) revert CommonError.ZeroAddressSet();
     p12CoinFactory = p12CoinFactory_;
 
     __ReentrancyGuard_init_unchained();

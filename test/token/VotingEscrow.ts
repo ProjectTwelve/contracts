@@ -22,8 +22,8 @@ describe('VotingEscrow', function () {
     expect((await core.votingEscrow.locked(test.address)).amount).to.be.equal(100n * 10n ** 18n);
   });
   it('withdraw p12Token Emergency successfully', async function () {
-    await expect(core.votingEscrow.connect(test).expire()).to.be.revertedWith('SafeOwnable: caller not owner');
-    await expect(core.votingEscrow.connect(test).withdraw()).to.be.revertedWith('VotingEscrow: condition not met');
+    await expect(core.votingEscrow.connect(test).expire()).to.be.revertedWith('NoPermission');
+    await expect(core.votingEscrow.connect(test).withdraw()).to.be.revertedWith('CannotWithdraw');
     await core.votingEscrow.expire();
     await core.votingEscrow.connect(test).withdraw();
     expect(await core.p12Token.balanceOf(test.address)).to.be.equal(100n * 10n ** 18n);

@@ -43,7 +43,7 @@ contract SecretShopUpgradable is
     Market.SettleShared memory shared,
     Market.SettleDetail memory detail
   ) external virtual override returns (uint256) {
-    if (msg.sender != address(this)) revert UnsafeCall();
+    if (msg.sender != address(this)) revert UnSafeCall();
 
     return _run(order, shared, detail);
   }

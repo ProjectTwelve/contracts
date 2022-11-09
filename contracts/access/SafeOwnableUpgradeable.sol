@@ -6,6 +6,7 @@ pragma solidity 0.8.15;
 import '@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol';
 import '@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol';
+import '../libraries/CommonError.sol';
 
 contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable, ERC1967UpgradeUpgradeable {
   address private _owner;
@@ -42,7 +43,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable, ERC1967Upg
    * @dev Throws if called by any account other than the owner.
    */
   modifier onlyOwner() {
-    require(owner() == _msgSender(), 'SafeOwnable: caller not owner');
+    _checkOwner();
     _;
   }
 
@@ -63,7 +64,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable, ERC1967Upg
    * only happens when the pending owner claim the ownership
    */
   function transferOwnership(address newOwner, bool direct) public virtual onlyOwner {
-    require(newOwner != address(0), 'SafeOwnable: new owner is 0');
+    if (newOwner == address(0)) revert CommonError.ZeroAddressSet();
     if (direct) {
       _transferOwnership(newOwner);
     } else {
@@ -75,7 +76,7 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable, ERC1967Upg
    * @dev pending owner call this function to claim ownership
    */
   function claimOwnership() public {
-    require(msg.sender == _pendingOwner, 'SafeOwnable: caller != pending');
+    if (msg.sender != _pendingOwner) revert CommonError.NoPermission();
 
     _claimOwnership();
   }
@@ -113,6 +114,13 @@ contract SafeOwnableUpgradeable is Initializable, ContextUpgradeable, ERC1967Upg
 
     _owner = _pendingOwner;
     _pendingOwner = address(0);
+  }
+
+  /**
+   * @dev Throws if the sender is not the owner.
+   */
+  function _checkOwner() internal view virtual {
+    if (owner() != _msgSender()) revert CommonError.NoPermission();
   }
 
   /**
