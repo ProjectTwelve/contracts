@@ -142,7 +142,7 @@ contract P12MineUpgradeable is
    * @notice Get pool id
    * @param lpToken Address of lpToken
    */
-  function getPid(address lpToken) public view virtual override lpTokenExist(lpToken) returns (uint256) {
+  function getPid(address lpToken) public view virtual override onlyLpTokenExist(lpToken) returns (uint256) {
     return lpTokenRegistry[lpToken] - 1;
   }
 
@@ -199,7 +199,7 @@ contract P12MineUpgradeable is
    * @notice Create a new pool
    * @param lpToken Address of lpToken
    */
-  function createPool(address lpToken) public virtual override lpTokenNotExist(lpToken) whenNotPaused onlyP12FactoryOrOwner {
+  function createPool(address lpToken) public virtual override onlyLpTokenNotExist(lpToken) whenNotPaused onlyP12FactoryOrOwner {
     poolInfos.push(PoolInfo({ lpToken: lpToken, accP12PerShare: 0, amount: 0, period: 0 }));
     periodTimestamp[lpToken][0] = block.timestamp;
     lpTokenRegistry[lpToken] = poolInfos.length;
@@ -472,12 +472,12 @@ contract P12MineUpgradeable is
   // ============ Modifiers ============
 
   // check if lpToken exists
-  modifier lpTokenExist(address lpToken) {
+  modifier onlyLpTokenExist(address lpToken) {
     if (lpTokenRegistry[lpToken] == 0) revert LpTokenNotExist();
     _;
   }
   // check if lpToken exists
-  modifier lpTokenNotExist(address lpToken) {
+  modifier onlyLpTokenNotExist(address lpToken) {
     if (lpTokenRegistry[lpToken] != 0) revert LpTokenExist();
     _;
   }

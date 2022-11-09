@@ -116,6 +116,14 @@ contract P12AssetFactoryUpgradable is
     P12Asset(collection).setUri(tokenId, newUri);
   }
 
+  /**
+   * @dev throw error if not collection developer
+   */
+  function _checkCollectionDeveloper(address collection) private view {
+    if (P12CoinFactoryUpgradeable(p12CoinFactory).allGames(registry[collection]) != msg.sender)
+      revert CommonError.NotGameDeveloper(msg.sender, registry[collection]);
+  }
+
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
@@ -126,8 +134,7 @@ contract P12AssetFactoryUpgradable is
   }
 
   modifier onlyCollectionDeveloper(address collection) {
-    if (P12CoinFactoryUpgradeable(p12CoinFactory).allGames(registry[collection]) != msg.sender)
-      revert CommonError.NotGameDeveloper(msg.sender, registry[collection]);
+    _checkCollectionDeveloper(collection);
     _;
   }
 }
