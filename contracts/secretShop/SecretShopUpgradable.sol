@@ -129,6 +129,13 @@ contract SecretShopUpgradable is
   }
 
   /**
+   * @inheritdoc ISecretShopUpgradable
+   */
+  function verifyOrderSignature(Market.Order memory order) external view override returns (bool valid) {
+    valid = _verifyOrderSignature(order);
+  }
+
+  /**
    * @dev Entry of a contract call
    * @param input a struct that contains all data
    */
@@ -142,7 +149,7 @@ contract SecretShopUpgradable is
      * @dev Iterate over multiple orders and verify signatures
      */
     for (uint256 i = 0; i < input.orders.length; i++) {
-      _verifyOrderSignature(input.orders[i]);
+      if (!_verifyOrderSignature(input.orders[i])) revert SignatureNotMatch();
     }
 
     /**
@@ -351,10 +358,9 @@ contract SecretShopUpgradable is
   }
 
   /**
-   * @dev verify whether the order data is real, necessary for security
-   * @param order order by the maker
+   * @dev implementation of `verifyOrderSignature`
    */
-  function _verifyOrderSignature(Market.Order memory order) internal view virtual {
+  function _verifyOrderSignature(Market.Order memory order) internal view virtual returns (bool) {
     address orderSigner;
 
     if (order.signVersion == Market.SIGN_V1) {
@@ -364,7 +370,7 @@ contract SecretShopUpgradable is
       revert SignatureVersionNotMatch();
     }
 
-    if (orderSigner != order.user) revert SignatureNotMatch();
+    return orderSigner == order.user;
   }
 
   /**
