@@ -196,6 +196,8 @@ describe('SecretShopUpgradable', function () {
 
     // verify signature
     expect(await core.p12SecretShop.verifyOrderSignature(Order)).to.be.equal(true);
+    const fakeV = Order.v === '0x1b' ? '0x1c' : '0x1b';
+    expect(await core.p12SecretShop.verifyOrderSignature({ ...Order, v: fakeV })).to.be.equal(false);
 
     const itemHash = utils.keccak256(
       '0x' + utils.defaultAbiCoder.encode([EIP721TypeEncoded], [{ ...orderInfo, item: items[0] }]).slice(66),
