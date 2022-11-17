@@ -268,6 +268,7 @@ contract P12MineUpgradeable is
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
+      emit Claim(msg.sender, pending,lpToken);
     }
     if (amount == 0) revert CommonError.ZeroUintSet();
     user.amount += amount;
@@ -291,6 +292,7 @@ contract P12MineUpgradeable is
     if (user.amount > 0) {
       uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       _safeP12Transfer(msg.sender, pending);
+      emit Claim(msg.sender, pending,lpToken);
     }
     uint256 unlockTimestamp = getWithdrawUnlockTimestamp(lpToken, amount);
     bytes32 newWithdrawId = _createWithdrawId(lpToken, amount, msg.sender);
@@ -312,6 +314,7 @@ contract P12MineUpgradeable is
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
     user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
     _safeP12Transfer(msg.sender, pending);
+    emit Claim(msg.sender, pending,lpToken);
     return pending;
   }
 
@@ -330,6 +333,7 @@ contract P12MineUpgradeable is
       _checkpoint(pid);
       pending += (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
       user.rewardDebt = (user.amount * pool.accP12PerShare) / ONE;
+      emit Claim(msg.sender, pending,pool.lpToken);
     }
     _safeP12Transfer(msg.sender, pending);
     return pending;
@@ -353,6 +357,7 @@ contract P12MineUpgradeable is
     _checkpoint(pid);
     uint256 pending = (user.amount * pool.accP12PerShare) / ONE - user.rewardDebt;
     _safeP12Transfer(_who, pending);
+    emit Claim(_who,pending,lpToken);
     uint256 amount = withdrawInfos[lpToken][id].amount;
     user.amount -= amount;
     pool.amount -= amount;
@@ -405,7 +410,6 @@ contract P12MineUpgradeable is
   function _safeP12Transfer(address to, uint256 amount) internal virtual {
     p12RewardVault.reward(to, amount);
     realizedReward[to] = realizedReward[to] + amount;
-    emit Claim(to, amount);
   }
 
   /**
