@@ -22,7 +22,7 @@ interface IP12MineUpgradeable {
     bytes32 indexed newWithdrawId,
     uint256 unlockTimestamp
   ); // delayed unStaking mining log
-  event Claim(address indexed user, uint256 amount); // get rewards
+  event Claim(address indexed user, uint256 amount,address lpToken); // get rewards
   event SetDelayB(uint256 oldDelayB, uint256 newDelayB); // change delayB log
   event SetDelayK(uint256 oldDelayK, uint256 newDelayK); // change delayK log
   event SetRate(uint256 oldRate, uint256 newRate); // set new rate
