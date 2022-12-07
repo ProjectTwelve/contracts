@@ -93,5 +93,7 @@
       "@nomiclabs/hardhat-ethers": "$@nomiclabs/hardhat-ethers"
     }
   },
-  "files": []
+  "files": [
+    "deployments"
+  ]
 }

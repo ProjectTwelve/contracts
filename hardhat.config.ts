@@ -68,15 +68,13 @@ const config: HardhatUserConfig = {
     forkP12TestNet: {
       url: 'http://127.0.0.1:8545/',
     },
-    rinkeby: {
-      url: process.env.RINKEBY_URL || '',
+    p12Chain: {
+      url: 'https://rpc-chain.p12.games',
       live: true,
-      chainId: 4,
+      chainId: 20736,
       accounts: accounts,
-      gas: 'auto',
-      gasPrice: 3000000000, // 3 Gwei
-      tags: ['staging'],
-      deploy: ['deploy/rinkeby'],
+      gasPrice: 1000000000,
+      deploy: ['deploy/p12Chain'],
     },
     goerli: {
       url: process.env.GOERLI_URL || '',
@@ -92,7 +90,7 @@ const config: HardhatUserConfig = {
   contractSizer: {
     alphaSort: false,
     disambiguatePaths: false,
-    runOnCompile: true,
+    runOnCompile: false,
     strict: true,
   },
   gasReporter: {
@@ -103,9 +101,11 @@ const config: HardhatUserConfig = {
     deployer: {
       default: 0,
       p12TestNet: addresses[0],
+      p12Chain: addresses[0],
     },
     owner: {
       default: 0,
+      p12Chain: addresses[0],
     },
   },
   deterministicDeployment: {
@@ -143,6 +143,7 @@ const config: HardhatUserConfig = {
     // Obtain one at https://etherscan.io/
     apiKey: {
       p12TestNet: 'p12',
+      p12Chain: 'p12',
       rinkeby: process.env.ETHERSCAN_API_KEY!,
       goerli: process.env.ETHERSCAN_API_KEY!,
     },
@@ -153,6 +154,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://blockscout.p12.games/api',
           browserURL: 'https://blockscout.p12.games/',
+        },
+      },
+      {
+        network: 'p12Chain',
+        chainId: 20736,
+        urls: {
+          apiURL: 'https://explorer.p12.games/api',
+          browserURL: 'https://explorer.p12.games/',
         },
       },
     ],
