@@ -6,19 +6,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
 
   const weth = await get('WETH9');
 
-  await deploy('ERC721Delegate', {
-    from: deployer,
-    args: [owner],
-    log: true,
-  });
-
-  await deploy('ERC1155Delegate', {
-    from: deployer,
-    args: [owner],
-    log: true,
-  });
-
-  await deploy('SecretShopUpgradable', {
+  const secretShop = await deploy('SecretShopUpgradable', {
     from: deployer,
     args: [],
     proxy: {
@@ -31,6 +19,18 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
         },
       },
     },
+    log: true,
+  });
+
+  await deploy('ERC721Delegate', {
+    from: deployer,
+    args: [owner, secretShop.address],
+    log: true,
+  });
+
+  await deploy('ERC1155Delegate', {
+    from: deployer,
+    args: [owner, secretShop.address],
     log: true,
   });
 };

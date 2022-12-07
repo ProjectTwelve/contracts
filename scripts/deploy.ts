@@ -57,19 +57,9 @@ export async function deployEconomyContract(): Promise<EconomyContract> {
 }
 
 export async function setUp(ec: EconomyContract, ex: ExternalContract) {
-  const accounts = await ethers.getSigners();
-  const admin = accounts[0];
-
   await ec.p12CoinFactory.setP12Mine(ec.p12Mine.address);
   await ec.p12CoinFactory.setGaugeController(ec.gaugeController.address);
   await ec.gaugeController.addType('liquidity', 1n * 10n ** 18n);
-
-  await ec.erc1155delegate.grantRole(await ec.erc1155delegate.DELEGATION_CALLER(), ec.p12SecretShop.address);
-  await ec.erc721delegate.grantRole(await ec.erc1155delegate.DELEGATION_CALLER(), ec.p12SecretShop.address);
-
-  await ec.erc1155delegate.grantRole(await ec.erc1155delegate.PAUSABLE_CALLER(), admin.address);
-  await ec.erc721delegate.grantRole(await ec.erc721delegate.PAUSABLE_CALLER(), admin.address);
-
   await ec.p12SecretShop.updateCurrencies([ec.p12Token.address], []);
   await ec.p12SecretShop.updateDelegates([ec.erc1155delegate.address, ec.erc721delegate.address], []);
 }

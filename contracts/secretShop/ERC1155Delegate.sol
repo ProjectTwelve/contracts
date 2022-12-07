@@ -24,8 +24,9 @@ contract ERC1155Delegate is IDelegate, AccessControl, IERC1155Receiver, Reentran
     uint256 amount;
   }
 
-  constructor(address admin_) {
-    _grantRole(DEFAULT_ADMIN_ROLE, admin_);
+  constructor(address pauser_, address secretShop_) {
+    _grantRole(DELEGATION_CALLER, secretShop_);
+    _grantRole(PAUSABLE_CALLER, pauser_);
   }
 
   /**
