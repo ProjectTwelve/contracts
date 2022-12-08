@@ -11,6 +11,7 @@ import {
   VotingEscrow,
 } from '../typechain';
 import { Contract } from 'ethers';
+import { parseEther } from 'ethers/lib/utils';
 
 export declare type ExternalContract = {
   uniswapFactory: Contract;
@@ -57,6 +58,8 @@ export async function deployEconomyContract(): Promise<EconomyContract> {
 }
 
 export async function setUp(ec: EconomyContract, ex: ExternalContract) {
+  const accounts = await ethers.getSigners();
+  await ec.p12Token.mint(accounts[0].address, parseEther((10 ** 6).toString()));
   await ec.p12CoinFactory.setP12Mine(ec.p12Mine.address);
   await ec.p12CoinFactory.setGaugeController(ec.gaugeController.address);
   await ec.gaugeController.addType('liquidity', 1n * 10n ** 18n);

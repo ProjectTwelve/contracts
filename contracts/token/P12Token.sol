@@ -10,16 +10,21 @@ import './interfaces/IP12Token.sol';
 // temporary contract, not corresponding to real token model
 
 contract P12Token is IP12Token, ERC20, SafeOwnable {
+  error SupplyExceedMax();
+
+  uint256 public immutable maxSupply;
+
   constructor(
     address owner_,
     string memory name,
     string memory symbol,
-    uint256 totalSupply
+    uint256 maxSupply_
   ) ERC20(name, symbol) SafeOwnable(owner_) {
-    _mint(owner_, totalSupply);
+    maxSupply = maxSupply_;
   }
 
   function mint(address recipient, uint256 amount) public override onlyOwner {
     _mint(recipient, amount);
+    if (totalSupply() > maxSupply) revert SupplyExceedMax();
   }
 }

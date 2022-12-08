@@ -73,7 +73,7 @@ const config: HardhatUserConfig = {
       live: true,
       chainId: 20736,
       accounts: accounts,
-      gasPrice: 1000000000,
+      gasPrice: 'auto',
       deploy: ['deploy/p12Chain'],
     },
     goerli: {
