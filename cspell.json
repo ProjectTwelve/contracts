@@ -25,6 +25,7 @@
     "hljs",
     "Hola",
     "IERC",
+    "inheritdoc",
     "Initializable",
     "ipfs",
     "IWETH",
@@ -58,6 +59,7 @@
     "structs",
     "Timelock",
     "TOKENLESS",
+    "tovarishfin",
     "transferownership",
     "tsort",
     "typechain",
@@ -66,8 +68,7 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf",
-    "inheritdoc"
+    "xwbf"
   ],
   "ignorePaths": ["typechain/**", "flatten/**"]
 }

@@ -1,5 +1,6 @@
 import { DeployFunction } from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
+import { formatBytes32String, keccak256 } from 'ethers/lib/utils';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy, get } = deployments;
@@ -32,6 +33,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
       },
     },
     log: true,
+    deterministicDeployment: keccak256(formatBytes32String('P12_Economy_V1')),
   });
 };
 func.tags = ['Mine'];

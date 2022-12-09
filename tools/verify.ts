@@ -34,7 +34,7 @@ async function main() {
         if (str.includes('Reason: Already Verified') || str.includes('Contract source code already verified')) {
           console.log(`${content.storageLayout.storage[0].contract} at ${content.address} Already Verified`);
         } else {
-          console.log(`verify the ${content.storageLayout.storage[0].contract} at ${content.address} fail`, err);
+          console.log(`verify the ${content.storageLayout?.storage[0].contract} at ${content.address} fail`, err);
         }
       }
     }

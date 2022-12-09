@@ -1,5 +1,5 @@
 import { DeployFunction } from 'hardhat-deploy/types';
-import { parseEther } from 'ethers/lib/utils';
+import { formatBytes32String, keccak256, parseEther } from 'ethers/lib/utils';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
   const { deploy } = deployments;
@@ -10,6 +10,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
     from: deployer,
     args: [owner, 'P12Token', 'P12', String(parseEther((10 ** 10).toString()))],
     log: true,
+    deterministicDeployment: keccak256(formatBytes32String('P12_Economy_V1')),
   });
 };
 func.tags = ['P12Token'];

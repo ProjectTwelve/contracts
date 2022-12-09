@@ -9,3 +9,4 @@ build
 theme
 pnpm-lock.yaml
 .docusaurus
+docs

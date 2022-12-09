@@ -184,7 +184,7 @@ describe('P12Mine', function () {
 
   // try withdraw
   it('show withdraw fail', async function () {
-    expect(core.p12Mine.executeWithdraw(pair.address, id)).to.be.revertedWith('P12Mine: can only be withdraw once');
+    await expect(core.p12Mine.executeWithdraw(pair.address, id)).to.be.revertedWith('NoPermission');
   });
 
   // delay unStaking mining

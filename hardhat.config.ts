@@ -12,6 +12,7 @@ import 'solidity-coverage';
 import 'hardhat-contract-sizer';
 import '@openzeppelin/hardhat-upgrades';
 import 'solidity-docgen';
+import '@tovarishfin/hardhat-yul';
 
 dotenv.config();
 addFlatTask();
@@ -111,6 +112,12 @@ const config: HardhatUserConfig = {
   deterministicDeployment: {
     44010: {
       factory: '0xCB2c067Db41aB40Fe6583BE811C15FF190b05dAF',
+      deployer: '',
+      funding: '',
+      signedTx: '',
+    },
+    20736: {
+      factory: '0x08774080f4548460C82ad647fea02c8FC7AefE57',
       deployer: '',
       funding: '',
       signedTx: '',

@@ -3,6 +3,8 @@ import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 import { P12CoinFactoryUpgradeableAlter, P12GameCoin } from '../../typechain';
+import { randomAddress } from '../../tools/utils';
+import { randomBytes } from 'crypto';
 
 describe('P12CoinFactory', function () {
   let admin: SignerWithAddress;
@@ -29,9 +31,9 @@ describe('P12CoinFactory', function () {
   });
   it('Should pausable effective', async () => {
     await core.p12CoinFactory.pause();
-    expect(core.p12CoinFactory.create('', '', '', '', 0n, 0n)).to.be.revertedWith('Pausable: paused');
-    expect(core.p12CoinFactory.queueMintCoin('', '', 0n)).to.be.revertedWith('Pausable: paused');
-    expect(core.p12CoinFactory.executeMintCoin('', '')).to.be.revertedWith('Pausable: paused');
+    await expect(core.p12CoinFactory.create('', '', '', '', 0n, 0n)).to.be.revertedWith('Pausable: paused');
+    await expect(core.p12CoinFactory.queueMintCoin('', randomAddress(), 0n)).to.be.revertedWith('Pausable: paused');
+    await expect(core.p12CoinFactory.executeMintCoin(randomAddress(), randomBytes(32))).to.be.revertedWith('Pausable: paused');
     await core.p12CoinFactory.unpause();
   });
 
