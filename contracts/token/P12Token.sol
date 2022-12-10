@@ -12,7 +12,7 @@ import './interfaces/IP12Token.sol';
 contract P12Token is IP12Token, ERC20, SafeOwnable {
   error SupplyExceedMax();
 
-  uint256 public immutable maxSupply;
+  uint256 public immutable override maxSupply;
 
   constructor(
     address owner_,

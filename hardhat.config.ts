@@ -69,13 +69,13 @@ const config: HardhatUserConfig = {
     forkP12TestNet: {
       url: 'http://127.0.0.1:8545/',
     },
-    p12Chain: {
+    pudge: {
       url: 'https://rpc-chain.p12.games',
       live: true,
       chainId: 20736,
       accounts: accounts,
-      gasPrice: 'auto',
-      deploy: ['deploy/p12Chain'],
+      gasPrice: 'auto', //
+      deploy: ['deploy/pudge'],
     },
     goerli: {
       url: process.env.GOERLI_URL || '',
@@ -102,11 +102,11 @@ const config: HardhatUserConfig = {
     deployer: {
       default: 0,
       p12TestNet: addresses[0],
-      p12Chain: addresses[0],
+      pudge: addresses[0],
     },
     owner: {
       default: 0,
-      p12Chain: addresses[0],
+      pudge: addresses[0],
     },
   },
   deterministicDeployment: {
@@ -117,7 +117,7 @@ const config: HardhatUserConfig = {
       signedTx: '',
     },
     20736: {
-      factory: '0x08774080f4548460C82ad647fea02c8FC7AefE57',
+      factory: '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086',
       deployer: '',
       funding: '',
       signedTx: '',
@@ -150,7 +150,7 @@ const config: HardhatUserConfig = {
     // Obtain one at https://etherscan.io/
     apiKey: {
       p12TestNet: 'p12',
-      p12Chain: 'p12',
+      pudge: 'p12',
       rinkeby: process.env.ETHERSCAN_API_KEY!,
       goerli: process.env.ETHERSCAN_API_KEY!,
     },
@@ -164,7 +164,7 @@ const config: HardhatUserConfig = {
         },
       },
       {
-        network: 'p12Chain',
+        network: 'pudge',
         chainId: 20736,
         urls: {
           apiURL: 'https://explorer.p12.games/api',
