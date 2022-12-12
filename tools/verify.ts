@@ -4,7 +4,7 @@ import fs from 'fs-extra';
 import { exit } from 'process';
 
 // If the contract does not require verification, just add it here
-const whiteList = ['P12Token.json', 'UniswapV2Factory.json', 'UniswapV2Router02.json', 'WETH9.json'];
+const whiteList = ['deterministic-deployment-proxy.json', 'UniswapV2Factory.json', 'UniswapV2Router02.json', 'WETH9.json'];
 
 function getNoVerifyFile() {
   const files: string[] = [];
