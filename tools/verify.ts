@@ -23,7 +23,7 @@ async function main() {
       const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
       try {
         if (!content.implementation) {
-          if (content.storageLayout) {
+          if (content.storageLayout?.[0]) {
             await verify(content.address, content.args, content.storageLayout.storage[0].contract);
           } else {
             await verify(content.address, content.args);
@@ -34,7 +34,7 @@ async function main() {
         if (str.includes('Reason: Already Verified') || str.includes('Contract source code already verified')) {
           console.log(`${content.storageLayout.storage[0].contract} at ${content.address} Already Verified`);
         } else {
-          console.log(`verify the ${content.storageLayout?.storage[0].contract} at ${content.address} fail`, err);
+          console.log(`verify the ${content.storageLayout?.storage?.[0]?.contract} at ${content.address} fail`, err);
         }
       }
     }
