@@ -10,7 +10,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
 
   await deploy('VotingEscrow', {
     from: deployer,
-    args: [owner, p12.address, 'Vote-escrowed P12', 'veP12'],
+    args: [owner, p12.address, 'Vote-escrowed P2', 'veP2'],
     log: true,
     deterministicDeployment: keccak256(formatBytes32String('P12_Economy_V1')),
   });
