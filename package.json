@@ -80,6 +80,7 @@
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/contracts-upgradeable": "^4.7.3",
     "@openzeppelin/upgrades-core": "^1.19.1",
+    "@p12/contracts-lib": "^0.0.5",
     "@tovarishfin/hardhat-yul": "^3.0.5",
     "@uniswap/v2-core": "^1.0.1",
     "@uniswap/v2-periphery": "^1.1.0-beta.0",

@@ -16,6 +16,7 @@ specifiers:
   '@openzeppelin/contracts-upgradeable': ^4.7.3
   '@openzeppelin/hardhat-upgrades': ^1.17.0
   '@openzeppelin/upgrades-core': ^1.19.1
+  '@p12/contracts-lib': ^0.0.5
   '@tovarishfin/hardhat-yul': ^3.0.5
   '@typechain/ethers-v5': ^7.2.0
   '@typechain/hardhat': ^2.3.1
@@ -68,6 +69,7 @@ dependencies:
   '@openzeppelin/contracts': 4.7.3
   '@openzeppelin/contracts-upgradeable': 4.7.3
   '@openzeppelin/upgrades-core': 1.19.1
+  '@p12/contracts-lib': 0.0.5
   '@tovarishfin/hardhat-yul': 3.0.5_hardhat@2.9.9
   '@uniswap/v2-core': 1.0.1
   '@uniswap/v2-periphery': 1.1.0-beta.0
@@ -3877,6 +3879,13 @@ packages:
       solidity-ast: 0.4.35
     transitivePeerDependencies:
       - supports-color
+
+  /@p12/contracts-lib/0.0.5:
+    resolution: {integrity: sha512-io8F8cEDwnfxLER95QgRKqbPzldSHjUbsl50O7EqCxJmCe4uu2hTwYh1QuD/u1swxQGMalhU0NbgwhpDLIRi1g==}
+    dependencies:
+      '@openzeppelin/contracts': 4.7.3
+      '@openzeppelin/contracts-upgradeable': 4.7.3
+    dev: false
 
   /@polka/url/1.0.0-next.21:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
