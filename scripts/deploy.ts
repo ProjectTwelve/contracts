@@ -9,7 +9,7 @@ import {
   SecretShopUpgradable,
   GaugeControllerUpgradeable,
   VotingEscrow,
-} from '../typechain';
+} from '../typechain-types';
 import { Contract } from 'ethers';
 import { parseEther } from 'ethers/lib/utils';
 

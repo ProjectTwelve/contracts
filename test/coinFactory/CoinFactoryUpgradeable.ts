@@ -2,7 +2,7 @@ import { ethers } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { expect } from 'chai';
 import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
-import { P12CoinFactoryUpgradeableAlter, P12GameCoin } from '../../typechain';
+import { P12CoinFactoryUpgradeableAlter, P12GameCoin } from '../../typechain-types';
 import { randomAddress } from '../../tools/utils';
 import { randomBytes } from 'crypto';
 

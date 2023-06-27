@@ -3,7 +3,7 @@ artifacts
 cache
 coverage*
 gasReporterOutput.json
-typechain
+typechain-types
 deployments
 build
 theme

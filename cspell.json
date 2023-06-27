@@ -70,5 +70,5 @@
     "UUPS",
     "xwbf"
   ],
-  "ignorePaths": ["typechain/**", "flatten/**", "lib/**", "out/**"]
+  "ignorePaths": ["typechain-types/**", "flatten/**", "lib/**", "out/**"]
 }

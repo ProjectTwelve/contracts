@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import { P12AssetDemo, ERC721Demo, P12Asset } from '../../typechain';
+import { P12AssetDemo, ERC721Demo, P12Asset } from '../../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { utils } from 'ethers';
 import { genSalt } from './utils';

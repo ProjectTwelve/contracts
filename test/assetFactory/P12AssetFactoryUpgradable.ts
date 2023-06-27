@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { ethers } from 'hardhat';
-import { P12AssetFactoryUpgradable, P12Asset, P12CoinFactoryUpgradeable } from '../../typechain';
+import { P12AssetFactoryUpgradable, P12Asset, P12CoinFactoryUpgradeable } from '../../typechain-types';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { getContract } from '../../scripts/deploy';
 
