@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 import 'forge-std/Test.sol';
-import '../../contracts/staking/interfaces/IGaugeController.sol';
-import '../../contracts/staking/P12MineUpgradeable.sol';
-import '../../contracts/token/P12Token.sol';
-import '../../contracts/staking/P12MineStorage.sol';
+import 'src/staking/interfaces/IGaugeController.sol';
+import 'src/staking/P12MineUpgradeable.sol';
+import 'src/token/P12Token.sol';
+import 'src/staking/P12MineStorage.sol';
 contract P12MineUpgradeableTest is Test{
   P12MineUpgradeable public p12MineUpgradeable;
   P12Token public p12Token;

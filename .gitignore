@@ -20,3 +20,4 @@ docs/**
 yarn-error.log
 solcInputs
 typechain-types
+cache_hardhat

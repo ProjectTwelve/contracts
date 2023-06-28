@@ -1,0 +1,21 @@
+[profile.default]
+src = 'src'
+out = 'out'
+libs = ['lib']
+optimizer = true
+optimizer_runs = 1
+solc = "0.8.19"
+bytescode_hash = "none"
+# viaIR = true
+
+fs_permissions = [{ access = "read", path = "./" }]
+
+# set debug when debug, set default to commit
+revert_strings = "debug"
+[invariant]
+
+run = 1024
+depth = 30
+fail_on_revert = false
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config

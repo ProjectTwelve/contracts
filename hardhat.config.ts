@@ -1,11 +1,13 @@
 import * as dotenv from 'dotenv';
 
+import fs from 'fs';
 import { HardhatUserConfig, task } from 'hardhat/config';
 import { addFlatTask } from './tools/flat';
 import '@nomiclabs/hardhat-etherscan';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
+import 'hardhat-preprocessor';
 import 'hardhat-deploy';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
@@ -16,6 +18,18 @@ import '@tovarishfin/hardhat-yul';
 
 dotenv.config();
 addFlatTask();
+
+function getRemapping() {
+  return (
+    fs
+      /* cspell:disable-next-line */
+      .readFileSync('remappings.txt', 'utf8')
+      .split('\n')
+      .filter(Boolean)
+      .filter((v) => v.includes('@node_modules'))
+      .map((line) => line.trim().split('='))
+  );
+}
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -111,6 +125,25 @@ const config: HardhatUserConfig = {
       default: 0,
       pudge: addresses[0],
     },
+  },
+  paths: {
+    sources: './src', // Use ./src rather than ./contracts as Hardhat expects
+    cache: './cache_hardhat', // Use a different cache for Hardhat than Foundry
+  },
+  // This fully resolves paths for imports in the ./lib directory for Hardhat
+  preprocess: {
+    eachLine: (hre) => ({
+      transform: (line: string) => {
+        if (line.match(/^\s*import /i)) {
+          getRemapping().forEach(([find, replace]) => {
+            if (line.match(find)) {
+              line = line.replace(find, replace);
+            }
+          });
+        }
+        return line;
+      },
+    }),
   },
   deterministicDeployment: {
     44010: {

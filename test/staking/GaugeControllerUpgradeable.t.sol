@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 import 'forge-std/Test.sol';
-import '../../contracts/staking/GaugeControllerUpgradeable.sol';
-import '../../contracts/token/interfaces/IVotingEscrow.sol';
-import '../../contracts/token/VotingEscrow.sol';
-import '../../contracts/token/P12Token.sol';
+import 'src/staking/GaugeControllerUpgradeable.sol';
+import 'src/token/interfaces/IVotingEscrow.sol';
+import 'src/token/VotingEscrow.sol';
+import 'src/token/P12Token.sol';
 contract GaugeControllerUpgradeableTest is Test{
   GaugeControllerUpgradeable public gaugeControllerUpgradeable;
   VotingEscrow public votingEscrow;

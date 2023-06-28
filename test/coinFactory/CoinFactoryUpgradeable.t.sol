@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 import 'forge-std/Test.sol';
-import '../../contracts/coinFactory/P12CoinFactoryUpgradeable.sol';
-import '../../contracts/staking/interfaces/IP12MineUpgradeable.sol';
+import 'src/coinFactory/P12CoinFactoryUpgradeable.sol';
+import 'src/staking/interfaces/IP12MineUpgradeable.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 
-import '../../contracts/staking/interfaces/IGaugeController.sol';
+import 'src/staking/interfaces/IGaugeController.sol';
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-import '../../contracts/coinFactory/interfaces/IP12GameCoin.sol';
-import '../../contracts/token/P12Token.sol';
+import 'src/coinFactory/interfaces/IP12GameCoin.sol';
+import 'src/token/P12Token.sol';
 contract CoinFactoryUpgradeableTest is Test{
   P12CoinFactoryUpgradeable public p12CoinFactoryUpgradeable;
   P12Token public p12Token;
