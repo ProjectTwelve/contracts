@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity 0.8.15;
+pragma solidity 0.8.19;
 import 'forge-std/Test.sol';
 import '../../contracts/staking/GaugeControllerUpgradeable.sol';
 import '../../contracts/token/interfaces/IVotingEscrow.sol';

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-pragma solidity 0.8.15;
+pragma solidity 0.8.19;
 
 import { UUPSUpgradeable } from '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import { SafeOwnableUpgradeable } from '@p12/contracts-lib/contracts/access/SafeOwnableUpgradeable.sol';

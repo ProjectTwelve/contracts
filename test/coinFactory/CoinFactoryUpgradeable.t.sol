@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity 0.8.15;
+pragma solidity 0.8.19;
 import 'forge-std/Test.sol';
 import '../../contracts/coinFactory/P12CoinFactoryUpgradeable.sol';
 import '../../contracts/staking/interfaces/IP12MineUpgradeable.sol';

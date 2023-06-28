@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-pragma solidity 0.8.15;
+pragma solidity 0.8.19;
 
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
