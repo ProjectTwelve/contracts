@@ -1,0 +1,23 @@
+{
+  "unversionedId": "coinFactory/P12GameCoin",
+  "id": "coinFactory/P12GameCoin",
+  "title": "P12GameCoin",
+  "description": "P12GameCoin",
+  "source": "@site/docs/coinFactory/P12GameCoin.md",
+  "sourceDirName": "coinFactory",
+  "slug": "/coinFactory/P12GameCoin",
+  "permalink": "/contracts/coinFactory/P12GameCoin",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12CoinFactoryUpgradeable",
+    "permalink": "/contracts/coinFactory/P12CoinFactoryUpgradeable"
+  },
+  "next": {
+    "title": "IP12CoinFactoryUpgradeable",
+    "permalink": "/contracts/coinFactory/interfaces/IP12CoinFactoryUpgradeable"
+  }
+}

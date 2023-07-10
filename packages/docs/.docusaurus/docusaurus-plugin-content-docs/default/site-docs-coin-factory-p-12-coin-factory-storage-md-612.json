@@ -1,0 +1,23 @@
+{
+  "unversionedId": "coinFactory/P12CoinFactoryStorage",
+  "id": "coinFactory/P12CoinFactoryStorage",
+  "title": "P12CoinFactoryStorage",
+  "description": "P12CoinFactoryStorage",
+  "source": "@site/docs/coinFactory/P12CoinFactoryStorage.md",
+  "sourceDirName": "coinFactory",
+  "slug": "/coinFactory/P12CoinFactoryStorage",
+  "permalink": "/contracts/coinFactory/P12CoinFactoryStorage",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12AssetFactoryUpgradable",
+    "permalink": "/contracts/assetFactory/interfaces/IP12AssetFactoryUpgradable"
+  },
+  "next": {
+    "title": "P12CoinFactoryUpgradeable",
+    "permalink": "/contracts/coinFactory/P12CoinFactoryUpgradeable"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "unversionedId": "assetFactory/interfaces/IP12AssetFactoryUpgradable",
+  "id": "assetFactory/interfaces/IP12AssetFactoryUpgradable",
+  "title": "IP12AssetFactoryUpgradable",
+  "description": "IP12AssetFactoryUpgradable",
+  "source": "@site/docs/assetFactory/interfaces/IP12AssetFactoryUpgradable.md",
+  "sourceDirName": "assetFactory/interfaces",
+  "slug": "/assetFactory/interfaces/IP12AssetFactoryUpgradable",
+  "permalink": "/contracts/assetFactory/interfaces/IP12AssetFactoryUpgradable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12Asset",
+    "permalink": "/contracts/assetFactory/interfaces/IP12Asset"
+  },
+  "next": {
+    "title": "P12CoinFactoryStorage",
+    "permalink": "/contracts/coinFactory/P12CoinFactoryStorage"
+  }
+}

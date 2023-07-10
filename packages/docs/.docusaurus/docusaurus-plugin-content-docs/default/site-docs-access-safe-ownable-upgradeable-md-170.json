@@ -1,0 +1,23 @@
+{
+  "unversionedId": "access/SafeOwnableUpgradeable",
+  "id": "access/SafeOwnableUpgradeable",
+  "title": "SafeOwnableUpgradeable",
+  "description": "SafeOwnableUpgradeable",
+  "source": "@site/docs/access/SafeOwnableUpgradeable.md",
+  "sourceDirName": "access",
+  "slug": "/access/SafeOwnableUpgradeable",
+  "permalink": "/contracts/access/SafeOwnableUpgradeable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "SafeOwnable",
+    "permalink": "/contracts/access/SafeOwnable"
+  },
+  "next": {
+    "title": "P12Asset",
+    "permalink": "/contracts/assetFactory/P12Asset"
+  }
+}

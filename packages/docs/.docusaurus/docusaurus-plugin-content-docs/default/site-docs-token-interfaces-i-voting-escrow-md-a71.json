@@ -1,0 +1,19 @@
+{
+  "unversionedId": "token/interfaces/IVotingEscrow",
+  "id": "token/interfaces/IVotingEscrow",
+  "title": "IVotingEscrow",
+  "description": "IVotingEscrow",
+  "source": "@site/docs/token/interfaces/IVotingEscrow.md",
+  "sourceDirName": "token/interfaces",
+  "slug": "/token/interfaces/IVotingEscrow",
+  "permalink": "/contracts/token/interfaces/IVotingEscrow",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12Token",
+    "permalink": "/contracts/token/interfaces/IP12Token"
+  }
+}

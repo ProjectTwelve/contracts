@@ -1,0 +1,23 @@
+{
+  "unversionedId": "token/VotingEscrow",
+  "id": "token/VotingEscrow",
+  "title": "VotingEscrow",
+  "description": "VotingEscrow",
+  "source": "@site/docs/token/VotingEscrow.md",
+  "sourceDirName": "token",
+  "slug": "/token/VotingEscrow",
+  "permalink": "/contracts/token/VotingEscrow",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12Token",
+    "permalink": "/contracts/token/P12Token"
+  },
+  "next": {
+    "title": "IP12Token",
+    "permalink": "/contracts/token/interfaces/IP12Token"
+  }
+}

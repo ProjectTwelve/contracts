@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/interfaces/IGaugeController",
+  "id": "staking/interfaces/IGaugeController",
+  "title": "IGaugeController",
+  "description": "IGaugeController",
+  "source": "@site/docs/staking/interfaces/IGaugeController.md",
+  "sourceDirName": "staking/interfaces",
+  "slug": "/staking/interfaces/IGaugeController",
+  "permalink": "/contracts/staking/interfaces/IGaugeController",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12RewardVault",
+    "permalink": "/contracts/staking/P12RewardVault"
+  },
+  "next": {
+    "title": "IP12MineUpgradeable",
+    "permalink": "/contracts/staking/interfaces/IP12MineUpgradeable"
+  }
+}

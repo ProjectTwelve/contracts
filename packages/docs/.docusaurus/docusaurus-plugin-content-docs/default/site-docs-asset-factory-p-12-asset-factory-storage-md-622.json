@@ -1,0 +1,23 @@
+{
+  "unversionedId": "assetFactory/P12AssetFactoryStorage",
+  "id": "assetFactory/P12AssetFactoryStorage",
+  "title": "P12AssetFactoryStorage",
+  "description": "P12AssetFactoryStorage",
+  "source": "@site/docs/assetFactory/P12AssetFactoryStorage.md",
+  "sourceDirName": "assetFactory",
+  "slug": "/assetFactory/P12AssetFactoryStorage",
+  "permalink": "/contracts/assetFactory/P12AssetFactoryStorage",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12Asset",
+    "permalink": "/contracts/assetFactory/P12Asset"
+  },
+  "next": {
+    "title": "P12AssetFactoryUpgradable",
+    "permalink": "/contracts/assetFactory/P12AssetFactoryUpgradable"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/interfaces/IP12RewardVault",
+  "id": "staking/interfaces/IP12RewardVault",
+  "title": "IP12RewardVault",
+  "description": "IP12RewardVault",
+  "source": "@site/docs/staking/interfaces/IP12RewardVault.md",
+  "sourceDirName": "staking/interfaces",
+  "slug": "/staking/interfaces/IP12RewardVault",
+  "permalink": "/contracts/staking/interfaces/IP12RewardVault",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12MineUpgradeable",
+    "permalink": "/contracts/staking/interfaces/IP12MineUpgradeable"
+  },
+  "next": {
+    "title": "P12Token",
+    "permalink": "/contracts/token/P12Token"
+  }
+}

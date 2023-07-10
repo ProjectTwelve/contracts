@@ -1,0 +1,23 @@
+{
+  "unversionedId": "token/P12Token",
+  "id": "token/P12Token",
+  "title": "P12Token",
+  "description": "P12Token",
+  "source": "@site/docs/token/P12Token.md",
+  "sourceDirName": "token",
+  "slug": "/token/P12Token",
+  "permalink": "/contracts/token/P12Token",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12RewardVault",
+    "permalink": "/contracts/staking/interfaces/IP12RewardVault"
+  },
+  "next": {
+    "title": "VotingEscrow",
+    "permalink": "/contracts/token/VotingEscrow"
+  }
+}

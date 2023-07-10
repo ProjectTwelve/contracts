@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/GaugeControllerUpgradeable",
+  "id": "staking/GaugeControllerUpgradeable",
+  "title": "GaugeControllerUpgradeable",
+  "description": "GaugeControllerUpgradeable",
+  "source": "@site/docs/staking/GaugeControllerUpgradeable.md",
+  "sourceDirName": "staking",
+  "slug": "/staking/GaugeControllerUpgradeable",
+  "permalink": "/contracts/staking/GaugeControllerUpgradeable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "ControllerStorage",
+    "permalink": "/contracts/staking/ControllerStorage"
+  },
+  "next": {
+    "title": "P12MineStorage",
+    "permalink": "/contracts/staking/P12MineStorage"
+  }
+}

@@ -4,365 +4,177 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-importers:
+dependencies:
+  '@openzeppelin/contracts':
+    specifier: ^4.7.3
+    version: 4.7.3
+  '@openzeppelin/contracts-upgradeable':
+    specifier: ^4.7.3
+    version: 4.7.3
+  '@openzeppelin/upgrades-core':
+    specifier: ^1.19.1
+    version: 1.19.1
+  '@p12/contracts-lib':
+    specifier: ^0.0.5
+    version: 0.0.5
+  '@tovarishfin/hardhat-yul':
+    specifier: ^3.0.5
+    version: 3.0.5(hardhat@2.12.6)
+  '@uniswap/v3-core':
+    specifier: ^1.0.1
+    version: 1.0.1
+  '@uniswap/v3-periphery':
+    specifier: ^1.4.3
+    version: 1.4.3
+  canonical-weth:
+    specifier: ^1.4.0
+    version: 1.4.0
+  hardhat-preprocessor:
+    specifier: ^0.1.5
+    version: 0.1.5(hardhat@2.12.6)
+  lodash:
+    specifier: ^4.17.15
+    version: 4.17.15
 
-  .: {}
-
-  packages/contracts:
-    dependencies:
-      '@openzeppelin/contracts':
-        specifier: ^4.7.3
-        version: 4.7.3
-      '@openzeppelin/contracts-upgradeable':
-        specifier: ^4.7.3
-        version: 4.7.3
-      '@openzeppelin/upgrades-core':
-        specifier: ^1.19.1
-        version: 1.19.1
-      '@p12/contracts-lib':
-        specifier: ^0.0.5
-        version: 0.0.5
-      '@tovarishfin/hardhat-yul':
-        specifier: ^3.0.5
-        version: 3.0.5(hardhat@2.12.6)
-      '@uniswap/v3-core':
-        specifier: ^1.0.1
-        version: 1.0.1
-      '@uniswap/v3-periphery':
-        specifier: ^1.4.3
-        version: 1.4.3
-      canonical-weth:
-        specifier: ^1.4.0
-        version: 1.4.0
-      hardhat-preprocessor:
-        specifier: ^0.1.5
-        version: 0.1.5(hardhat@2.12.6)
-      lodash:
-        specifier: ^4.17.15
-        version: 4.17.15
-    devDependencies:
-      '@docusaurus/core':
-        specifier: 2.0.1
-        version: 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/preset-classic':
-        specifier: 2.0.1
-        version: 2.0.1(@algolia/client-search@4.18.0)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)(typescript@4.5.4)
-      '@ethersproject/abi':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/bytes':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/providers':
-        specifier: ^5.7.2
-        version: 5.7.2
-      '@metamask/eth-sig-util':
-        specifier: ^4.0.1
-        version: 4.0.1
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.6)
-      '@nomiclabs/hardhat-etherscan':
-        specifier: ^3.1.0
-        version: 3.1.0(hardhat@2.12.6)
-      '@nomiclabs/hardhat-waffle':
-        specifier: ^2.0.1
-        version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
-      '@openzeppelin/hardhat-upgrades':
-        specifier: ^1.17.0
-        version: 1.17.0(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
-      '@typechain/ethers-v5':
-        specifier: ^7.2.0
-        version: 7.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@4.5.4)
-      '@typechain/hardhat':
-        specifier: ^6.1.6
-        version: 6.1.6(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@7.2.0)(ethers@5.7.2)(hardhat@2.12.6)(typechain@8.1.1)
-      '@types/chai':
-        specifier: ^4.3.0
-        version: 4.3.0
-      '@types/fs-extra':
-        specifier: ^9.0.13
-        version: 9.0.13
-      '@types/mocha':
-        specifier: ^9.0.0
-        version: 9.0.0
-      '@types/node':
-        specifier: ^12.20.40
-        version: 12.20.40
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.16.0
-        version: 5.16.0(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)(typescript@4.5.4)
-      '@typescript-eslint/parser':
-        specifier: ^5.16.0
-        version: 5.16.0(eslint@7.32.0)(typescript@4.5.4)
-      chai:
-        specifier: ^4.3.4
-        version: 4.3.4
-      cspell:
-        specifier: ^5.15.1
-        version: 5.15.1
-      dotenv:
-        specifier: ^10.0.0
-        version: 10.0.0
-      eslint:
-        specifier: ^7.32.0
-        version: 7.32.0
-      eslint-config-prettier:
-        specifier: ^8.3.0
-        version: 8.3.0(eslint@7.32.0)
-      eslint-config-standard:
-        specifier: ^16.0.3
-        version: 16.0.3(eslint-plugin-import@2.25.4)(eslint-plugin-node@11.1.0)(eslint-plugin-promise@5.2.0)(eslint@7.32.0)
-      eslint-plugin-import:
-        specifier: ^2.25.4
-        version: 2.25.4(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)
-      eslint-plugin-node:
-        specifier: ^11.1.0
-        version: 11.1.0(eslint@7.32.0)
-      eslint-plugin-prettier:
-        specifier: ^3.4.1
-        version: 3.4.1(eslint-config-prettier@8.3.0)(eslint@7.32.0)(prettier@2.5.1)
-      eslint-plugin-promise:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@7.32.0)
-      ethereum-waffle:
-        specifier: ^4.0.2
-        version: 4.0.2(typescript@4.5.4)
-      ethers:
-        specifier: ^5.7.2
-        version: 5.7.2
-      fs-extra:
-        specifier: ^10.1.0
-        version: 10.1.0
-      hardhat:
-        specifier: 2.12.6
-        version: 2.12.6(ts-node@10.4.0)(typescript@4.5.4)
-      hardhat-contract-sizer:
-        specifier: ^2.6.1
-        version: 2.6.1(hardhat@2.12.6)
-      hardhat-deploy:
-        specifier: ^0.11.25
-        version: 0.11.25
-      hardhat-gas-reporter:
-        specifier: ^1.0.6
-        version: 1.0.6(hardhat@2.12.6)
-      prettier:
-        specifier: ^2.5.1
-        version: 2.5.1
-      prettier-plugin-sh:
-        specifier: ^0.8.1
-        version: 0.8.1(prettier@2.5.1)
-      prettier-plugin-solidity:
-        specifier: ^1.0.0-beta.13
-        version: 1.0.0-beta.13(prettier@2.5.1)
-      solhint:
-        specifier: ^3.3.6
-        version: 3.3.6
-      solidity-coverage:
-        specifier: 0.7.22
-        version: 0.7.22
-      solidity-docgen:
-        specifier: ^0.6.0-beta.22
-        version: 0.6.0-beta.22(hardhat@2.12.6)
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.4.0(@types/node@12.20.40)(typescript@4.5.4)
-      tsort:
-        specifier: ^0.0.1
-        version: 0.0.1
-      typechain:
-        specifier: ^8.1.1
-        version: 8.1.1(typescript@4.5.4)
-      typescript:
-        specifier: ^4.5.4
-        version: 4.5.4
-
-  packages/docs:
-    dependencies:
-      '@openzeppelin/contracts':
-        specifier: ^4.7.3
-        version: 4.7.3
-      '@openzeppelin/contracts-upgradeable':
-        specifier: ^4.7.3
-        version: 4.7.3
-      '@openzeppelin/upgrades-core':
-        specifier: ^1.19.1
-        version: 1.19.1
-      '@p12/contracts-lib':
-        specifier: ^0.0.5
-        version: 0.0.5
-      '@tovarishfin/hardhat-yul':
-        specifier: ^3.0.5
-        version: 3.0.5(hardhat@2.12.6)
-      '@uniswap/v3-core':
-        specifier: ^1.0.1
-        version: 1.0.1
-      '@uniswap/v3-periphery':
-        specifier: ^1.4.3
-        version: 1.4.3
-      canonical-weth:
-        specifier: ^1.4.0
-        version: 1.4.0
-      hardhat-preprocessor:
-        specifier: ^0.1.5
-        version: 0.1.5(hardhat@2.12.6)
-      lodash:
-        specifier: ^4.17.15
-        version: 4.17.15
-    devDependencies:
-      '@algolia/client-search':
-        specifier: ^4.9.1
-        version: 4.9.1
-      '@docusaurus/core':
-        specifier: 2.0.1
-        version: 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/preset-classic':
-        specifier: 2.0.1
-        version: 2.0.1(@algolia/client-search@4.9.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)(typescript@4.5.4)
-      '@ethersproject/abi':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/bytes':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/providers':
-        specifier: ^5.7.2
-        version: 5.7.2
-      '@mdx-js/react':
-        specifier: ^1.6.22
-        version: 1.6.22(react@17.0.2)
-      '@metamask/eth-sig-util':
-        specifier: ^4.0.1
-        version: 4.0.1
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.6)
-      '@nomiclabs/hardhat-etherscan':
-        specifier: ^3.1.0
-        version: 3.1.0(hardhat@2.12.6)
-      '@nomiclabs/hardhat-waffle':
-        specifier: ^2.0.1
-        version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
-      '@openzeppelin/hardhat-upgrades':
-        specifier: ^1.17.0
-        version: 1.17.0(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
-      '@typechain/ethers-v5':
-        specifier: ^7.2.0
-        version: 7.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@4.5.4)
-      '@typechain/hardhat':
-        specifier: ^6.1.6
-        version: 6.1.6(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@7.2.0)(ethers@5.7.2)(hardhat@2.12.6)(typechain@8.1.1)
-      '@types/chai':
-        specifier: ^4.3.0
-        version: 4.3.0
-      '@types/fs-extra':
-        specifier: ^9.0.13
-        version: 9.0.13
-      '@types/mocha':
-        specifier: ^9.0.0
-        version: 9.0.0
-      '@types/node':
-        specifier: ^12.20.40
-        version: 12.20.40
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.16.0
-        version: 5.16.0(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)(typescript@4.5.4)
-      '@typescript-eslint/parser':
-        specifier: ^5.16.0
-        version: 5.16.0(eslint@7.32.0)(typescript@4.5.4)
-      chai:
-        specifier: ^4.3.4
-        version: 4.3.4
-      cspell:
-        specifier: ^5.15.1
-        version: 5.15.1
-      dotenv:
-        specifier: ^10.0.0
-        version: 10.0.0
-      eslint:
-        specifier: ^7.32.0
-        version: 7.32.0
-      eslint-config-prettier:
-        specifier: ^8.3.0
-        version: 8.3.0(eslint@7.32.0)
-      eslint-config-standard:
-        specifier: ^16.0.3
-        version: 16.0.3(eslint-plugin-import@2.25.4)(eslint-plugin-node@11.1.0)(eslint-plugin-promise@5.2.0)(eslint@7.32.0)
-      eslint-plugin-import:
-        specifier: ^2.25.4
-        version: 2.25.4(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)
-      eslint-plugin-node:
-        specifier: ^11.1.0
-        version: 11.1.0(eslint@7.32.0)
-      eslint-plugin-prettier:
-        specifier: ^3.4.1
-        version: 3.4.1(eslint-config-prettier@8.3.0)(eslint@7.32.0)(prettier@2.5.1)
-      eslint-plugin-promise:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@7.32.0)
-      ethereum-waffle:
-        specifier: ^4.0.2
-        version: 4.0.2(typescript@4.5.4)
-      ethers:
-        specifier: ^5.7.2
-        version: 5.7.2
-      fs-extra:
-        specifier: ^10.1.0
-        version: 10.1.0
-      hardhat:
-        specifier: 2.12.6
-        version: 2.12.6(ts-node@10.4.0)(typescript@4.5.4)
-      hardhat-contract-sizer:
-        specifier: ^2.6.1
-        version: 2.6.1(hardhat@2.12.6)
-      hardhat-deploy:
-        specifier: ^0.11.25
-        version: 0.11.25
-      hardhat-gas-reporter:
-        specifier: ^1.0.6
-        version: 1.0.6(hardhat@2.12.6)
-      husky:
-        specifier: ^7.0.4
-        version: 7.0.4
-      prettier:
-        specifier: ^2.5.1
-        version: 2.5.1
-      prettier-plugin-sh:
-        specifier: ^0.8.1
-        version: 0.8.1(prettier@2.5.1)
-      prettier-plugin-solidity:
-        specifier: ^1.0.0-beta.13
-        version: 1.0.0-beta.13(prettier@2.5.1)
-      prism-react-renderer:
-        specifier: ^1.3.5
-        version: 1.3.5(react@17.0.2)
-      react:
-        specifier: ^17.0.2
-        version: 17.0.2
-      react-dom:
-        specifier: ^17.0.2
-        version: 17.0.2(react@17.0.2)
-      solhint:
-        specifier: ^3.3.6
-        version: 3.3.6
-      solidity-coverage:
-        specifier: 0.7.22
-        version: 0.7.22
-      solidity-docgen:
-        specifier: ^0.6.0-beta.22
-        version: 0.6.0-beta.22(hardhat@2.12.6)
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.4.0(@types/node@12.20.40)(typescript@4.5.4)
-      tsort:
-        specifier: ^0.0.1
-        version: 0.0.1
-      typechain:
-        specifier: ^8.1.1
-        version: 8.1.1(typescript@4.5.4)
-      typescript:
-        specifier: ^4.5.4
-        version: 4.5.4
+devDependencies:
+  '@docusaurus/core':
+    specifier: 2.0.1
+    version: 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
+  '@docusaurus/preset-classic':
+    specifier: 2.0.1
+    version: 2.0.1(@algolia/client-search@4.18.0)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)(typescript@4.5.4)
+  '@ethersproject/abi':
+    specifier: ^5.7.0
+    version: 5.7.0
+  '@ethersproject/bytes':
+    specifier: ^5.7.0
+    version: 5.7.0
+  '@ethersproject/providers':
+    specifier: ^5.7.2
+    version: 5.7.2
+  '@metamask/eth-sig-util':
+    specifier: ^4.0.1
+    version: 4.0.1
+  '@nomiclabs/hardhat-ethers':
+    specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
+    version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.6)
+  '@nomiclabs/hardhat-etherscan':
+    specifier: ^3.1.0
+    version: 3.1.0(hardhat@2.12.6)
+  '@nomiclabs/hardhat-waffle':
+    specifier: ^2.0.1
+    version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
+  '@openzeppelin/hardhat-upgrades':
+    specifier: ^1.17.0
+    version: 1.17.0(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
+  '@typechain/ethers-v5':
+    specifier: ^7.2.0
+    version: 7.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@4.5.4)
+  '@typechain/hardhat':
+    specifier: ^6.1.6
+    version: 6.1.6(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@7.2.0)(ethers@5.7.2)(hardhat@2.12.6)(typechain@8.1.1)
+  '@types/chai':
+    specifier: ^4.3.0
+    version: 4.3.0
+  '@types/fs-extra':
+    specifier: ^9.0.13
+    version: 9.0.13
+  '@types/mocha':
+    specifier: ^9.0.0
+    version: 9.0.0
+  '@types/node':
+    specifier: ^12.20.40
+    version: 12.20.40
+  '@typescript-eslint/eslint-plugin':
+    specifier: ^5.16.0
+    version: 5.16.0(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)(typescript@4.5.4)
+  '@typescript-eslint/parser':
+    specifier: ^5.16.0
+    version: 5.16.0(eslint@7.32.0)(typescript@4.5.4)
+  chai:
+    specifier: ^4.3.4
+    version: 4.3.4
+  cspell:
+    specifier: ^5.15.1
+    version: 5.15.1
+  dotenv:
+    specifier: ^10.0.0
+    version: 10.0.0
+  eslint:
+    specifier: ^7.32.0
+    version: 7.32.0
+  eslint-config-prettier:
+    specifier: ^8.3.0
+    version: 8.3.0(eslint@7.32.0)
+  eslint-config-standard:
+    specifier: ^16.0.3
+    version: 16.0.3(eslint-plugin-import@2.25.4)(eslint-plugin-node@11.1.0)(eslint-plugin-promise@5.2.0)(eslint@7.32.0)
+  eslint-plugin-import:
+    specifier: ^2.25.4
+    version: 2.25.4(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)
+  eslint-plugin-node:
+    specifier: ^11.1.0
+    version: 11.1.0(eslint@7.32.0)
+  eslint-plugin-prettier:
+    specifier: ^3.4.1
+    version: 3.4.1(eslint-config-prettier@8.3.0)(eslint@7.32.0)(prettier@2.5.1)
+  eslint-plugin-promise:
+    specifier: ^5.2.0
+    version: 5.2.0(eslint@7.32.0)
+  ethereum-waffle:
+    specifier: ^4.0.2
+    version: 4.0.2(typescript@4.5.4)
+  ethers:
+    specifier: ^5.7.2
+    version: 5.7.2
+  fs-extra:
+    specifier: ^10.1.0
+    version: 10.1.0
+  hardhat:
+    specifier: 2.12.6
+    version: 2.12.6(ts-node@10.4.0)(typescript@4.5.4)
+  hardhat-contract-sizer:
+    specifier: ^2.6.1
+    version: 2.6.1(hardhat@2.12.6)
+  hardhat-deploy:
+    specifier: ^0.11.25
+    version: 0.11.25
+  hardhat-gas-reporter:
+    specifier: ^1.0.6
+    version: 1.0.6(hardhat@2.12.6)
+  husky:
+    specifier: ^7.0.4
+    version: 7.0.4
+  prettier:
+    specifier: ^2.5.1
+    version: 2.5.1
+  prettier-plugin-sh:
+    specifier: ^0.8.1
+    version: 0.8.1(prettier@2.5.1)
+  prettier-plugin-solidity:
+    specifier: ^1.0.0-beta.13
+    version: 1.0.0-beta.13(prettier@2.5.1)
+  solhint:
+    specifier: ^3.3.6
+    version: 3.3.6
+  solidity-coverage:
+    specifier: 0.7.22
+    version: 0.7.22
+  solidity-docgen:
+    specifier: ^0.6.0-beta.22
+    version: 0.6.0-beta.22(hardhat@2.12.6)
+  ts-node:
+    specifier: ^10.4.0
+    version: 10.4.0(@types/node@12.20.40)(typescript@4.5.4)
+  tsort:
+    specifier: ^0.0.1
+    version: 0.0.1
+  typechain:
+    specifier: ^8.1.1
+    version: 8.1.1(typescript@4.5.4)
+  typescript:
+    specifier: ^4.5.4
+    version: 4.5.4
 
 packages:
 
@@ -382,35 +194,12 @@ packages:
       - search-insights
     dev: true
 
-  /@algolia/autocomplete-core@1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)(search-insights@2.6.0):
-    resolution: {integrity: sha512-009HdfugtGCdC4JdXUbVJClA0q0zh24yyePn+KUGk3rP7j8FEe/m5Yo/z65gn6nP/cM39PxpzqKrL7A6fP6PPw==}
-    dependencies:
-      '@algolia/autocomplete-plugin-algolia-insights': 1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)(search-insights@2.6.0)
-      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - algoliasearch
-      - search-insights
-    dev: true
-
   /@algolia/autocomplete-plugin-algolia-insights@1.9.3(@algolia/client-search@4.18.0)(algoliasearch@4.18.0)(search-insights@2.6.0):
     resolution: {integrity: sha512-a/yTUkcO/Vyy+JffmAnTWbr4/90cLzw+CC3bRbhnULr/EM0fGNvM13oQQ14f2moLMcVDyAx/leczLlAOovhSZg==}
     peerDependencies:
       search-insights: '>= 1 < 3'
     dependencies:
       '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.18.0)(algoliasearch@4.18.0)
-      search-insights: 2.6.0
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - algoliasearch
-    dev: true
-
-  /@algolia/autocomplete-plugin-algolia-insights@1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)(search-insights@2.6.0):
-    resolution: {integrity: sha512-a/yTUkcO/Vyy+JffmAnTWbr4/90cLzw+CC3bRbhnULr/EM0fGNvM13oQQ14f2moLMcVDyAx/leczLlAOovhSZg==}
-    peerDependencies:
-      search-insights: '>= 1 < 3'
-    dependencies:
-      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)
       search-insights: 2.6.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -428,17 +217,6 @@ packages:
       algoliasearch: 4.18.0
     dev: true
 
-  /@algolia/autocomplete-preset-algolia@1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0):
-    resolution: {integrity: sha512-d4qlt6YmrLMYy95n5TB52wtNDr6EgAIPH81dvvvW8UmuWRgxEtY0NJiPwl/h95JtG2vmRM804M0DSwMCNZlzRA==}
-    peerDependencies:
-      '@algolia/client-search': '>= 4.9.1 < 6'
-      algoliasearch: '>= 4.9.1 < 6'
-    dependencies:
-      '@algolia/autocomplete-shared': 1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)
-      '@algolia/client-search': 4.9.1
-      algoliasearch: 4.18.0
-    dev: true
-
   /@algolia/autocomplete-shared@1.9.3(@algolia/client-search@4.18.0)(algoliasearch@4.18.0):
     resolution: {integrity: sha512-Wnm9E4Ye6Rl6sTTqjoymD+l8DjSTHsHboVRYrKgEt8Q7UHm9nYbqhN/i0fhUYA3OAEH7WA8x3jfpnmJm3rKvaQ==}
     peerDependencies:
@@ -446,16 +224,6 @@ packages:
       algoliasearch: '>= 4.9.1 < 6'
     dependencies:
       '@algolia/client-search': 4.18.0
-      algoliasearch: 4.18.0
-    dev: true
-
-  /@algolia/autocomplete-shared@1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0):
-    resolution: {integrity: sha512-Wnm9E4Ye6Rl6sTTqjoymD+l8DjSTHsHboVRYrKgEt8Q7UHm9nYbqhN/i0fhUYA3OAEH7WA8x3jfpnmJm3rKvaQ==}
-    peerDependencies:
-      '@algolia/client-search': '>= 4.9.1 < 6'
-      algoliasearch: '>= 4.9.1 < 6'
-    dependencies:
-      '@algolia/client-search': 4.9.1
       algoliasearch: 4.18.0
     dev: true
 
@@ -467,10 +235,6 @@ packages:
 
   /@algolia/cache-common@4.18.0:
     resolution: {integrity: sha512-BmxsicMR4doGbeEXQu8yqiGmiyvpNvejYJtQ7rvzttEAMxOPoWEHrWyzBQw4x7LrBY9pMrgv4ZlUaF8PGzewHg==}
-    dev: true
-
-  /@algolia/cache-common@4.9.1:
-    resolution: {integrity: sha512-tcvw4mOfFy44V4ZxDEy9wNGr6vFROZKRpXKTEBgdw/WBn6mX51H1ar4RWtceDEcDU4H5fIv5tsY3ip2hU+fTPg==}
     dev: true
 
   /@algolia/cache-in-memory@4.18.0:
@@ -503,13 +267,6 @@ packages:
       '@algolia/transporter': 4.18.0
     dev: true
 
-  /@algolia/client-common@4.9.1:
-    resolution: {integrity: sha512-UziRTZ8km3qwoVPIyEre8TV6V+MX7UtbfVqPmSafZ0xu41UUZ+sL56YoKjOXkbKuybeIC9prXMGy/ID5bXkTqg==}
-    dependencies:
-      '@algolia/requester-common': 4.9.1
-      '@algolia/transporter': 4.9.1
-    dev: true
-
   /@algolia/client-personalization@4.18.0:
     resolution: {integrity: sha512-+PeCjODbxtamHcPl+couXMeHEefpUpr7IHftj4Y4Nia1hj8gGq4VlIcqhToAw8YjLeCTfOR7r7xtj3pJcYdP8A==}
     dependencies:
@@ -526,24 +283,12 @@ packages:
       '@algolia/transporter': 4.18.0
     dev: true
 
-  /@algolia/client-search@4.9.1:
-    resolution: {integrity: sha512-r9Cw2r8kJr45iYncFDht6EshARghU265wuY8Q8oHrpFHjAziEYdsUOdNmQKbsSH5J3gLjDPx1EI5DzVd6ivn3w==}
-    dependencies:
-      '@algolia/client-common': 4.9.1
-      '@algolia/requester-common': 4.9.1
-      '@algolia/transporter': 4.9.1
-    dev: true
-
   /@algolia/events@4.0.1:
     resolution: {integrity: sha512-FQzvOCgoFXAbf5Y6mYozw2aj5KCJoA3m4heImceldzPSMbdyS4atVjJzXKMsfX3wnZTFYwkkt8/z8UesLHlSBQ==}
     dev: true
 
   /@algolia/logger-common@4.18.0:
     resolution: {integrity: sha512-46etYgSlkoKepkMSyaoriSn2JDgcrpc/nkOgou/lm0y17GuMl9oYZxwKKTSviLKI5Irk9nSKGwnBTQYwXOYdRg==}
-    dev: true
-
-  /@algolia/logger-common@4.9.1:
-    resolution: {integrity: sha512-9mPrbFlFyPT7or/7PXTiJjyOewWB9QRkZKVXkt5zHAUiUzGxmmdpJIGpPv3YQnDur8lXrXaRI0MHXUuIDMY1ng==}
     dev: true
 
   /@algolia/logger-console@4.18.0:
@@ -562,10 +307,6 @@ packages:
     resolution: {integrity: sha512-xlT8R1qYNRBCi1IYLsx7uhftzdfsLPDGudeQs+xvYB4sQ3ya7+ppolB/8m/a4F2gCkEO6oxpp5AGemM7kD27jA==}
     dev: true
 
-  /@algolia/requester-common@4.9.1:
-    resolution: {integrity: sha512-9hPgXnlCSbqJqF69M5x5WN3h51Dc+mk/iWNeJSVxExHGvCDfBBZd0v6S15i8q2a9cD1I2RnhMpbnX5BmGtabVA==}
-    dev: true
-
   /@algolia/requester-node-http@4.18.0:
     resolution: {integrity: sha512-TGfwj9aeTVgOUhn5XrqBhwUhUUDnGIKlI0kCBMdR58XfXcfdwomka+CPIgThRbfYw04oQr31A6/95ZH2QVJ9UQ==}
     dependencies:
@@ -578,14 +319,6 @@ packages:
       '@algolia/cache-common': 4.18.0
       '@algolia/logger-common': 4.18.0
       '@algolia/requester-common': 4.18.0
-    dev: true
-
-  /@algolia/transporter@4.9.1:
-    resolution: {integrity: sha512-AbjFfGzX+cAuj7Qyc536OxIQzjFOA5FU2ANGStx8LBH+AKXScwfkx67C05riuaRR5adSCLMSEbVvUscH0nF+6A==}
-    dependencies:
-      '@algolia/cache-common': 4.9.1
-      '@algolia/logger-common': 4.9.1
-      '@algolia/requester-common': 4.9.1
     dev: true
 
   /@ampproject/remapping@2.2.1:
@@ -2287,31 +2020,6 @@ packages:
       - search-insights
     dev: true
 
-  /@docsearch/react@3.5.1(@algolia/client-search@4.9.1)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0):
-    resolution: {integrity: sha512-t5mEODdLzZq4PTFAm/dvqcvZFdPDMdfPE5rJS5SC8OUq9mPzxEy6b+9THIqNM9P0ocCb4UC5jqBrxKclnuIbzQ==}
-    peerDependencies:
-      '@types/react': '>= 16.8.0 < 19.0.0'
-      react: '>= 16.8.0 < 19.0.0'
-      react-dom: '>= 16.8.0 < 19.0.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
-    dependencies:
-      '@algolia/autocomplete-core': 1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)(search-insights@2.6.0)
-      '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.9.1)(algoliasearch@4.18.0)
-      '@docsearch/css': 3.5.1
-      algoliasearch: 4.18.0
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - search-insights
-    dev: true
-
   /@docusaurus/core@2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4):
     resolution: {integrity: sha512-Prd46TtZdiixlTl8a+h9bI5HegkfREjSNkrX2rVEwJZeziSz4ya+l7QDnbnCB2XbxEG8cveFo/F9q5lixolDtQ==}
     engines: {node: '>=16.14'}
@@ -2785,49 +2493,6 @@ packages:
       - webpack-cli
     dev: true
 
-  /@docusaurus/preset-classic@2.0.1(@algolia/client-search@4.9.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)(typescript@4.5.4):
-    resolution: {integrity: sha512-nOoniTg46My1qdDlLWeFs55uEmxOJ+9WMF8KKG8KMCu5LAvpemMi7rQd4x8Tw+xiPHZ/sQzH9JmPTMPRE4QGPw==}
-    engines: {node: '>=16.14'}
-    peerDependencies:
-      react: ^16.8.4 || ^17.0.0
-      react-dom: ^16.8.4 || ^17.0.0
-    dependencies:
-      '@docusaurus/core': 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-content-blog': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-content-docs': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-content-pages': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-debug': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-google-analytics': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-google-gtag': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/plugin-sitemap': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/theme-classic': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/theme-common': 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/theme-search-algolia': 2.0.1(@algolia/client-search@4.9.1)(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)(typescript@4.5.4)
-      '@docusaurus/types': 2.0.1(react-dom@17.0.2)(react@17.0.2)
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - '@parcel/css'
-      - '@swc/core'
-      - '@swc/css'
-      - '@types/react'
-      - bufferutil
-      - csso
-      - debug
-      - encoding
-      - esbuild
-      - eslint
-      - lightningcss
-      - search-insights
-      - supports-color
-      - typescript
-      - uglify-js
-      - utf-8-validate
-      - vue-template-compiler
-      - webpack-cli
-    dev: true
-
   /@docusaurus/react-loadable@5.5.2(react@17.0.2):
     resolution: {integrity: sha512-A3dYjdBGuy0IGT+wyLIGIKLRE+sAk1iNk0f1HjNDysO7u8lhL4N3VEm+FAubmJbAztn94F7MxBTPmnixbiyFdQ==}
     peerDependencies:
@@ -2940,53 +2605,6 @@ packages:
       react-dom: ^16.8.4 || ^17.0.0
     dependencies:
       '@docsearch/react': 3.5.1(@algolia/client-search@4.18.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)
-      '@docusaurus/core': 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/logger': 2.0.1
-      '@docusaurus/plugin-content-docs': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/theme-common': 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
-      '@docusaurus/theme-translations': 2.0.1
-      '@docusaurus/utils': 2.0.1(@docusaurus/types@2.0.1)
-      '@docusaurus/utils-validation': 2.0.1(@docusaurus/types@2.0.1)
-      algoliasearch: 4.18.0
-      algoliasearch-helper: 3.13.3(algoliasearch@4.18.0)
-      clsx: 1.2.1
-      eta: 1.14.2
-      fs-extra: 10.1.0
-      lodash: 4.17.21
-      react: 17.0.2
-      react-dom: 17.0.2(react@17.0.2)
-      tslib: 2.6.0
-      utility-types: 3.10.0
-    transitivePeerDependencies:
-      - '@algolia/client-search'
-      - '@docusaurus/types'
-      - '@parcel/css'
-      - '@swc/core'
-      - '@swc/css'
-      - '@types/react'
-      - bufferutil
-      - csso
-      - debug
-      - esbuild
-      - eslint
-      - lightningcss
-      - search-insights
-      - supports-color
-      - typescript
-      - uglify-js
-      - utf-8-validate
-      - vue-template-compiler
-      - webpack-cli
-    dev: true
-
-  /@docusaurus/theme-search-algolia@2.0.1(@algolia/client-search@4.9.1)(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)(typescript@4.5.4):
-    resolution: {integrity: sha512-cw3NaOSKbYlsY6uNj4PgO+5mwyQ3aEWre5RlmvjStaz2cbD15Nr69VG8Rd/F6Q5VsCT8BvSdkPDdDG5d/ACexg==}
-    engines: {node: '>=16.14'}
-    peerDependencies:
-      react: ^16.8.4 || ^17.0.0
-      react-dom: ^16.8.4 || ^17.0.0
-    dependencies:
-      '@docsearch/react': 3.5.1(@algolia/client-search@4.9.1)(react-dom@17.0.2)(react@17.0.2)(search-insights@2.6.0)
       '@docusaurus/core': 2.0.1(@docusaurus/types@2.0.1)(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)
       '@docusaurus/logger': 2.0.1
       '@docusaurus/plugin-content-docs': 2.0.1(eslint@7.32.0)(react-dom@17.0.2)(react@17.0.2)(typescript@4.5.4)

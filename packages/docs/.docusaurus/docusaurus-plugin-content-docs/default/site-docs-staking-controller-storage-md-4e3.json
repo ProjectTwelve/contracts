@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/ControllerStorage",
+  "id": "staking/ControllerStorage",
+  "title": "ControllerStorage",
+  "description": "ControllerStorage",
+  "source": "@site/docs/staking/ControllerStorage.md",
+  "sourceDirName": "staking",
+  "slug": "/staking/ControllerStorage",
+  "permalink": "/contracts/staking/ControllerStorage",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IWETHUpgradable",
+    "permalink": "/contracts/secretShop/interfaces/IWETHUpgradable"
+  },
+  "next": {
+    "title": "GaugeControllerUpgradeable",
+    "permalink": "/contracts/staking/GaugeControllerUpgradeable"
+  }
+}

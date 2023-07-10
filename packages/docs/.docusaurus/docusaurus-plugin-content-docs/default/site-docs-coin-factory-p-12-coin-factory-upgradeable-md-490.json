@@ -1,0 +1,23 @@
+{
+  "unversionedId": "coinFactory/P12CoinFactoryUpgradeable",
+  "id": "coinFactory/P12CoinFactoryUpgradeable",
+  "title": "P12CoinFactoryUpgradeable",
+  "description": "P12CoinFactoryUpgradeable",
+  "source": "@site/docs/coinFactory/P12CoinFactoryUpgradeable.md",
+  "sourceDirName": "coinFactory",
+  "slug": "/coinFactory/P12CoinFactoryUpgradeable",
+  "permalink": "/contracts/coinFactory/P12CoinFactoryUpgradeable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12CoinFactoryStorage",
+    "permalink": "/contracts/coinFactory/P12CoinFactoryStorage"
+  },
+  "next": {
+    "title": "P12GameCoin",
+    "permalink": "/contracts/coinFactory/P12GameCoin"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/P12RewardVault",
+  "id": "staking/P12RewardVault",
+  "title": "P12RewardVault",
+  "description": "P12RewardVault",
+  "source": "@site/docs/staking/P12RewardVault.md",
+  "sourceDirName": "staking",
+  "slug": "/staking/P12RewardVault",
+  "permalink": "/contracts/staking/P12RewardVault",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12MineUpgradeable",
+    "permalink": "/contracts/staking/P12MineUpgradeable"
+  },
+  "next": {
+    "title": "IGaugeController",
+    "permalink": "/contracts/staking/interfaces/IGaugeController"
+  }
+}

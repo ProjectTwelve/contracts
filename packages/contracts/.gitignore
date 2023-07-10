@@ -1,0 +1,22 @@
+node_modules
+.env
+coverage
+coverage.json
+typechain
+doc
+out
+
+#Hardhat files
+cache
+artifacts
+.openzeppelin
+flatten
+.DS_Store
+.docusaurus
+scripts/tmp.ts
+build
+docs/**
+yarn-error.log
+solcInputs
+typechain-types
+cache_hardhat

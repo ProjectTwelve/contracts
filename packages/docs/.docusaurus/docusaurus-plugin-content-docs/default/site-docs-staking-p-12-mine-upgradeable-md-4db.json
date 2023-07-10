@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/P12MineUpgradeable",
+  "id": "staking/P12MineUpgradeable",
+  "title": "P12MineUpgradeable",
+  "description": "P12MineUpgradeable",
+  "source": "@site/docs/staking/P12MineUpgradeable.md",
+  "sourceDirName": "staking",
+  "slug": "/staking/P12MineUpgradeable",
+  "permalink": "/contracts/staking/P12MineUpgradeable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12MineStorage",
+    "permalink": "/contracts/staking/P12MineStorage"
+  },
+  "next": {
+    "title": "P12RewardVault",
+    "permalink": "/contracts/staking/P12RewardVault"
+  }
+}

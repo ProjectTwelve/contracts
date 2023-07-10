@@ -1,0 +1,23 @@
+{
+  "unversionedId": "staking/interfaces/IP12MineUpgradeable",
+  "id": "staking/interfaces/IP12MineUpgradeable",
+  "title": "IP12MineUpgradeable",
+  "description": "IP12MineUpgradeable",
+  "source": "@site/docs/staking/interfaces/IP12MineUpgradeable.md",
+  "sourceDirName": "staking/interfaces",
+  "slug": "/staking/interfaces/IP12MineUpgradeable",
+  "permalink": "/contracts/staking/interfaces/IP12MineUpgradeable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IGaugeController",
+    "permalink": "/contracts/staking/interfaces/IGaugeController"
+  },
+  "next": {
+    "title": "IP12RewardVault",
+    "permalink": "/contracts/staking/interfaces/IP12RewardVault"
+  }
+}

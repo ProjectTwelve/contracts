@@ -1,0 +1,23 @@
+{
+  "unversionedId": "index",
+  "id": "index",
+  "title": "index",
+  "description": "",
+  "source": "@site/docs/index.md",
+  "sourceDirName": ".",
+  "slug": "/",
+  "permalink": "/contracts/",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12GameCoin",
+    "permalink": "/contracts/coinFactory/interfaces/IP12GameCoin"
+  },
+  "next": {
+    "title": "CommonError",
+    "permalink": "/contracts/libraries/CommonError"
+  }
+}

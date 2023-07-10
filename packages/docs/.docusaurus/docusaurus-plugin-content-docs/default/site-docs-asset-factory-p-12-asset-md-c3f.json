@@ -1,0 +1,23 @@
+{
+  "unversionedId": "assetFactory/P12Asset",
+  "id": "assetFactory/P12Asset",
+  "title": "P12Asset",
+  "description": "P12Asset",
+  "source": "@site/docs/assetFactory/P12Asset.md",
+  "sourceDirName": "assetFactory",
+  "slug": "/assetFactory/P12Asset",
+  "permalink": "/contracts/assetFactory/P12Asset",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "SafeOwnableUpgradeable",
+    "permalink": "/contracts/access/SafeOwnableUpgradeable"
+  },
+  "next": {
+    "title": "P12AssetFactoryStorage",
+    "permalink": "/contracts/assetFactory/P12AssetFactoryStorage"
+  }
+}

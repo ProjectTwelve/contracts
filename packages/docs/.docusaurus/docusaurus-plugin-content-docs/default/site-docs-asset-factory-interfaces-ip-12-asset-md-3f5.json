@@ -1,0 +1,23 @@
+{
+  "unversionedId": "assetFactory/interfaces/IP12Asset",
+  "id": "assetFactory/interfaces/IP12Asset",
+  "title": "IP12Asset",
+  "description": "IP12Asset",
+  "source": "@site/docs/assetFactory/interfaces/IP12Asset.md",
+  "sourceDirName": "assetFactory/interfaces",
+  "slug": "/assetFactory/interfaces/IP12Asset",
+  "permalink": "/contracts/assetFactory/interfaces/IP12Asset",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "P12AssetFactoryUpgradable",
+    "permalink": "/contracts/assetFactory/P12AssetFactoryUpgradable"
+  },
+  "next": {
+    "title": "IP12AssetFactoryUpgradable",
+    "permalink": "/contracts/assetFactory/interfaces/IP12AssetFactoryUpgradable"
+  }
+}

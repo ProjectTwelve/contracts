@@ -1,0 +1,1041 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "loadedVersions": [
+        {
+          "versionName": "current",
+          "label": "Next",
+          "banner": null,
+          "badge": false,
+          "className": "docs-version-current",
+          "path": "/contracts/",
+          "tagsPath": "/contracts/tags",
+          "isLast": true,
+          "routePriority": -1,
+          "contentPath": "/Users/noyy/GIT/contracts/docs",
+          "contentPathLocalized": "/Users/noyy/GIT/contracts/i18n/en/docusaurus-plugin-content-docs/current",
+          "docs": [
+            {
+              "unversionedId": "access/SafeOwnable",
+              "id": "access/SafeOwnable",
+              "title": "SafeOwnable",
+              "description": "SafeOwnable",
+              "source": "@site/docs/access/SafeOwnable.md",
+              "sourceDirName": "access",
+              "slug": "/access/SafeOwnable",
+              "permalink": "/contracts/access/SafeOwnable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "next": {
+                "title": "SafeOwnableUpgradeable",
+                "permalink": "/contracts/access/SafeOwnableUpgradeable"
+              }
+            },
+            {
+              "unversionedId": "access/SafeOwnableUpgradeable",
+              "id": "access/SafeOwnableUpgradeable",
+              "title": "SafeOwnableUpgradeable",
+              "description": "SafeOwnableUpgradeable",
+              "source": "@site/docs/access/SafeOwnableUpgradeable.md",
+              "sourceDirName": "access",
+              "slug": "/access/SafeOwnableUpgradeable",
+              "permalink": "/contracts/access/SafeOwnableUpgradeable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "SafeOwnable",
+                "permalink": "/contracts/access/SafeOwnable"
+              },
+              "next": {
+                "title": "P12Asset",
+                "permalink": "/contracts/assetFactory/P12Asset"
+              }
+            },
+            {
+              "unversionedId": "assetFactory/interfaces/IP12Asset",
+              "id": "assetFactory/interfaces/IP12Asset",
+              "title": "IP12Asset",
+              "description": "IP12Asset",
+              "source": "@site/docs/assetFactory/interfaces/IP12Asset.md",
+              "sourceDirName": "assetFactory/interfaces",
+              "slug": "/assetFactory/interfaces/IP12Asset",
+              "permalink": "/contracts/assetFactory/interfaces/IP12Asset",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12AssetFactoryUpgradable",
+                "permalink": "/contracts/assetFactory/P12AssetFactoryUpgradable"
+              },
+              "next": {
+                "title": "IP12AssetFactoryUpgradable",
+                "permalink": "/contracts/assetFactory/interfaces/IP12AssetFactoryUpgradable"
+              }
+            },
+            {
+              "unversionedId": "assetFactory/interfaces/IP12AssetFactoryUpgradable",
+              "id": "assetFactory/interfaces/IP12AssetFactoryUpgradable",
+              "title": "IP12AssetFactoryUpgradable",
+              "description": "IP12AssetFactoryUpgradable",
+              "source": "@site/docs/assetFactory/interfaces/IP12AssetFactoryUpgradable.md",
+              "sourceDirName": "assetFactory/interfaces",
+              "slug": "/assetFactory/interfaces/IP12AssetFactoryUpgradable",
+              "permalink": "/contracts/assetFactory/interfaces/IP12AssetFactoryUpgradable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12Asset",
+                "permalink": "/contracts/assetFactory/interfaces/IP12Asset"
+              },
+              "next": {
+                "title": "P12CoinFactoryStorage",
+                "permalink": "/contracts/coinFactory/P12CoinFactoryStorage"
+              }
+            },
+            {
+              "unversionedId": "assetFactory/P12Asset",
+              "id": "assetFactory/P12Asset",
+              "title": "P12Asset",
+              "description": "P12Asset",
+              "source": "@site/docs/assetFactory/P12Asset.md",
+              "sourceDirName": "assetFactory",
+              "slug": "/assetFactory/P12Asset",
+              "permalink": "/contracts/assetFactory/P12Asset",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "SafeOwnableUpgradeable",
+                "permalink": "/contracts/access/SafeOwnableUpgradeable"
+              },
+              "next": {
+                "title": "P12AssetFactoryStorage",
+                "permalink": "/contracts/assetFactory/P12AssetFactoryStorage"
+              }
+            },
+            {
+              "unversionedId": "assetFactory/P12AssetFactoryStorage",
+              "id": "assetFactory/P12AssetFactoryStorage",
+              "title": "P12AssetFactoryStorage",
+              "description": "P12AssetFactoryStorage",
+              "source": "@site/docs/assetFactory/P12AssetFactoryStorage.md",
+              "sourceDirName": "assetFactory",
+              "slug": "/assetFactory/P12AssetFactoryStorage",
+              "permalink": "/contracts/assetFactory/P12AssetFactoryStorage",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12Asset",
+                "permalink": "/contracts/assetFactory/P12Asset"
+              },
+              "next": {
+                "title": "P12AssetFactoryUpgradable",
+                "permalink": "/contracts/assetFactory/P12AssetFactoryUpgradable"
+              }
+            },
+            {
+              "unversionedId": "assetFactory/P12AssetFactoryUpgradable",
+              "id": "assetFactory/P12AssetFactoryUpgradable",
+              "title": "P12AssetFactoryUpgradable",
+              "description": "P12AssetFactoryUpgradable",
+              "source": "@site/docs/assetFactory/P12AssetFactoryUpgradable.md",
+              "sourceDirName": "assetFactory",
+              "slug": "/assetFactory/P12AssetFactoryUpgradable",
+              "permalink": "/contracts/assetFactory/P12AssetFactoryUpgradable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12AssetFactoryStorage",
+                "permalink": "/contracts/assetFactory/P12AssetFactoryStorage"
+              },
+              "next": {
+                "title": "IP12Asset",
+                "permalink": "/contracts/assetFactory/interfaces/IP12Asset"
+              }
+            },
+            {
+              "unversionedId": "coinFactory/interfaces/IP12CoinFactoryUpgradeable",
+              "id": "coinFactory/interfaces/IP12CoinFactoryUpgradeable",
+              "title": "IP12CoinFactoryUpgradeable",
+              "description": "IP12CoinFactoryUpgradeable",
+              "source": "@site/docs/coinFactory/interfaces/IP12CoinFactoryUpgradeable.md",
+              "sourceDirName": "coinFactory/interfaces",
+              "slug": "/coinFactory/interfaces/IP12CoinFactoryUpgradeable",
+              "permalink": "/contracts/coinFactory/interfaces/IP12CoinFactoryUpgradeable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12GameCoin",
+                "permalink": "/contracts/coinFactory/P12GameCoin"
+              },
+              "next": {
+                "title": "IP12GameCoin",
+                "permalink": "/contracts/coinFactory/interfaces/IP12GameCoin"
+              }
+            },
+            {
+              "unversionedId": "coinFactory/interfaces/IP12GameCoin",
+              "id": "coinFactory/interfaces/IP12GameCoin",
+              "title": "IP12GameCoin",
+              "description": "IP12GameCoin",
+              "source": "@site/docs/coinFactory/interfaces/IP12GameCoin.md",
+              "sourceDirName": "coinFactory/interfaces",
+              "slug": "/coinFactory/interfaces/IP12GameCoin",
+              "permalink": "/contracts/coinFactory/interfaces/IP12GameCoin",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12CoinFactoryUpgradeable",
+                "permalink": "/contracts/coinFactory/interfaces/IP12CoinFactoryUpgradeable"
+              },
+              "next": {
+                "title": "index",
+                "permalink": "/contracts/"
+              }
+            },
+            {
+              "unversionedId": "coinFactory/P12CoinFactoryStorage",
+              "id": "coinFactory/P12CoinFactoryStorage",
+              "title": "P12CoinFactoryStorage",
+              "description": "P12CoinFactoryStorage",
+              "source": "@site/docs/coinFactory/P12CoinFactoryStorage.md",
+              "sourceDirName": "coinFactory",
+              "slug": "/coinFactory/P12CoinFactoryStorage",
+              "permalink": "/contracts/coinFactory/P12CoinFactoryStorage",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12AssetFactoryUpgradable",
+                "permalink": "/contracts/assetFactory/interfaces/IP12AssetFactoryUpgradable"
+              },
+              "next": {
+                "title": "P12CoinFactoryUpgradeable",
+                "permalink": "/contracts/coinFactory/P12CoinFactoryUpgradeable"
+              }
+            },
+            {
+              "unversionedId": "coinFactory/P12CoinFactoryUpgradeable",
+              "id": "coinFactory/P12CoinFactoryUpgradeable",
+              "title": "P12CoinFactoryUpgradeable",
+              "description": "P12CoinFactoryUpgradeable",
+              "source": "@site/docs/coinFactory/P12CoinFactoryUpgradeable.md",
+              "sourceDirName": "coinFactory",
+              "slug": "/coinFactory/P12CoinFactoryUpgradeable",
+              "permalink": "/contracts/coinFactory/P12CoinFactoryUpgradeable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12CoinFactoryStorage",
+                "permalink": "/contracts/coinFactory/P12CoinFactoryStorage"
+              },
+              "next": {
+                "title": "P12GameCoin",
+                "permalink": "/contracts/coinFactory/P12GameCoin"
+              }
+            },
+            {
+              "unversionedId": "coinFactory/P12GameCoin",
+              "id": "coinFactory/P12GameCoin",
+              "title": "P12GameCoin",
+              "description": "P12GameCoin",
+              "source": "@site/docs/coinFactory/P12GameCoin.md",
+              "sourceDirName": "coinFactory",
+              "slug": "/coinFactory/P12GameCoin",
+              "permalink": "/contracts/coinFactory/P12GameCoin",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12CoinFactoryUpgradeable",
+                "permalink": "/contracts/coinFactory/P12CoinFactoryUpgradeable"
+              },
+              "next": {
+                "title": "IP12CoinFactoryUpgradeable",
+                "permalink": "/contracts/coinFactory/interfaces/IP12CoinFactoryUpgradeable"
+              }
+            },
+            {
+              "unversionedId": "index",
+              "id": "index",
+              "title": "index",
+              "description": "",
+              "source": "@site/docs/index.md",
+              "sourceDirName": ".",
+              "slug": "/",
+              "permalink": "/contracts/",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12GameCoin",
+                "permalink": "/contracts/coinFactory/interfaces/IP12GameCoin"
+              },
+              "next": {
+                "title": "CommonError",
+                "permalink": "/contracts/libraries/CommonError"
+              }
+            },
+            {
+              "unversionedId": "libraries/CommonError",
+              "id": "libraries/CommonError",
+              "title": "CommonError",
+              "description": "CommonError",
+              "source": "@site/docs/libraries/CommonError.md",
+              "sourceDirName": "libraries",
+              "slug": "/libraries/CommonError",
+              "permalink": "/contracts/libraries/CommonError",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "index",
+                "permalink": "/contracts/"
+              },
+              "next": {
+                "title": "ERC1155Delegate",
+                "permalink": "/contracts/secretShop/ERC1155Delegate"
+              }
+            },
+            {
+              "unversionedId": "secretShop/ERC1155Delegate",
+              "id": "secretShop/ERC1155Delegate",
+              "title": "ERC1155Delegate",
+              "description": "ERC1155Delegate",
+              "source": "@site/docs/secretShop/ERC1155Delegate.md",
+              "sourceDirName": "secretShop",
+              "slug": "/secretShop/ERC1155Delegate",
+              "permalink": "/contracts/secretShop/ERC1155Delegate",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "CommonError",
+                "permalink": "/contracts/libraries/CommonError"
+              },
+              "next": {
+                "title": "ERC721Delegate",
+                "permalink": "/contracts/secretShop/ERC721Delegate"
+              }
+            },
+            {
+              "unversionedId": "secretShop/ERC721Delegate",
+              "id": "secretShop/ERC721Delegate",
+              "title": "ERC721Delegate",
+              "description": "ERC721Delegate",
+              "source": "@site/docs/secretShop/ERC721Delegate.md",
+              "sourceDirName": "secretShop",
+              "slug": "/secretShop/ERC721Delegate",
+              "permalink": "/contracts/secretShop/ERC721Delegate",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "ERC1155Delegate",
+                "permalink": "/contracts/secretShop/ERC1155Delegate"
+              },
+              "next": {
+                "title": "MarketConsts",
+                "permalink": "/contracts/secretShop/MarketConsts"
+              }
+            },
+            {
+              "unversionedId": "secretShop/interfaces/IDelegate",
+              "id": "secretShop/interfaces/IDelegate",
+              "title": "IDelegate",
+              "description": "IDelegate",
+              "source": "@site/docs/secretShop/interfaces/IDelegate.md",
+              "sourceDirName": "secretShop/interfaces",
+              "slug": "/secretShop/interfaces/IDelegate",
+              "permalink": "/contracts/secretShop/interfaces/IDelegate",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "SecretShopUpgradable",
+                "permalink": "/contracts/secretShop/SecretShopUpgradable"
+              },
+              "next": {
+                "title": "ISecretShopUpgradable",
+                "permalink": "/contracts/secretShop/interfaces/ISecretShopUpgradable"
+              }
+            },
+            {
+              "unversionedId": "secretShop/interfaces/ISecretShopUpgradable",
+              "id": "secretShop/interfaces/ISecretShopUpgradable",
+              "title": "ISecretShopUpgradable",
+              "description": "ISecretShopUpgradable",
+              "source": "@site/docs/secretShop/interfaces/ISecretShopUpgradable.md",
+              "sourceDirName": "secretShop/interfaces",
+              "slug": "/secretShop/interfaces/ISecretShopUpgradable",
+              "permalink": "/contracts/secretShop/interfaces/ISecretShopUpgradable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IDelegate",
+                "permalink": "/contracts/secretShop/interfaces/IDelegate"
+              },
+              "next": {
+                "title": "IWETHUpgradable",
+                "permalink": "/contracts/secretShop/interfaces/IWETHUpgradable"
+              }
+            },
+            {
+              "unversionedId": "secretShop/interfaces/IWETHUpgradable",
+              "id": "secretShop/interfaces/IWETHUpgradable",
+              "title": "IWETHUpgradable",
+              "description": "IWETHUpgradable",
+              "source": "@site/docs/secretShop/interfaces/IWETHUpgradable.md",
+              "sourceDirName": "secretShop/interfaces",
+              "slug": "/secretShop/interfaces/IWETHUpgradable",
+              "permalink": "/contracts/secretShop/interfaces/IWETHUpgradable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "ISecretShopUpgradable",
+                "permalink": "/contracts/secretShop/interfaces/ISecretShopUpgradable"
+              },
+              "next": {
+                "title": "ControllerStorage",
+                "permalink": "/contracts/staking/ControllerStorage"
+              }
+            },
+            {
+              "unversionedId": "secretShop/MarketConsts",
+              "id": "secretShop/MarketConsts",
+              "title": "MarketConsts",
+              "description": "Market",
+              "source": "@site/docs/secretShop/MarketConsts.md",
+              "sourceDirName": "secretShop",
+              "slug": "/secretShop/MarketConsts",
+              "permalink": "/contracts/secretShop/MarketConsts",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "ERC721Delegate",
+                "permalink": "/contracts/secretShop/ERC721Delegate"
+              },
+              "next": {
+                "title": "SecretShopStorage",
+                "permalink": "/contracts/secretShop/SecretShopStorage"
+              }
+            },
+            {
+              "unversionedId": "secretShop/SecretShopStorage",
+              "id": "secretShop/SecretShopStorage",
+              "title": "SecretShopStorage",
+              "description": "SecretShopStorage",
+              "source": "@site/docs/secretShop/SecretShopStorage.md",
+              "sourceDirName": "secretShop",
+              "slug": "/secretShop/SecretShopStorage",
+              "permalink": "/contracts/secretShop/SecretShopStorage",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "MarketConsts",
+                "permalink": "/contracts/secretShop/MarketConsts"
+              },
+              "next": {
+                "title": "SecretShopUpgradable",
+                "permalink": "/contracts/secretShop/SecretShopUpgradable"
+              }
+            },
+            {
+              "unversionedId": "secretShop/SecretShopUpgradable",
+              "id": "secretShop/SecretShopUpgradable",
+              "title": "SecretShopUpgradable",
+              "description": "SecretShopUpgradable",
+              "source": "@site/docs/secretShop/SecretShopUpgradable.md",
+              "sourceDirName": "secretShop",
+              "slug": "/secretShop/SecretShopUpgradable",
+              "permalink": "/contracts/secretShop/SecretShopUpgradable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "SecretShopStorage",
+                "permalink": "/contracts/secretShop/SecretShopStorage"
+              },
+              "next": {
+                "title": "IDelegate",
+                "permalink": "/contracts/secretShop/interfaces/IDelegate"
+              }
+            },
+            {
+              "unversionedId": "staking/ControllerStorage",
+              "id": "staking/ControllerStorage",
+              "title": "ControllerStorage",
+              "description": "ControllerStorage",
+              "source": "@site/docs/staking/ControllerStorage.md",
+              "sourceDirName": "staking",
+              "slug": "/staking/ControllerStorage",
+              "permalink": "/contracts/staking/ControllerStorage",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IWETHUpgradable",
+                "permalink": "/contracts/secretShop/interfaces/IWETHUpgradable"
+              },
+              "next": {
+                "title": "GaugeControllerUpgradeable",
+                "permalink": "/contracts/staking/GaugeControllerUpgradeable"
+              }
+            },
+            {
+              "unversionedId": "staking/GaugeControllerUpgradeable",
+              "id": "staking/GaugeControllerUpgradeable",
+              "title": "GaugeControllerUpgradeable",
+              "description": "GaugeControllerUpgradeable",
+              "source": "@site/docs/staking/GaugeControllerUpgradeable.md",
+              "sourceDirName": "staking",
+              "slug": "/staking/GaugeControllerUpgradeable",
+              "permalink": "/contracts/staking/GaugeControllerUpgradeable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "ControllerStorage",
+                "permalink": "/contracts/staking/ControllerStorage"
+              },
+              "next": {
+                "title": "P12MineStorage",
+                "permalink": "/contracts/staking/P12MineStorage"
+              }
+            },
+            {
+              "unversionedId": "staking/interfaces/IGaugeController",
+              "id": "staking/interfaces/IGaugeController",
+              "title": "IGaugeController",
+              "description": "IGaugeController",
+              "source": "@site/docs/staking/interfaces/IGaugeController.md",
+              "sourceDirName": "staking/interfaces",
+              "slug": "/staking/interfaces/IGaugeController",
+              "permalink": "/contracts/staking/interfaces/IGaugeController",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12RewardVault",
+                "permalink": "/contracts/staking/P12RewardVault"
+              },
+              "next": {
+                "title": "IP12MineUpgradeable",
+                "permalink": "/contracts/staking/interfaces/IP12MineUpgradeable"
+              }
+            },
+            {
+              "unversionedId": "staking/interfaces/IP12MineUpgradeable",
+              "id": "staking/interfaces/IP12MineUpgradeable",
+              "title": "IP12MineUpgradeable",
+              "description": "IP12MineUpgradeable",
+              "source": "@site/docs/staking/interfaces/IP12MineUpgradeable.md",
+              "sourceDirName": "staking/interfaces",
+              "slug": "/staking/interfaces/IP12MineUpgradeable",
+              "permalink": "/contracts/staking/interfaces/IP12MineUpgradeable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IGaugeController",
+                "permalink": "/contracts/staking/interfaces/IGaugeController"
+              },
+              "next": {
+                "title": "IP12RewardVault",
+                "permalink": "/contracts/staking/interfaces/IP12RewardVault"
+              }
+            },
+            {
+              "unversionedId": "staking/interfaces/IP12RewardVault",
+              "id": "staking/interfaces/IP12RewardVault",
+              "title": "IP12RewardVault",
+              "description": "IP12RewardVault",
+              "source": "@site/docs/staking/interfaces/IP12RewardVault.md",
+              "sourceDirName": "staking/interfaces",
+              "slug": "/staking/interfaces/IP12RewardVault",
+              "permalink": "/contracts/staking/interfaces/IP12RewardVault",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12MineUpgradeable",
+                "permalink": "/contracts/staking/interfaces/IP12MineUpgradeable"
+              },
+              "next": {
+                "title": "P12Token",
+                "permalink": "/contracts/token/P12Token"
+              }
+            },
+            {
+              "unversionedId": "staking/P12MineStorage",
+              "id": "staking/P12MineStorage",
+              "title": "P12MineStorage",
+              "description": "P12MineStorage",
+              "source": "@site/docs/staking/P12MineStorage.md",
+              "sourceDirName": "staking",
+              "slug": "/staking/P12MineStorage",
+              "permalink": "/contracts/staking/P12MineStorage",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "GaugeControllerUpgradeable",
+                "permalink": "/contracts/staking/GaugeControllerUpgradeable"
+              },
+              "next": {
+                "title": "P12MineUpgradeable",
+                "permalink": "/contracts/staking/P12MineUpgradeable"
+              }
+            },
+            {
+              "unversionedId": "staking/P12MineUpgradeable",
+              "id": "staking/P12MineUpgradeable",
+              "title": "P12MineUpgradeable",
+              "description": "P12MineUpgradeable",
+              "source": "@site/docs/staking/P12MineUpgradeable.md",
+              "sourceDirName": "staking",
+              "slug": "/staking/P12MineUpgradeable",
+              "permalink": "/contracts/staking/P12MineUpgradeable",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12MineStorage",
+                "permalink": "/contracts/staking/P12MineStorage"
+              },
+              "next": {
+                "title": "P12RewardVault",
+                "permalink": "/contracts/staking/P12RewardVault"
+              }
+            },
+            {
+              "unversionedId": "staking/P12RewardVault",
+              "id": "staking/P12RewardVault",
+              "title": "P12RewardVault",
+              "description": "P12RewardVault",
+              "source": "@site/docs/staking/P12RewardVault.md",
+              "sourceDirName": "staking",
+              "slug": "/staking/P12RewardVault",
+              "permalink": "/contracts/staking/P12RewardVault",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12MineUpgradeable",
+                "permalink": "/contracts/staking/P12MineUpgradeable"
+              },
+              "next": {
+                "title": "IGaugeController",
+                "permalink": "/contracts/staking/interfaces/IGaugeController"
+              }
+            },
+            {
+              "unversionedId": "token/interfaces/IP12Token",
+              "id": "token/interfaces/IP12Token",
+              "title": "IP12Token",
+              "description": "IP12Token",
+              "source": "@site/docs/token/interfaces/IP12Token.md",
+              "sourceDirName": "token/interfaces",
+              "slug": "/token/interfaces/IP12Token",
+              "permalink": "/contracts/token/interfaces/IP12Token",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "VotingEscrow",
+                "permalink": "/contracts/token/VotingEscrow"
+              },
+              "next": {
+                "title": "IVotingEscrow",
+                "permalink": "/contracts/token/interfaces/IVotingEscrow"
+              }
+            },
+            {
+              "unversionedId": "token/interfaces/IVotingEscrow",
+              "id": "token/interfaces/IVotingEscrow",
+              "title": "IVotingEscrow",
+              "description": "IVotingEscrow",
+              "source": "@site/docs/token/interfaces/IVotingEscrow.md",
+              "sourceDirName": "token/interfaces",
+              "slug": "/token/interfaces/IVotingEscrow",
+              "permalink": "/contracts/token/interfaces/IVotingEscrow",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12Token",
+                "permalink": "/contracts/token/interfaces/IP12Token"
+              }
+            },
+            {
+              "unversionedId": "token/P12Token",
+              "id": "token/P12Token",
+              "title": "P12Token",
+              "description": "P12Token",
+              "source": "@site/docs/token/P12Token.md",
+              "sourceDirName": "token",
+              "slug": "/token/P12Token",
+              "permalink": "/contracts/token/P12Token",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "IP12RewardVault",
+                "permalink": "/contracts/staking/interfaces/IP12RewardVault"
+              },
+              "next": {
+                "title": "VotingEscrow",
+                "permalink": "/contracts/token/VotingEscrow"
+              }
+            },
+            {
+              "unversionedId": "token/VotingEscrow",
+              "id": "token/VotingEscrow",
+              "title": "VotingEscrow",
+              "description": "VotingEscrow",
+              "source": "@site/docs/token/VotingEscrow.md",
+              "sourceDirName": "token",
+              "slug": "/token/VotingEscrow",
+              "permalink": "/contracts/token/VotingEscrow",
+              "draft": false,
+              "tags": [],
+              "version": "current",
+              "frontMatter": {},
+              "sidebar": "defaultSidebar",
+              "previous": {
+                "title": "P12Token",
+                "permalink": "/contracts/token/P12Token"
+              },
+              "next": {
+                "title": "IP12Token",
+                "permalink": "/contracts/token/interfaces/IP12Token"
+              }
+            }
+          ],
+          "drafts": [],
+          "sidebars": {
+            "defaultSidebar": [
+              {
+                "type": "category",
+                "label": "access",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "access/SafeOwnable"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "access/SafeOwnableUpgradeable"
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "assetFactory",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "assetFactory/P12Asset"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "assetFactory/P12AssetFactoryStorage"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "assetFactory/P12AssetFactoryUpgradable"
+                  },
+                  {
+                    "type": "category",
+                    "label": "interfaces",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "assetFactory/interfaces/IP12Asset"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "assetFactory/interfaces/IP12AssetFactoryUpgradable"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "coinFactory",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "coinFactory/P12CoinFactoryStorage"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "coinFactory/P12CoinFactoryUpgradeable"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "coinFactory/P12GameCoin"
+                  },
+                  {
+                    "type": "category",
+                    "label": "interfaces",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "coinFactory/interfaces/IP12CoinFactoryUpgradeable"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "coinFactory/interfaces/IP12GameCoin"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "doc",
+                "id": "index"
+              },
+              {
+                "type": "category",
+                "label": "libraries",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "libraries/CommonError"
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "secretShop",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "secretShop/ERC1155Delegate"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "secretShop/ERC721Delegate"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "secretShop/MarketConsts"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "secretShop/SecretShopStorage"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "secretShop/SecretShopUpgradable"
+                  },
+                  {
+                    "type": "category",
+                    "label": "interfaces",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "secretShop/interfaces/IDelegate"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "secretShop/interfaces/ISecretShopUpgradable"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "secretShop/interfaces/IWETHUpgradable"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "staking",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "staking/ControllerStorage"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "staking/GaugeControllerUpgradeable"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "staking/P12MineStorage"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "staking/P12MineUpgradeable"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "staking/P12RewardVault"
+                  },
+                  {
+                    "type": "category",
+                    "label": "interfaces",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "staking/interfaces/IGaugeController"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "staking/interfaces/IP12MineUpgradeable"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "staking/interfaces/IP12RewardVault"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "token",
+                "collapsible": true,
+                "collapsed": true,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "token/P12Token"
+                  },
+                  {
+                    "type": "doc",
+                    "id": "token/VotingEscrow"
+                  },
+                  {
+                    "type": "category",
+                    "label": "interfaces",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "token/interfaces/IP12Token"
+                      },
+                      {
+                        "type": "doc",
+                        "id": "token/interfaces/IVotingEscrow"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "docusaurus-plugin-content-pages": {
+    "default": null
+  },
+  "docusaurus-plugin-debug": {},
+  "docusaurus-theme-classic": {},
+  "docusaurus-bootstrap-plugin": {},
+  "docusaurus-mdx-fallback-plugin": {}
+}

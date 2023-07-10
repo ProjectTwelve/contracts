@@ -1,0 +1,23 @@
+{
+  "unversionedId": "libraries/CommonError",
+  "id": "libraries/CommonError",
+  "title": "CommonError",
+  "description": "CommonError",
+  "source": "@site/docs/libraries/CommonError.md",
+  "sourceDirName": "libraries",
+  "slug": "/libraries/CommonError",
+  "permalink": "/contracts/libraries/CommonError",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "index",
+    "permalink": "/contracts/"
+  },
+  "next": {
+    "title": "ERC1155Delegate",
+    "permalink": "/contracts/secretShop/ERC1155Delegate"
+  }
+}

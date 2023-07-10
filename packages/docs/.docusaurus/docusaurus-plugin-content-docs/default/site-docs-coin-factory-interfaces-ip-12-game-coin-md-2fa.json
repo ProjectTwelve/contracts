@@ -1,0 +1,23 @@
+{
+  "unversionedId": "coinFactory/interfaces/IP12GameCoin",
+  "id": "coinFactory/interfaces/IP12GameCoin",
+  "title": "IP12GameCoin",
+  "description": "IP12GameCoin",
+  "source": "@site/docs/coinFactory/interfaces/IP12GameCoin.md",
+  "sourceDirName": "coinFactory/interfaces",
+  "slug": "/coinFactory/interfaces/IP12GameCoin",
+  "permalink": "/contracts/coinFactory/interfaces/IP12GameCoin",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "previous": {
+    "title": "IP12CoinFactoryUpgradeable",
+    "permalink": "/contracts/coinFactory/interfaces/IP12CoinFactoryUpgradeable"
+  },
+  "next": {
+    "title": "index",
+    "permalink": "/contracts/"
+  }
+}

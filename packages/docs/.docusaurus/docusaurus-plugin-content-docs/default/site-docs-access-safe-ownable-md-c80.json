@@ -1,0 +1,19 @@
+{
+  "unversionedId": "access/SafeOwnable",
+  "id": "access/SafeOwnable",
+  "title": "SafeOwnable",
+  "description": "SafeOwnable",
+  "source": "@site/docs/access/SafeOwnable.md",
+  "sourceDirName": "access",
+  "slug": "/access/SafeOwnable",
+  "permalink": "/contracts/access/SafeOwnable",
+  "draft": false,
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "defaultSidebar",
+  "next": {
+    "title": "SafeOwnableUpgradeable",
+    "permalink": "/contracts/access/SafeOwnableUpgradeable"
+  }
+}
