@@ -20,12 +20,6 @@ dependencies:
   '@tovarishfin/hardhat-yul':
     specifier: ^3.0.5
     version: 3.0.5(hardhat@2.12.6)
-  '@uniswap/v2-core':
-    specifier: ^1.0.1
-    version: 1.0.1
-  '@uniswap/v2-periphery':
-    specifier: ^1.1.0-beta.0
-    version: 1.1.0-beta.0
   '@uniswap/v3-core':
     specifier: ^1.0.1
     version: 1.0.1
@@ -4936,32 +4930,14 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@uniswap/lib@1.1.1:
-    resolution: {integrity: sha512-2yK7sLpKIT91TiS5sewHtOa7YuM8IuBXVl4GZv2jZFys4D2sY7K5vZh6MqD25TPA95Od+0YzCVq6cTF2IKrOmg==}
-    engines: {node: '>=10'}
-    dev: false
-
   /@uniswap/lib@4.0.1-alpha:
     resolution: {integrity: sha512-f6UIliwBbRsgVLxIaBANF6w09tYqc6Y/qXdsrbEmXHyFA7ILiKrIwRFXe1yOg8M3cksgVsO9N7yuL2DdCGQKBA==}
-    engines: {node: '>=10'}
-    dev: false
-
-  /@uniswap/v2-core@1.0.0:
-    resolution: {integrity: sha512-BJiXrBGnN8mti7saW49MXwxDBRFiWemGetE58q8zgfnPPzQKq55ADltEILqOt6VFZ22kVeVKbF8gVd8aY3l7pA==}
     engines: {node: '>=10'}
     dev: false
 
   /@uniswap/v2-core@1.0.1:
     resolution: {integrity: sha512-MtybtkUPSyysqLY2U210NBDeCHX+ltHt3oADGdjqoThZaFRDKwM6k1Nb3F0A3hk5hwuQvytFWhrWHOEq6nVJ8Q==}
     engines: {node: '>=10'}
-    dev: false
-
-  /@uniswap/v2-periphery@1.1.0-beta.0:
-    resolution: {integrity: sha512-6dkwAMKza8nzqYiXEr2D86dgW3TTavUvCR0w2Tu33bAbM8Ah43LKAzH7oKKPRT5VJQaMi1jtkGs1E8JPor1n5g==}
-    engines: {node: '>=10'}
-    dependencies:
-      '@uniswap/lib': 1.1.1
-      '@uniswap/v2-core': 1.0.0
     dev: false
 
   /@uniswap/v3-core@1.0.0:

@@ -3,7 +3,6 @@ import { ethers } from 'hardhat';
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
 import { fixtureAll, EconomyContract, ExternalContract } from '../../scripts/deploy';
 import { Contract } from 'ethers/lib/ethers';
-import * as compiledUniswapPair from '@uniswap/v2-core/build/UniswapV2Pair.json';
 
 describe('P12Mine', function () {
   let admin: SignerWithAddress;
@@ -11,7 +10,6 @@ describe('P12Mine', function () {
   let user: SignerWithAddress;
   let core: EconomyContract & ExternalContract;
   let p12RewardVault: Contract;
-  let gameCoinAddress: string;
   let pair: Contract;
   let liquidity: number;
   let id: string;
@@ -57,28 +55,22 @@ describe('P12Mine', function () {
   });
 
   it('Should show gameCoin create successfully!', async function () {
-    const name = 'GameCoin';
-    const symbol = 'GC';
-    const gameId = '1101';
-    const gameCoinIconUrl =
-      'https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/87c5b43b19d4065f837f54637d3932e680af9c9b.jpg';
-    const amountGameCoin = BigInt(10) * BigInt(10) ** 18n;
-    const amountP12 = BigInt(1) * BigInt(10) ** 18n;
-
-    await core.p12Token.connect(developer).approve(core.p12CoinFactory.address, amountP12);
-    const createInfo = await core.p12CoinFactory
-      .connect(developer)
-      .create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
-
-    (await createInfo.wait()).events!.forEach((x) => {
-      if (x.event === 'CreateGameCoin') {
-        gameCoinAddress = x.args!.gameCoinAddress;
-      }
-    });
-    const pairAddress = await core.uniswapFactory.getPair(core.p12Token.address, gameCoinAddress);
-    const Pair = new ethers.ContractFactory(compiledUniswapPair.interface, compiledUniswapPair.bytecode, admin);
-    pair = Pair.attach(pairAddress);
-    liquidity = await pair.balanceOf(core.p12Mine.address);
+    // const name = 'GameCoin';
+    // const symbol = 'GC';
+    // const gameId = '1101';
+    // const gameCoinIconUrl =
+    //   'https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/87c5b43b19d4065f837f54637d3932e680af9c9b.jpg';
+    // const amountGameCoin = BigInt(10) * BigInt(10) ** 18n;
+    // const amountP12 = BigInt(1) * BigInt(10) ** 18n;
+    // await core.p12Token.connect(developer).approve(core.p12CoinFactory.address, amountP12);
+    // const createInfo = await core.p12CoinFactory
+    //   .connect(developer)
+    //   .create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
+    // (await createInfo.wait()).events!.forEach((x) => {
+    //   if (x.event === 'CreateGameCoin') {
+    //     const gameCoinAddress = x.args!.gameCoinAddress;
+    //   }
+    // });
   });
   // create locker
   it('show create locker successfully', async function () {

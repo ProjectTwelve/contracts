@@ -13,11 +13,11 @@ contract P12CoinFactoryStorage {
    */
   address public p12;
   /**
-   * @dev uniswap v2 Router address
+   * @dev uniswap position manager address
    */
   INonfungiblePositionManager public uniswapPosManager;
   /**
-   * @dev uniswap v2 Factory address
+   * @dev uniswap v3 Factory address
    */
   IUniswapV3Factory public uniswapFactory;
   /**

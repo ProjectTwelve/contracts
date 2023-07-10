@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.19;
 
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
+
 import '../token/interfaces/IVotingEscrow.sol';
 
 contract ControllerStorage {

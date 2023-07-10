@@ -2,8 +2,8 @@
 pragma solidity 0.8.19;
 
 import '../coinFactory/P12CoinFactoryUpgradeable.sol';
-import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+
+
 
 // new contract for test
 contract P12CoinFactoryUpgradeableAlter is P12CoinFactoryUpgradeable {
