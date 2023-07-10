@@ -24,6 +24,20 @@
     "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\"",
     "estimate-size": "hardhat size-contracts --max-memory 8096"
   },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.sol": [
+      "prettier",
+      "cspell"
+    ],
+    "*.ts": [
+      "prettier",
+      "eslint",
+      "cspell"
+    ]
+  },
   "devDependencies": {
     "@docusaurus/core": "2.0.1",
     "@docusaurus/preset-classic": "2.0.1",
@@ -81,7 +95,9 @@
     "@uniswap/v3-periphery": "^1.4.3",
     "canonical-weth": "^1.4.0",
     "hardhat-preprocessor": "^0.1.5",
-    "lodash": "^4.17.15"
+    "lint-staged": "^13.2.3",
+    "lodash": "^4.17.15",
+    "simple-git-hooks": "^2.8.1"
   },
   "overrides": {
     "@nomiclabs/hardhat-waffle": {
