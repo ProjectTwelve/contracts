@@ -10,22 +10,6 @@ contract P12CoinFactoryUpgradeableAlter is P12CoinFactoryUpgradeable {
   error CallWhiteBlackFail();
 
   /**
-   * @dev set UniswapFactory address
-   * @param newAddr new UniswapFactory address
-   */
-  function setUniswapFactory(IUniswapV2Factory newAddr) public override onlyOwner {
-    uniswapFactory = IUniswapV2Factory(newAddr);
-  }
-
-  /**
-   * @dev set Uniswap Router Address
-   * @param newAddr new Uniswap Router Address
-   */
-  function setUniswapRouter(IUniswapV2Router02 newAddr) public override onlyOwner {
-    uniswapRouter = IUniswapV2Router02(newAddr);
-  }
-
-  /**
    * @dev this is used for test internal function upgrade
    */
   function _compareStrings(string memory, string memory) internal pure override returns (bool) {

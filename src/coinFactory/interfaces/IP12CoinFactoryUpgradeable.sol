@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
-import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+
+import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
+import { INonfungiblePositionManager } from '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
+
 import '../../staking/interfaces/IP12MineUpgradeable.sol';
 import '../../staking/interfaces/IGaugeController.sol';
 import './IP12GameCoin.sol';
@@ -21,20 +23,12 @@ interface IP12CoinFactoryUpgradeable {
   ) external returns (IP12GameCoin);
 
   //  mint coin and Launch a statement
-  function queueMintCoin(
-    string memory gameId,
-    IP12GameCoin gameCoinAddress,
-    uint256 amountGameCoin
-  ) external returns (bool);
+  function queueMintCoin(string memory gameId, IP12GameCoin gameCoinAddress, uint256 amountGameCoin) external returns (bool);
 
   // execute Mint coin
   function executeMintCoin(IP12GameCoin gameCoinAddress, bytes32 mintId) external returns (bool);
 
-  function withdraw(
-    address userAddress,
-    IP12GameCoin gameCoinAddress,
-    uint256 amountGameCoin
-  ) external returns (bool);
+  function withdraw(address userAddress, IP12GameCoin gameCoinAddress, uint256 amountGameCoin) external returns (bool);
 
   function setDev(address newDev) external;
 
@@ -42,9 +36,9 @@ interface IP12CoinFactoryUpgradeable {
 
   function setGaugeController(IGaugeController newGaugeController) external;
 
-  function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external;
+  function setUniswapFactory(IUniswapV3Factory newUniswapFactory) external;
 
-  function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external;
+  function setUniswapPosManager(INonfungiblePositionManager newUniswapRouter) external;
 
   function setP12Token(address newP12Token) external;
 
@@ -101,9 +95,9 @@ interface IP12CoinFactoryUpgradeable {
   event SetGaugeController(IGaugeController oldGaugeController, IGaugeController newGaugeController);
 
   // uniFactory and router address change log
-  event SetUniswapFactory(IUniswapV2Factory oldUniswapFactory, IUniswapV2Factory newUniswapFactory);
+  event SetUniswapFactory(IUniswapV3Factory oldUniswapFactory, IUniswapV3Factory newUniswapFactory);
 
-  event SetUniswapRouter(IUniswapV2Router02 oldUniswapRouter, IUniswapV2Router02 newUniswapRouter);
+  event SetUniswapPosManager(INonfungiblePositionManager oldUniswapRouter, INonfungiblePositionManager newUniswapRouter);
 
   event SetP12Token(address oldP12Token, address newP12Token);
 

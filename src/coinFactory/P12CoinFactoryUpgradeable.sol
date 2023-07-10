@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 
+import { INonfungiblePositionManager } from '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
+
+import { INonfungiblePositionManager } from '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
+
 import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Pair.sol';
@@ -80,9 +84,9 @@ contract P12CoinFactoryUpgradeable is
    * reserved only during development
    * @param newUniswapFactory new UniswapFactory address
    */
-  function setUniswapFactory(IUniswapV2Factory newUniswapFactory) external virtual override onlyOwner {
+  function setUniswapFactory(IUniswapV3Factory newUniswapFactory) external virtual override onlyOwner {
     if (address(newUniswapFactory) == address(0)) revert CommonError.ZeroAddressSet();
-    IUniswapV2Factory oldUniswapFactory = uniswapFactory;
+    IUniswapV3Factory oldUniswapFactory = newUniswapFactory;
     uniswapFactory = newUniswapFactory;
     emit SetUniswapFactory(oldUniswapFactory, newUniswapFactory);
   }
@@ -90,13 +94,13 @@ contract P12CoinFactoryUpgradeable is
   /**
    * @dev set uniswapRouter address
    * reserved only during development
-   * @param newUniswapRouter new uniswapRouter address
+   * @param uniswapPosManager_ new uniswapPosManager address
    */
-  function setUniswapRouter(IUniswapV2Router02 newUniswapRouter) external virtual override onlyOwner {
-    if (address(newUniswapRouter) == address(0)) revert CommonError.ZeroAddressSet();
-    IUniswapV2Router02 oldUniswapRouter = uniswapRouter;
-    uniswapRouter = newUniswapRouter;
-    emit SetUniswapRouter(oldUniswapRouter, newUniswapRouter);
+  function setUniswapPosManager(INonfungiblePositionManager uniswapPosManager_) external virtual override onlyOwner {
+    if (address(uniswapPosManager_) == address(0)) revert CommonError.ZeroAddressSet();
+    INonfungiblePositionManager oldUniswapRouter = uniswapPosManager_;
+    uniswapPosManager_ = uniswapPosManager_;
+    emit SetUniswapPosManager(oldUniswapRouter, uniswapPosManager_);
   }
 
   /**
@@ -133,36 +137,37 @@ contract P12CoinFactoryUpgradeable is
     gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
-    IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), amountP12);
+    address token0 = p12;
+    uint256 token0Amount = amountP12;
+    address token1 = address(gameCoinAddress);
+    uint256 token1Amount = amountGameCoinDesired;
 
-    IERC20Upgradeable(address(gameCoinAddress)).safeApprove(address(uniswapRouter), amountGameCoinDesired);
+    if (address(gameCoinAddress) < p12) {
+      token0 = address(gameCoinAddress);
+      uint256 token0Amount = amountGameCoinDesired;
+      token1 = p12;
+      token1Amount = amountP12;
+    }
 
-    uint256 liquidity0;
-    (, , liquidity0) = uniswapRouter.addLiquidity(
-      p12,
-      address(gameCoinAddress),
-      amountP12,
-      amountGameCoinDesired,
-      amountP12,
-      amountGameCoinDesired,
-      address(p12Mine),
-      _getBlockTimestamp() + addLiquidityEffectiveTime
+    // fee 0.3% tickSpacing 60
+    uniswapFactory.createPool(token0, token1, 3000);
+
+    // create initial liquidity and get an nft
+    uniswapPosManager.mint(
+      INonfungiblePositionManager.MintParams(
+        token0,
+        token1,
+        30000,
+        -1000,
+        1000,
+        token0Amount,
+        token1Amount,
+        token0Amount,
+        token1Amount,
+        msg.sender,
+        block.timestamp + 1
+      )
     );
-    //get pair contract address
-    address pair = uniswapFactory.getPair(p12, address(gameCoinAddress));
-
-    // check address
-    if (address(pair) == address(0)) revert CommonError.ZeroAddressSet();
-
-    // get lpToken value
-    uint256 liquidity1 = IUniswapV2Pair(pair).balanceOf(address(p12Mine));
-    if (liquidity0 != liquidity1) revert InvalidLiquidity();
-
-    // add pair address to Controller,100 is init weight
-    gaugeController.addGauge(pair, 0, 100);
-
-    // create a new pool and add staking info
-    p12Mine.addLpTokenInfoForGameCreator(pair, liquidity1, msg.sender);
 
     allGameCoins[gameCoinAddress] = gameId;
     emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
@@ -216,14 +221,10 @@ contract P12CoinFactoryUpgradeable is
    * @param mintId a unique id to identify a mint, developer can get it after declare
    * @return bool whether the operation success
    */
-  function executeMintCoin(IP12GameCoin gameCoinAddress, bytes32 mintId)
-    external
-    virtual
-    override
-    nonReentrant
-    whenNotPaused
-    returns (bool)
-  {
+  function executeMintCoin(
+    IP12GameCoin gameCoinAddress,
+    bytes32 mintId
+  ) external virtual override nonReentrant whenNotPaused returns (bool) {
     if (coinMintRecords[gameCoinAddress][mintId].unlockTimestamp == 0) revert NonExistenceMintId(mintId);
     // check if it has been executed
     if (coinMintRecords[gameCoinAddress][mintId].executed) revert ExecutedMint(mintId);
@@ -273,21 +274,21 @@ contract P12CoinFactoryUpgradeable is
   function initialize(
     address owner_,
     address p12_,
-    IUniswapV2Factory uniswapFactory_,
-    IUniswapV2Router02 uniswapRouter_,
+    IUniswapV3Factory uniswapFactory_,
+    INonfungiblePositionManager uniswapPosManager_,
     uint256 effectiveTime_,
     bytes32 initHash_
   ) public initializer {
     if (address(p12_) == address(0)) revert CommonError.ZeroAddressSet();
     if (address(uniswapFactory_) == address(0)) revert CommonError.ZeroAddressSet();
-    if (address(uniswapRouter_) == address(0)) revert CommonError.ZeroAddressSet();
+    if (address(uniswapPosManager_) == address(0)) revert CommonError.ZeroAddressSet();
 
     p12 = p12_;
     uniswapFactory = uniswapFactory_;
-    uniswapRouter = uniswapRouter_;
+    uniswapPosManager = uniswapPosManager_;
     _initHash = initHash_;
     addLiquidityEffectiveTime = effectiveTime_;
-    IERC20Upgradeable(p12).safeApprove(address(uniswapRouter), type(uint256).max);
+    IERC20Upgradeable(p12).safeApprove(address(uniswapPosManager_), type(uint256).max);
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
     __Ownable_init_unchained(owner_);
@@ -330,25 +331,20 @@ contract P12CoinFactoryUpgradeable is
   /**
    * @dev calculate the MintFee in P12
    */
-  function getMintFee(IP12GameCoin gameCoinAddress, uint256 amountGameCoin)
-    public
-    view
-    virtual
-    override
-    returns (uint256 amountP12)
-  {
-    uint256 gameCoinReserved;
-    uint256 p12Reserved;
-    if (p12 < address(gameCoinAddress)) {
-      (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
-    } else {
-      (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
-    }
-
-    // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
-    amountP12 = (p12Reserved * amountGameCoin) / (gameCoinReserved * 100);
-
-    return amountP12;
+  function getMintFee(
+    IP12GameCoin gameCoinAddress,
+    uint256 amountGameCoin
+  ) public view virtual override returns (uint256 amountP12) {
+    // uint256 gameCoinReserved;
+    // uint256 p12Reserved;
+    // if (p12 < address(gameCoinAddress)) {
+    //   (p12Reserved, gameCoinReserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
+    // } else {
+    //   (gameCoinReserved, p12Reserved, ) = IUniswapV2Pair(uniswapFactory.getPair(address(gameCoinAddress), p12)).getReserves();
+    // }
+    // // overflow when p12Reserved * amountGameCoin > 2^256 ~= 10^77
+    // amountP12 = (p12Reserved * amountGameCoin) / (gameCoinReserved * 100);
+    // return amountP12;
   }
 
   /**
@@ -372,13 +368,10 @@ contract P12CoinFactoryUpgradeable is
           0----p---2p---------> amount
             
    */
-  function getMintDelay(IP12GameCoin gameCoinAddress, uint256 amountGameCoin)
-    public
-    view
-    virtual
-    override
-    returns (uint256 time)
-  {
+  function getMintDelay(
+    IP12GameCoin gameCoinAddress,
+    uint256 amountGameCoin
+  ) public view virtual override returns (uint256 time) {
     time = (amountGameCoin * delayK) / (IP12GameCoin(gameCoinAddress).totalSupply()) + delayB;
     return time;
   }

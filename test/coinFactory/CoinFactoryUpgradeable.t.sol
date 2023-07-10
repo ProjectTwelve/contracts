@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
+
+import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
+import { INonfungiblePositionManager } from '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
+
 import 'forge-std/Test.sol';
 import 'src/coinFactory/P12CoinFactoryUpgradeable.sol';
 import 'src/staking/interfaces/IP12MineUpgradeable.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
 
 import 'src/staking/interfaces/IGaugeController.sol';
-import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
 import 'src/coinFactory/interfaces/IP12GameCoin.sol';
 import 'src/token/P12Token.sol';
 
@@ -44,16 +46,17 @@ contract CoinFactoryUpgradeableTest is Test {
     assertEq(p12CoinFactoryUpgradeable.p12(), NewP12Token);
   }
 
-  function testSetUniswapFactory(IUniswapV2Factory NewUniswapFactory) public {
+  function testSetUniswapFactory(IUniswapV3Factory NewUniswapFactory) public {
     vm.prank(p12CoinFactoryUpgradeable.owner());
     p12CoinFactoryUpgradeable.setUniswapFactory(NewUniswapFactory);
     assertEq(p12CoinFactoryUpgradeable.uniswapFactory.address, address(NewUniswapFactory));
   }
 
-  function testSetUniswapRouter(IUniswapV2Router02 newUniswapRouter) public {
+  function testSetUniswapRouter(INonfungiblePositionManager newPosManager_) public {
     vm.prank(p12CoinFactoryUpgradeable.owner());
-    p12CoinFactoryUpgradeable.setUniswapRouter(newUniswapRouter);
-    assertEq(p12CoinFactoryUpgradeable.uniswapRouter.address, address(newUniswapRouter));
+
+    p12CoinFactoryUpgradeable.setUniswapPosManager(newPosManager_);
+    assertEq(p12CoinFactoryUpgradeable.uniswapPosManager.address, address(newPosManager_));
   }
 
   function testRegister(string memory gameId, address developer) public {

@@ -68,7 +68,13 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf"
+    "xwbf",
+    "Nonfungible",
+    "concat",
+    "iszero",
+    "multicalls",
+    "Bips",
+    "blocktime"
   ],
   "ignorePaths": ["typechain-types/**", "flatten/**", "lib/**", "out/**"]
 }

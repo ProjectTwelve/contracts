@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 
-import '@uniswap/v2-periphery/contracts/interfaces/IUniswapV2Router02.sol';
-import '@uniswap/v2-core/contracts/interfaces/IUniswapV2Factory.sol';
+import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
+import { INonfungiblePositionManager } from '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
 import '../staking/interfaces/IP12MineUpgradeable.sol';
 import '../staking/interfaces/IGaugeController.sol';
 import './interfaces/IP12GameCoin.sol';
@@ -15,11 +15,11 @@ contract P12CoinFactoryStorage {
   /**
    * @dev uniswap v2 Router address
    */
-  IUniswapV2Router02 public uniswapRouter;
+  INonfungiblePositionManager public uniswapPosManager;
   /**
    * @dev uniswap v2 Factory address
    */
-  IUniswapV2Factory public uniswapFactory;
+  IUniswapV3Factory public uniswapFactory;
   /**
    * @dev length of cast delay time is a linear function of percentage of additional issues,
    * @dev delayK and delayB is the linear function's parameter which could be changed later
