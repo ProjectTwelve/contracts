@@ -2,7 +2,7 @@
 pragma solidity 0.8.19;
 
 import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
-import { INonfungiblePositionManager } from '@uniswap/v3-periphery/contracts/interfaces/INonfungiblePositionManager.sol';
+import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
 
 import 'forge-std/Test.sol';
 import 'src/coinFactory/P12CoinFactoryUpgradeable.sol';

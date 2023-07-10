@@ -9,6 +9,10 @@ bytescode_hash = "none"
 # viaIR = true
 
 fs_permissions = [{ access = "read", path = "./" }]
+allow_paths = [
+    # pnpm symlinks to the project root's node_modules
+    "../../node_modules",
+]
 
 # set debug when debug, set default to commit
 revert_strings = "debug"
