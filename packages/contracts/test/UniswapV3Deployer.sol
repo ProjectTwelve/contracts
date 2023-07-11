@@ -83,6 +83,7 @@ library UniswapV3Deployer {
     address WETH9,
     string memory nativeCurrencyLabel
   ) public returns (address tokenDescriptor) {
+    deployNFTDesLib();
     if (bytes(nativeCurrencyLabel).length > 31) {
       revert('label too long');
     }

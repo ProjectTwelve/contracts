@@ -32,8 +32,6 @@ contract P12CoinFactoryStorage {
    */
   bytes32 internal _initHash;
 
-  uint256 public addLiquidityEffectiveTime;
-
   /**
    * @dev p12 staking contract
    */

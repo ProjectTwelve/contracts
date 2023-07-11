@@ -2,14 +2,15 @@
 
 pragma solidity 0.8.19;
 
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import { ERC20 } from '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import { ERC20Permit } from '@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol';
 import '../access/SafeOwnable.sol';
 
 import './interfaces/IP12Token.sol';
 
 // temporary contract, not corresponding to real token model
 
-contract P12Token is IP12Token, ERC20, SafeOwnable {
+contract P12Token is IP12Token, ERC20Permit, SafeOwnable {
   error SupplyExceedMax();
 
   uint256 public immutable override maxSupply;
@@ -19,7 +20,7 @@ contract P12Token is IP12Token, ERC20, SafeOwnable {
     string memory name,
     string memory symbol,
     uint256 maxSupply_
-  ) ERC20(name, symbol) SafeOwnable(owner_) {
+  ) ERC20(name, symbol) ERC20Permit(name) SafeOwnable(owner_) {
     maxSupply = maxSupply_;
   }
 

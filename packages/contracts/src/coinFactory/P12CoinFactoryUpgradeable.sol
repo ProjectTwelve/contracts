@@ -2,7 +2,7 @@
 pragma solidity 0.8.19;
 
 import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
-
+import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '../access/SafeOwnableUpgradeable.sol';
@@ -270,9 +270,7 @@ contract P12CoinFactoryUpgradeable is
     address owner_,
     address p12_,
     IUniswapV3Factory uniswapFactory_,
-    INonfungiblePositionManager uniswapPosManager_,
-    uint256 effectiveTime_,
-    bytes32 initHash_
+    INonfungiblePositionManager uniswapPosManager_
   ) public initializer {
     if (address(p12_) == address(0)) revert CommonError.ZeroAddressSet();
     if (address(uniswapFactory_) == address(0)) revert CommonError.ZeroAddressSet();
@@ -281,8 +279,6 @@ contract P12CoinFactoryUpgradeable is
     p12 = p12_;
     uniswapFactory = uniswapFactory_;
     uniswapPosManager = uniswapPosManager_;
-    _initHash = initHash_;
-    addLiquidityEffectiveTime = effectiveTime_;
     IERC20Upgradeable(p12).safeApprove(address(uniswapPosManager_), type(uint256).max);
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
