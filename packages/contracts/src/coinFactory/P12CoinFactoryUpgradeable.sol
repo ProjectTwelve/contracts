@@ -139,7 +139,7 @@ contract P12CoinFactoryUpgradeable is
 
     if (address(gameCoinAddress) < p12) {
       token0 = address(gameCoinAddress);
-      uint256 token0Amount = amountGameCoinDesired;
+      token0Amount = amountGameCoinDesired;
       token1 = p12;
       token1Amount = amountP12;
     }

@@ -25,12 +25,18 @@ importers:
       '@tovarishfin/hardhat-yul':
         specifier: ^3.0.5
         version: 3.0.5(hardhat@2.12.6)
+      '@uniswap/lib':
+        specifier: 4.0.1-alpha
+        version: 4.0.1-alpha
       '@uniswap/v3-core':
         specifier: ^1.0.1
         version: 1.0.1
       '@uniswap/v3-periphery':
         specifier: ^1.4.3
         version: 1.4.3
+      base64-sol:
+        specifier: ^1.1.0
+        version: 1.1.0
       canonical-weth:
         specifier: ^1.4.0
         version: 1.4.0
@@ -6107,6 +6113,10 @@ packages:
 
   /base64-sol@1.0.1:
     resolution: {integrity: sha512-ld3cCNMeXt4uJXmLZBHFGMvVpK9KsLVEhPpFRXnvSVAqABKbuNZg/+dsq3NuM+wxFLb/UrVkz7m1ciWmkMfTbg==}
+    dev: false
+
+  /base64-sol@1.1.0:
+    resolution: {integrity: sha512-mksLxtFyBcXd3LYK5UxyMj29YR//zoaeXpJaKRbnLQC0E99oCJl7VpKaJDXWAuTvnhxBU9XNYzhxSL8umsrxWg==}
     dev: false
 
   /batch@0.6.1:
