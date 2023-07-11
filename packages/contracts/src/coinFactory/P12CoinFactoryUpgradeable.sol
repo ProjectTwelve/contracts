@@ -3,6 +3,10 @@ pragma solidity 0.8.19;
 
 import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
 import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
+import { IERC20PermitUpgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol';
+import { IERC20Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+
+import { ClonesUpgradeable } from '@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol';
 import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
 import '../access/SafeOwnableUpgradeable.sol';
@@ -126,7 +130,7 @@ contract P12CoinFactoryUpgradeable is
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
     uint256 amountP12
-  ) external virtual override nonReentrant whenNotPaused returns (IP12GameCoin gameCoinAddress) {
+  ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     if (msg.sender != allGames[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     if (amountP12 == 0) revert CommonError.NotEnoughP12();
     gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
@@ -166,7 +170,7 @@ contract P12CoinFactoryUpgradeable is
 
     allGameCoins[gameCoinAddress] = gameId;
     emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
-    return IP12GameCoin(gameCoinAddress);
+    return gameCoinAddress;
   }
 
   /**
@@ -178,7 +182,7 @@ contract P12CoinFactoryUpgradeable is
    */
   function queueMintCoin(
     string memory gameId,
-    IP12GameCoin gameCoinAddress,
+    address gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
     if (msg.sender != allGames[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
@@ -200,7 +204,7 @@ contract P12CoinFactoryUpgradeable is
     // transfer the p12 to this contract
     IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), p12Fee);
 
-    uint256 delayD = getMintDelay(gameCoinAddress, amountGameCoin);
+    uint256 delayD = getMintDelay(address(gameCoinAddress), amountGameCoin);
 
     bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, _initHash);
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
@@ -217,7 +221,7 @@ contract P12CoinFactoryUpgradeable is
    * @return bool whether the operation success
    */
   function executeMintCoin(
-    IP12GameCoin gameCoinAddress,
+    address gameCoinAddress,
     bytes32 mintId
   ) external virtual override nonReentrant whenNotPaused returns (bool) {
     if (coinMintRecords[gameCoinAddress][mintId].unlockTimestamp == 0) revert NonExistenceMintId(mintId);
@@ -249,7 +253,7 @@ contract P12CoinFactoryUpgradeable is
    */
   function withdraw(
     address userAddress,
-    IP12GameCoin gameCoinAddress,
+    address gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override onlyDev returns (bool) {
     IERC20Upgradeable(address(gameCoinAddress)).safeTransfer(userAddress, amountGameCoin);
@@ -307,23 +311,15 @@ contract P12CoinFactoryUpgradeable is
     return true;
   }
 
-  function setTokenName(IP12GameCoin token, string calldata newName) public onlyGameDev(token) {
-    token.setName(newName);
-  }
-
-  function setTokenSymbol(IP12GameCoin token, string calldata newSymbol) public onlyGameDev(token) {
-    token.setSymbol(newSymbol);
-  }
-
-  function setTokenIconUrl(IP12GameCoin token, string calldata newUrl) public onlyGameDev(token) {
-    token.setGameCoinIconUrl(newUrl);
+  function setTokenIconUrl(address token, string calldata newUrl) public onlyGameDev(token) {
+    IP12GameCoin(token).setGameCoinIconUrl(newUrl);
   }
 
   /**
    * @dev calculate the MintFee in P12
    */
   function getMintFee(
-    IP12GameCoin gameCoinAddress,
+    address gameCoinAddress,
     uint256 amountGameCoin
   ) public view virtual override returns (uint256 amountP12) {
     // uint256 gameCoinReserved;
@@ -359,11 +355,8 @@ contract P12CoinFactoryUpgradeable is
           0----p---2p---------> amount
             
    */
-  function getMintDelay(
-    IP12GameCoin gameCoinAddress,
-    uint256 amountGameCoin
-  ) public view virtual override returns (uint256 time) {
-    time = (amountGameCoin * delayK) / (IP12GameCoin(gameCoinAddress).totalSupply()) + delayB;
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
+    time = (amountGameCoin * delayK) / (IERC20Upgradeable(gameCoinAddress).totalSupply()) + delayB;
     return time;
   }
 
@@ -383,9 +376,13 @@ contract P12CoinFactoryUpgradeable is
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin
-  ) internal virtual returns (P12GameCoin gameCoinAddress) {
-    P12GameCoin gameCoin = new P12GameCoin(address(this), name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
-    gameCoinAddress = gameCoin;
+  ) internal virtual returns (address gameCoinAddress) {
+    // erc1167 clone
+    gameCoinAddress = ClonesUpgradeable.clone(gameCoinImpl);
+    // initialize
+    IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, gameId, gameCoinIconUrl);
+    // mint initial amount
+    IP12GameCoin(gameCoinAddress).mint(msg.sender, amountGameCoin);
   }
 
   /**
@@ -398,7 +395,7 @@ contract P12CoinFactoryUpgradeable is
    * @return hash mintId
    */
   function _hashOperation(
-    IP12GameCoin gameCoinAddress,
+    address gameCoinAddress,
     address declarer,
     uint256 amount,
     uint256 timestamp,
@@ -425,7 +422,7 @@ contract P12CoinFactoryUpgradeable is
     if (msg.sender != dev) revert NotP12Dev();
   }
 
-  function _verifyGameDev(IP12GameCoin token) internal view {
+  function _verifyGameDev(address token) internal view {
     if (msg.sender != allGames[allGameCoins[token]]) revert CommonError.NotGameDeveloper(msg.sender, allGameCoins[token]);
   }
 
@@ -442,7 +439,7 @@ contract P12CoinFactoryUpgradeable is
     _;
   }
 
-  modifier onlyGameDev(IP12GameCoin token) {
+  modifier onlyGameDev(address token) {
     _verifyGameDev(token);
     _;
   }

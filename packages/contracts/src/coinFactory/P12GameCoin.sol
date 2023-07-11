@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 
-import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
-import '../access/SafeOwnable.sol';
-import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol';
-import './interfaces/IP12GameCoin.sol';
+import { ERC20BurnableUpgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol';
+import { IP12GameCoin } from './interfaces/IP12GameCoin.sol';
+import { ERC20PermitUpgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-ERC20PermitUpgradeable.sol';
+import { ERC20BurnableUpgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol';
+import { Ownable2StepUpgradeable } from '@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol';
 
-contract P12GameCoin is IP12GameCoin, ERC20, ERC20Burnable, SafeOwnable {
+contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownable2StepUpgradeable, IP12GameCoin {
   /**
    * @dev Off-chain data, game id
    */
@@ -28,21 +29,23 @@ contract P12GameCoin is IP12GameCoin, ERC20, ERC20Burnable, SafeOwnable {
    * @param symbol_ game coin symbol
    * @param gameId_ gameId
    * @param iconUrl_ game coin icon's url
-   * @param amount_ amount of first minting
    */
-  constructor(
+  function initialize(
     address owner_,
     string memory name_,
     string memory symbol_,
     string memory gameId_,
-    string memory iconUrl_,
-    uint256 amount_
-  ) ERC20(name_, symbol_) SafeOwnable(owner_) {
+    string memory iconUrl_
+  ) public override {
     _name = name_;
     _symbol = symbol_;
     _gameId = gameId_;
     _iconUrl = iconUrl_;
-    _mint(msg.sender, amount_);
+
+    __ERC20Permit_init(name_);
+    __ERC20_init(name_, symbol_);
+    __Ownable2Step_init();
+    _transferOwnership(owner_);
   }
 
   /**
@@ -61,31 +64,9 @@ contract P12GameCoin is IP12GameCoin, ERC20, ERC20Burnable, SafeOwnable {
    * @param account off-chain account
    * @param amount amount of this transfer
    */
-  function transferWithAccount(
-    address recipient,
-    string memory account,
-    uint256 amount
-  ) external override {
+  function transferWithAccount(address recipient, string memory account, uint256 amount) external override {
     transfer(recipient, amount);
     emit TransferWithAccount(recipient, account, amount);
-  }
-
-  /**
-   * @dev set new name
-   */
-  function setName(string calldata newName) external override onlyOwner {
-    string memory oldName = _name;
-    _name = newName;
-    emit NameUpdated(oldName, newName);
-  }
-
-  /**
-   * @dev set new symbol
-   */
-  function setSymbol(string calldata newSymbol) external override onlyOwner {
-    string memory oldSymbol = _symbol;
-    _symbol = newSymbol;
-    emit SymbolUpdated(oldSymbol, newSymbol);
   }
 
   /**

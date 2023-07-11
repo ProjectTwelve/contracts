@@ -20,6 +20,11 @@ contract P12CoinFactoryStorage {
    * @dev uniswap v3 Factory address
    */
   IUniswapV3Factory public uniswapFactory;
+
+  /**
+   * @notice game coin implmentation address
+   */
+  address public gameCoinImpl;
   /**
    * @dev length of cast delay time is a linear function of percentage of additional issues,
    * @dev delayK and delayB is the linear function's parameter which could be changed later
@@ -45,11 +50,11 @@ contract P12CoinFactoryStorage {
   // gameId => developer address
   mapping(string => address) public allGames;
   // gameCoinAddress => gameId
-  mapping(IP12GameCoin => string) public allGameCoins;
+  mapping(address => string) public allGameCoins;
   // gameCoinAddress => declareMintId => MintCoinInfo
-  mapping(IP12GameCoin => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
+  mapping(address => mapping(bytes32 => MintCoinInfo)) public coinMintRecords;
   // gameCoinAddress => declareMintId
-  mapping(IP12GameCoin => bytes32) public preMintIds;
+  mapping(address => bytes32) public preMintIds;
 
   /**
    * @dev struct of each mint request

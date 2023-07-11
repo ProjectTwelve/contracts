@@ -77,28 +77,28 @@ contract CoinFactoryUpgradeableTest is Test {
     p12Token.mint(p12CoinFactoryUpgradeable.allGames(gameId), amountP12);
     p12Token.approve(address(p12CoinFactoryUpgradeable), amountP12);
     vm.prank(p12CoinFactoryUpgradeable.allGames(gameId));
-    IP12GameCoin gameCoin = p12CoinFactoryUpgradeable.create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
-    assertEq(gameCoin.balanceOf(address(p12CoinFactoryUpgradeable)), amountGameCoin / 2);
+    address gameCoin = p12CoinFactoryUpgradeable.create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12);
+    assertEq(IERC20Upgradeable(address(gameCoin)).balanceOf(address(p12CoinFactoryUpgradeable)), amountGameCoin / 2);
   }
 
-  function testQueueMintCoin(string memory gameId, IP12GameCoin gameCoinAddress, uint256 amountGameCoin) public {
+  function testQueueMintCoin(string memory gameId, address gameCoinAddress, uint256 amountGameCoin) public {
     vm.prank(p12CoinFactoryUpgradeable.allGames(gameId));
     bool status = p12CoinFactoryUpgradeable.queueMintCoin(gameId, gameCoinAddress, amountGameCoin);
     assertTrue(status);
   }
 
-  function testExecuteMintCoin(IP12GameCoin gameCoinAddress, bytes32 mintId) public {
-    uint256 oldBalance = gameCoinAddress.balanceOf(address(p12CoinFactoryUpgradeable));
+  function testExecuteMintCoin(address gameCoinAddress, bytes32 mintId) public {
+    uint256 oldBalance = IERC20Upgradeable(gameCoinAddress).balanceOf(address(p12CoinFactoryUpgradeable));
     bool status = p12CoinFactoryUpgradeable.executeMintCoin(gameCoinAddress, mintId);
     assertTrue(status);
-    uint256 Balance = gameCoinAddress.balanceOf(address(p12CoinFactoryUpgradeable));
+    uint256 Balance = IERC20Upgradeable(gameCoinAddress).balanceOf(address(p12CoinFactoryUpgradeable));
     assertGt(Balance, oldBalance);
   }
 
-  function testWithdraw(address userAddress, IP12GameCoin gameCoinAddress, uint256 amountGameCoin) public {
+  function testWithdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) public {
     vm.prank(p12CoinFactoryUpgradeable.dev());
     p12CoinFactoryUpgradeable.withdraw(userAddress, gameCoinAddress, amountGameCoin);
-    uint256 balanceOf = gameCoinAddress.balanceOf(userAddress);
+    uint256 balanceOf = IERC20Upgradeable(gameCoinAddress).balanceOf(userAddress);
     assertEq(amountGameCoin, balanceOf);
   }
 
@@ -128,10 +128,10 @@ contract CoinFactoryUpgradeableTest is Test {
   //   p12CoinFactoryUpgradeable.getMintFee(gameCoinAddress, amountGameCoin);
   // }
 
-  function testGetMintDelay(IP12GameCoin gameCoinAddress, uint256 amountGameCoin) public {
+  function testGetMintDelay(address gameCoinAddress, uint256 amountGameCoin) public {
     uint256 timeA = p12CoinFactoryUpgradeable.getMintDelay(gameCoinAddress, amountGameCoin);
     uint256 timeB = (amountGameCoin * p12CoinFactoryUpgradeable.delayK()) /
-      (IP12GameCoin(gameCoinAddress).totalSupply()) +
+      (IERC20Upgradeable(gameCoinAddress).totalSupply()) +
       p12CoinFactoryUpgradeable.delayB();
     assertEq(timeA, timeB);
   }

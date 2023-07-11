@@ -6,7 +6,6 @@ import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INo
 
 import '../../staking/interfaces/IP12MineUpgradeable.sol';
 import '../../staking/interfaces/IGaugeController.sol';
-import './IP12GameCoin.sol';
 
 interface IP12CoinFactoryUpgradeable {
   // register gameId =>developer
@@ -20,15 +19,15 @@ interface IP12CoinFactoryUpgradeable {
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
     uint256 amountP12
-  ) external returns (IP12GameCoin);
+  ) external returns (address);
 
   //  mint coin and Launch a statement
-  function queueMintCoin(string memory gameId, IP12GameCoin gameCoinAddress, uint256 amountGameCoin) external returns (bool);
+  function queueMintCoin(string memory gameId, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
 
   // execute Mint coin
-  function executeMintCoin(IP12GameCoin gameCoinAddress, bytes32 mintId) external returns (bool);
+  function executeMintCoin(address gameCoinAddress, bytes32 mintId) external returns (bool);
 
-  function withdraw(address userAddress, IP12GameCoin gameCoinAddress, uint256 amountGameCoin) external returns (bool);
+  function withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
 
   function setDev(address newDev) external;
 
@@ -43,10 +42,10 @@ interface IP12CoinFactoryUpgradeable {
   function setP12Token(address newP12Token) external;
 
   // get mintFee
-  function getMintFee(IP12GameCoin gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+  function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get mintDelay
-  function getMintDelay(IP12GameCoin gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
 
   // get delayK
   function setDelayK(uint256 delayK) external returns (bool);
@@ -54,7 +53,7 @@ interface IP12CoinFactoryUpgradeable {
   // get delayB
   function setDelayB(uint256 delayB) external returns (bool);
 
-  error MisMatchCoinWithGameId(IP12GameCoin coin, string gameId);
+  error MisMatchCoinWithGameId(address coin, string gameId);
   // not existent mint id
   error NonExistenceMintId(bytes32 mintId);
   // mintId is already executed
@@ -70,22 +69,22 @@ interface IP12CoinFactoryUpgradeable {
   event RegisterGame(string gameId, address indexed developer);
 
   // register Game coin log
-  event CreateGameCoin(IP12GameCoin indexed gameCoinAddress, string gameId, uint256 amountP12);
+  event CreateGameCoin(address indexed gameCoinAddress, string gameId, uint256 amountP12);
 
   // mint coin in future log
   event QueueMintCoin(
     bytes32 indexed mintId,
-    IP12GameCoin indexed gameCoinAddress,
+    address indexed gameCoinAddress,
     uint256 mintAmount,
     uint256 unlockTimestamp,
     uint256 amountP12
   );
 
   // mint coin success log
-  event ExecuteMintCoin(bytes32 indexed mintId, IP12GameCoin indexed gameCoinAddress, address indexed executor);
+  event ExecuteMintCoin(bytes32 indexed mintId, address indexed gameCoinAddress, address indexed executor);
 
   // game player withdraw gameCoin
-  event Withdraw(address userAddress, IP12GameCoin gameCoinAddress, uint256 amountGameCoin);
+  event Withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin);
 
   event SetDev(address oldDev, address newDev);
 

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
 
-interface IP12GameCoin is IERC20 {
+interface IP12GameCoin {
   /**
    * @dev record the event that transfer coin with a off-chain account, which will be used when someone want to deposit his coin to off-chain game.
    */
@@ -20,15 +19,15 @@ interface IP12GameCoin is IERC20 {
 
   function gameCoinIconUrl() external view returns (string memory);
 
-  function transferWithAccount(
-    address recipient,
-    string memory account,
-    uint256 amount
-  ) external;
-
-  function setName(string calldata newName) external;
-
-  function setSymbol(string calldata newSymbol) external;
+  function transferWithAccount(address recipient, string memory account, uint256 amount) external;
 
   function setGameCoinIconUrl(string calldata newUrl) external;
+
+  function initialize(
+    address owner_,
+    string memory name_,
+    string memory symbol_,
+    string memory gameId_,
+    string memory iconUrl_
+  ) external;
 }
