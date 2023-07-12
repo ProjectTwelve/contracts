@@ -56,12 +56,10 @@ contract P12AssetFactoryUpgradable is
    * @param gameId a off-chain game id
    * @param contractURI contract-level metadata uri
    */
-  function createCollection(string calldata gameId, string calldata contractURI)
-    public
-    override
-    onlyDeveloper(gameId)
-    whenNotPaused
-  {
+  function createCollection(
+    string calldata gameId,
+    string calldata contractURI
+  ) public override onlyDeveloper(gameId) whenNotPaused {
     P12Asset collection = new P12Asset(address(this), contractURI);
     // record creator
     registry[address(collection)] = gameId;
@@ -93,12 +91,10 @@ contract P12AssetFactoryUpgradable is
    * @param collection collection address
    * @param newUri new Contract-level metadata uri
    */
-  function updateCollectionUri(address collection, string calldata newUri)
-    public
-    override
-    onlyCollectionDeveloper(collection)
-    whenNotPaused
-  {
+  function updateCollectionUri(
+    address collection,
+    string calldata newUri
+  ) public override onlyCollectionDeveloper(collection) whenNotPaused {
     P12Asset(collection).setContractURI(newUri);
   }
 
@@ -120,7 +116,7 @@ contract P12AssetFactoryUpgradable is
    * @dev throw error if not collection developer
    */
   function _checkCollectionDeveloper(address collection) private view {
-    if (P12CoinFactoryUpgradeable(p12CoinFactory).allGames(registry[collection]) != msg.sender)
+    if (P12CoinFactoryUpgradeable(p12CoinFactory).getGameDev(registry[collection]) != msg.sender)
       revert CommonError.NotGameDeveloper(msg.sender, registry[collection]);
   }
 
@@ -128,7 +124,7 @@ contract P12AssetFactoryUpgradable is
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
   modifier onlyDeveloper(string memory gameId) {
-    if (P12CoinFactoryUpgradeable(p12CoinFactory).allGames(gameId) != msg.sender)
+    if (P12CoinFactoryUpgradeable(p12CoinFactory).getGameDev(gameId) != msg.sender)
       revert CommonError.NotGameDeveloper(msg.sender, gameId);
     _;
   }

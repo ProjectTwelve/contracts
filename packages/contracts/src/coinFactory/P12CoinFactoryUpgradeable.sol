@@ -109,7 +109,7 @@ contract P12CoinFactoryUpgradeable is
    */
   function register(string memory gameId, address developer) external virtual override onlyDev {
     if (address(developer) == address(0)) revert CommonError.ZeroAddressSet();
-    allGames[gameId] = developer;
+    _gameDev[gameId] = developer;
     emit RegisterGame(gameId, developer);
   }
 
@@ -120,7 +120,7 @@ contract P12CoinFactoryUpgradeable is
    * @param gameId the game's id
    * @param gameCoinIconUrl game coin icon's url
    * @param amountGameCoin how many coin first mint
-   * @param amountP12 how many P12 coin developer would stake
+   * @param priceSqrtX96 X game coin per p12
    * @return gameCoinAddress the address of the new game coin
    */
   function create(
@@ -129,27 +129,43 @@ contract P12CoinFactoryUpgradeable is
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
-    uint256 amountP12
+    uint160 priceSqrtX96
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
-    if (msg.sender != allGames[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
-    if (amountP12 == 0) revert CommonError.NotEnoughP12();
+    if (msg.sender != _gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
-    address token0 = p12;
-    uint256 token0Amount = amountP12;
-    address token1 = address(gameCoinAddress);
-    uint256 token1Amount = amountGameCoinDesired;
+    address token0;
+    uint256 token0Amount;
+    address token1;
+    uint256 token1Amount;
+    uint256 amountP12;
 
     if (address(gameCoinAddress) < p12) {
       token0 = address(gameCoinAddress);
       token0Amount = amountGameCoinDesired;
       token1 = p12;
-      token1Amount = amountP12;
+      token1Amount = amountGameCoinDesired / (priceSqrtX96 ** 2);
+      amountP12 = token1Amount;
+    } else {
+      token0 = p12;
+      token0Amount = amountGameCoinDesired * ((2 ** 192 / priceSqrtX96));
+      amountP12 = token0Amount;
+      token1 = address(gameCoinAddress);
+      token1Amount = amountGameCoinDesired;
     }
 
+    // transfer amount P12
+    IERC20Upgradeable(p12).transferFrom(msg.sender, address(this), amountP12);
+    IERC20Upgradeable(p12).approve(address(uniswapPosManager), amountP12);
+
+    // aprove gamecoin
+    IERC20Upgradeable(gameCoinAddress).approve(address(uniswapPosManager), amountGameCoinDesired);
+
     // fee 0.3% tickSpacing 60
-    uniswapFactory.createPool(token0, token1, 3000);
+    // uniswapFactory.createPool(token0, token1, 3000);
+
+    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, priceSqrtX96);
 
     // create initial liquidity and get an nft
     uniswapPosManager.mint(
@@ -161,8 +177,8 @@ contract P12CoinFactoryUpgradeable is
         1000,
         token0Amount,
         token1Amount,
-        token0Amount,
-        token1Amount,
+        0,
+        0,
         msg.sender,
         block.timestamp + 1
       )
@@ -185,7 +201,7 @@ contract P12CoinFactoryUpgradeable is
     address gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
-    if (msg.sender != allGames[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
+    if (msg.sender != _gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     if (!_compareStrings(allGameCoins[gameCoinAddress], gameId)) revert MisMatchCoinWithGameId(gameCoinAddress, gameId);
     // Set the correct unlock time
     uint256 time;
@@ -274,7 +290,8 @@ contract P12CoinFactoryUpgradeable is
     address owner_,
     address p12_,
     IUniswapV3Factory uniswapFactory_,
-    INonfungiblePositionManager uniswapPosManager_
+    INonfungiblePositionManager uniswapPosManager_,
+    address gameCoinImpl_
   ) public initializer {
     if (address(p12_) == address(0)) revert CommonError.ZeroAddressSet();
     if (address(uniswapFactory_) == address(0)) revert CommonError.ZeroAddressSet();
@@ -283,6 +300,7 @@ contract P12CoinFactoryUpgradeable is
     p12 = p12_;
     uniswapFactory = uniswapFactory_;
     uniswapPosManager = uniswapPosManager_;
+    gameCoinImpl = gameCoinImpl_;
     IERC20Upgradeable(p12).safeApprove(address(uniswapPosManager_), type(uint256).max);
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
@@ -313,6 +331,10 @@ contract P12CoinFactoryUpgradeable is
 
   function setTokenIconUrl(address token, string calldata newUrl) public onlyGameDev(token) {
     IP12GameCoin(token).setGameCoinIconUrl(newUrl);
+  }
+
+  function getGameDev(string calldata gameId) public view override returns (address) {
+    return _gameDev[gameId];
   }
 
   /**
@@ -382,7 +404,7 @@ contract P12CoinFactoryUpgradeable is
     // initialize
     IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, gameId, gameCoinIconUrl);
     // mint initial amount
-    IP12GameCoin(gameCoinAddress).mint(msg.sender, amountGameCoin);
+    IP12GameCoin(gameCoinAddress).mint(address(this), amountGameCoin);
   }
 
   /**
@@ -423,7 +445,7 @@ contract P12CoinFactoryUpgradeable is
   }
 
   function _verifyGameDev(address token) internal view {
-    if (msg.sender != allGames[allGameCoins[token]]) revert CommonError.NotGameDeveloper(msg.sender, allGameCoins[token]);
+    if (msg.sender != _gameDev[allGameCoins[token]]) revert CommonError.NotGameDeveloper(msg.sender, allGameCoins[token]);
   }
 
   /**

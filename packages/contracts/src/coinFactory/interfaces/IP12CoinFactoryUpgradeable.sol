@@ -18,7 +18,7 @@ interface IP12CoinFactoryUpgradeable {
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
-    uint256 amountP12
+    uint160 priceSqrtX96
   ) external returns (address);
 
   //  mint coin and Launch a statement
@@ -28,6 +28,8 @@ interface IP12CoinFactoryUpgradeable {
   function executeMintCoin(address gameCoinAddress, bytes32 mintId) external returns (bool);
 
   function withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
+
+  function getGameDev(string memory) external returns (address);
 
   function setDev(address newDev) external;
 

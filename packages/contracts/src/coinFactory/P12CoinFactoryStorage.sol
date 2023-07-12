@@ -48,7 +48,7 @@ contract P12CoinFactoryStorage {
   uint256[40] private __gap;
 
   // gameId => developer address
-  mapping(string => address) public allGames;
+  mapping(string => address) public _gameDev;
   // gameCoinAddress => gameId
   mapping(address => string) public allGameCoins;
   // gameCoinAddress => declareMintId => MintCoinInfo

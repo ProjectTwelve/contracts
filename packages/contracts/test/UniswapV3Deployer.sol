@@ -109,7 +109,7 @@ library UniswapV3Deployer {
     string memory root = vm.projectRoot();
     string memory path = string.concat(root, '/vendor/NonfungibleTokenPositionDescriptor.json');
     bytes memory bytecode = abi.decode(stdJson.parseRaw(vm.readFile(path), '.bytecode'), (bytes));
-    bytes memory args = abi.encode(factory, tokenDes, WETH9);
+    bytes memory args = abi.encode(factory, WETH9, tokenDes);
 
     assembly {
       posManager := create(0, add(bytecode, 0x20), add(mload(bytecode), mload(args)))

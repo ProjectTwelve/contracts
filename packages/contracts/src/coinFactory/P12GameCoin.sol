@@ -36,7 +36,7 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
     string memory symbol_,
     string memory gameId_,
     string memory iconUrl_
-  ) public override {
+  ) public override initializer {
     _name = name_;
     _symbol = symbol_;
     _gameId = gameId_;
