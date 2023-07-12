@@ -25,7 +25,7 @@ contract AllTestBase is Test {
   }
 
   function testDeployAll() public {
-    testDeployAll();
+    mockDeployAll();
   }
 
   function mockDeployAll() public {

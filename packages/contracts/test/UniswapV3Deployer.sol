@@ -19,10 +19,7 @@ library UniswapV3Deployer {
   Vm constant vm = Vm(HEVM_ADDRESS);
 
   function deployUniswapV3Factory() public returns (address v3Factory) {
-    string memory root = vm.projectRoot();
-    string memory path = string.concat(root, '/vendor/UniswapV3Factory.json');
-
-    bytes memory bytecode = abi.decode(stdJson.parseRaw(vm.readFile(path), '.bytecode'), (bytes));
+    bytes memory bytecode = vm.getCode('vendor/UniswapV3Factory.json');
 
     assembly {
       v3Factory := create(0, add(bytecode, 0x20), mload(bytecode))
@@ -33,10 +30,7 @@ library UniswapV3Deployer {
   }
 
   function deployWETH9() public returns (address WETH9) {
-    string memory root = vm.projectRoot();
-    string memory path = string.concat(root, '/vendor/WETH9.json');
-
-    bytes memory bytecode = abi.decode(stdJson.parseRaw(vm.readFile(path), '.bytecode'), (bytes));
+    bytes memory bytecode = vm.getCode('vendor/WETH9.json');
 
     assembly {
       WETH9 := create(0, add(bytecode, 0x20), mload(bytecode))
@@ -47,13 +41,12 @@ library UniswapV3Deployer {
   }
 
   function deployUniswapV3Router(address v3factory, address WETH9) public returns (address v3Router) {
-    string memory root = vm.projectRoot();
-    string memory path = string.concat(root, '/vendor/SwapRouter.json');
-    bytes memory bytecode = abi.decode(stdJson.parseRaw(vm.readFile(path), '.bytecode'), (bytes));
+    bytes memory bytecode = vm.getCode('vendor/SwapRouter.json');
     bytes memory args = abi.encode(v3factory, WETH9);
+    bytes memory deployCode = abi.encodePacked(bytecode, args);
 
     assembly {
-      v3Router := create(0, add(bytecode, 0x20), add(mload(bytecode), mload(args)))
+      v3Router := create(0, add(deployCode, 0x20), mload(deployCode))
       if iszero(extcodesize(v3Router)) {
         revert(0, 0)
       }
@@ -62,7 +55,6 @@ library UniswapV3Deployer {
 
   function deployNFTDesLib() public returns (address nftMangerLib) {
     bytes memory bytecode = vm.getCode('vendor/NFTDescriptor.json');
-    // vm.deployCodeTo('/vendor/NFTDescriptor.json');
 
     // make it deterministic
     // deploy from a new account with nonce 0
@@ -95,9 +87,10 @@ library UniswapV3Deployer {
 
     bytes memory bytecode = vm.getCode('vendor/NonfungibleTokenPositionDescriptor.json');
     bytes memory args = abi.encode(WETH9, label);
+    bytes memory deployCode = abi.encodePacked(bytecode, args);
 
     assembly {
-      tokenDescriptor := create(0, add(bytecode, 0x20), add(mload(bytecode), mload(args)))
+      tokenDescriptor := create(0, add(deployCode, 0x20), mload(deployCode))
       if iszero(extcodesize(tokenDescriptor)) {
         revert(0, 0)
       }
@@ -106,13 +99,12 @@ library UniswapV3Deployer {
   }
 
   function deployPosManager(address factory, address WETH9, address tokenDes) public returns (address posManager) {
-    string memory root = vm.projectRoot();
-    string memory path = string.concat(root, '/vendor/NonfungibleTokenPositionDescriptor.json');
-    bytes memory bytecode = abi.decode(stdJson.parseRaw(vm.readFile(path), '.bytecode'), (bytes));
+    bytes memory bytecode = vm.getCode('vendor/NonfungiblePositionManager.json');
     bytes memory args = abi.encode(factory, WETH9, tokenDes);
+    bytes memory deployCode = abi.encodePacked(bytecode, args);
 
     assembly {
-      posManager := create(0, add(bytecode, 0x20), add(mload(bytecode), mload(args)))
+      posManager := create(0, add(deployCode, 0x20), mload(deployCode))
       if iszero(extcodesize(posManager)) {
         revert(0, 0)
       }
