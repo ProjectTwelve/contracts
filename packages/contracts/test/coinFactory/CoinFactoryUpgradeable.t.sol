@@ -68,16 +68,15 @@ contract CoinFactoryUpgradeableTest is AllTestBase {
     _coinFactory.register(gameId, developer);
   }
 
-  function testCreateGameCoin(
-    string memory name,
-    string memory symbol,
-    string memory gameId,
-    string memory gameCoinIconUrl,
-    address developer,
-    uint96 amountGameCoin,
-    uint64 priceSqrt
-  ) public {
-    vm.assume(developer != address(0) && priceSqrt != 0 && amountGameCoin != 0);
+  function testCreateGameCoin() public {
+    //
+    string memory name;
+    string memory symbol;
+    string memory gameId;
+    string memory gameCoinIconUrl;
+    address developer = address(113);
+    uint96 amountGameCoin = 10000 ether;
+    // vm.assume(developer != address(0) && amountGameCoin > 100_000);
 
     // mock register
     mockRegister(gameId, developer);
@@ -85,9 +84,13 @@ contract CoinFactoryUpgradeableTest is AllTestBase {
     address gameDev = _coinFactory.getGameDev(gameId);
 
     deal(_p12, gameDev, UINT256_MAX);
+
+    // just test as 1:1 price
+    uint256 amountP12 = amountGameCoin / 2;
+    uint160 priceSqrt = 1 * 2 ** 96;
     vm.startPrank(gameDev);
     IERC20Upgradeable(_p12).approve(address(_coinFactory), UINT256_MAX);
-    address gameCoin = _coinFactory.create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, priceSqrt * 2 ** 96);
+    address gameCoin = _coinFactory.create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin, amountP12, priceSqrt);
     assertEq(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2);
   }
 

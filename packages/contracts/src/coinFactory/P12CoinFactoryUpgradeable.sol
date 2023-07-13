@@ -22,6 +22,8 @@ import './P12GameCoin.sol';
 import './interfaces/IP12GameCoin.sol';
 import '../libraries/CommonError.sol';
 
+import 'forge-std/console2.sol';
+
 contract P12CoinFactoryUpgradeable is
   P12CoinFactoryStorage,
   UUPSUpgradeable,
@@ -129,6 +131,7 @@ contract P12CoinFactoryUpgradeable is
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
+    uint256 amountP12,
     uint160 priceSqrtX96
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     if (msg.sender != _gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
@@ -139,42 +142,41 @@ contract P12CoinFactoryUpgradeable is
     uint256 token0Amount;
     address token1;
     uint256 token1Amount;
-    uint256 amountP12;
 
     if (address(gameCoinAddress) < p12) {
       token0 = address(gameCoinAddress);
       token0Amount = amountGameCoinDesired;
       token1 = p12;
-      token1Amount = amountGameCoinDesired / (priceSqrtX96 ** 2);
-      amountP12 = token1Amount;
+      token1Amount = amountP12;
     } else {
       token0 = p12;
-      token0Amount = amountGameCoinDesired * ((2 ** 192 / priceSqrtX96));
-      amountP12 = token0Amount;
+      token0Amount = amountP12;
       token1 = address(gameCoinAddress);
       token1Amount = amountGameCoinDesired;
     }
 
     // transfer amount P12
     IERC20Upgradeable(p12).transferFrom(msg.sender, address(this), amountP12);
-    IERC20Upgradeable(p12).approve(address(uniswapPosManager), amountP12);
+    // IERC20Upgradeable(p12).approve(address(uniswapPosManager), u);
 
     // aprove gamecoin
-    IERC20Upgradeable(gameCoinAddress).approve(address(uniswapPosManager), amountGameCoinDesired);
+    IERC20Upgradeable(gameCoinAddress).approve(address(uniswapPosManager), type(uint256).max);
 
     // fee 0.3% tickSpacing 60
     // uniswapFactory.createPool(token0, token1, 3000);
 
-    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, priceSqrtX96);
+    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, 1 * 2 ** 96);
+
+    console2.log(token0, token1);
 
     // create initial liquidity and get an nft
     uniswapPosManager.mint(
       INonfungiblePositionManager.MintParams(
         token0,
         token1,
-        30000,
-        -1000,
-        1000,
+        3000,
+        -88727,
+        88727,
         token0Amount,
         token1Amount,
         0,

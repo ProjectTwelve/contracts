@@ -18,6 +18,7 @@ interface IP12CoinFactoryUpgradeable {
     string memory gameId,
     string memory gameCoinIconUrl,
     uint256 amountGameCoin,
+    uint256 amountP12,
     uint160 priceSqrtX96
   ) external returns (address);
 

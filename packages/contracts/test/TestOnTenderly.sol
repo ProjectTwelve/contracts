@@ -1,19 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 
-import { Vm } from 'forge-std/Vm.sol';
-import 'test/UniswapV3Deployer.sol';
-import { P12Token } from 'src/token/P12Token.sol';
+import 'forge-std/Script.sol';
+
 import 'src/coinFactory/P12CoinFactoryUpgradeable.sol';
-import { P12GameCoin } from 'src/coinFactory/P12GameCoin.sol';
-import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
-import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
 
-import 'forge-std/Test.sol';
+import { P12Token } from 'src/token/P12Token.sol';
 
-contract AllTestBase is Test {
+contract TestOnTenderly is Script {
   uint256 _ethFork;
-  address _owner = vm.addr(12);
+  address _owner = 0x4A0bB26Cdf9107033117e96eD3e2CE7Fa2ffbD87;
   address _v3Factory;
   address _weth9;
   address _v3router;
@@ -21,15 +17,32 @@ contract AllTestBase is Test {
   address _p12;
   IP12CoinFactoryUpgradeable _coinFactory;
 
-  function setUp() public virtual {
-    // use fork network to avoid manual deployment
-    string memory MAINNET_RPC_URL = vm.envString('ETH_CHAIN_RPC_URL');
-    _ethFork = vm.createSelectFork(MAINNET_RPC_URL, 17683004);
-    mockDeployAll();
-  }
+  function run() public {
+    vm.startBroadcast();
 
-  function testDeployAll() public {
     mockDeployAll();
+
+    string memory gameId = '1';
+    // tmp private key
+    // 564285758b2888408bad2ce9785e239ca8ce9e88c3d32b2128ececaefdfbf310
+    // 0x4A0bB26Cdf9107033117e96eD3e2CE7Fa2ffbD87
+
+    // mock register
+    _coinFactory.setDev(0x4A0bB26Cdf9107033117e96eD3e2CE7Fa2ffbD87);
+    _coinFactory.register(gameId, 0x4A0bB26Cdf9107033117e96eD3e2CE7Fa2ffbD87);
+
+    address gameDev = _coinFactory.getGameDev(gameId);
+
+    uint256 amountGameCoin = 1_000_000 ether;
+
+    // just test as 1:1 price
+    uint256 amountP12 = amountGameCoin / 2;
+    uint160 priceSqrt = 1 * 2 ** 96;
+
+    IERC20Upgradeable(_p12).approve(address(_coinFactory), UINT256_MAX);
+    // address gameCoin = _coinFactory.create('test game coin', 'tgc', gameId, '', amountGameCoin, amountP12, priceSqrt);
+
+    vm.stopBroadcast();
   }
 
   function mockDeployAll() public {
@@ -48,6 +61,8 @@ contract AllTestBase is Test {
 
     // deploy p12
     _p12 = address(new P12Token(_owner, 'Project Twleve', 'P12', UINT256_MAX));
+
+    P12Token(_p12).mint(0x4A0bB26Cdf9107033117e96eD3e2CE7Fa2ffbD87, type(uint128).max);
 
     // deploy game coin impl
     address gameCoinImpl = address(new P12GameCoin());

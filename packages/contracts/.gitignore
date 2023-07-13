@@ -6,6 +6,7 @@ typechain
 doc
 out
 forge-cache
+broadcast
 
 #Hardhat files
 cache
