@@ -11,7 +11,7 @@
   "scripts": {
     "compile": "hardhat compile",
     "deploy": "hardhat deploy",
-    "verify": "hardhat run ./tools/verify.ts",
+    "verify": "hardhat verifyDeployment",
     "export": "hardhat run ./tools/export.ts",
     "doc:gen": "hardhat docgen",
     "doc:dev": "docusaurus start",

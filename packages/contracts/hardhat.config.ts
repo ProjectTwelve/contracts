@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import * as envEnc from '@chainlink/env-enc';
 
 import fs from 'fs';
 import { HardhatUserConfig, task } from 'hardhat/config';
@@ -16,8 +17,12 @@ import '@openzeppelin/hardhat-upgrades';
 import 'solidity-docgen';
 import '@tovarishfin/hardhat-yul';
 
+import verifyDeploymentOnScan from './tasks/verify';
+
+envEnc.config();
 dotenv.config();
 addFlatTask();
+task('verifyDeployment', 'verify hardhat deployment on scan').setAction(verifyDeploymentOnScan);
 
 function getRemapping() {
   return (
@@ -45,6 +50,11 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
 const addresses = process.env.ADDESSSES ? process.env.ADDESSSES.split(',') : [];
+const deployer = process.env.DEPLOYER;
+
+if (deployer === undefined) {
+  throw new Error('ENV NOT SET');
+}
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -94,6 +104,13 @@ const config: HardhatUserConfig = {
       gasPrice: 'auto', //
       deploy: ['deploy/pudge'],
     },
+    mumbai: {
+      url: process.env.MUMBAI_RPC_URL,
+      live: true,
+      accounts: accounts,
+      gasPrice: 'auto', //
+      deploy: ['deploy/mumbai'],
+    },
     goerli: {
       url: process.env.GOERLI_URL || '',
       live: true,
@@ -120,6 +137,7 @@ const config: HardhatUserConfig = {
       default: 0,
       p12TestNet: addresses[0],
       pudge: addresses[0],
+      mumbai: deployer,
     },
     owner: {
       default: 0,
@@ -187,8 +205,8 @@ const config: HardhatUserConfig = {
     apiKey: {
       p12TestNet: 'p12',
       pudge: 'p12',
-      rinkeby: process.env.ETHERSCAN_API_KEY!,
       goerli: process.env.ETHERSCAN_API_KEY!,
+      polygonMumbai: process.env.POLYSCAN_API_KEY!,
     },
     customChains: [
       {

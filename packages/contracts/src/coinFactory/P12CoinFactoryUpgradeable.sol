@@ -22,8 +22,6 @@ import './P12GameCoin.sol';
 import './interfaces/IP12GameCoin.sol';
 import '../libraries/CommonError.sol';
 
-import 'forge-std/console2.sol';
-
 contract P12CoinFactoryUpgradeable is
   P12CoinFactoryStorage,
   UUPSUpgradeable,
@@ -136,6 +134,7 @@ contract P12CoinFactoryUpgradeable is
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     if (msg.sender != _gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
+
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
     address token0;
@@ -167,16 +166,14 @@ contract P12CoinFactoryUpgradeable is
 
     uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, 1 * 2 ** 96);
 
-    console2.log(token0, token1);
-
     // create initial liquidity and get an nft
     uniswapPosManager.mint(
       INonfungiblePositionManager.MintParams(
         token0,
         token1,
         3000,
-        -88727,
-        88727,
+        -88680,
+        88680,
         token0Amount,
         token1Amount,
         0,
