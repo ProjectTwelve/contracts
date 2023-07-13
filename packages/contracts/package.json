@@ -20,6 +20,8 @@
     "prettier": "prettier -w .",
     "test": "hardhat test --deploy-fixture",
     "test:analysis": "REPORT_GAS=true hardhat test",
+    "enc": "env-enc set-pw",
+    "enc:set": "env-enc set",
     "coverage": "HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
     "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\"",
     "estimate-size": "hardhat size-contracts --max-memory 8096"
@@ -89,6 +91,7 @@
     "typescript": "^4.5.4"
   },
   "dependencies": {
+    "@chainlink/env-enc": "^1.0.5",
     "@openzeppelin/contracts": "^4.9.2",
     "@openzeppelin/contracts-upgradeable": "^4.9.2",
     "@openzeppelin/upgrades-core": "^1.19.1",
