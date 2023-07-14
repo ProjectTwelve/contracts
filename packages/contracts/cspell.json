@@ -2,14 +2,17 @@
   "words": [
     "ADDESSSES",
     "adoc",
+    "Bips",
     "blockhash",
     "Blockhash",
+    "blocktime",
     "bytecode",
     "chainid",
     "checkins",
     "checkpointed",
     "codeql",
     "composability",
+    "concat",
     "Consts",
     "crytic",
     "Dapphub",
@@ -27,6 +30,7 @@
     "inheritdoc",
     "Initializable",
     "ipfs",
+    "iszero",
     "IWETH",
     "keccak",
     "koro",
@@ -36,12 +40,15 @@
     "mulmod",
     "multicall",
     "Multicall",
+    "multicalls",
     "nomiclabs",
+    "Nonfungible",
     "nopadding",
     "Numberish",
     "Oraclize",
     "Pausable",
     "pbjfli",
+    "POLYSCAN",
     "Proxiable",
     "proxied",
     "pudge",
@@ -68,13 +75,12 @@
     "uqdiv",
     "uups",
     "UUPS",
-    "xwbf",
-    "Nonfungible",
-    "concat",
-    "iszero",
-    "multicalls",
-    "Bips",
-    "blocktime"
+    "xwbf"
   ],
-  "ignorePaths": ["typechain-types/**", "flatten/**", "lib/**", "out/**"]
+  "ignorePaths": [
+    "typechain-types/**",
+    "flatten/**",
+    "lib/**",
+    "out/**"
+  ]
 }

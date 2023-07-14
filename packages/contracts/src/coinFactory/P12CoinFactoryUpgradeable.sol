@@ -86,7 +86,7 @@ contract P12CoinFactoryUpgradeable is
     // fee 0.3% tickSpacing 60
     uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, priceSqrtX96);
 
-    // create initial liquidity and givev nft to msgsender
+    // create initial liquidity and givev nft to msg.sender
     uniswapPosManager.mint(
       INonfungiblePositionManager.MintParams(
         token0,

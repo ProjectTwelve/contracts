@@ -104,6 +104,14 @@ const config: HardhatUserConfig = {
       gasPrice: 'auto', //
       deploy: ['deploy/pudge'],
     },
+    butcher: {
+      url: 'https://butcher.rpc.p12.games',
+      live: true,
+      chainId: 248832,
+      accounts: accounts,
+      gasPrice: 'auto', //
+      deploy: ['deploy/butcher'],
+    },
     mumbai: {
       url: process.env.MUMBAI_RPC_URL,
       live: true,
@@ -134,13 +142,12 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      default: 0,
       p12TestNet: addresses[0],
       pudge: addresses[0],
       mumbai: deployer,
+      butcher: deployer,
     },
     owner: {
-      default: 0,
       pudge: addresses[0],
     },
   },
@@ -183,12 +190,8 @@ const config: HardhatUserConfig = {
       signedTx: '',
     },
   },
-
   external: {
     contracts: [
-      { artifacts: 'node_modules/@uniswap/v2-core/build/' },
-      { artifacts: 'node_modules/@uniswap/v2-periphery/build/' },
-      { artifacts: 'node_modules/canonical-weth/build/contracts/' },
       {
         artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
       },
@@ -205,6 +208,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       p12TestNet: 'p12',
       pudge: 'p12',
+      butcher: 'p12',
       goerli: process.env.ETHERSCAN_API_KEY!,
       polygonMumbai: process.env.POLYSCAN_API_KEY!,
     },
@@ -223,6 +227,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://explorer.p12.games/api',
           browserURL: 'https://explorer.p12.games/',
+        },
+      },
+      {
+        network: 'butcher',
+        chainId: 248832,
+        urls: {
+          apiURL: 'https://butcher.explorer.p12.games/api',
+          browserURL: 'https://butcher.explorer.p12.games',
         },
       },
     ],
