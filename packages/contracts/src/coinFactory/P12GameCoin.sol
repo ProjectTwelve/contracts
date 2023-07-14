@@ -18,6 +18,7 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
    */
   string private _name;
   string private _symbol;
+  string private _uri;
 
   /**
    * @param name_ game coin name
@@ -28,11 +29,13 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
     address owner_,
     string calldata name_,
     string calldata symbol_,
+    string calldata uri_,
     uint256 gameId_
   ) public override initializer {
     _name = name_;
     _symbol = symbol_;
     _gameId = gameId_;
+    _uri = uri_;
 
     __ERC20Permit_init(name_);
     __ERC20_init(name_, symbol_);
@@ -74,6 +77,13 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
    */
   function symbol() public view virtual override returns (string memory) {
     return _symbol;
+  }
+
+  /**
+   * @dev return token uri
+   */
+  function tokenURI() public view returns (string memory) {
+    return _uri;
   }
 
   /**

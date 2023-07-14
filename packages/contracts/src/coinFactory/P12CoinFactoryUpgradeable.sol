@@ -49,13 +49,14 @@ contract P12CoinFactoryUpgradeable is
   function create(
     string calldata name,
     string calldata symbol,
+    string calldata uri,
     uint256 gameId,
     uint256 amountGameCoin,
     uint256 amountP12,
     uint160 priceSqrtX96
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
-    gameCoinAddress = _create(name, symbol, gameId, amountGameCoin);
+    gameCoinAddress = _create(name, symbol, uri, gameId, amountGameCoin);
 
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
@@ -310,13 +311,14 @@ contract P12CoinFactoryUpgradeable is
   function _create(
     string calldata name,
     string calldata symbol,
+    string calldata uri,
     uint256 gameId,
     uint256 amountGameCoin
   ) internal virtual returns (address gameCoinAddress) {
     // erc1167 clone
     gameCoinAddress = ClonesUpgradeable.clone(gameCoinImpl);
     // initialize
-    IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, gameId);
+    IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, uri, gameId);
     // mint initial amount
     IP12GameCoin(gameCoinAddress).mint(address(this), amountGameCoin);
   }

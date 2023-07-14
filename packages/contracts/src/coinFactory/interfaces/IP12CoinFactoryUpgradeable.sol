@@ -23,6 +23,7 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
   function create(
     string calldata name,
     string calldata symbol,
+    string calldata uri,
     uint256 gameId,
     uint256 amountGameCoin,
     uint256 amountP12,
