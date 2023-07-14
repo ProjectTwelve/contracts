@@ -22,9 +22,6 @@ contract AllTestBase is Test {
   IP12CoinFactoryUpgradeable _coinFactory;
 
   function setUp() public virtual {
-    // use fork network to avoid manual deployment
-    string memory MAINNET_RPC_URL = vm.envString('ETH_CHAIN_RPC_URL');
-    _ethFork = vm.createSelectFork(MAINNET_RPC_URL, 17683004);
     mockDeployAll();
   }
 
@@ -34,17 +31,11 @@ contract AllTestBase is Test {
 
   function mockDeployAll() public {
     // deploy uniswap
-    // _v3Factory = UniswapV3Deployer.deployUniswapV3Factory();
-    // _weth9 = UniswapV3Deployer.deployWETH9();
-    // _v3router = UniswapV3Deployer.deployUniswapV3Router(_v3Factory, _weth9);
-    // address nftPosDes = UniswapV3Deployer.deployNFTPositionDescriptor(_weth9, 'P12');
-    // _nftPos = UniswapV3Deployer.deployPosManager(_v3Factory, _weth9, nftPosDes);
-
-    // https://github.com/Uniswap/v3-periphery/blob/main/deploys.md
-    _v3Factory = 0x1F98431c8aD98523631AE4a59f267346ea31F984;
-    _weth9 = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    _v3router = 0xE592427A0AEce92De3Edee1F18E0157C05861564;
-    _nftPos = 0xC36442b4a4522E871399CD717aBDD847Ab11FE88;
+    _v3Factory = UniswapV3Deployer.deployUniswapV3Factory();
+    _weth9 = UniswapV3Deployer.deployWETH9();
+    _v3router = UniswapV3Deployer.deployUniswapV3Router(_v3Factory, _weth9);
+    address nftPosDes = UniswapV3Deployer.deployNFTPositionDescriptor(_weth9, 'P12');
+    _nftPos = UniswapV3Deployer.deployPosManager(_v3Factory, _weth9, nftPosDes);
 
     // deploy p12
     _p12 = address(new P12Token(_owner, 'Project Twleve', 'P12', UINT256_MAX));

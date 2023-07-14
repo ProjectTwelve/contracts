@@ -164,7 +164,7 @@ contract P12CoinFactoryUpgradeable is
     // fee 0.3% tickSpacing 60
     // uniswapFactory.createPool(token0, token1, 3000);
 
-    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, 1 * 2 ** 96);
+    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, priceSqrtX96);
 
     // create initial liquidity and get an nft
     uniswapPosManager.mint(
@@ -172,6 +172,7 @@ contract P12CoinFactoryUpgradeable is
         token0,
         token1,
         3000,
+        // Tick range should be an integer multiple of the tick space
         -88680,
         88680,
         token0Amount,
