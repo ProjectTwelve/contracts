@@ -9,15 +9,9 @@ import { Ownable2StepUpgradeable } from '@openzeppelin/contracts-upgradeable/acc
 
 contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownable2StepUpgradeable, IP12GameCoin {
   /**
-   * @dev Off-chain data, game id
+   * @dev Off-chain game id
    */
   uint256 private _gameId;
-
-  /**
-   * @dev override oz erc20 to update both variable
-   */
-  string private _name;
-  string private _symbol;
   string private _uri;
 
   /**
@@ -32,8 +26,6 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
     string calldata uri_,
     uint256 gameId_
   ) public override initializer {
-    _name = name_;
-    _symbol = symbol_;
     _gameId = gameId_;
     _uri = uri_;
 
@@ -55,28 +47,14 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
   /**
    * @dev transfer function for just a basic transfer with an off-chain account
    * @dev called when a user want to deposit his coin from on-chain to off-chain
+   * @notice deposit is valid only when recipient is on-chain custodian address
    * @param recipient address which receive the coin, usually be custodian address
-   * @param account off-chain account
+   * @param account off-chain account hash
    * @param amount amount of this transfer
    */
-  function transferWithAccount(address recipient, string memory account, uint256 amount) external override {
+  function depositToAccount(address recipient, uint256 amount, bytes32 account) external override {
     transfer(recipient, amount);
-    emit TransferWithAccount(recipient, account, amount);
-  }
-
-  /**
-   * @dev Returns the name of the token.
-   */
-  function name() public view virtual override returns (string memory) {
-    return _name;
-  }
-
-  /**
-   * @dev Returns the symbol of the token, usually a shorter version of the
-   * name.
-   */
-  function symbol() public view virtual override returns (string memory) {
-    return _symbol;
+    emit DepositToAccount(recipient, account, amount);
   }
 
   /**

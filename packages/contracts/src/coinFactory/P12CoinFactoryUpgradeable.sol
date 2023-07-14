@@ -77,19 +77,16 @@ contract P12CoinFactoryUpgradeable is
       token1Amount = amountGameCoinDesired;
     }
 
-    // transfer amount P12
-    IERC20Upgradeable(p12).transferFrom(msg.sender, address(this), amountP12);
-    // IERC20Upgradeable(p12).approve(address(uniswapPosManager), u);
+    // transfer P12 to address this for later liquidity create
+    IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), amountP12);
 
     // aprove gamecoin
     IERC20Upgradeable(gameCoinAddress).approve(address(uniswapPosManager), type(uint256).max);
 
     // fee 0.3% tickSpacing 60
-    // uniswapFactory.createPool(token0, token1, 3000);
-
     uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, priceSqrtX96);
 
-    // create initial liquidity and get an nft
+    // create initial liquidity and givev nft to msgsender
     uniswapPosManager.mint(
       INonfungiblePositionManager.MintParams(
         token0,
@@ -315,8 +312,9 @@ contract P12CoinFactoryUpgradeable is
     uint256 gameId,
     uint256 amountGameCoin
   ) internal virtual returns (address gameCoinAddress) {
-    // erc1167 clone
-    gameCoinAddress = ClonesUpgradeable.clone(gameCoinImpl);
+    bytes32 salt = keccak256(abi.encode(gameId, ++_gameCoinCount[gameId]));
+    // erc1167 deterministic clone
+    gameCoinAddress = ClonesUpgradeable.cloneDeterministic(gameCoinImpl, salt);
     // initialize
     IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, uri, gameId);
     // mint initial amount
@@ -346,6 +344,15 @@ contract P12CoinFactoryUpgradeable is
 
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+
+  /**
+   * @dev get a specific game next coin's deterministic address
+   * @param gameId off chain game Id
+   */
+  function getGameNextCoinAddress(uint256 gameId) public view returns (address gameCoinAddress) {
+    bytes32 salt = keccak256(abi.encode(gameId, _gameCoinCount[gameId] + 1));
+    gameCoinAddress = ClonesUpgradeable.predictDeterministicAddress(gameCoinImpl, salt);
+  }
 
   /**
    * @dev get current block's timestamp

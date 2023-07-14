@@ -37,5 +37,8 @@ contract P12CoinFactoryStorage {
   // gameCoinAddress => declareMintId
   mapping(address => bytes32) public preMintIds;
 
-  uint256[40] private __gap;
+  // gameId => coin amount
+  mapping(uint256 => uint256) internal _gameCoinCount;
+
+  uint256[39] private __gap;
 }

@@ -7,17 +7,13 @@ interface IP12GameCoin is IERC1046 {
   /**
    * @dev record the event that transfer coin with a off-chain account, which will be used when someone want to deposit his coin to off-chain game.
    */
-  event TransferWithAccount(address recipient, string account, uint256 amount);
-
-  event NameUpdated(string oldName, string newName);
-
-  event SymbolUpdated(string oldSymbol, string newSymbol);
+  event DepositToAccount(address indexed recipient, bytes32 indexed account, uint256 amount);
 
   function mint(address to, uint256 amount) external;
 
   function gameId() external view returns (uint256);
 
-  function transferWithAccount(address recipient, string memory account, uint256 amount) external;
+  function depositToAccount(address recipient, uint256 amount, bytes32 account) external;
 
   function initialize(
     address owner_,
