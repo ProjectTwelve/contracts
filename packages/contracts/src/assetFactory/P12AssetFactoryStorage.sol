@@ -5,7 +5,7 @@ contract P12AssetFactoryStorage {
   /**
     @dev collection address => gameId
   */
-  mapping(address => string) public registry;
+  mapping(address => uint256) public registry;
 
   /**
    * p12CoinFactory address, for reading game and developer relationship

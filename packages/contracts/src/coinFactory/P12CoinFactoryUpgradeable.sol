@@ -2,114 +2,38 @@
 pragma solidity 0.8.19;
 
 import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
-import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
-import { IERC20PermitUpgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-IERC20PermitUpgradeable.sol';
 import { IERC20Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-
 import { ClonesUpgradeable } from '@openzeppelin/contracts-upgradeable/proxy/ClonesUpgradeable.sol';
-import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
-import '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
-import '../access/SafeOwnableUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
-import '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
-import './interfaces/IP12CoinFactoryUpgradeable.sol';
-import '../staking/interfaces/IP12MineUpgradeable.sol';
-import './P12CoinFactoryStorage.sol';
-import '../staking/interfaces/IGaugeController.sol';
-import './P12GameCoin.sol';
-import './interfaces/IP12GameCoin.sol';
-import '../libraries/CommonError.sol';
+import { Ownable2StepUpgradeable } from '@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol';
+import { UUPSUpgradeable } from '@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol';
+import { ReentrancyGuardUpgradeable } from '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
+import { PausableUpgradeable } from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
+import { SafeERC20Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
+import { IERC20Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import { IP12CoinFactoryUpgradeable } from 'src/coinFactory/interfaces/IP12CoinFactoryUpgradeable.sol';
+import { IP12MineUpgradeable } from '../staking/interfaces/IP12MineUpgradeable.sol';
+import { P12CoinFactoryStorage } from './P12CoinFactoryStorage.sol';
+import { IP12GameCoin } from 'src/coinFactory/interfaces/IP12GameCoin.sol';
+import { CommonError } from 'src/libraries/CommonError.sol';
 
 contract P12CoinFactoryUpgradeable is
   P12CoinFactoryStorage,
   UUPSUpgradeable,
   IP12CoinFactoryUpgradeable,
-  SafeOwnableUpgradeable,
+  Ownable2StepUpgradeable,
   ReentrancyGuardUpgradeable,
   PausableUpgradeable
 {
   using SafeERC20Upgradeable for IERC20Upgradeable;
-
-  //============ External ============
-  /**
-   * @dev set dev address
-   * @param newDev new dev address
-   */
-  function setDev(address newDev) external virtual override onlyOwner {
-    if (newDev == address(0)) revert CommonError.ZeroAddressSet();
-    address oldDev = dev;
-    dev = newDev;
-    emit SetDev(oldDev, newDev);
-  }
-
-  /**
-   * @dev set p12mine contract address
-   * @param newP12Mine new p12mine address
-   */
-  function setP12Mine(IP12MineUpgradeable newP12Mine) external virtual override onlyOwner {
-    if (address(newP12Mine) == address(0)) revert CommonError.ZeroAddressSet();
-    IP12MineUpgradeable oldP12Mine = p12Mine;
-    p12Mine = newP12Mine;
-    emit SetP12Mine(oldP12Mine, newP12Mine);
-  }
-
-  /**
-   * @dev set gaugeController contract address
-   * @param newGaugeController new gaugeController address
-   */
-  function setGaugeController(IGaugeController newGaugeController) external virtual override onlyOwner {
-    if (address(newGaugeController) == address(0)) revert CommonError.ZeroAddressSet();
-    IGaugeController oldGaugeController = gaugeController;
-    gaugeController = newGaugeController;
-    emit SetGaugeController(oldGaugeController, newGaugeController);
-  }
-
-  /**
-   * @dev set p12Token address
-   * reserved only during development
-   * @param newP12Token new p12Token address
-   */
-  function setP12Token(address newP12Token) external virtual override onlyOwner {
-    if (address(newP12Token) == address(0)) revert CommonError.ZeroAddressSet();
-    address oldP12Token = p12;
-    p12 = newP12Token;
-    emit SetP12Token(oldP12Token, newP12Token);
-  }
-
-  /**
-   * @dev set uniswapFactory address
-   * reserved only during development
-   * @param newUniswapFactory new UniswapFactory address
-   */
-  function setUniswapFactory(IUniswapV3Factory newUniswapFactory) external virtual override onlyOwner {
-    if (address(newUniswapFactory) == address(0)) revert CommonError.ZeroAddressSet();
-    IUniswapV3Factory oldUniswapFactory = newUniswapFactory;
-    uniswapFactory = newUniswapFactory;
-    emit SetUniswapFactory(oldUniswapFactory, newUniswapFactory);
-  }
-
-  /**
-   * @dev set uniswapRouter address
-   * reserved only during development
-   * @param uniswapPosManager_ new uniswapPosManager address
-   */
-  function setUniswapPosManager(INonfungiblePositionManager uniswapPosManager_) external virtual override onlyOwner {
-    if (address(uniswapPosManager_) == address(0)) revert CommonError.ZeroAddressSet();
-    INonfungiblePositionManager oldUniswapRouter = uniswapPosManager_;
-    uniswapPosManager_ = uniswapPosManager_;
-    emit SetUniswapPosManager(oldUniswapRouter, uniswapPosManager_);
-  }
 
   /**
    * @dev create binding between game and developer, only called by p12 backend
    * @param gameId game id
    * @param developer developer address, who own this game
    */
-  function register(string memory gameId, address developer) external virtual override onlyDev {
+  function register(uint256 gameId, address developer) external virtual override onlySigner {
     if (address(developer) == address(0)) revert CommonError.ZeroAddressSet();
-    _gameDev[gameId] = developer;
+    gameDev[gameId] = developer;
     emit RegisterGame(gameId, developer);
   }
 
@@ -118,22 +42,20 @@ contract P12CoinFactoryUpgradeable is
    * @param name new game coin's name
    * @param symbol game coin's symbol
    * @param gameId the game's id
-   * @param gameCoinIconUrl game coin icon's url
    * @param amountGameCoin how many coin first mint
    * @param priceSqrtX96 X game coin per p12
    * @return gameCoinAddress the address of the new game coin
    */
   function create(
-    string memory name,
-    string memory symbol,
-    string memory gameId,
-    string memory gameCoinIconUrl,
+    string calldata name,
+    string calldata symbol,
+    uint256 gameId,
     uint256 amountGameCoin,
     uint256 amountP12,
     uint160 priceSqrtX96
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
-    if (msg.sender != _gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
-    gameCoinAddress = _create(name, symbol, gameId, gameCoinIconUrl, amountGameCoin);
+    if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
+    gameCoinAddress = _create(name, symbol, gameId, amountGameCoin);
 
     uint256 amountGameCoinDesired = amountGameCoin / 2;
 
@@ -184,7 +106,7 @@ contract P12CoinFactoryUpgradeable is
       )
     );
 
-    allGameCoins[gameCoinAddress] = gameId;
+    coinGameIds[gameCoinAddress] = gameId;
     emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
     return gameCoinAddress;
   }
@@ -197,12 +119,12 @@ contract P12CoinFactoryUpgradeable is
    * @param success whether the operation success
    */
   function queueMintCoin(
-    string memory gameId,
+    uint256 gameId,
     address gameCoinAddress,
     uint256 amountGameCoin
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
-    if (msg.sender != _gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
-    if (!_compareStrings(allGameCoins[gameCoinAddress], gameId)) revert MisMatchCoinWithGameId(gameCoinAddress, gameId);
+    if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
+    if (coinGameIds[gameCoinAddress] != gameId) revert MisMatchCoinWithGameId(gameCoinAddress, gameId);
     // Set the correct unlock time
     uint256 time;
     uint256 currentTimestamp = _getBlockTimestamp();
@@ -222,7 +144,7 @@ contract P12CoinFactoryUpgradeable is
 
     uint256 delayD = getMintDelay(address(gameCoinAddress), amountGameCoin);
 
-    bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time, _initHash);
+    bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time);
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
 
     emit QueueMintCoin(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
@@ -271,7 +193,7 @@ contract P12CoinFactoryUpgradeable is
     address userAddress,
     address gameCoinAddress,
     uint256 amountGameCoin
-  ) external virtual override onlyDev returns (bool) {
+  ) external virtual override onlySigner returns (bool) {
     IERC20Upgradeable(address(gameCoinAddress)).safeTransfer(userAddress, amountGameCoin);
     emit Withdraw(userAddress, gameCoinAddress, amountGameCoin);
     return true;
@@ -289,22 +211,20 @@ contract P12CoinFactoryUpgradeable is
   function initialize(
     address owner_,
     address p12_,
-    IUniswapV3Factory uniswapFactory_,
     INonfungiblePositionManager uniswapPosManager_,
     address gameCoinImpl_
   ) public initializer {
     if (address(p12_) == address(0)) revert CommonError.ZeroAddressSet();
-    if (address(uniswapFactory_) == address(0)) revert CommonError.ZeroAddressSet();
     if (address(uniswapPosManager_) == address(0)) revert CommonError.ZeroAddressSet();
 
     p12 = p12_;
-    uniswapFactory = uniswapFactory_;
     uniswapPosManager = uniswapPosManager_;
     gameCoinImpl = gameCoinImpl_;
     IERC20Upgradeable(p12).safeApprove(address(uniswapPosManager_), type(uint256).max);
     __ReentrancyGuard_init_unchained();
     __Pausable_init_unchained();
-    __Ownable_init_unchained(owner_);
+    __Ownable2Step_init();
+    _transferOwnership(owner_);
   }
 
   /**
@@ -329,12 +249,8 @@ contract P12CoinFactoryUpgradeable is
     return true;
   }
 
-  function setTokenIconUrl(address token, string calldata newUrl) public onlyGameDev(token) {
-    IP12GameCoin(token).setGameCoinIconUrl(newUrl);
-  }
-
-  function getGameDev(string calldata gameId) public view override returns (address) {
-    return _gameDev[gameId];
+  function getGameDev(uint256 gameId) public view override returns (address) {
+    return gameDev[gameId];
   }
 
   /**
@@ -389,20 +305,18 @@ contract P12CoinFactoryUpgradeable is
    * @param name game coin name
    * @param symbol game coin symbol
    * @param gameId game id
-   * @param gameCoinIconUrl game coin icon's url
    * @param amountGameCoin how many for first mint
    */
   function _create(
-    string memory name,
-    string memory symbol,
-    string memory gameId,
-    string memory gameCoinIconUrl,
+    string calldata name,
+    string calldata symbol,
+    uint256 gameId,
     uint256 amountGameCoin
   ) internal virtual returns (address gameCoinAddress) {
     // erc1167 clone
     gameCoinAddress = ClonesUpgradeable.clone(gameCoinImpl);
     // initialize
-    IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, gameId, gameCoinIconUrl);
+    IP12GameCoin(gameCoinAddress).initialize(address(this), name, symbol, gameId);
     // mint initial amount
     IP12GameCoin(gameCoinAddress).mint(address(this), amountGameCoin);
   }
@@ -413,19 +327,17 @@ contract P12CoinFactoryUpgradeable is
    * @param declarer address which declare to mint game coin
    * @param amount how much to mint
    * @param timestamp time when declare
-   * @param salt a random bytes32
    * @return hash mintId
    */
   function _hashOperation(
     address gameCoinAddress,
     address declarer,
     uint256 amount,
-    uint256 timestamp,
-    bytes32 salt
+    uint256 timestamp
   ) internal virtual returns (bytes32 hash) {
     bytes32 preMintId = preMintIds[gameCoinAddress];
 
-    bytes32 preMintIdNew = keccak256(abi.encode(gameCoinAddress, declarer, amount, timestamp, preMintId, salt));
+    bytes32 preMintIdNew = keccak256(abi.encode(gameCoinAddress, declarer, amount, timestamp, preMintId));
     preMintIds[gameCoinAddress] = preMintIdNew;
     return preMintIdNew;
   }
@@ -440,12 +352,14 @@ contract P12CoinFactoryUpgradeable is
     return block.timestamp;
   }
 
-  function _verifyDev() internal view {
-    if (msg.sender != dev) revert NotP12Dev();
+  function _verifySigner() internal view {
+    if (!signers[msg.sender]) {
+      revert NotP12Signer();
+    }
   }
 
   function _verifyGameDev(address token) internal view {
-    if (msg.sender != _gameDev[allGameCoins[token]]) revert CommonError.NotGameDeveloper(msg.sender, allGameCoins[token]);
+    if (msg.sender != gameDev[coinGameIds[token]]) revert CommonError.NotGameDeveloper(msg.sender, coinGameIds[token]);
   }
 
   /**
@@ -456,8 +370,8 @@ contract P12CoinFactoryUpgradeable is
   }
 
   // ============= Modifier ================
-  modifier onlyDev() {
-    _verifyDev();
+  modifier onlySigner() {
+    _verifySigner();
     _;
   }
 

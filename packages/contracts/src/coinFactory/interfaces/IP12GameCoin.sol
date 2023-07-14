@@ -11,23 +11,11 @@ interface IP12GameCoin {
 
   event SymbolUpdated(string oldSymbol, string newSymbol);
 
-  event IconUrlUpdated(string oldUrl, string newUrl);
-
   function mint(address to, uint256 amount) external;
 
-  function gameId() external view returns (string memory);
-
-  function gameCoinIconUrl() external view returns (string memory);
+  function gameId() external view returns (uint256);
 
   function transferWithAccount(address recipient, string memory account, uint256 amount) external;
 
-  function setGameCoinIconUrl(string calldata newUrl) external;
-
-  function initialize(
-    address owner_,
-    string memory name_,
-    string memory symbol_,
-    string memory gameId_,
-    string memory iconUrl_
-  ) external;
+  function initialize(address owner_, string calldata name_, string calldata symbol_, uint256 gameId_) external;
 }

@@ -57,7 +57,7 @@ contract P12AssetFactoryUpgradable is
    * @param contractURI contract-level metadata uri
    */
   function createCollection(
-    string calldata gameId,
+    uint256 gameId,
     string calldata contractURI
   ) public override onlyDeveloper(gameId) whenNotPaused {
     P12Asset collection = new P12Asset(address(this), contractURI);
@@ -123,7 +123,7 @@ contract P12AssetFactoryUpgradable is
   /** upgrade function */
   function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
-  modifier onlyDeveloper(string memory gameId) {
+  modifier onlyDeveloper(uint256 gameId) {
     if (P12CoinFactoryUpgradeable(p12CoinFactory).getGameDev(gameId) != msg.sender)
       revert CommonError.NotGameDeveloper(msg.sender, gameId);
     _;

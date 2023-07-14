@@ -44,7 +44,7 @@ contract AllTestBase is Test {
     address gameCoinImpl = address(new P12GameCoin());
     // deploy coinfactory
     P12CoinFactoryUpgradeable coinFactory = new P12CoinFactoryUpgradeable();
-    coinFactory.initialize(_owner, _p12, IUniswapV3Factory(_v3Factory), INonfungiblePositionManager(_nftPos), gameCoinImpl);
+    coinFactory.initialize(_owner, _p12, INonfungiblePositionManager(_nftPos), gameCoinImpl);
     _coinFactory = IP12CoinFactoryUpgradeable(coinFactory);
   }
 }

@@ -11,12 +11,7 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
   /**
    * @dev Off-chain data, game id
    */
-  string private _gameId;
-
-  /**
-   * @dev game coin's logo
-   */
-  string private _iconUrl;
+  uint256 private _gameId;
 
   /**
    * @dev override oz erc20 to update both variable
@@ -28,19 +23,16 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
    * @param name_ game coin name
    * @param symbol_ game coin symbol
    * @param gameId_ gameId
-   * @param iconUrl_ game coin icon's url
    */
   function initialize(
     address owner_,
-    string memory name_,
-    string memory symbol_,
-    string memory gameId_,
-    string memory iconUrl_
+    string calldata name_,
+    string calldata symbol_,
+    uint256 gameId_
   ) public override initializer {
     _name = name_;
     _symbol = symbol_;
     _gameId = gameId_;
-    _iconUrl = iconUrl_;
 
     __ERC20Permit_init(name_);
     __ERC20_init(name_, symbol_);
@@ -70,15 +62,6 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
   }
 
   /**
-   * @dev set new Icon Url
-   */
-  function setGameCoinIconUrl(string calldata newUrl) external override onlyOwner {
-    string memory oldUrl = _iconUrl;
-    _iconUrl = newUrl;
-    emit IconUrlUpdated(oldUrl, newUrl);
-  }
-
-  /**
    * @dev Returns the name of the token.
    */
   function name() public view virtual override returns (string memory) {
@@ -96,14 +79,7 @@ contract P12GameCoin is ERC20PermitUpgradeable, ERC20BurnableUpgradeable, Ownabl
   /**
    * @dev Returns the gameId of the token
    */
-  function gameId() public view virtual override returns (string memory) {
+  function gameId() public view virtual override returns (uint256) {
     return _gameId;
-  }
-
-  /**
-   * @dev Returns the icon url of the token
-   */
-  function gameCoinIconUrl() public view virtual override returns (string memory) {
-    return _iconUrl;
   }
 }

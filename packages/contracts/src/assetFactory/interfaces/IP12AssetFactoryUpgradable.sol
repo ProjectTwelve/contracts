@@ -16,19 +16,11 @@ interface IP12AssetFactoryUpgradable {
 
   function setP12CoinFactory(address newP12Factory) external;
 
-  function createCollection(string calldata gameId, string calldata) external;
+  function createCollection(uint256 gameId, string calldata) external;
 
-  function createAssetAndMint(
-    address,
-    uint256,
-    string calldata
-  ) external;
+  function createAssetAndMint(address, uint256, string calldata) external;
 
   function updateCollectionUri(address, string calldata) external;
 
-  function updateSftUri(
-    address,
-    uint256,
-    string calldata
-  ) external;
+  function updateSftUri(address, uint256, string calldata) external;
 }

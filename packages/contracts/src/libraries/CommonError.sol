@@ -8,7 +8,7 @@ library CommonError {
   // pass zero uint as args;
   error ZeroUintSet();
   // not game developer and no permit to do something
-  error NotGameDeveloper(address user, string gameId);
+  error NotGameDeveloper(address user, uint256 gameId);
   // not enough p12, pass zero value for p12 amount
   error NotEnoughP12();
   // no permission to do something
