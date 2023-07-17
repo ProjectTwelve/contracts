@@ -80,7 +80,6 @@ const config: HardhatUserConfig = {
       //   blockNumber: 997788,
       // },
       // The fork configuration can be turned on or off by itself according to the situation
-      chainId: 44102,
       deploy: ['deploy/hardhat'],
     },
     p12TestNet: {
@@ -194,6 +193,27 @@ const config: HardhatUserConfig = {
     contracts: [
       {
         artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
+      },
+      {
+        artifacts: 'node_modules/@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/',
+      },
+      {
+        artifacts: 'node_modules/@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/',
+      },
+      {
+        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/',
+      },
+      {
+        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/',
+      },
+      {
+        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/',
+      },
+      {
+        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/',
+      },
+      {
+        artifacts: 'node_modules/canonical-weth/build/contracts/',
       },
     ],
   },
