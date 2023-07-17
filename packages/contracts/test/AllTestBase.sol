@@ -14,6 +14,9 @@ import 'forge-std/Test.sol';
 contract AllTestBase is Test {
   uint256 _ethFork;
   address _owner = vm.addr(12);
+  address _signer = vm.addr(13);
+  address _mockDeveloper = vm.addr(14);
+  uint256 _mockGameId = 12;
   address _v3Factory;
   address _weth9;
   address _v3router;
@@ -46,5 +49,21 @@ contract AllTestBase is Test {
     P12CoinFactoryUpgradeable coinFactory = new P12CoinFactoryUpgradeable();
     coinFactory.initialize(_owner, _p12, INonfungiblePositionManager(_nftPos), gameCoinImpl);
     _coinFactory = IP12CoinFactoryUpgradeable(coinFactory);
+
+    // set signer
+    address[] memory toAddr = new address[](1);
+    address[] memory toRemove;
+    toAddr[0] = _signer;
+    vm.prank(_owner);
+    coinFactory.updateSigners(toAddr, toRemove);
+
+    // mock register
+
+    mockRegister(_mockGameId, _mockDeveloper);
+  }
+
+  function mockRegister(uint256 gameId, address developer) public {
+    vm.prank(_signer);
+    _coinFactory.register(gameId, developer);
   }
 }

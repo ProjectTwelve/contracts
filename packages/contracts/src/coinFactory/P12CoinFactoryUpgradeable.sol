@@ -10,6 +10,7 @@ import { ReentrancyGuardUpgradeable } from '@openzeppelin/contracts-upgradeable/
 import { PausableUpgradeable } from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import { SafeERC20Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol';
 import { IERC20Upgradeable } from '@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol';
+import { MathUpgradeable } from '@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol';
 import { IP12CoinFactoryUpgradeable } from 'src/coinFactory/interfaces/IP12CoinFactoryUpgradeable.sol';
 import { IP12MineUpgradeable } from '../staking/interfaces/IP12MineUpgradeable.sol';
 import { P12CoinFactoryStorage } from './P12CoinFactoryStorage.sol';
@@ -43,7 +44,6 @@ contract P12CoinFactoryUpgradeable is
    * @param symbol game coin's symbol
    * @param gameId the game's id
    * @param amountGameCoin how many coin first mint
-   * @param priceSqrtX96 X game coin per p12
    * @return gameCoinAddress the address of the new game coin
    */
   function create(
@@ -52,8 +52,7 @@ contract P12CoinFactoryUpgradeable is
     string calldata uri,
     uint256 gameId,
     uint256 amountGameCoin,
-    uint256 amountP12,
-    uint160 priceSqrtX96
+    uint256 amountP12
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     gameCoinAddress = _create(name, symbol, uri, gameId, amountGameCoin);
@@ -64,17 +63,22 @@ contract P12CoinFactoryUpgradeable is
     uint256 token0Amount;
     address token1;
     uint256 token1Amount;
+    uint256 priceSqrtX96;
 
     if (address(gameCoinAddress) < p12) {
       token0 = address(gameCoinAddress);
       token0Amount = amountGameCoinDesired;
       token1 = p12;
       token1Amount = amountP12;
+
+      priceSqrtX96 = MathUpgradeable.sqrt(((amountP12 / 1 ether) * 2 ** 192) / (amountGameCoin / 1 ether));
     } else {
       token0 = p12;
       token0Amount = amountP12;
       token1 = address(gameCoinAddress);
       token1Amount = amountGameCoinDesired;
+
+      priceSqrtX96 = MathUpgradeable.sqrt(((amountGameCoin / 1 ether) * 2 ** 192) / (amountP12 / 1 ether));
     }
 
     // transfer P12 to address this for later liquidity create
@@ -84,7 +88,7 @@ contract P12CoinFactoryUpgradeable is
     IERC20Upgradeable(gameCoinAddress).approve(address(uniswapPosManager), type(uint256).max);
 
     // fee 0.3% tickSpacing 60
-    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, priceSqrtX96);
+    uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, uint160(priceSqrtX96));
 
     // create initial liquidity and givev nft to msg.sender
     uniswapPosManager.mint(
@@ -93,8 +97,8 @@ contract P12CoinFactoryUpgradeable is
         token1,
         3000,
         // Tick range should be an integer multiple of the tick space
-        -88680,
-        88680,
+        -887220,
+        887220,
         token0Amount,
         token1Amount,
         0,
@@ -179,6 +183,22 @@ contract P12CoinFactoryUpgradeable is
     emit ExecuteMintCoin(mintId, gameCoinAddress, msg.sender);
 
     return true;
+  }
+
+  /**
+   * @dev update signers
+   * @param toAdd list of to be added signer
+   * @param toRemove list of to be removed signer
+   */
+  function updateSigners(address[] calldata toAdd, address[] calldata toRemove) public onlyOwner {
+    for (uint256 i = 0; i < toAdd.length; i++) {
+      signers[toAdd[i]] = true;
+      emit SignerUpdate(toAdd[i], true);
+    }
+    for (uint256 i = 0; i < toRemove.length; i++) {
+      delete signers[toRemove[i]];
+      emit SignerUpdate(toRemove[i], false);
+    }
   }
 
   /**
@@ -349,7 +369,7 @@ contract P12CoinFactoryUpgradeable is
    * @dev get a specific game next coin's deterministic address
    * @param gameId off chain game Id
    */
-  function getGameNextCoinAddress(uint256 gameId) public view returns (address gameCoinAddress) {
+  function getGameNextCoinAddress(uint256 gameId) public view override returns (address gameCoinAddress) {
     bytes32 salt = keccak256(abi.encode(gameId, _gameCoinCount[gameId] + 1));
     gameCoinAddress = ClonesUpgradeable.predictDeterministicAddress(gameCoinImpl, salt);
   }

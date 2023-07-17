@@ -26,8 +26,7 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
     string calldata uri,
     uint256 gameId,
     uint256 amountGameCoin,
-    uint256 amountP12,
-    uint160 priceSqrtX96
+    uint256 amountP12
   ) external returns (address);
 
   //  mint coin and Launch a statement
@@ -39,6 +38,8 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
   function withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
 
   function getGameDev(uint256) external returns (address);
+
+  function getGameNextCoinAddress(uint256 gameId) external view returns (address gameCoinAddress);
 
   // get mintFee
   function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
@@ -78,6 +79,8 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
     uint256 unlockTimestamp,
     uint256 amountP12
   );
+
+  event SignerUpdate(address signer, bool valid);
 
   // mint coin success log
   event ExecuteMintCoin(bytes32 indexed mintId, address indexed gameCoinAddress, address indexed executor);

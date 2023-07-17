@@ -24,3 +24,7 @@ depth = 30
 fail_on_revert = false
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
+
+[fuzz]
+runs = 256
+max_test_rejects = 65536

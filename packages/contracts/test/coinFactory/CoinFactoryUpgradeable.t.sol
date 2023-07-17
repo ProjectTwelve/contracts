@@ -5,6 +5,8 @@ import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswa
 import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
 
 import '@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol';
+import '@openzeppelin/contracts/utils/math/Math.sol';
+
 import 'test/AllTestBase.sol';
 import 'forge-std/Test.sol';
 import 'src/coinFactory/P12CoinFactoryUpgradeable.sol';
@@ -63,35 +65,25 @@ contract CoinFactoryUpgradeableTest is AllTestBase {
     assertEq(_coinFactory.getGameDev(gameId), developer);
   }
 
-  function mockRegister(uint256 gameId, address developer) public {
-    vm.prank(_coinFactory.getGameDev(gameId));
-    _coinFactory.register(gameId, developer);
-  }
-
-  function testCreateGameCoin() public {
+  function testCreateGameCoin(
+    string calldata name,
+    string calldata symbol,
+    string calldata uri,
+    uint256 amountP12Seed,
+    uint256 ratioSeed
+  ) public {
     //
-    string memory name;
-    string memory symbol;
-    string memory uri;
-    uint256 gameId;
-    address developer = address(113);
-    uint96 amountGameCoin = 10000 ether;
-    // vm.assume(developer != address(0) && amountGameCoin > 100_000);
+    uint256 amountP12 = bound(amountP12Seed, 1 ether, 10_000_000_000 ether);
+    uint256 ratio = bound(ratioSeed, 1, 1_000_000_000);
+    uint256 amountGameCoin = amountP12 * ratio;
 
-    // mock register
-    mockRegister(gameId, developer);
+    deal(_p12, _coinFactory.getGameDev(_mockGameId), UINT256_MAX);
 
-    address gameDev = _coinFactory.getGameDev(gameId);
-
-    deal(_p12, gameDev, UINT256_MAX);
-
-    // just test as 1:1 price
-    uint256 amountP12 = amountGameCoin / 2;
-    uint160 priceSqrt = 1 * 2 ** 96;
-    vm.startPrank(gameDev);
+    vm.startPrank(_mockDeveloper);
     IERC20Upgradeable(_p12).approve(address(_coinFactory), UINT256_MAX);
-    address gameCoin = _coinFactory.create(name, symbol, uri, gameId, amountGameCoin, amountP12, priceSqrt);
-    assertEq(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2);
+    address gameCoin = _coinFactory.create(name, symbol, uri, _mockGameId, amountGameCoin, amountP12);
+    // The error is less than 1/10k
+    assertApproxEqRel(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2, 1e13);
   }
 
   // function testQueueMintCoin(string memory gameId, address gameCoinAddress, uint256 amountGameCoin) public {
