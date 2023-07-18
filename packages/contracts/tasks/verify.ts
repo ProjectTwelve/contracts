@@ -7,13 +7,20 @@ export default async function verifyDeploymentOnScan(params: any, hre: HardhatRu
 }
 
 // If the contract does not require verification, just add it here
-const whiteList: string[] = [];
+const whiteList: string[] = [
+  'NFTDescriptor',
+  'NonfungiblePositionManager',
+  'NonfungibleTokenPositionDescriptor',
+  'SwapRouter',
+  'UniswapV3Factory',
+  'WETH9',
+];
 
 function getNoVerifyFile(hre: HardhatRuntimeEnvironment) {
   const files: string[] = [];
   if (whiteList.length > 0) {
     whiteList.forEach((l) => {
-      const pathFile = path.join(__dirname, '../deployments') + '/' + hre.network.name + '/' + l;
+      const pathFile = path.join(__dirname, '../deployments') + '/' + hre.network.name + '/' + l + '.json';
       files.push(pathFile);
     });
   }

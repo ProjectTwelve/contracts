@@ -66,8 +66,8 @@ importers:
         specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
         version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.12.6)
       '@nomiclabs/hardhat-etherscan':
-        specifier: ^3.1.0
-        version: 3.1.0(hardhat@2.12.6)
+        specifier: ^3.1.7
+        version: 3.1.7(hardhat@2.12.6)
       '@nomiclabs/hardhat-waffle':
         specifier: ^2.0.1
         version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6)
@@ -4268,6 +4268,26 @@ packages:
       - supports-color
     dev: true
 
+  /@nomiclabs/hardhat-etherscan@3.1.7(hardhat@2.12.6):
+    resolution: {integrity: sha512-tZ3TvSgpvsQ6B6OGmo1/Au6u8BrAkvs1mIC/eURA3xgIfznUZBhmpne8hv7BXUzw9xNL3fXdpOYgOQlVMTcoHQ==}
+    peerDependencies:
+      hardhat: ^2.0.4
+    dependencies:
+      '@ethersproject/abi': 5.7.0
+      '@ethersproject/address': 5.7.0
+      cbor: 8.1.0
+      chalk: 2.4.2
+      debug: 4.3.4(supports-color@8.1.1)
+      fs-extra: 7.0.1
+      hardhat: 2.12.6(ts-node@10.4.0)(typescript@4.5.4)
+      lodash: 4.17.21
+      semver: 6.3.0
+      table: 6.8.1
+      undici: 5.22.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@nomiclabs/hardhat-waffle@2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.12.6):
     resolution: {integrity: sha512-2YR2V5zTiztSH9n8BYWgtv3Q+EL0N5Ltm1PAr5z20uAY4SkkfylJ98CIqt18XFvxTD5x4K2wKBzddjV9ViDAZQ==}
     peerDependencies:
@@ -5970,7 +5990,7 @@ packages:
   /async@2.6.4:
     resolution: {integrity: sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==}
     dependencies:
-      lodash: 4.17.15
+      lodash: 4.17.21
 
   /asynckit@0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
@@ -11502,7 +11522,6 @@ packages:
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: true
 
   /log-symbols@3.0.0:
     resolution: {integrity: sha512-dSkNGuI7iG3mfvDzUuYZyvk5dD9ocYCYzNU6CYDE6+Xqd+gwme6Z00NS3dUh8mq/73HaEtT7m6W+yUPtU6BZnQ==}
