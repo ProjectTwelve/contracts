@@ -50,11 +50,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
 const addresses = process.env.ADDESSSES ? process.env.ADDESSSES.split(',') : [];
-const deployer = process.env.DEPLOYER;
-
-if (deployer === undefined) {
-  throw new Error('ENV NOT SET');
-}
+const deployer = process.env.DEPLOYER || '0x0000000000000000000000000000000000000000';
 
 const config: HardhatUserConfig = {
   solidity: {
