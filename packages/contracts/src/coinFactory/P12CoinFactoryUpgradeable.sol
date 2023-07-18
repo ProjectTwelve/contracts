@@ -57,7 +57,7 @@ contract P12CoinFactoryUpgradeable is
     if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     gameCoinAddress = _create(name, symbol, uri, gameId, amountGameCoin);
 
-    uint256 amountGameCoinDesired = amountGameCoin / 2;
+    uint256 amountGameCoinForLiquidity = amountGameCoin / 2;
 
     address token0;
     uint256 token0Amount;
@@ -67,18 +67,18 @@ contract P12CoinFactoryUpgradeable is
 
     if (address(gameCoinAddress) < p12) {
       token0 = address(gameCoinAddress);
-      token0Amount = amountGameCoinDesired;
+      token0Amount = amountGameCoinForLiquidity;
       token1 = p12;
       token1Amount = amountP12;
 
-      priceSqrtX96 = MathUpgradeable.sqrt(((amountP12 / 1 ether) * 2 ** 192) / (amountGameCoin / 1 ether));
+      priceSqrtX96 = MathUpgradeable.sqrt(((amountP12 / 1 ether) * 2 ** 192) / (amountGameCoinForLiquidity / 1 ether));
     } else {
       token0 = p12;
       token0Amount = amountP12;
       token1 = address(gameCoinAddress);
-      token1Amount = amountGameCoinDesired;
+      token1Amount = amountGameCoinForLiquidity;
 
-      priceSqrtX96 = MathUpgradeable.sqrt(((amountGameCoin / 1 ether) * 2 ** 192) / (amountP12 / 1 ether));
+      priceSqrtX96 = MathUpgradeable.sqrt(((amountGameCoinForLiquidity / 1 ether) * 2 ** 192) / (amountP12 / 1 ether));
     }
 
     // transfer P12 to address this for later liquidity create
@@ -109,7 +109,7 @@ contract P12CoinFactoryUpgradeable is
     );
 
     coinGameIds[gameCoinAddress] = gameId;
-    emit CreateGameCoin(gameCoinAddress, gameId, amountP12);
+    emit CreateGameCoin(gameCoinAddress, gameId, amountGameCoin, amountP12);
     return gameCoinAddress;
   }
 
