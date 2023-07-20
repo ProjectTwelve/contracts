@@ -178,6 +178,12 @@ const config: HardhatUserConfig = {
       funding: '',
       signedTx: '',
     },
+    248832: {
+      factory: '0x2844B158Bcffc0aD7d881a982D464c0ce38d8086',
+      deployer: '',
+      funding: '',
+      signedTx: '',
+    },
     5: {
       factory: '0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7',
       deployer: '',
