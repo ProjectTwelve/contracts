@@ -82,8 +82,8 @@ contract CoinFactoryUpgradeableTest is AllTestBase {
     vm.startPrank(_mockDeveloper);
     IERC20Upgradeable(_p12).approve(address(_coinFactory), UINT256_MAX);
     address gameCoin = _coinFactory.create(name, symbol, uri, _mockGameId, amountGameCoin, amountP12);
-    // The error is less than 1/10k
-    assertApproxEqRel(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2, 1e13);
+    // The diff is less than 1/10k
+    assertApproxEqRel(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2, 1e14);
   }
 
   // function testQueueMintCoin(string memory gameId, address gameCoinAddress, uint256 amountGameCoin) public {

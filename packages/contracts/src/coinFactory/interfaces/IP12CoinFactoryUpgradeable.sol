@@ -69,7 +69,13 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
   event RegisterGame(uint256 gameId, address indexed developer);
 
   // register Game coin log
-  event CreateGameCoin(address indexed gameCoinAddress, uint256 indexed gameId, uint256 amountGameCoin, uint256 amountP12);
+  event CreateGameCoin(
+    address indexed developer,
+    address indexed gameCoinAddress,
+    uint256 indexed gameId,
+    uint256 amountGameCoin,
+    uint256 amountP12
+  );
 
   // mint coin in future log
   event QueueMintCoin(

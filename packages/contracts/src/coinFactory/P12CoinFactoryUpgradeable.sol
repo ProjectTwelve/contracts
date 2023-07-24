@@ -109,7 +109,7 @@ contract P12CoinFactoryUpgradeable is
     );
 
     coinGameIds[gameCoinAddress] = gameId;
-    emit CreateGameCoin(gameCoinAddress, gameId, amountGameCoin, amountP12);
+    emit CreateGameCoin(msg.sender, gameCoinAddress, gameId, amountGameCoin, amountP12);
     return gameCoinAddress;
   }
 
@@ -127,16 +127,12 @@ contract P12CoinFactoryUpgradeable is
   ) external virtual override nonReentrant whenNotPaused returns (bool success) {
     if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
     if (coinGameIds[gameCoinAddress] != gameId) revert MisMatchCoinWithGameId(gameCoinAddress, gameId);
+
+    bytes32 preMintId = preMintIds[gameCoinAddress];
+    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][preMintId].unlockTimestamp;
+
     // Set the correct unlock time
-    uint256 time;
-    uint256 currentTimestamp = _getBlockTimestamp();
-    bytes32 _preMintId = preMintIds[gameCoinAddress];
-    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][_preMintId].unlockTimestamp;
-    if (currentTimestamp >= lastUnlockTimestamp) {
-      time = currentTimestamp;
-    } else {
-      time = lastUnlockTimestamp;
-    }
+    uint256 time = MathUpgradeable.max(_getBlockTimestamp(), lastUnlockTimestamp);
 
     // minting fee for p12
     uint256 p12Fee = getMintFee(gameCoinAddress, amountGameCoin);
@@ -147,6 +143,7 @@ contract P12CoinFactoryUpgradeable is
     uint256 delayD = getMintDelay(address(gameCoinAddress), amountGameCoin);
 
     bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time);
+
     coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
 
     emit QueueMintCoin(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
@@ -177,7 +174,6 @@ contract P12CoinFactoryUpgradeable is
     coinMintRecords[gameCoinAddress][mintId].executed = true;
 
     // transfer the gameCoin to this contract first
-
     IP12GameCoin(gameCoinAddress).mint(address(this), coinMintRecords[gameCoinAddress][mintId].amount);
 
     emit ExecuteMintCoin(mintId, gameCoinAddress, msg.sender);
@@ -313,7 +309,6 @@ contract P12CoinFactoryUpgradeable is
    */
   function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) public view virtual override returns (uint256 time) {
     time = (amountGameCoin * delayK) / (IERC20Upgradeable(gameCoinAddress).totalSupply()) + delayB;
-    return time;
   }
 
   //============ Internal ============
