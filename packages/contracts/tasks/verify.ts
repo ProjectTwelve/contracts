@@ -56,11 +56,7 @@ async function verifyFile(hre: HardhatRuntimeEnvironment, fileName: string) {
     const content = fs.readJSONSync(fileName, { encoding: 'utf-8' });
     try {
       if (!content.implementation) {
-        if (content.storageLayout && content.storageLayout.storage.length !== 0) {
-          await verify(hre, content.address, content.args, content.storageLayout.storage[0].contract);
-        } else {
-          await verify(hre, content.address, content.args);
-        }
+        await verify(hre, content.address, content.args, content.storageLayout.storage[0]?.contract);
       }
     } catch (err) {
       const str: string = String(err);
