@@ -108,7 +108,7 @@ const config: HardhatUserConfig = {
       deploy: ['deploy/butcher'],
     },
     mumbai: {
-      url: process.env.MUMBAI_RPC_URL,
+      url: process.env.MUMBAI_RPC_URL || '',
       live: true,
       accounts: accounts,
       gasPrice: 'auto', //
