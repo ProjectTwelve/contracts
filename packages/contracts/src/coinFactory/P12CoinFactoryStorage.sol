@@ -16,7 +16,7 @@ contract P12CoinFactoryStorage {
   INonfungiblePositionManager public uniswapPosManager;
 
   /**
-   * @notice game coin implmentation address
+   * @notice game coin implementation address
    */
   address public gameCoinImpl;
   /**

@@ -41,11 +41,11 @@ contract AllTestBase is Test {
     _nftPos = UniswapV3Deployer.deployPosManager(_v3Factory, _weth9, nftPosDes);
 
     // deploy p12
-    _p12 = address(new P12Token(_owner, 'Project Twleve', 'P12', UINT256_MAX));
+    _p12 = address(new P12Token(_owner, 'Project Twelve', 'P12', UINT256_MAX));
 
     // deploy game coin impl
     address gameCoinImpl = address(new P12GameCoin());
-    // deploy coinfactory
+    // deploy coin factory
     P12CoinFactoryUpgradeable coinFactory = new P12CoinFactoryUpgradeable();
     coinFactory.initialize(_owner, _p12, INonfungiblePositionManager(_nftPos), gameCoinImpl);
     _coinFactory = IP12CoinFactoryUpgradeable(coinFactory);

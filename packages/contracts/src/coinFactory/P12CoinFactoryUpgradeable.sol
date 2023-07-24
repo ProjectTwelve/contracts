@@ -84,13 +84,13 @@ contract P12CoinFactoryUpgradeable is
     // transfer P12 to address this for later liquidity create
     IERC20Upgradeable(p12).safeTransferFrom(msg.sender, address(this), amountP12);
 
-    // aprove gamecoin
+    // approve game coin
     IERC20Upgradeable(gameCoinAddress).approve(address(uniswapPosManager), type(uint256).max);
 
     // fee 0.3% tickSpacing 60
     uniswapPosManager.createAndInitializePoolIfNecessary(token0, token1, 3000, uint160(priceSqrtX96));
 
-    // create initial liquidity and givev nft to msg.sender
+    // create initial liquidity and give nft to msg.sender
     uniswapPosManager.mint(
       INonfungiblePositionManager.MintParams(
         token0,
