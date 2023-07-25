@@ -57,6 +57,7 @@ contract P12CoinFactoryUpgradeable is
     uint256 amountP12
   ) external virtual override nonReentrant whenNotPaused returns (address gameCoinAddress) {
     if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
+    if (amountGameCoin < 100 ether || amountP12 < 100 ether) revert CoinAmountTooLess();
     gameCoinAddress = _create(name, symbol, uri, gameId, amountGameCoin);
 
     uint256 amountGameCoinForLiquidity = amountGameCoin / 2;

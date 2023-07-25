@@ -74,7 +74,7 @@ contract CoinFactoryUpgradeableTest is AllTestBase, IP12CoinFactoryDef {
     uint256 ratioSeed
   ) public {
     //
-    uint256 amountP12 = bound(amountP12Seed, 2 ether, 10_000_000_000 ether);
+    uint256 amountP12 = bound(amountP12Seed, 100 ether, 10_000_000_000 ether);
     uint256 ratio = bound(ratioSeed, 1, 1_000_000_000);
     uint256 amountGameCoin = amountP12 * ratio;
 

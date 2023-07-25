@@ -52,6 +52,7 @@ interface IP12CoinFactoryDef {
   // change delayK log
   event SetDelayK(uint256 oldDelayK, uint256 newDelayK);
 
+  error CoinAmountTooLess();
   error MisMatchCoinWithGameId(address coin, uint256 gameId);
   // not existent mint id
   error NonExistenceMintId(bytes32 mintId);
