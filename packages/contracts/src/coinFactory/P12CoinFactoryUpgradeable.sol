@@ -45,6 +45,8 @@ contract P12CoinFactoryUpgradeable is
    * @param gameId the game's id
    * @param amountGameCoin how many coin first mint
    * @return gameCoinAddress the address of the new game coin
+   * @dev amountP12 should be larger than 1 ether, smaller than 1.8 * 10^19 ether
+   * @dev amountGameCoin should be larger than 2 ether, smaller than 1.8 * 10^19 ether
    */
   function create(
     string calldata name,
