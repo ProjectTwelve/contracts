@@ -32,8 +32,8 @@ contract P12CoinFactoryStorage {
   mapping(uint256 => address) public gameDev;
   // gameCoinAddress => gameId
   mapping(address => uint256) public coinGameIds;
-  // gameCoinAddress => declareMintId => MintCoinInfo
-  mapping(address => mapping(bytes32 => IP12CoinFactoryDef.MintCoinInfo)) public coinMintRecords;
+  // declareMintId => MintCoinInfo
+  mapping(bytes32 => IP12CoinFactoryDef.MintCoinInfo) public coinMintRecords;
   // gameCoinAddress => declareMintId
   mapping(address => bytes32) public preMintIds;
 

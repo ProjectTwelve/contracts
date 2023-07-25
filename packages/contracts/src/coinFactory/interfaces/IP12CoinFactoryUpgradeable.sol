@@ -10,7 +10,8 @@ interface IP12CoinFactoryDef {
    */
   struct MintCoinInfo {
     uint256 amount;
-    uint256 unlockTimestamp;
+    address coinAddr;
+    uint40 unlockTimestamp;
     bool executed;
   }
 }
@@ -30,10 +31,10 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
   ) external returns (address);
 
   //  mint coin and Launch a statement
-  function queueMintCoin(uint256 gameId, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
+  function queueMintCoin(address gameCoinAddress, uint256 amountGameCoin) external;
 
   // execute Mint coin
-  function executeMintCoin(address gameCoinAddress, bytes32 mintId) external returns (bool);
+  function executeMintCoin(bytes32 mintId) external;
 
   function withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
 

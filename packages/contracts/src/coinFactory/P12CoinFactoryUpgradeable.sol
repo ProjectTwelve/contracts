@@ -117,21 +117,15 @@ contract P12CoinFactoryUpgradeable is
 
   /**
    * @dev if developer want to mint after create coin, developer must declare first
-   * @param gameId game's id
    * @param gameCoinAddress game coin's address
    * @param amountGameCoin how many developer want to mint
-   * @param success whether the operation success
    */
-  function queueMintCoin(
-    uint256 gameId,
-    address gameCoinAddress,
-    uint256 amountGameCoin
-  ) external virtual override nonReentrant whenNotPaused returns (bool success) {
-    if (msg.sender != gameDev[gameId]) revert CommonError.NotGameDeveloper(msg.sender, gameId);
-    if (coinGameIds[gameCoinAddress] != gameId) revert MisMatchCoinWithGameId(gameCoinAddress, gameId);
+  function queueMintCoin(address gameCoinAddress, uint256 amountGameCoin) external virtual override nonReentrant whenNotPaused {
+    if (msg.sender != gameDev[coinGameIds[gameCoinAddress]])
+      revert CommonError.NotGameDeveloper(msg.sender, coinGameIds[gameCoinAddress]);
 
     bytes32 preMintId = preMintIds[gameCoinAddress];
-    uint256 lastUnlockTimestamp = coinMintRecords[gameCoinAddress][preMintId].unlockTimestamp;
+    uint256 lastUnlockTimestamp = coinMintRecords[preMintId].unlockTimestamp;
 
     // Set the correct unlock time
     uint256 time = MathUpgradeable.max(_getBlockTimestamp(), lastUnlockTimestamp);
@@ -146,41 +140,32 @@ contract P12CoinFactoryUpgradeable is
 
     bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time);
 
-    coinMintRecords[gameCoinAddress][mintId] = MintCoinInfo(amountGameCoin, delayD + time, false);
+    coinMintRecords[mintId] = MintCoinInfo(amountGameCoin, gameCoinAddress, uint40(delayD + time), false);
 
     emit QueueMintCoin(mintId, gameCoinAddress, amountGameCoin, delayD + time, p12Fee);
-
-    return true;
   }
 
   /**
    * @dev when time is up, anyone can call this function to make the mint executed
-   * @param gameCoinAddress address of the game coin
    * @param mintId a unique id to identify a mint, developer can get it after declare
-   * @return bool whether the operation success
    */
-  function executeMintCoin(
-    address gameCoinAddress,
-    bytes32 mintId
-  ) external virtual override nonReentrant whenNotPaused returns (bool) {
-    if (coinMintRecords[gameCoinAddress][mintId].unlockTimestamp == 0) revert NonExistenceMintId(mintId);
+  function executeMintCoin(bytes32 mintId) external virtual override nonReentrant whenNotPaused {
+    if (coinMintRecords[mintId].unlockTimestamp == 0) revert NonExistenceMintId(mintId);
     // check if it has been executed
-    if (coinMintRecords[gameCoinAddress][mintId].executed) revert ExecutedMint(mintId);
-
-    uint256 time = _getBlockTimestamp();
+    if (coinMintRecords[mintId].executed) revert ExecutedMint(mintId);
 
     // check that the current time is greater than the unlock time
-    if (time <= coinMintRecords[gameCoinAddress][mintId].unlockTimestamp) revert NotTimeToMint(mintId);
+    if (_getBlockTimestamp() <= coinMintRecords[mintId].unlockTimestamp) revert NotTimeToMint(mintId);
 
     // Modify status
-    coinMintRecords[gameCoinAddress][mintId].executed = true;
+    coinMintRecords[mintId].executed = true;
+
+    address gameCoinAddress = coinMintRecords[mintId].coinAddr;
 
     // transfer the gameCoin to this contract first
-    IP12GameCoin(gameCoinAddress).mint(address(this), coinMintRecords[gameCoinAddress][mintId].amount);
+    IP12GameCoin(gameCoinAddress).mint(address(this), coinMintRecords[mintId].amount);
 
     emit ExecuteMintCoin(mintId, gameCoinAddress, msg.sender);
-
-    return true;
   }
 
   /**
