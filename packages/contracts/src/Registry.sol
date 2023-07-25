@@ -6,7 +6,7 @@ import { IRegistry } from 'src/IRegistry.sol';
 import { Ownable2Step } from '@openzeppelin/contracts/access/Ownable2Step.sol';
 
 contract Registry is IRegistry, Ownable2Step {
-  event AddressRigistered(bytes32 indexed key, address indexed addr);
+  event AddressRegistered(bytes32 indexed key, address indexed addr);
   mapping(bytes32 => address) public override addressRegistry;
 
   constructor(address owner_) {
@@ -15,6 +15,6 @@ contract Registry is IRegistry, Ownable2Step {
 
   function registerAddress(bytes32 key, address addr) external override onlyOwner {
     addressRegistry[key] = addr;
-    emit AddressRigistered(key, addr);
+    emit AddressRegistered(key, addr);
   }
 }
