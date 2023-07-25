@@ -4,6 +4,7 @@ pragma solidity 0.8.19;
 import { IUniswapV3Factory } from '@uniswap/v3-core/contracts/interfaces/IUniswapV3Factory.sol';
 import { INonfungiblePositionManager } from 'src/interfaces/external/uniswap/INonfungiblePositionManager.sol';
 
+import { IP12CoinFactoryDef } from 'src/coinFactory/interfaces/IP12CoinFactoryUpgradeable.sol';
 import '@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol';
 import '@openzeppelin/contracts/utils/math/Math.sol';
 
@@ -16,7 +17,7 @@ import 'src/staking/interfaces/IGaugeController.sol';
 import 'src/coinFactory/interfaces/IP12GameCoin.sol';
 import 'src/token/P12Token.sol';
 
-contract CoinFactoryUpgradeableTest is AllTestBase {
+contract CoinFactoryUpgradeableTest is AllTestBase, IP12CoinFactoryDef {
   function setUp() public override {
     super.setUp();
   }
@@ -77,13 +78,54 @@ contract CoinFactoryUpgradeableTest is AllTestBase {
     uint256 ratio = bound(ratioSeed, 1, 1_000_000_000);
     uint256 amountGameCoin = amountP12 * ratio;
 
+    address gameCoin = this.mockCreateGameCoin(name, symbol, uri, amountGameCoin, amountP12);
+    // The diff is less than 1/10k
+    assertApproxEqRel(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2, 1e14);
+  }
+
+  function testQueueMintGameCoin(uint256 mintAmount) public {
+    address coin = mockCreateRandomGameCoin();
+
+    vm.expectEmit(false, true, true, true);
+    emit QueueMintCoin(0, coin, mintAmount, block.timestamp, 0);
+
+    vm.prank(_mockDeveloper);
+    _coinFactory.queueMintCoin(coin, mintAmount);
+  }
+
+  function testExecuteMintGameCoin() public {
+    uint256 mintAmount = 200 ether;
+    address coin = mockCreateRandomGameCoin();
+
+    vm.prank(_mockDeveloper);
+    bytes32 mintId = _coinFactory.queueMintCoin(coin, mintAmount);
+
+    vm.expectEmit(true, true, true, true);
+    emit ExecuteMintCoin(mintId, coin, _mockDeveloper);
+
+    vm.warp(block.timestamp + 1);
+
+    vm.prank(_mockDeveloper);
+    _coinFactory.executeMintCoin(mintId);
+  }
+
+  function mockCreateRandomGameCoin() public returns (address gameCoin) {
+    gameCoin = mockCreateGameCoin('Game Coin', 'GC', 'ipfs://', 1000 ether, 1000 ether);
+  }
+
+  function mockCreateGameCoin(
+    string memory name,
+    string memory symbol,
+    string memory uri,
+    uint256 amountGameCoin,
+    uint256 amountP12
+  ) public returns (address gameCoin) {
     deal(_p12, _coinFactory.getGameDev(_mockGameId), UINT256_MAX);
 
     vm.startPrank(_mockDeveloper);
     IERC20Upgradeable(_p12).approve(address(_coinFactory), UINT256_MAX);
-    address gameCoin = _coinFactory.create(name, symbol, uri, _mockGameId, amountGameCoin, amountP12);
-    // The diff is less than 1/10k
-    assertApproxEqRel(IERC20Upgradeable(address(gameCoin)).balanceOf(address(_coinFactory)), amountGameCoin / 2, 1e14);
+
+    gameCoin = _coinFactory.create(name, symbol, uri, _mockGameId, amountGameCoin, amountP12);
   }
 
   // function testQueueMintCoin(string memory gameId, address gameCoinAddress, uint256 amountGameCoin) public {

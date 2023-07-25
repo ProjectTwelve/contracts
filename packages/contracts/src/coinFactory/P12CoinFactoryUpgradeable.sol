@@ -120,7 +120,10 @@ contract P12CoinFactoryUpgradeable is
    * @param gameCoinAddress game coin's address
    * @param amountGameCoin how many developer want to mint
    */
-  function queueMintCoin(address gameCoinAddress, uint256 amountGameCoin) external virtual override nonReentrant whenNotPaused {
+  function queueMintCoin(
+    address gameCoinAddress,
+    uint256 amountGameCoin
+  ) external virtual override nonReentrant whenNotPaused returns (bytes32 mintId) {
     if (msg.sender != gameDev[coinGameIds[gameCoinAddress]])
       revert CommonError.NotGameDeveloper(msg.sender, coinGameIds[gameCoinAddress]);
 
@@ -138,7 +141,7 @@ contract P12CoinFactoryUpgradeable is
 
     uint256 delayD = getMintDelay(address(gameCoinAddress), amountGameCoin);
 
-    bytes32 mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time);
+    mintId = _hashOperation(gameCoinAddress, msg.sender, amountGameCoin, time);
 
     coinMintRecords[mintId] = MintCoinInfo(amountGameCoin, gameCoinAddress, uint40(delayD + time), false);
 

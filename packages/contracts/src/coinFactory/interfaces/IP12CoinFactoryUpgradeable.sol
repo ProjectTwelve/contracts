@@ -14,57 +14,6 @@ interface IP12CoinFactoryDef {
     uint40 unlockTimestamp;
     bool executed;
   }
-}
-
-interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
-  // register gameId =>developer
-  function register(uint256 gameId, address developer) external;
-
-  // mint game coin
-  function create(
-    string calldata name,
-    string calldata symbol,
-    string calldata uri,
-    uint256 gameId,
-    uint256 amountGameCoin,
-    uint256 amountP12
-  ) external returns (address);
-
-  //  mint coin and Launch a statement
-  function queueMintCoin(address gameCoinAddress, uint256 amountGameCoin) external;
-
-  // execute Mint coin
-  function executeMintCoin(bytes32 mintId) external;
-
-  function withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
-
-  function getGameDev(uint256) external returns (address);
-
-  function getGameNextCoinAddress(uint256 gameId) external view returns (address gameCoinAddress);
-
-  // get mintFee
-  function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
-
-  // get mintDelay
-  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
-
-  // get delayK
-  function setDelayK(uint256 delayK) external returns (bool);
-
-  // get delayB
-  function setDelayB(uint256 delayB) external returns (bool);
-
-  error MisMatchCoinWithGameId(address coin, uint256 gameId);
-  // not existent mint id
-  error NonExistenceMintId(bytes32 mintId);
-  // mintId is already executed
-  error ExecutedMint(bytes32 mintId);
-  // it's not time to mint this batch of coins
-  error NotTimeToMint(bytes32 mintId);
-  // don't have p12 dev role
-  error NotP12Signer();
-  // invalid liquidity when first create coin and create swap pool
-  error InvalidLiquidity();
 
   // register Game developer log
   event RegisterGame(uint256 gameId, address indexed developer);
@@ -102,4 +51,55 @@ interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
 
   // change delayK log
   event SetDelayK(uint256 oldDelayK, uint256 newDelayK);
+
+  error MisMatchCoinWithGameId(address coin, uint256 gameId);
+  // not existent mint id
+  error NonExistenceMintId(bytes32 mintId);
+  // mintId is already executed
+  error ExecutedMint(bytes32 mintId);
+  // it's not time to mint this batch of coins
+  error NotTimeToMint(bytes32 mintId);
+  // don't have p12 dev role
+  error NotP12Signer();
+  // invalid liquidity when first create coin and create swap pool
+  error InvalidLiquidity();
+}
+
+interface IP12CoinFactoryUpgradeable is IP12CoinFactoryDef {
+  // register gameId =>developer
+  function register(uint256 gameId, address developer) external;
+
+  // mint game coin
+  function create(
+    string calldata name,
+    string calldata symbol,
+    string calldata uri,
+    uint256 gameId,
+    uint256 amountGameCoin,
+    uint256 amountP12
+  ) external returns (address);
+
+  //  mint coin and Launch a statement
+  function queueMintCoin(address gameCoinAddress, uint256 amountGameCoin) external returns (bytes32);
+
+  // execute Mint coin
+  function executeMintCoin(bytes32 mintId) external;
+
+  function withdraw(address userAddress, address gameCoinAddress, uint256 amountGameCoin) external returns (bool);
+
+  function getGameDev(uint256) external returns (address);
+
+  function getGameNextCoinAddress(uint256 gameId) external view returns (address gameCoinAddress);
+
+  // get mintFee
+  function getMintFee(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+
+  // get mintDelay
+  function getMintDelay(address gameCoinAddress, uint256 amountGameCoin) external view returns (uint256);
+
+  // get delayK
+  function setDelayK(uint256 delayK) external returns (bool);
+
+  // get delayB
+  function setDelayB(uint256 delayB) external returns (bool);
 }
