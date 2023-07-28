@@ -104,7 +104,7 @@ const config: HardhatUserConfig = {
       live: true,
       chainId: 248832,
       accounts: accounts,
-      gasPrice: 'auto', //
+      gasPrice: 1500000000, // 1.5 gwei
       deploy: ['deploy/butcher'],
     },
     mumbai: {
@@ -214,6 +214,7 @@ const config: HardhatUserConfig = {
       {
         artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/',
       },
+      { artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol' },
       {
         artifacts: 'node_modules/canonical-weth/build/contracts/',
       },

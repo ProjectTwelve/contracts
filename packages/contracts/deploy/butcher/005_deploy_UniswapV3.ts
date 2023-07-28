@@ -42,6 +42,12 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
     args: [v3.address, weth.address, nftDes.address],
     log: true,
   });
+
+  await deploy('Quoter', {
+    from: deployer,
+    args: [v3.address, weth.address],
+    log: true,
+  });
 };
 func.tags = ['UniswapV3'];
 export default func;
