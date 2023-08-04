@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "declaration": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./scripts", "src/test", "./typechain", "./deploy", "./tools", "export.ts", "./tasks"],
+  "files": ["./hardhat.config.ts"]
+}
