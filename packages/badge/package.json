@@ -92,6 +92,7 @@
   },
   "dependencies": {
     "@chainlink/env-enc": "^1.0.5",
+    "@nomicfoundation/hardhat-foundry": "^1.0.2",
     "@openzeppelin/contracts": "^4.9.2",
     "@openzeppelin/contracts-upgradeable": "^4.9.2",
     "@openzeppelin/upgrades-core": "^1.19.1",
