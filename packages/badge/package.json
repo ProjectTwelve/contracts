@@ -1,13 +1,11 @@
 {
-  "name": "@p12/contracts",
+  "name": "@p12/badge-contracts",
   "version": "v0.0.3",
+  "private": true,
   "license": "GPL-3.0",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "compile": "hardhat compile",
     "deploy": "hardhat deploy --no-compile",
