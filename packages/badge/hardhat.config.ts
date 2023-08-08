@@ -1,7 +1,8 @@
-import * as dotenv from 'dotenv';
+import { HardhatUserConfig, task } from 'hardhat/config';
+
+import dotenv from 'dotenv';
 import * as envEnc from '@chainlink/env-enc';
 
-import { HardhatUserConfig, task } from 'hardhat/config';
 import '@nomiclabs/hardhat-etherscan';
 import '@nomiclabs/hardhat-ethers';
 import '@nomiclabs/hardhat-waffle';

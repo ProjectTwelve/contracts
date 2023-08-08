@@ -4,10 +4,10 @@ pragma solidity 0.8.19;
 import { ERC721 } from 'solady/tokens/ERC721.sol';
 
 /**
- * @dev p12 badge has five rarity, thery are orange, purple, blue, green, white
+ * @dev p12 badge has five rarity, they are orange, purple, blue, green, white
  * @dev for gas efficency, we would encode the rarity in tokenId.
  * @dev we place tokenId in the following ways:
- * @dev uint216 for reserve, uint8 for rarity, uint40 for increment id
+ * @dev uint200 for reserve, uint8 for rarity, uint16 for variety, uint40 for increment id
  */
 
 contract P12Badge is ERC721 {
