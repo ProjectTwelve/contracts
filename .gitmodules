@@ -10,3 +10,6 @@
 [submodule "packages/bridge/lib/forge-std"]
 	path = packages/bridge/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "packages/bridge/lib/solady"]
+	path = packages/bridge/lib/solady
+	url = https://github.com/vectorized/solady
