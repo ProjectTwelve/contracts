@@ -29,16 +29,12 @@
   },
   "lint-staged": {
     "*.sol": [
-      "prettier",
+      "forge fmt",
       "cspell"
     ],
     "*.ts": [
       "prettier",
       "eslint",
-      "cspell"
-    ],
-    "*": [
-      "prettier",
       "cspell"
     ]
   },
