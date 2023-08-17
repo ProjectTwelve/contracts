@@ -17,11 +17,14 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
     }
 
     function sendNFT(uint256 dstChainId, uint256 tokenId, address receiver) external {
-        IERC721(communityBadge).transferFrom(msg.sender, address(this), tokenId);
+        _sendNFT(dstChainId, tokenId, receiver);
+    }
 
-        uint256 cid = IStarNFT(communityBadge).cid(tokenId);
-
-        emit SendNFT(dstChainId, tokenId, cid);
+    function sendBatchNFT(uint256 dstChainId, uint256[] calldata tokenIds, address receiver) external {
+        for (uint256 i = 0; i < tokenIds.length; i++) {
+            uint256 tokenId = tokenIds[i];
+            _sendNFT(dstChainId, tokenId, receiver);
+        }
     }
 
     function releaseNFT(address user, uint256 tokenId) external onlySigner {
@@ -37,6 +40,14 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
 
     function onERC721Received(address, address, uint256, bytes calldata) public pure override returns (bytes4) {
         return this.onERC721Received.selector;
+    }
+
+    function _sendNFT(uint256 dstChainId, uint256 tokenId, address receiver) internal {
+        IERC721(communityBadge).transferFrom(msg.sender, address(this), tokenId);
+
+        uint256 cid = IStarNFT(communityBadge).cid(tokenId);
+
+        emit SendNFT(dstChainId, tokenId, cid, receiver);
     }
 
     function _checkSigner() internal view {

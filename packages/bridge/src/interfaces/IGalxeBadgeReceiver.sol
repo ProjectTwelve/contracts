@@ -9,7 +9,7 @@ interface IGalxeBadgeReceiverDef {
     ///  @param tokenId NFT tokenId
     ///  @param cid galxe campaign id
 
-    event SendNFT(uint256 indexed dstChainId, uint256 indexed tokenId, uint256 indexed cid);
+    event SendNFT(uint256 indexed dstChainId, uint256 indexed tokenId, uint256 indexed cid, address receiver);
 
     event ReleaseNFT(address indexed user, uint256 indexed tokenId);
 

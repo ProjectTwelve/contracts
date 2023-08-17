@@ -65,18 +65,12 @@ const config: HardhatUserConfig = {
       // The fork configuration can be turned on or off by itself according to the situation
       deploy: ['deploy/hardhat'],
     },
-    p12TestNet: {
-      url: 'https://testnet.p12.games/',
-      live: true,
-      chainId: 44010,
+    polygonFork: {
       accounts: accounts,
-      gas: 'auto',
-      gasPrice: 3000000000,
-      // tags: ['test'],
-      deploy: ['deploy/p12TestNet'],
-    },
-    forkP12TestNet: {
-      url: 'http://127.0.0.1:8545/',
+      chainId: 1377777777,
+      url: 'https://rpc.vnet.tenderly.co/devnet/badge-bridge-test-polygon/197d1f10-e6f9-4e73-ab8b-b067de7181b1',
+      live: true,
+      deploy: ['deploy/polygon'],
     },
     pudge: {
       url: 'https://rpc-chain.p12.games',
@@ -94,23 +88,6 @@ const config: HardhatUserConfig = {
       gasPrice: 1500000000, // 1.5 gwei
       deploy: ['deploy/butcher'],
     },
-    mumbai: {
-      url: process.env.MUMBAI_RPC_URL || '',
-      live: true,
-      accounts: accounts,
-      gasPrice: 'auto', //
-      deploy: ['deploy/mumbai'],
-    },
-    goerli: {
-      url: process.env.GOERLI_URL || '',
-      live: true,
-      chainId: 5,
-      accounts: accounts,
-      gas: 'auto',
-      gasPrice: 'auto', //
-      tags: ['staging'],
-      deploy: ['deploy/goerli'],
-    },
   },
   contractSizer: {
     alphaSort: false,
@@ -124,10 +101,10 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      p12TestNet: addresses[0],
       pudge: addresses[0],
       mumbai: deployer,
       butcher: deployer,
+      polygonFork: deployer,
     },
     owner: {
       pudge: addresses[0],
