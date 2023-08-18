@@ -16,14 +16,14 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
         communityBadge = badge_;
     }
 
-    function sendNFT(uint256 dstChainId, uint256 tokenId, address receiver) external {
-        _sendNFT(dstChainId, tokenId, receiver);
+    function sendNFT(uint256 dstChainId, uint256 tokenId, address from, address receiver) external {
+        _sendNFT(dstChainId, tokenId, from, receiver);
     }
 
-    function sendBatchNFT(uint256 dstChainId, uint256[] calldata tokenIds, address receiver) external {
+    function sendBatchNFT(uint256 dstChainId, uint256[] calldata tokenIds, address from, address receiver) external {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
-            _sendNFT(dstChainId, tokenId, receiver);
+            _sendNFT(dstChainId, tokenId, from, receiver);
         }
     }
 
@@ -42,12 +42,12 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
         return this.onERC721Received.selector;
     }
 
-    function _sendNFT(uint256 dstChainId, uint256 tokenId, address receiver) internal {
-        IERC721(communityBadge).transferFrom(msg.sender, address(this), tokenId);
+    function _sendNFT(uint256 dstChainId, uint256 tokenId, address from, address receiver) internal {
+        IERC721(communityBadge).transferFrom(from, address(this), tokenId);
 
         uint256 cid = IStarNFT(communityBadge).cid(tokenId);
 
-        emit SendNFT(dstChainId, tokenId, cid, receiver);
+        emit SendNFT(dstChainId, tokenId, cid, from, receiver);
     }
 
     function _checkSigner() internal view {

@@ -67,8 +67,8 @@ const config: HardhatUserConfig = {
     },
     polygonFork: {
       accounts: accounts,
-      chainId: 1377777777,
-      url: 'https://rpc.vnet.tenderly.co/devnet/badge-bridge-test-polygon/197d1f10-e6f9-4e73-ab8b-b067de7181b1',
+      chainId: 137,
+      url: 'https://rpc.tenderly.co/fork/55dd54ab-02db-4989-b810-c781de3f0f6d',
       live: true,
       deploy: ['deploy/polygon'],
     },
