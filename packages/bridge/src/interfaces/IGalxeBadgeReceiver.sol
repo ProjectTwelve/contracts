@@ -3,6 +3,9 @@ pragma solidity 0.8.19;
 
 interface IGalxeBadgeReceiverDef {
     error NotSigner();
+
+    error DstChainIdIsNotAllowed();
+
     /// @notice emit bridge NFT event
     /// @dev just emit the bridge NFT request event
     /// @param dstChainId destination dstChainId
@@ -16,6 +19,8 @@ interface IGalxeBadgeReceiverDef {
     event ReleaseNFT(address indexed user, uint256 indexed tokenId);
 
     event SignerSet(address signer, bool valid);
+
+    event DstValidSet(uint256 chainId, bool valid);
 }
 
 interface IGalxeBadgeReceiver is IGalxeBadgeReceiverDef {}

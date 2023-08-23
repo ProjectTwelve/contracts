@@ -10,6 +10,7 @@ import {IGalxeBadgeReceiver} from "src/interfaces/IGalxeBadgeReceiver.sol";
 contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
     address public communityBadge;
     mapping(address => bool) public signers;
+    mapping(uint256 => bool) public allowedDst;
 
     constructor(address badge_, address owner_) {
         _setOwner(owner_);
@@ -38,11 +39,20 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
         emit SignerSet(signer, valid);
     }
 
+    function updateDstValidity(uint256 dstChainId, bool valid) external onlyOwner {
+        allowedDst[dstChainId] = valid;
+
+        emit DstValidSet(dstChainId, valid);
+    }
+
     function onERC721Received(address, address, uint256, bytes calldata) public pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
 
     function _sendNFT(uint256 dstChainId, uint256 tokenId, address from, address receiver) internal {
+        if (!allowedDst[dstChainId]) {
+            revert DstChainIdIsNotAllowed();
+        }
         IERC721(communityBadge).transferFrom(from, address(this), tokenId);
 
         uint256 cid = IStarNFT(communityBadge).cid(tokenId);
