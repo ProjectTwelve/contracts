@@ -61,7 +61,7 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
 
         uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
-        emit SendNFT(dstChainId, tokenId, cid, from, receiver);
+        emit SendNFT(dstChainId, tokenId, cid, nftAddr, from, receiver);
     }
 
     function _checkSigner() internal view {
