@@ -68,7 +68,7 @@ const config: HardhatUserConfig = {
     polygonFork: {
       accounts: accounts,
       chainId: 137,
-      url: 'https://rpc.tenderly.co/fork/55dd54ab-02db-4989-b810-c781de3f0f6d',
+      url: 'https://rpc.tenderly.co/fork/c86c341b-fe43-4682-bdf2-67b72949926f',
       live: true,
       deploy: ['deploy/polygon'],
     },
