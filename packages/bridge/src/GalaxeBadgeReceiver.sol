@@ -8,28 +8,32 @@ import {IStarNFT} from "src/interfaces/IStarNFT.sol";
 import {IGalxeBadgeReceiver} from "src/interfaces/IGalxeBadgeReceiver.sol";
 
 contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
-    address public communityBadge;
     mapping(address => bool) public signers;
     mapping(uint256 => bool) public allowedDst;
 
-    constructor(address badge_, address owner_) {
+    constructor(address owner_) {
         _setOwner(owner_);
-        communityBadge = badge_;
     }
 
-    function sendNFT(uint256 dstChainId, uint256 tokenId, address from, address receiver) external {
-        _sendNFT(dstChainId, tokenId, from, receiver);
+    function sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address from, address receiver) external {
+        _sendNFT(nftAddr, dstChainId, tokenId, from, receiver);
     }
 
-    function sendBatchNFT(uint256 dstChainId, uint256[] calldata tokenIds, address from, address receiver) external {
+    function sendBatchNFT(
+        address nftAddr,
+        uint256 dstChainId,
+        uint256[] calldata tokenIds,
+        address from,
+        address receiver
+    ) external {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
-            _sendNFT(dstChainId, tokenId, from, receiver);
+            _sendNFT(nftAddr, dstChainId, tokenId, from, receiver);
         }
     }
 
-    function releaseNFT(address user, uint256 tokenId) external onlySigner {
-        IERC721(communityBadge).transferFrom(address(this), user, tokenId);
+    function releaseNFT(address nftAddr, address user, uint256 tokenId) external onlySigner {
+        IERC721(nftAddr).transferFrom(address(this), user, tokenId);
         emit ReleaseNFT(user, tokenId);
     }
 
@@ -49,13 +53,13 @@ contract GalxeBadgeReceiver is IGalxeBadgeReceiver, Ownable, IERC721Receiver {
         return this.onERC721Received.selector;
     }
 
-    function _sendNFT(uint256 dstChainId, uint256 tokenId, address from, address receiver) internal {
+    function _sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address from, address receiver) internal {
         if (!allowedDst[dstChainId]) {
             revert DstChainIdIsNotAllowed();
         }
-        IERC721(communityBadge).transferFrom(from, address(this), tokenId);
+        IERC721(nftAddr).transferFrom(from, address(this), tokenId);
 
-        uint256 cid = IStarNFT(communityBadge).cid(tokenId);
+        uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
         emit SendNFT(dstChainId, tokenId, cid, from, receiver);
     }

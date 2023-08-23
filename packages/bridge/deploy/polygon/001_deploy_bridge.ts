@@ -1,15 +1,18 @@
 import { DeployFunction } from 'hardhat-deploy/types';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
-  const { deploy } = deployments;
+  const { deploy, execute } = deployments;
 
   const { deployer } = await getNamedAccounts();
 
   await deploy('GalxeBadgeReceiver', {
     from: deployer,
-    args: ['0xC18Eeac03F52ac67F956C3Fb7526a119475778dd', deployer],
+    args: [deployer],
     log: true,
   });
+
+  await execute('GalxeBadgeReceiver', { from: deployer, log: true }, 'updateDstValidity', 20736, true);
+  await execute('GalxeBadgeReceiver', { from: deployer, log: true }, 'updateDstValidity', 248832, true);
 };
 
 func.tags = ['GalxeBadgeReceiver'];
