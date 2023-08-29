@@ -72,6 +72,20 @@ const config: HardhatUserConfig = {
       live: true,
       deploy: ['deploy/polygon'],
     },
+    polygon: {
+      accounts: accounts,
+      chainId: 137,
+      url: 'https://polygon-bor.publicnode.com',
+      live: true,
+      deploy: ['deploy/polygon'],
+    },
+    bnb: {
+      accounts: accounts,
+      chainId: 56,
+      url: 'https://bsc.publicnode.com',
+      live: true,
+      deploy: ['deploy/bnb'],
+    },
     pudge: {
       url: 'https://rpc-chain.p12.games',
       live: true,
@@ -104,6 +118,8 @@ const config: HardhatUserConfig = {
       pudge: addresses[0],
       mumbai: deployer,
       butcher: deployer,
+      bnb: deployer,
+      polygon: deployer,
       polygonFork: deployer,
     },
     owner: {
@@ -184,6 +200,8 @@ const config: HardhatUserConfig = {
       butcher: 'p12',
       goerli: process.env.ETHERSCAN_API_KEY!,
       polygonMumbai: process.env.POLYSCAN_API_KEY!,
+      polygon: process.env.POLYSCAN_API_KEY!,
+      bsc: process.env.BSCSCAN_API_KEY!,
     },
     customChains: [
       {
