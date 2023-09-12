@@ -1,0 +1,10 @@
+forge-std/=lib/forge-std/src/
+ds-test/=lib/forge-std/lib/ds-test/src/
+solady/=lib/solady/src
+foundry-upgrades/=lib/foundry-upgrades/src/
+@openzeppelin/=node_modules/@openzeppelin/
+@uniswap/=node_modules/@uniswap/
+@p12/=node_modules/@p12/
+base64-sol=node_modules/base64-sol/
+contracts/=contracts/
+src/=src/

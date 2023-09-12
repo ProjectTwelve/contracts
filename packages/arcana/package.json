@@ -1,0 +1,115 @@
+{
+  "name": "@p12/bridge-contracts",
+  "version": "v0.0.3",
+  "private": true,
+  "license": "GPL-3.0",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy": "hardhat deploy --no-compile",
+    "verify": "hardhat verifyDeployment",
+    "export": "hardhat run ./tools/export.ts",
+    "doc:gen": "hardhat docgen",
+    "doc:dev": "docusaurus start",
+    "doc:build": "docusaurus build",
+    "flat": "hardhat flat",
+    "prettier": "prettier -w .",
+    "test": "forge test",
+    "test:analysis": "REPORT_GAS=true hardhat test",
+    "enc": "env-enc set-pw",
+    "enc:set": "env-enc set",
+    "coverage": "HARDHAT_DEPLOY_FIXTURE=true hardhat coverage",
+    "lint": "cspell \"**/*.sol\" \"**/*.ts\" && prettier -w . && eslint \"**/**.ts\" --fix && solhint \"contracts/**/*.sol\"",
+    "estimate-size": "hardhat size-contracts --max-memory 8096"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.sol": [
+      "forge fmt",
+      "cspell"
+    ],
+    "*.ts": [
+      "prettier",
+      "eslint",
+      "cspell"
+    ]
+  },
+  "devDependencies": {
+    "@ethersproject/abi": "^5.7.0",
+    "@ethersproject/bytes": "^5.7.0",
+    "@ethersproject/providers": "^5.7.2",
+    "@metamask/eth-sig-util": "^4.0.1",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
+    "@nomiclabs/hardhat-etherscan": "^3.1.7",
+    "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/hardhat-upgrades": "^1.17.0",
+    "@typechain/ethers-v5": "^7.2.0",
+    "@typechain/hardhat": "^6.1.6",
+    "@types/chai": "^4.3.0",
+    "@types/fs-extra": "^9.0.13",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^12.20.40",
+    "@typescript-eslint/eslint-plugin": "^5.16.0",
+    "@typescript-eslint/parser": "^5.16.0",
+    "chai": "^4.3.4",
+    "cspell": "^5.15.1",
+    "dotenv": "^10.0.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^3.4.1",
+    "eslint-plugin-promise": "^5.2.0",
+    "ethereum-waffle": "^4.0.2",
+    "ethers": "^5.7.2",
+    "fs-extra": "^10.1.0",
+    "hardhat": "2.17.1",
+    "hardhat-contract-sizer": "^2.10.0",
+    "hardhat-deploy": "^0.11.25",
+    "hardhat-gas-reporter": "^1.0.6",
+    "lint-staged": "^13.2.3",
+    "prettier": "^2.5.1",
+    "prettier-plugin-sh": "^0.8.1",
+    "prettier-plugin-solidity": "^1.0.0-beta.13",
+    "solhint": "^3.3.6",
+    "solidity-coverage": "0.7.22",
+    "solidity-docgen": "^0.6.0-beta.22",
+    "ts-node": "^10.4.0",
+    "tsort": "^0.0.1",
+    "typechain": "^8.1.1",
+    "typescript": "^4.5.4"
+  },
+  "dependencies": {
+    "@chainlink/env-enc": "^1.0.5",
+    "@nomicfoundation/hardhat-foundry": "^1.0.2",
+    "@openzeppelin/contracts": "^4.9.2",
+    "@openzeppelin/contracts-upgradeable": "^4.9.2",
+    "@openzeppelin/upgrades-core": "^1.19.1",
+    "@p12/contracts-lib": "^0.0.5",
+    "@tovarishfin/hardhat-yul": "^3.0.5",
+    "@uniswap/lib": "4.0.1-alpha",
+    "@uniswap/v3-core": "^1.0.1",
+    "@uniswap/v3-periphery": "^1.4.3",
+    "base64-sol": "^1.1.0",
+    "canonical-weth": "^1.4.0",
+    "hardhat-preprocessor": "^0.1.5",
+    "simple-git-hooks": "^2.8.1",
+    "viem": "^1.10.9"
+  },
+  "overrides": {
+    "@nomiclabs/hardhat-waffle": {
+      "@nomiclabs/hardhat-ethers": "$@nomiclabs/hardhat-ethers"
+    },
+    "@openzeppelin/hardhat-upgrades": {
+      "@nomiclabs/hardhat-ethers": "$@nomiclabs/hardhat-ethers"
+    }
+  },
+  "files": [
+    "deployments"
+  ]
+}

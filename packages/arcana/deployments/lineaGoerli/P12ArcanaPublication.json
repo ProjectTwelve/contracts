@@ -1,0 +1,363 @@
+{
+  "address": "0x553d66C71A85F315f73446FC8BbfE356C997Dd65",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner_",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "inputs": [],
+      "name": "NewOwnerIsZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NoHandoverRequest",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "Unauthorized",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "pendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipHandoverCanceled",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "pendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipHandoverRequested",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "oldOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "cancelOwnershipHandover",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "completeOwnershipHandover",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "result",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "pendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "ownershipHandoverExpiresAt",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "result",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "publicGame",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "publicationFee",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "qualDevs",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "requestOwnershipHandover",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "fee",
+          "type": "uint256"
+        }
+      ],
+      "name": "setPublicationFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "dst",
+          "type": "address"
+        }
+      ],
+      "name": "withdrawFee",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x65985ea300e7606f0b5cf19f3dfc47e55e5996716808d9c552f4aa45274b62d6",
+  "receipt": {
+    "to": null,
+    "from": "0xe6CAB02B0CF13F9638083Fa2C144A3E463a7b16f",
+    "contractAddress": "0x553d66C71A85F315f73446FC8BbfE356C997Dd65",
+    "transactionIndex": 14,
+    "gasUsed": "400561",
+    "logsBloom": "0x00004000000000000000002000000000000000040000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000080000000000000000020000000000000000000800000000100000000000000000000000400000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x789da7c5141616ab8b589dc927ab9a5a2c0ee8ed445678ffac34d1b26b10ee89",
+    "transactionHash": "0x65985ea300e7606f0b5cf19f3dfc47e55e5996716808d9c552f4aa45274b62d6",
+    "logs": [
+      {
+        "transactionIndex": 14,
+        "blockNumber": 1514760,
+        "transactionHash": "0x65985ea300e7606f0b5cf19f3dfc47e55e5996716808d9c552f4aa45274b62d6",
+        "address": "0x553d66C71A85F315f73446FC8BbfE356C997Dd65",
+        "topics": [
+          "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x000000000000000000000000e6cab02b0cf13f9638083fa2c144a3e463a7b16f"
+        ],
+        "data": "0x",
+        "logIndex": 2,
+        "blockHash": "0x789da7c5141616ab8b589dc927ab9a5a2c0ee8ed445678ffac34d1b26b10ee89"
+      }
+    ],
+    "blockNumber": 1514760,
+    "cumulativeGasUsed": "869674",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xe6CAB02B0CF13F9638083Fa2C144A3E463a7b16f"
+  ],
+  "numDeployments": 1,
+  "solcInputHash": "702444800f11def31b8baf98b9c408b8",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner_\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"NewOwnerIsZeroAddress\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NoHandoverRequest\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Unauthorized\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"OwnershipHandoverCanceled\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"OwnershipHandoverRequested\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"OwnershipTransferred\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"cancelOwnershipHandover\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"completeOwnershipHandover\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"result\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"pendingOwner\",\"type\":\"address\"}],\"name\":\"ownershipHandoverExpiresAt\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"result\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"publicGame\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"publicationFee\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"qualDevs\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"renounceOwnership\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"requestOwnershipHandover\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"fee\",\"type\":\"uint256\"}],\"name\":\"setPublicationFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"dst\",\"type\":\"address\"}],\"name\":\"withdrawFee\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"NewOwnerIsZeroAddress()\":[{\"details\":\"The `newOwner` cannot be the zero address.\"}],\"NoHandoverRequest()\":[{\"details\":\"The `pendingOwner` does not have a valid handover request.\"}],\"Unauthorized()\":[{\"details\":\"The caller is not authorized to call the function.\"}]},\"events\":{\"OwnershipHandoverCanceled(address)\":{\"details\":\"The ownership handover to `pendingOwner` has been canceled.\"},\"OwnershipHandoverRequested(address)\":{\"details\":\"An ownership handover to `pendingOwner` has been requested.\"},\"OwnershipTransferred(address,address)\":{\"details\":\"The ownership is transferred from `oldOwner` to `newOwner`. This event is intentionally kept the same as OpenZeppelin's Ownable to be compatible with indexers and [EIP-173](https://eips.ethereum.org/EIPS/eip-173), despite it not being as lightweight as a single argument event.\"}},\"kind\":\"dev\",\"methods\":{\"cancelOwnershipHandover()\":{\"details\":\"Cancels the two-step ownership handover to the caller, if any.\"},\"completeOwnershipHandover(address)\":{\"details\":\"Allows the owner to complete the two-step ownership handover to `pendingOwner`. Reverts if there is no existing ownership handover requested by `pendingOwner`.\"},\"owner()\":{\"details\":\"Returns the owner of the contract.\"},\"ownershipHandoverExpiresAt(address)\":{\"details\":\"Returns the expiry timestamp for the two-step ownership handover to `pendingOwner`.\"},\"renounceOwnership()\":{\"details\":\"Allows the owner to renounce their ownership.\"},\"requestOwnershipHandover()\":{\"details\":\"Request a two-step ownership handover to the caller. The request will automatically expire in 48 hours (172800 seconds) by default.\"},\"transferOwnership(address)\":{\"details\":\"Allows the owner to transfer the ownership to `newOwner`.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/P12ArcanaPublication.sol\":\"P12ArcanaPublication\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":20000},\"remappings\":[\":contracts/=contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":foundry-upgrades/=lib/foundry-upgrades/src/\",\":solady/=lib/solady/src/\",\":src/=src/\"]},\"sources\":{\"lib/solady/src/auth/Ownable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.4;\\n\\n/// @notice Simple single owner authorization mixin.\\n/// @author Solady (https://github.com/vectorized/solady/blob/main/src/auth/Ownable.sol)\\n///\\n/// @dev Note:\\n/// This implementation does NOT auto-initialize the owner to `msg.sender`.\\n/// You MUST call the `_initializeOwner` in the constructor / initializer.\\n///\\n/// While the ownable portion follows\\n/// [EIP-173](https://eips.ethereum.org/EIPS/eip-173) for compatibility,\\n/// the nomenclature for the 2-step ownership handover may be unique to this codebase.\\nabstract contract Ownable {\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                       CUSTOM ERRORS                        */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev The caller is not authorized to call the function.\\n    error Unauthorized();\\n\\n    /// @dev The `newOwner` cannot be the zero address.\\n    error NewOwnerIsZeroAddress();\\n\\n    /// @dev The `pendingOwner` does not have a valid handover request.\\n    error NoHandoverRequest();\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                           EVENTS                           */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev The ownership is transferred from `oldOwner` to `newOwner`.\\n    /// This event is intentionally kept the same as OpenZeppelin's Ownable to be\\n    /// compatible with indexers and [EIP-173](https://eips.ethereum.org/EIPS/eip-173),\\n    /// despite it not being as lightweight as a single argument event.\\n    event OwnershipTransferred(address indexed oldOwner, address indexed newOwner);\\n\\n    /// @dev An ownership handover to `pendingOwner` has been requested.\\n    event OwnershipHandoverRequested(address indexed pendingOwner);\\n\\n    /// @dev The ownership handover to `pendingOwner` has been canceled.\\n    event OwnershipHandoverCanceled(address indexed pendingOwner);\\n\\n    /// @dev `keccak256(bytes(\\\"OwnershipTransferred(address,address)\\\"))`.\\n    uint256 private constant _OWNERSHIP_TRANSFERRED_EVENT_SIGNATURE =\\n        0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0;\\n\\n    /// @dev `keccak256(bytes(\\\"OwnershipHandoverRequested(address)\\\"))`.\\n    uint256 private constant _OWNERSHIP_HANDOVER_REQUESTED_EVENT_SIGNATURE =\\n        0xdbf36a107da19e49527a7176a1babf963b4b0ff8cde35ee35d6cd8f1f9ac7e1d;\\n\\n    /// @dev `keccak256(bytes(\\\"OwnershipHandoverCanceled(address)\\\"))`.\\n    uint256 private constant _OWNERSHIP_HANDOVER_CANCELED_EVENT_SIGNATURE =\\n        0xfa7b8eab7da67f412cc9575ed43464468f9bfbae89d1675917346ca6d8fe3c92;\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                          STORAGE                           */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev The owner slot is given by: `not(_OWNER_SLOT_NOT)`.\\n    /// It is intentionally chosen to be a high value\\n    /// to avoid collision with lower slots.\\n    /// The choice of manual storage layout is to enable compatibility\\n    /// with both regular and upgradeable contracts.\\n    uint256 private constant _OWNER_SLOT_NOT = 0x8b78c6d8;\\n\\n    /// The ownership handover slot of `newOwner` is given by:\\n    /// ```\\n    ///     mstore(0x00, or(shl(96, user), _HANDOVER_SLOT_SEED))\\n    ///     let handoverSlot := keccak256(0x00, 0x20)\\n    /// ```\\n    /// It stores the expiry timestamp of the two-step ownership handover.\\n    uint256 private constant _HANDOVER_SLOT_SEED = 0x389a75e1;\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                     INTERNAL FUNCTIONS                     */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Initializes the owner directly without authorization guard.\\n    /// This function must be called upon initialization,\\n    /// regardless of whether the contract is upgradeable or not.\\n    /// This is to enable generalization to both regular and upgradeable contracts,\\n    /// and to save gas in case the initial owner is not the caller.\\n    /// For performance reasons, this function will not check if there\\n    /// is an existing owner.\\n    function _initializeOwner(address newOwner) internal virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Clean the upper 96 bits.\\n            newOwner := shr(96, shl(96, newOwner))\\n            // Store the new value.\\n            sstore(not(_OWNER_SLOT_NOT), newOwner)\\n            // Emit the {OwnershipTransferred} event.\\n            log3(0, 0, _OWNERSHIP_TRANSFERRED_EVENT_SIGNATURE, 0, newOwner)\\n        }\\n    }\\n\\n    /// @dev Sets the owner directly without authorization guard.\\n    function _setOwner(address newOwner) internal virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            let ownerSlot := not(_OWNER_SLOT_NOT)\\n            // Clean the upper 96 bits.\\n            newOwner := shr(96, shl(96, newOwner))\\n            // Emit the {OwnershipTransferred} event.\\n            log3(0, 0, _OWNERSHIP_TRANSFERRED_EVENT_SIGNATURE, sload(ownerSlot), newOwner)\\n            // Store the new value.\\n            sstore(ownerSlot, newOwner)\\n        }\\n    }\\n\\n    /// @dev Throws if the sender is not the owner.\\n    function _checkOwner() internal view virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // If the caller is not the stored owner, revert.\\n            if iszero(eq(caller(), sload(not(_OWNER_SLOT_NOT)))) {\\n                mstore(0x00, 0x82b42900) // `Unauthorized()`.\\n                revert(0x1c, 0x04)\\n            }\\n        }\\n    }\\n\\n    /// @dev Returns how long a two-step ownership handover is valid for in seconds.\\n    /// Override to return a different value if needed.\\n    /// Made internal to conserve bytecode. Wrap it in a public function if needed.\\n    function _ownershipHandoverValidFor() internal view virtual returns (uint64) {\\n        return 48 * 3600;\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                  PUBLIC UPDATE FUNCTIONS                   */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Allows the owner to transfer the ownership to `newOwner`.\\n    function transferOwnership(address newOwner) public payable virtual onlyOwner {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            if iszero(shl(96, newOwner)) {\\n                mstore(0x00, 0x7448fbae) // `NewOwnerIsZeroAddress()`.\\n                revert(0x1c, 0x04)\\n            }\\n        }\\n        _setOwner(newOwner);\\n    }\\n\\n    /// @dev Allows the owner to renounce their ownership.\\n    function renounceOwnership() public payable virtual onlyOwner {\\n        _setOwner(address(0));\\n    }\\n\\n    /// @dev Request a two-step ownership handover to the caller.\\n    /// The request will automatically expire in 48 hours (172800 seconds) by default.\\n    function requestOwnershipHandover() public payable virtual {\\n        unchecked {\\n            uint256 expires = block.timestamp + _ownershipHandoverValidFor();\\n            /// @solidity memory-safe-assembly\\n            assembly {\\n                // Compute and set the handover slot to `expires`.\\n                mstore(0x0c, _HANDOVER_SLOT_SEED)\\n                mstore(0x00, caller())\\n                sstore(keccak256(0x0c, 0x20), expires)\\n                // Emit the {OwnershipHandoverRequested} event.\\n                log2(0, 0, _OWNERSHIP_HANDOVER_REQUESTED_EVENT_SIGNATURE, caller())\\n            }\\n        }\\n    }\\n\\n    /// @dev Cancels the two-step ownership handover to the caller, if any.\\n    function cancelOwnershipHandover() public payable virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Compute and set the handover slot to 0.\\n            mstore(0x0c, _HANDOVER_SLOT_SEED)\\n            mstore(0x00, caller())\\n            sstore(keccak256(0x0c, 0x20), 0)\\n            // Emit the {OwnershipHandoverCanceled} event.\\n            log2(0, 0, _OWNERSHIP_HANDOVER_CANCELED_EVENT_SIGNATURE, caller())\\n        }\\n    }\\n\\n    /// @dev Allows the owner to complete the two-step ownership handover to `pendingOwner`.\\n    /// Reverts if there is no existing ownership handover requested by `pendingOwner`.\\n    function completeOwnershipHandover(address pendingOwner) public payable virtual onlyOwner {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Compute and set the handover slot to 0.\\n            mstore(0x0c, _HANDOVER_SLOT_SEED)\\n            mstore(0x00, pendingOwner)\\n            let handoverSlot := keccak256(0x0c, 0x20)\\n            // If the handover does not exist, or has expired.\\n            if gt(timestamp(), sload(handoverSlot)) {\\n                mstore(0x00, 0x6f5e8818) // `NoHandoverRequest()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Set the handover slot to 0.\\n            sstore(handoverSlot, 0)\\n        }\\n        _setOwner(pendingOwner);\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                   PUBLIC READ FUNCTIONS                    */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Returns the owner of the contract.\\n    function owner() public view virtual returns (address result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            result := sload(not(_OWNER_SLOT_NOT))\\n        }\\n    }\\n\\n    /// @dev Returns the expiry timestamp for the two-step ownership handover to `pendingOwner`.\\n    function ownershipHandoverExpiresAt(address pendingOwner)\\n        public\\n        view\\n        virtual\\n        returns (uint256 result)\\n    {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Compute the handover slot.\\n            mstore(0x0c, _HANDOVER_SLOT_SEED)\\n            mstore(0x00, pendingOwner)\\n            // Load the handover slot.\\n            result := sload(keccak256(0x0c, 0x20))\\n        }\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                         MODIFIERS                          */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Marks a function as only callable by the owner.\\n    modifier onlyOwner() virtual {\\n        _checkOwner();\\n        _;\\n    }\\n}\\n\",\"keccak256\":\"0xd916b6ca098f26e08eff367c6fc1853956839d8d1c9d2df715784b6dec99889b\",\"license\":\"MIT\"},\"src/P12ArcanaPublication.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-only\\npragma solidity 0.8.19;\\n\\nimport {Ownable} from \\\"solady/auth/Ownable.sol\\\";\\n\\ncontract P12ArcanaPublication is Ownable {\\n    constructor(address owner_) {\\n        _initializeOwner(owner_);\\n    }\\n\\n    mapping(address => bool) public qualDevs;\\n    uint256 public publicationFee;\\n\\n    function publicGame() public payable {\\n        require(msg.value >= publicationFee, \\\"fee not enough\\\");\\n        qualDevs[msg.sender] = true;\\n    }\\n\\n    function setPublicationFee(uint256 fee) public onlyOwner {\\n        publicationFee = fee;\\n    }\\n\\n    function withdrawFee(address dst) public onlyOwner {\\n        (bool success,) = payable(address(dst)).call(\\\"\\\");\\n        require(success, \\\"withdraw fail\\\");\\n    }\\n}\\n\",\"keccak256\":\"0x7933cddae165cb7de3c7f7beb479e85d4ea62c59be3a269004f52b8d946cfb36\",\"license\":\"GPL-3.0-only\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161068c38038061068c83398101604081905261002f9161007a565b6100388161003e565b506100aa565b6001600160a01b0316638b78c6d8198190558060007f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e08180a350565b60006020828403121561008c57600080fd5b81516001600160a01b03811681146100a357600080fd5b9392505050565b6105d3806100b96000396000f3fe6080604052600436106100c75760003560e01c8063a154fce211610074578063f04e283e1161004e578063f04e283e146101eb578063f2fde38b146101fe578063fee81cf41461021157600080fd5b8063a154fce214610183578063a56c95cb1461018b578063af8996f1146101cb57600080fd5b80636e0e540c116100a55780636e0e540c146100fe578063715018a6146101275780638da5cb5b1461012f57600080fd5b80631ac3ddeb146100cc57806325692962146100ee57806354d1f13d146100f6575b600080fd5b3480156100d857600080fd5b506100ec6100e7366004610570565b610244565b005b6100ec61031a565b6100ec61036a565b34801561010a57600080fd5b5061011460015481565b6040519081526020015b60405180910390f35b6100ec6103a6565b34801561013b57600080fd5b507fffffffffffffffffffffffffffffffffffffffffffffffffffffffff748739275460405173ffffffffffffffffffffffffffffffffffffffff909116815260200161011e565b6100ec6103ba565b34801561019757600080fd5b506101bb6101a6366004610570565b60006020819052908152604090205460ff1681565b604051901515815260200161011e565b3480156101d757600080fd5b506100ec6101e63660046105ad565b610460565b6100ec6101f9366004610570565b61046d565b6100ec61020c366004610570565b6104ad565b34801561021d57600080fd5b5061011461022c366004610570565b63389a75e1600c908152600091909152602090205490565b61024c6104d4565b60405160009073ffffffffffffffffffffffffffffffffffffffff8316908281818181865af19150503d80600081146102a1576040519150601f19603f3d011682016040523d82523d6000602084013e6102a6565b606091505b5050905080610316576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600d60248201527f7769746864726177206661696c0000000000000000000000000000000000000060448201526064015b60405180910390fd5b5050565b60006202a30067ffffffffffffffff164201905063389a75e1600c5233600052806020600c2055337fdbf36a107da19e49527a7176a1babf963b4b0ff8cde35ee35d6cd8f1f9ac7e1d600080a250565b63389a75e1600c523360005260006020600c2055337ffa7b8eab7da67f412cc9575ed43464468f9bfbae89d1675917346ca6d8fe3c92600080a2565b6103ae6104d4565b6103b8600061050a565b565b600154341015610426576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600e60248201527f666565206e6f7420656e6f756768000000000000000000000000000000000000604482015260640161030d565b33600090815260208190526040902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055565b6104686104d4565b600155565b6104756104d4565b63389a75e1600c52806000526020600c20805442111561049d57636f5e88186000526004601cfd5b600090556104aa8161050a565b50565b6104b56104d4565b8060601b6104cb57637448fbae6000526004601cfd5b6104aa8161050a565b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffff748739275433146103b8576382b429006000526004601cfd5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffff74873927805473ffffffffffffffffffffffffffffffffffffffff9092169182907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a355565b60006020828403121561058257600080fd5b813573ffffffffffffffffffffffffffffffffffffffff811681146105a657600080fd5b9392505050565b6000602082840312156105bf57600080fd5b503591905056fea164736f6c6343000813000a",
+  "deployedBytecode": "0x6080604052600436106100c75760003560e01c8063a154fce211610074578063f04e283e1161004e578063f04e283e146101eb578063f2fde38b146101fe578063fee81cf41461021157600080fd5b8063a154fce214610183578063a56c95cb1461018b578063af8996f1146101cb57600080fd5b80636e0e540c116100a55780636e0e540c146100fe578063715018a6146101275780638da5cb5b1461012f57600080fd5b80631ac3ddeb146100cc57806325692962146100ee57806354d1f13d146100f6575b600080fd5b3480156100d857600080fd5b506100ec6100e7366004610570565b610244565b005b6100ec61031a565b6100ec61036a565b34801561010a57600080fd5b5061011460015481565b6040519081526020015b60405180910390f35b6100ec6103a6565b34801561013b57600080fd5b507fffffffffffffffffffffffffffffffffffffffffffffffffffffffff748739275460405173ffffffffffffffffffffffffffffffffffffffff909116815260200161011e565b6100ec6103ba565b34801561019757600080fd5b506101bb6101a6366004610570565b60006020819052908152604090205460ff1681565b604051901515815260200161011e565b3480156101d757600080fd5b506100ec6101e63660046105ad565b610460565b6100ec6101f9366004610570565b61046d565b6100ec61020c366004610570565b6104ad565b34801561021d57600080fd5b5061011461022c366004610570565b63389a75e1600c908152600091909152602090205490565b61024c6104d4565b60405160009073ffffffffffffffffffffffffffffffffffffffff8316908281818181865af19150503d80600081146102a1576040519150601f19603f3d011682016040523d82523d6000602084013e6102a6565b606091505b5050905080610316576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600d60248201527f7769746864726177206661696c0000000000000000000000000000000000000060448201526064015b60405180910390fd5b5050565b60006202a30067ffffffffffffffff164201905063389a75e1600c5233600052806020600c2055337fdbf36a107da19e49527a7176a1babf963b4b0ff8cde35ee35d6cd8f1f9ac7e1d600080a250565b63389a75e1600c523360005260006020600c2055337ffa7b8eab7da67f412cc9575ed43464468f9bfbae89d1675917346ca6d8fe3c92600080a2565b6103ae6104d4565b6103b8600061050a565b565b600154341015610426576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600e60248201527f666565206e6f7420656e6f756768000000000000000000000000000000000000604482015260640161030d565b33600090815260208190526040902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055565b6104686104d4565b600155565b6104756104d4565b63389a75e1600c52806000526020600c20805442111561049d57636f5e88186000526004601cfd5b600090556104aa8161050a565b50565b6104b56104d4565b8060601b6104cb57637448fbae6000526004601cfd5b6104aa8161050a565b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffff748739275433146103b8576382b429006000526004601cfd5b7fffffffffffffffffffffffffffffffffffffffffffffffffffffffff74873927805473ffffffffffffffffffffffffffffffffffffffff9092169182907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0600080a355565b60006020828403121561058257600080fd5b813573ffffffffffffffffffffffffffffffffffffffff811681146105a657600080fd5b9392505050565b6000602082840312156105bf57600080fd5b503591905056fea164736f6c6343000813000a",
+  "devdoc": {
+    "errors": {
+      "NewOwnerIsZeroAddress()": [
+        {
+          "details": "The `newOwner` cannot be the zero address."
+        }
+      ],
+      "NoHandoverRequest()": [
+        {
+          "details": "The `pendingOwner` does not have a valid handover request."
+        }
+      ],
+      "Unauthorized()": [
+        {
+          "details": "The caller is not authorized to call the function."
+        }
+      ]
+    },
+    "events": {
+      "OwnershipHandoverCanceled(address)": {
+        "details": "The ownership handover to `pendingOwner` has been canceled."
+      },
+      "OwnershipHandoverRequested(address)": {
+        "details": "An ownership handover to `pendingOwner` has been requested."
+      },
+      "OwnershipTransferred(address,address)": {
+        "details": "The ownership is transferred from `oldOwner` to `newOwner`. This event is intentionally kept the same as OpenZeppelin's Ownable to be compatible with indexers and [EIP-173](https://eips.ethereum.org/EIPS/eip-173), despite it not being as lightweight as a single argument event."
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "cancelOwnershipHandover()": {
+        "details": "Cancels the two-step ownership handover to the caller, if any."
+      },
+      "completeOwnershipHandover(address)": {
+        "details": "Allows the owner to complete the two-step ownership handover to `pendingOwner`. Reverts if there is no existing ownership handover requested by `pendingOwner`."
+      },
+      "owner()": {
+        "details": "Returns the owner of the contract."
+      },
+      "ownershipHandoverExpiresAt(address)": {
+        "details": "Returns the expiry timestamp for the two-step ownership handover to `pendingOwner`."
+      },
+      "renounceOwnership()": {
+        "details": "Allows the owner to renounce their ownership."
+      },
+      "requestOwnershipHandover()": {
+        "details": "Request a two-step ownership handover to the caller. The request will automatically expire in 48 hours (172800 seconds) by default."
+      },
+      "transferOwnership(address)": {
+        "details": "Allows the owner to transfer the ownership to `newOwner`."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 191,
+        "contract": "src/P12ArcanaPublication.sol:P12ArcanaPublication",
+        "label": "qualDevs",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_address,t_bool)"
+      },
+      {
+        "astId": 193,
+        "contract": "src/P12ArcanaPublication.sol:P12ArcanaPublication",
+        "label": "publicationFee",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
