@@ -18,6 +18,7 @@ import 'solidity-docgen';
 import '@tovarishfin/hardhat-yul';
 
 import verifyDeploymentOnScan from './tasks/verify';
+import { deploy } from '@openzeppelin/hardhat-upgrades/dist/utils';
 
 envEnc.config();
 dotenv.config();
@@ -72,6 +73,14 @@ const config: HardhatUserConfig = {
       gasPrice: 'auto',
       deploy: ['deploy/lineaGoerli'],
     },
+    linea: {
+      url: 'https://rpc.linea.build',
+      live: true,
+      chainId: 59144,
+      accounts: accounts,
+      gasPrice: 'auto',
+      deploy: ['deploy/linea'],
+    },
   },
   contractSizer: {
     alphaSort: false,
@@ -86,6 +95,7 @@ const config: HardhatUserConfig = {
   namedAccounts: {
     deployer: {
       lineaGoerli: deployer,
+      linea: deployer,
     },
     owner: {},
   },
