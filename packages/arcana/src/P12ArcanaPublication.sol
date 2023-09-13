@@ -11,7 +11,7 @@ contract P12ArcanaPublication is Ownable {
     mapping(address => bool) public qualDevs;
     uint256 public publicationFee;
 
-    function publicGame() public payable {
+    function publishGame() public payable {
         require(msg.value >= publicationFee, "fee not enough");
         qualDevs[msg.sender] = true;
     }
@@ -21,7 +21,7 @@ contract P12ArcanaPublication is Ownable {
     }
 
     function withdrawFee(address dst) public onlyOwner {
-        (bool success,) = payable(address(dst)).call("");
+        (bool success,) = payable(address(dst)).call{value: (address(this)).balance}("");
         require(success, "withdraw fail");
     }
 }
