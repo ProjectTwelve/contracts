@@ -148,6 +148,7 @@ const config: HardhatUserConfig = {
       polygon: process.env.POLYSCAN_API_KEY!,
       bsc: process.env.BSCSCAN_API_KEY!,
       lineaGoerli: process.env.LINEASCAN_API_KEY!,
+      linea: process.env.LINEASCAN_API_KEY!,
     },
     customChains: [
       {
@@ -156,6 +157,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://api-testnet.lineascan.build/api',
           browserURL: 'https://goerli.lineascan.build/',
+        },
+      },
+      {
+        network: 'linea',
+        chainId: 59144,
+        urls: {
+          apiURL: 'https://api.lineascan.build/api',
+          browserURL: 'https://lineascan.build/',
         },
       },
       {
