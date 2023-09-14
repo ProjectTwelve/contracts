@@ -3,7 +3,7 @@ pragma solidity 0.8.19;
 
 import {Ownable} from "solady/auth/Ownable.sol";
 
-import {Test} from "forge-std/test.sol";
+import {Test} from "forge-std/Test.sol";
 
 import "src/P12ArcanaPublication.sol";
 
