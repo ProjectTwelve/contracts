@@ -184,6 +184,7 @@ const config: HardhatUserConfig = {
       butcher: 'p12',
       goerli: process.env.ETHERSCAN_API_KEY!,
       polygonMumbai: process.env.POLYSCAN_API_KEY!,
+      zetaChainAthens: 'zeta',
     },
     customChains: [
       {
@@ -192,6 +193,14 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://blockscout.p12.games/api',
           browserURL: 'https://blockscout.p12.games/',
+        },
+      },
+      {
+        network: 'zetaChainAthens',
+        chainId: 7001,
+        urls: {
+          apiURL: 'https://zetachain-athens-3.blockscout.com/api',
+          browserURL: 'https://zetachain-athens-3.blockscout.com/',
         },
       },
       {
