@@ -1,8 +1,9 @@
 {
     "ignorePaths": [
-        "typechain-types/**",
+        "typechain-types",
         "flatten/**",
         "lib/**",
+        "lib",
         "out/**"
     ],
     "words": [
@@ -27,6 +28,7 @@
         "Dapphub",
         "dedup",
         "delegatecall",
+        "devs",
         "docgen",
         "Dslope",
         "enumerability",
@@ -45,6 +47,8 @@
         "keccak",
         "koro",
         "licence",
+        "linea",
+        "LINEASCAN",
         "MAXTIME",
         "mload",
         "mulmod",

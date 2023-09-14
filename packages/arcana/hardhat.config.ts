@@ -18,7 +18,6 @@ import 'solidity-docgen';
 import '@tovarishfin/hardhat-yul';
 
 import verifyDeploymentOnScan from './tasks/verify';
-import { deploy } from '@openzeppelin/hardhat-upgrades/dist/utils';
 
 envEnc.config();
 dotenv.config();

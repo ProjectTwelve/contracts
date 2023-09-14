@@ -36,7 +36,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
-const addresses = process.env.ADDESSSES ? process.env.ADDESSSES.split(',') : [];
+// const addresses = process.env.ADDESSSES ? process.env.ADDESSSES.split(',') : [];
 const deployer = process.env.DEPLOYER || '0x0000000000000000000000000000000000000000';
 
 const config: HardhatUserConfig = {
