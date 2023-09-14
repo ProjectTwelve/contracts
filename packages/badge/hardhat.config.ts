@@ -111,6 +111,16 @@ const config: HardhatUserConfig = {
       tags: ['staging'],
       deploy: ['deploy/goerli'],
     },
+    zetaChainAthens: {
+      url: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public',
+      live: true,
+      chainId: 7001,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 'auto', //
+      tags: ['staging'],
+      deploy: ['deploy/zetaChainAthens'],
+    },
   },
   contractSizer: {
     alphaSort: false,
@@ -124,14 +134,9 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      p12TestNet: addresses[0],
-      pudge: addresses[0],
-      mumbai: deployer,
-      butcher: deployer,
+      zetaChainAthens: deployer,
     },
-    owner: {
-      pudge: addresses[0],
-    },
+    owner: {},
   },
   paths: {
     sources: './src', // Use ./src rather than ./contracts as Hardhat expects
