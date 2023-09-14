@@ -102,6 +102,16 @@ const config: HardhatUserConfig = {
       gasPrice: 1500000000, // 1.5 gwei
       deploy: ['deploy/butcher'],
     },
+    zetaChainAthens: {
+      url: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public',
+      live: true,
+      chainId: 7001,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 'auto', //
+      tags: ['staging'],
+      deploy: ['deploy/zetaChainAthens'],
+    },
   },
   contractSizer: {
     alphaSort: false,
@@ -121,6 +131,7 @@ const config: HardhatUserConfig = {
       bnb: deployer,
       polygon: deployer,
       polygonFork: deployer,
+      zetaChainAthens: deployer,
     },
     owner: {
       pudge: addresses[0],
@@ -202,8 +213,17 @@ const config: HardhatUserConfig = {
       polygonMumbai: process.env.POLYSCAN_API_KEY!,
       polygon: process.env.POLYSCAN_API_KEY!,
       bsc: process.env.BSCSCAN_API_KEY!,
+      zetaChainAthens: 'zeta',
     },
     customChains: [
+      {
+        network: 'zetaChainAthens',
+        chainId: 7001,
+        urls: {
+          apiURL: 'https://zetachain-athens-3.blockscout.com/api',
+          browserURL: 'https://zetachain-athens-3.blockscout.com/',
+        },
+      },
       {
         network: 'p12TestNet',
         chainId: 44010,

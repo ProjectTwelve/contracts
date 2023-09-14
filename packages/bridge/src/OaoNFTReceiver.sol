@@ -2,12 +2,11 @@
 pragma solidity 0.8.19;
 
 import {Ownable} from "solady/auth/Ownable.sol";
-import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
-import {IStarNFT} from "src/interfaces/IStarNFT.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IBridgeReceiver} from "src/interfaces/IBridgeReceiver.sol";
 
-contract GalxeBadgeReceiver is IBridgeReceiver, Ownable, IERC721Receiver {
+contract OaoNFTReceiver is IBridgeReceiver, Ownable, IERC721Receiver {
     mapping(address => bool) public signers;
     mapping(uint256 => bool) public allowedDst;
 
@@ -17,19 +16,6 @@ contract GalxeBadgeReceiver is IBridgeReceiver, Ownable, IERC721Receiver {
 
     function sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address from, address receiver) external {
         _sendNFT(nftAddr, dstChainId, tokenId, from, receiver);
-    }
-
-    function sendBatchNFT(
-        address nftAddr,
-        uint256 dstChainId,
-        uint256[] calldata tokenIds,
-        address from,
-        address receiver
-    ) external {
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 tokenId = tokenIds[i];
-            _sendNFT(nftAddr, dstChainId, tokenId, from, receiver);
-        }
     }
 
     function releaseNFT(address nftAddr, address user, uint256 tokenId) external onlySigner {
@@ -59,9 +45,7 @@ contract GalxeBadgeReceiver is IBridgeReceiver, Ownable, IERC721Receiver {
         }
         IERC721(nftAddr).transferFrom(from, address(this), tokenId);
 
-        uint256 cid = IStarNFT(nftAddr).cid(tokenId);
-
-        emit SendNFT(dstChainId, tokenId, cid, nftAddr, from, receiver);
+        emit SendOaoNFT(dstChainId, tokenId, nftAddr, from, receiver);
     }
 
     function _checkSigner() internal view {
