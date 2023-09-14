@@ -13,3 +13,6 @@
 [submodule "packages/bridge/lib/solady"]
 	path = packages/bridge/lib/solady
 	url = https://github.com/vectorized/solady
+[submodule "packages/arcana/lib/solady"]
+	path = packages/arcana/lib/solady
+	url = https://github.com/vectorized/solady
