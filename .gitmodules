@@ -16,3 +16,6 @@
 [submodule "packages/arcana/lib/solady"]
 	path = packages/arcana/lib/solady
 	url = https://github.com/vectorized/solady
+[submodule "packages/arcana/lib/forge-std"]
+	path = packages/arcana/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
