@@ -169,35 +169,7 @@ const config: HardhatUserConfig = {
       signedTx: '',
     },
   },
-  external: {
-    contracts: [
-      {
-        artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/',
-      },
-      { artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol' },
-      {
-        artifacts: 'node_modules/canonical-weth/build/contracts/',
-      },
-    ],
-  },
+  external: {},
   docgen: {
     pages: 'files',
     exclude: ['tests'],

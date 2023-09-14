@@ -40,8 +40,12 @@ contract oaoNFT is ERC721, Ownable, EIP712 {
         return _exists(tokenId);
     }
 
-    function setBaseUri(string calldata uri_) external {
+    function setBaseUri(string calldata uri_) external onlyOwner {
         baseUri = uri_;
+    }
+
+    function updateSigners(address signer, bool valid) public onlyOwner {
+        _signers[signer] = valid;
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
