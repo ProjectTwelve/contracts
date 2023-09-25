@@ -26,7 +26,7 @@ contract AntiSybil is IAntiSybil, UUPSUpgradeable, Ownable2StepUpgradeable, Anti
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     function proveToBeHuman() public payable {
-        if (msg.value <= _proofEthAmount) {
+        if (msg.value < _proofEthAmount) {
             revert CannotBeProved();
         }
         _isProvedHuman[msg.sender] = true;
