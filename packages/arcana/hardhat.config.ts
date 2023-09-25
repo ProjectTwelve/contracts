@@ -62,7 +62,8 @@ const config: HardhatUserConfig = {
       //   blockNumber: 997788,
       // },
       // The fork configuration can be turned on or off by itself according to the situation
-      deploy: ['deploy/hardhat'],
+      saveDeployments: false,
+      deploy: ['deploy/lineaGoerli'],
     },
     lineaGoerli: {
       url: 'https://rpc.goerli.linea.build',
@@ -93,6 +94,8 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
+      // default address provided by hardhat
+      hardhat: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
       lineaGoerli: deployer,
       linea: deployer,
     },
@@ -129,7 +132,13 @@ const config: HardhatUserConfig = {
       signedTx: '',
     },
   },
-  external: {},
+  external: {
+    contracts: [
+      {
+        artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
+      },
+    ],
+  },
   docgen: {
     pages: 'files',
     exclude: ['tests'],
