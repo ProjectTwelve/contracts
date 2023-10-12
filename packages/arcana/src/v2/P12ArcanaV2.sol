@@ -31,14 +31,14 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
     }
 
     function proveToBeHuman() public payable {
-        if (msg.value < _proofEthAmount) {
+        if (msg.value < _proofNativeAmount) {
             revert CannotBeProved();
         }
         _isProvedHuman[msg.sender] = true;
     }
 
     function proveToBeHuman(address token) public {
-        uint256 amount = requireAmount[token];
+        uint256 amount = _requireAmount[token];
         if (amount == 0) {
             revert InvalidToken();
         }
@@ -48,12 +48,12 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         _isProvedHuman[msg.sender] = true;
     }
 
-    function setProofEthAmount(uint256 amount) public onlyOwner {
-        _proofEthAmount = amount;
+    function setProofNativeAmount(uint256 amount) public onlyOwner {
+        _proofNativeAmount = amount;
     }
 
     function setProofTokenAndAmount(address token, uint256 amount) public onlyOwner {
-        requireAmount[token] = amount;
+        _requireAmount[token] = amount;
     }
 
     function setPublicationFee(uint256 fee) public onlyOwner {
@@ -70,7 +70,11 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         return _isProvedHuman[addr];
     }
 
-    function getProofEthAmount() public view returns (uint256) {
-        return _proofEthAmount;
+    function getProofNativeAmount() public view returns (uint256) {
+        return _proofNativeAmount;
+    }
+
+    function getProofTokenAmount(address token) public view returns (uint256) {
+        return _requireAmount[token];
     }
 }
