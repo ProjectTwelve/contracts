@@ -7,3 +7,6 @@
 [submodule "packages/dev/lib/forge-std"]
 	path = packages/dev/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "packages/dev/lib/solady"]
+	path = packages/dev/lib/solady
+	url = https://github.com/vectorized/solady
