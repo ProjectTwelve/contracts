@@ -5,7 +5,7 @@ import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/U
 import {AddressUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 
-contract AntiSybilStorge {
+contract AntiSybilStorage {
     uint256 internal _proofEthAmount;
     mapping(address => bool) internal _isProvedHuman;
     uint256[48] private __gap;
@@ -15,7 +15,7 @@ interface IAntiSybil {
     error CannotBeProved();
 }
 
-contract AntiSybil is IAntiSybil, UUPSUpgradeable, Ownable2StepUpgradeable, AntiSybilStorge {
+contract AntiSybil is IAntiSybil, UUPSUpgradeable, Ownable2StepUpgradeable, AntiSybilStorage {
     using AddressUpgradeable for address payable;
 
     function initialize(address owner_) public {

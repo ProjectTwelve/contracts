@@ -37,8 +37,8 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
 const deployer = process.env.DEPLOYER || '0x0000000000000000000000000000000000000000';
-const prodDeployer = process.env.PROD_DEPLOYER || '0x0000000000000000000000000000000000000000';
-const prodDeployerKey = process.env.PRDO_DEPLOYER_KEY || '0x0000000000000000000000000000000000000000000000000000000000000000';
+// const prodDeployer = process.env.PROD_DEPLOYER || '0x0000000000000000000000000000000000000000';
+const prodDeployerKey = process.env.PROD_DEPLOYER_KEY || '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 const config: HardhatUserConfig = {
   solidity: {

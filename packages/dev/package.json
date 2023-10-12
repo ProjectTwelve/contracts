@@ -98,7 +98,8 @@
     "base64-sol": "^1.1.0",
     "canonical-weth": "^1.4.0",
     "hardhat-preprocessor": "^0.1.5",
-    "simple-git-hooks": "^2.8.1"
+    "simple-git-hooks": "^2.8.1",
+    "viem": "^1.16.4"
   },
   "overrides": {
     "@nomiclabs/hardhat-waffle": {
