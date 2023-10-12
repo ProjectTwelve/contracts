@@ -189,363 +189,185 @@ importers:
         specifier: ^4.5.4
         version: 4.5.4
 
-  packages/badge:
-    dependencies:
-      '@chainlink/env-enc':
-        specifier: ^1.0.5
-        version: 1.0.5
-      '@nomicfoundation/hardhat-foundry':
-        specifier: ^1.0.2
-        version: 1.0.2(hardhat@2.17.1)
-      '@openzeppelin/contracts':
-        specifier: ^4.9.2
-        version: 4.9.2
-      '@openzeppelin/contracts-upgradeable':
-        specifier: ^4.9.2
-        version: 4.9.2
-      '@openzeppelin/upgrades-core':
-        specifier: ^1.19.1
-        version: 1.19.1
-      '@p12/contracts-lib':
-        specifier: ^0.0.5
-        version: 0.0.5
-      '@tovarishfin/hardhat-yul':
-        specifier: ^3.0.5
-        version: 3.0.5(hardhat@2.17.1)
-      '@uniswap/lib':
-        specifier: 4.0.1-alpha
-        version: 4.0.1-alpha
-      '@uniswap/v3-core':
-        specifier: ^1.0.1
-        version: 1.0.1
-      '@uniswap/v3-periphery':
-        specifier: ^1.4.3
-        version: 1.4.3
-      base64-sol:
-        specifier: ^1.1.0
-        version: 1.1.0
-      canonical-weth:
-        specifier: ^1.4.0
-        version: 1.4.0
-      hardhat-preprocessor:
-        specifier: ^0.1.5
-        version: 0.1.5(hardhat@2.17.1)
-      simple-git-hooks:
-        specifier: ^2.8.1
-        version: 2.8.1
-    devDependencies:
-      '@ethersproject/abi':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/bytes':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/providers':
-        specifier: ^5.7.2
-        version: 5.7.2
-      '@metamask/eth-sig-util':
-        specifier: ^4.0.1
-        version: 4.0.1
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.17.1)
-      '@nomiclabs/hardhat-etherscan':
-        specifier: ^3.1.7
-        version: 3.1.7(hardhat@2.17.1)
-      '@nomiclabs/hardhat-waffle':
-        specifier: ^2.0.1
-        version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.1)
-      '@openzeppelin/hardhat-upgrades':
-        specifier: ^1.17.0
-        version: 1.17.0(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.1)
-      '@typechain/ethers-v5':
-        specifier: ^7.2.0
-        version: 7.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@4.5.4)
-      '@typechain/hardhat':
-        specifier: ^6.1.6
-        version: 6.1.6(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@7.2.0)(ethers@5.7.2)(hardhat@2.17.1)(typechain@8.1.1)
-      '@types/chai':
-        specifier: ^4.3.0
-        version: 4.3.0
-      '@types/fs-extra':
-        specifier: ^9.0.13
-        version: 9.0.13
-      '@types/mocha':
-        specifier: ^9.0.0
-        version: 9.0.0
-      '@types/node':
-        specifier: ^12.20.40
-        version: 12.20.40
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.16.0
-        version: 5.16.0(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)(typescript@4.5.4)
-      '@typescript-eslint/parser':
-        specifier: ^5.16.0
-        version: 5.16.0(eslint@7.32.0)(typescript@4.5.4)
-      chai:
-        specifier: ^4.3.4
-        version: 4.3.4
-      cspell:
-        specifier: ^5.15.1
-        version: 5.15.1
-      dotenv:
-        specifier: ^10.0.0
-        version: 10.0.0
-      eslint:
-        specifier: ^7.32.0
-        version: 7.32.0
-      eslint-config-prettier:
-        specifier: ^8.3.0
-        version: 8.3.0(eslint@7.32.0)
-      eslint-config-standard:
-        specifier: ^16.0.3
-        version: 16.0.3(eslint-plugin-import@2.25.4)(eslint-plugin-node@11.1.0)(eslint-plugin-promise@5.2.0)(eslint@7.32.0)
-      eslint-plugin-import:
-        specifier: ^2.25.4
-        version: 2.25.4(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)
-      eslint-plugin-node:
-        specifier: ^11.1.0
-        version: 11.1.0(eslint@7.32.0)
-      eslint-plugin-prettier:
-        specifier: ^3.4.1
-        version: 3.4.1(eslint-config-prettier@8.3.0)(eslint@7.32.0)(prettier@2.5.1)
-      eslint-plugin-promise:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@7.32.0)
-      ethereum-waffle:
-        specifier: ^4.0.2
-        version: 4.0.2(typescript@4.5.4)
-      ethers:
-        specifier: ^5.7.2
-        version: 5.7.2
-      fs-extra:
-        specifier: ^10.1.0
-        version: 10.1.0
-      hardhat:
-        specifier: 2.17.1
-        version: 2.17.1(ts-node@10.4.0)(typescript@4.5.4)
-      hardhat-contract-sizer:
-        specifier: ^2.10.0
-        version: 2.10.0(hardhat@2.17.1)
-      hardhat-deploy:
-        specifier: ^0.11.25
-        version: 0.11.25
-      hardhat-gas-reporter:
-        specifier: ^1.0.6
-        version: 1.0.6(hardhat@2.17.1)
-      lint-staged:
-        specifier: ^13.2.3
-        version: 13.2.3
-      prettier:
-        specifier: ^2.5.1
-        version: 2.5.1
-      prettier-plugin-sh:
-        specifier: ^0.8.1
-        version: 0.8.1(prettier@2.5.1)
-      prettier-plugin-solidity:
-        specifier: ^1.0.0-beta.13
-        version: 1.0.0-beta.13(prettier@2.5.1)
-      solhint:
-        specifier: ^3.3.6
-        version: 3.3.6
-      solidity-coverage:
-        specifier: 0.7.22
-        version: 0.7.22
-      solidity-docgen:
-        specifier: ^0.6.0-beta.22
-        version: 0.6.0-beta.22(hardhat@2.17.1)
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.4.0(@types/node@12.20.40)(typescript@4.5.4)
-      tsort:
-        specifier: ^0.0.1
-        version: 0.0.1
-      typechain:
-        specifier: ^8.1.1
-        version: 8.1.1(typescript@4.5.4)
-      typescript:
-        specifier: ^4.5.4
-        version: 4.5.4
-
-  packages/bridge:
-    dependencies:
-      '@chainlink/env-enc':
-        specifier: ^1.0.5
-        version: 1.0.5
-      '@nomicfoundation/hardhat-foundry':
-        specifier: ^1.0.2
-        version: 1.0.2(hardhat@2.17.1)
-      '@openzeppelin/contracts':
-        specifier: ^4.9.2
-        version: 4.9.2
-      '@openzeppelin/contracts-upgradeable':
-        specifier: ^4.9.2
-        version: 4.9.2
-      '@openzeppelin/upgrades-core':
-        specifier: ^1.19.1
-        version: 1.19.1
-      '@p12/contracts-lib':
-        specifier: ^0.0.5
-        version: 0.0.5
-      '@tovarishfin/hardhat-yul':
-        specifier: ^3.0.5
-        version: 3.0.5(hardhat@2.17.1)
-      '@uniswap/lib':
-        specifier: 4.0.1-alpha
-        version: 4.0.1-alpha
-      '@uniswap/v3-core':
-        specifier: ^1.0.1
-        version: 1.0.1
-      '@uniswap/v3-periphery':
-        specifier: ^1.4.3
-        version: 1.4.3
-      base64-sol:
-        specifier: ^1.1.0
-        version: 1.1.0
-      canonical-weth:
-        specifier: ^1.4.0
-        version: 1.4.0
-      hardhat-preprocessor:
-        specifier: ^0.1.5
-        version: 0.1.5(hardhat@2.17.1)
-      simple-git-hooks:
-        specifier: ^2.8.1
-        version: 2.8.1
-    devDependencies:
-      '@ethersproject/abi':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/bytes':
-        specifier: ^5.7.0
-        version: 5.7.0
-      '@ethersproject/providers':
-        specifier: ^5.7.2
-        version: 5.7.2
-      '@metamask/eth-sig-util':
-        specifier: ^4.0.1
-        version: 4.0.1
-      '@nomiclabs/hardhat-ethers':
-        specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
-        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.17.1)
-      '@nomiclabs/hardhat-etherscan':
-        specifier: ^3.1.7
-        version: 3.1.7(hardhat@2.17.1)
-      '@nomiclabs/hardhat-waffle':
-        specifier: ^2.0.1
-        version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.1)
-      '@openzeppelin/hardhat-upgrades':
-        specifier: ^1.17.0
-        version: 1.17.0(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.1)
-      '@typechain/ethers-v5':
-        specifier: ^7.2.0
-        version: 7.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@4.5.4)
-      '@typechain/hardhat':
-        specifier: ^6.1.6
-        version: 6.1.6(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@7.2.0)(ethers@5.7.2)(hardhat@2.17.1)(typechain@8.1.1)
-      '@types/chai':
-        specifier: ^4.3.0
-        version: 4.3.0
-      '@types/fs-extra':
-        specifier: ^9.0.13
-        version: 9.0.13
-      '@types/mocha':
-        specifier: ^9.0.0
-        version: 9.0.0
-      '@types/node':
-        specifier: ^12.20.40
-        version: 12.20.40
-      '@typescript-eslint/eslint-plugin':
-        specifier: ^5.16.0
-        version: 5.16.0(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)(typescript@4.5.4)
-      '@typescript-eslint/parser':
-        specifier: ^5.16.0
-        version: 5.16.0(eslint@7.32.0)(typescript@4.5.4)
-      chai:
-        specifier: ^4.3.4
-        version: 4.3.4
-      cspell:
-        specifier: ^5.15.1
-        version: 5.15.1
-      dotenv:
-        specifier: ^10.0.0
-        version: 10.0.0
-      eslint:
-        specifier: ^7.32.0
-        version: 7.32.0
-      eslint-config-prettier:
-        specifier: ^8.3.0
-        version: 8.3.0(eslint@7.32.0)
-      eslint-config-standard:
-        specifier: ^16.0.3
-        version: 16.0.3(eslint-plugin-import@2.25.4)(eslint-plugin-node@11.1.0)(eslint-plugin-promise@5.2.0)(eslint@7.32.0)
-      eslint-plugin-import:
-        specifier: ^2.25.4
-        version: 2.25.4(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)
-      eslint-plugin-node:
-        specifier: ^11.1.0
-        version: 11.1.0(eslint@7.32.0)
-      eslint-plugin-prettier:
-        specifier: ^3.4.1
-        version: 3.4.1(eslint-config-prettier@8.3.0)(eslint@7.32.0)(prettier@2.5.1)
-      eslint-plugin-promise:
-        specifier: ^5.2.0
-        version: 5.2.0(eslint@7.32.0)
-      ethereum-waffle:
-        specifier: ^4.0.2
-        version: 4.0.2(typescript@4.5.4)
-      ethers:
-        specifier: ^5.7.2
-        version: 5.7.2
-      fs-extra:
-        specifier: ^10.1.0
-        version: 10.1.0
-      hardhat:
-        specifier: 2.17.1
-        version: 2.17.1(ts-node@10.4.0)(typescript@4.5.4)
-      hardhat-contract-sizer:
-        specifier: ^2.10.0
-        version: 2.10.0(hardhat@2.17.1)
-      hardhat-deploy:
-        specifier: ^0.11.25
-        version: 0.11.25
-      hardhat-gas-reporter:
-        specifier: ^1.0.6
-        version: 1.0.6(hardhat@2.17.1)
-      lint-staged:
-        specifier: ^13.2.3
-        version: 13.2.3
-      prettier:
-        specifier: ^2.5.1
-        version: 2.5.1
-      prettier-plugin-sh:
-        specifier: ^0.8.1
-        version: 0.8.1(prettier@2.5.1)
-      prettier-plugin-solidity:
-        specifier: ^1.0.0-beta.13
-        version: 1.0.0-beta.13(prettier@2.5.1)
-      solhint:
-        specifier: ^3.3.6
-        version: 3.3.6
-      solidity-coverage:
-        specifier: 0.7.22
-        version: 0.7.22
-      solidity-docgen:
-        specifier: ^0.6.0-beta.22
-        version: 0.6.0-beta.22(hardhat@2.17.1)
-      ts-node:
-        specifier: ^10.4.0
-        version: 10.4.0(@types/node@12.20.40)(typescript@4.5.4)
-      tsort:
-        specifier: ^0.0.1
-        version: 0.0.1
-      typechain:
-        specifier: ^8.1.1
-        version: 8.1.1(typescript@4.5.4)
-      typescript:
-        specifier: ^4.5.4
-        version: 4.5.4
-
   packages/contracts:
+    dependencies:
+      '@chainlink/env-enc':
+        specifier: ^1.0.5
+        version: 1.0.5
+      '@nomicfoundation/hardhat-foundry':
+        specifier: ^1.0.2
+        version: 1.0.2(hardhat@2.17.1)
+      '@openzeppelin/contracts':
+        specifier: ^4.9.2
+        version: 4.9.2
+      '@openzeppelin/contracts-upgradeable':
+        specifier: ^4.9.2
+        version: 4.9.2
+      '@openzeppelin/upgrades-core':
+        specifier: ^1.19.1
+        version: 1.19.1
+      '@p12/contracts-lib':
+        specifier: ^0.0.5
+        version: 0.0.5
+      '@tovarishfin/hardhat-yul':
+        specifier: ^3.0.5
+        version: 3.0.5(hardhat@2.17.1)
+      '@uniswap/lib':
+        specifier: 4.0.1-alpha
+        version: 4.0.1-alpha
+      '@uniswap/v3-core':
+        specifier: ^1.0.1
+        version: 1.0.1
+      '@uniswap/v3-periphery':
+        specifier: ^1.4.3
+        version: 1.4.3
+      base64-sol:
+        specifier: ^1.1.0
+        version: 1.1.0
+      canonical-weth:
+        specifier: ^1.4.0
+        version: 1.4.0
+      hardhat-preprocessor:
+        specifier: ^0.1.5
+        version: 0.1.5(hardhat@2.17.1)
+      simple-git-hooks:
+        specifier: ^2.8.1
+        version: 2.8.1
+    devDependencies:
+      '@ethersproject/abi':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ethersproject/bytes':
+        specifier: ^5.7.0
+        version: 5.7.0
+      '@ethersproject/providers':
+        specifier: ^5.7.2
+        version: 5.7.2
+      '@metamask/eth-sig-util':
+        specifier: ^4.0.1
+        version: 4.0.1
+      '@nomiclabs/hardhat-ethers':
+        specifier: npm:hardhat-deploy-ethers@0.3.0-beta.13
+        version: /hardhat-deploy-ethers@0.3.0-beta.13(ethers@5.7.2)(hardhat@2.17.1)
+      '@nomiclabs/hardhat-etherscan':
+        specifier: ^3.1.7
+        version: 3.1.7(hardhat@2.17.1)
+      '@nomiclabs/hardhat-waffle':
+        specifier: ^2.0.1
+        version: 2.0.1(ethereum-waffle@4.0.2)(ethers@5.7.2)(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.1)
+      '@openzeppelin/hardhat-upgrades':
+        specifier: ^1.17.0
+        version: 1.17.0(hardhat-deploy-ethers@0.3.0-beta.13)(hardhat@2.17.1)
+      '@typechain/ethers-v5':
+        specifier: ^7.2.0
+        version: 7.2.0(@ethersproject/abi@5.7.0)(@ethersproject/bytes@5.7.0)(@ethersproject/providers@5.7.2)(ethers@5.7.2)(typechain@8.1.1)(typescript@4.5.4)
+      '@typechain/hardhat':
+        specifier: ^6.1.6
+        version: 6.1.6(@ethersproject/abi@5.7.0)(@ethersproject/providers@5.7.2)(@typechain/ethers-v5@7.2.0)(ethers@5.7.2)(hardhat@2.17.1)(typechain@8.1.1)
+      '@types/chai':
+        specifier: ^4.3.0
+        version: 4.3.0
+      '@types/fs-extra':
+        specifier: ^9.0.13
+        version: 9.0.13
+      '@types/mocha':
+        specifier: ^9.0.0
+        version: 9.0.0
+      '@types/node':
+        specifier: ^12.20.40
+        version: 12.20.40
+      '@typescript-eslint/eslint-plugin':
+        specifier: ^5.16.0
+        version: 5.16.0(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)(typescript@4.5.4)
+      '@typescript-eslint/parser':
+        specifier: ^5.16.0
+        version: 5.16.0(eslint@7.32.0)(typescript@4.5.4)
+      chai:
+        specifier: ^4.3.4
+        version: 4.3.4
+      cspell:
+        specifier: ^5.15.1
+        version: 5.15.1
+      dotenv:
+        specifier: ^10.0.0
+        version: 10.0.0
+      eslint:
+        specifier: ^7.32.0
+        version: 7.32.0
+      eslint-config-prettier:
+        specifier: ^8.3.0
+        version: 8.3.0(eslint@7.32.0)
+      eslint-config-standard:
+        specifier: ^16.0.3
+        version: 16.0.3(eslint-plugin-import@2.25.4)(eslint-plugin-node@11.1.0)(eslint-plugin-promise@5.2.0)(eslint@7.32.0)
+      eslint-plugin-import:
+        specifier: ^2.25.4
+        version: 2.25.4(@typescript-eslint/parser@5.16.0)(eslint@7.32.0)
+      eslint-plugin-node:
+        specifier: ^11.1.0
+        version: 11.1.0(eslint@7.32.0)
+      eslint-plugin-prettier:
+        specifier: ^3.4.1
+        version: 3.4.1(eslint-config-prettier@8.3.0)(eslint@7.32.0)(prettier@2.5.1)
+      eslint-plugin-promise:
+        specifier: ^5.2.0
+        version: 5.2.0(eslint@7.32.0)
+      ethereum-waffle:
+        specifier: ^4.0.2
+        version: 4.0.2(typescript@4.5.4)
+      ethers:
+        specifier: ^5.7.2
+        version: 5.7.2
+      fs-extra:
+        specifier: ^10.1.0
+        version: 10.1.0
+      hardhat:
+        specifier: 2.17.1
+        version: 2.17.1(ts-node@10.4.0)(typescript@4.5.4)
+      hardhat-contract-sizer:
+        specifier: ^2.10.0
+        version: 2.10.0(hardhat@2.17.1)
+      hardhat-deploy:
+        specifier: ^0.11.25
+        version: 0.11.25
+      hardhat-gas-reporter:
+        specifier: ^1.0.6
+        version: 1.0.6(hardhat@2.17.1)
+      lint-staged:
+        specifier: ^13.2.3
+        version: 13.2.3
+      prettier:
+        specifier: ^2.5.1
+        version: 2.5.1
+      prettier-plugin-sh:
+        specifier: ^0.8.1
+        version: 0.8.1(prettier@2.5.1)
+      prettier-plugin-solidity:
+        specifier: ^1.0.0-beta.13
+        version: 1.0.0-beta.13(prettier@2.5.1)
+      solhint:
+        specifier: ^3.3.6
+        version: 3.3.6
+      solidity-coverage:
+        specifier: 0.7.22
+        version: 0.7.22
+      solidity-docgen:
+        specifier: ^0.6.0-beta.22
+        version: 0.6.0-beta.22(hardhat@2.17.1)
+      ts-node:
+        specifier: ^10.4.0
+        version: 10.4.0(@types/node@12.20.40)(typescript@4.5.4)
+      tsort:
+        specifier: ^0.0.1
+        version: 0.0.1
+      typechain:
+        specifier: ^8.1.1
+        version: 8.1.1(typescript@4.5.4)
+      typescript:
+        specifier: ^4.5.4
+        version: 4.5.4
+
+  packages/dev:
     dependencies:
       '@chainlink/env-enc':
         specifier: ^1.0.5
