@@ -36,8 +36,9 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
-const addresses = process.env.ADDESSSES ? process.env.ADDESSSES.split(',') : [];
 const deployer = process.env.DEPLOYER || '0x0000000000000000000000000000000000000000';
+const prodDeployer = process.env.PROD_DEPLOYER || '0x0000000000000000000000000000000000000000';
+const prodDeployerKey = process.env.PRDO_DEPLOYER_KEY || '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -47,7 +48,7 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 20000,
           },
           metadata: {
             bytecodeHash: 'none',
@@ -86,6 +87,19 @@ const config: HardhatUserConfig = {
       live: true,
       deploy: ['deploy/bnb'],
     },
+    p12TestNet: {
+      url: 'https://testnet.p12.games/',
+      live: true,
+      chainId: 44010,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 3000000000,
+      // tags: ['test'],
+      deploy: ['deploy/p12TestNet'],
+    },
+    forkP12TestNet: {
+      url: 'http://127.0.0.1:8545/',
+    },
     pudge: {
       url: 'https://rpc-chain.p12.games',
       live: true,
@@ -102,6 +116,23 @@ const config: HardhatUserConfig = {
       gasPrice: 1500000000, // 1.5 gwei
       deploy: ['deploy/butcher'],
     },
+    mumbai: {
+      url: process.env.MUMBAI_RPC_URL || '',
+      live: true,
+      accounts: accounts,
+      gasPrice: 'auto', //
+      deploy: ['deploy/mumbai'],
+    },
+    goerli: {
+      url: process.env.GOERLI_URL || '',
+      live: true,
+      chainId: 5,
+      accounts: accounts,
+      gas: 'auto',
+      gasPrice: 'auto', //
+      tags: ['staging'],
+      deploy: ['deploy/goerli'],
+    },
     zetaChainAthens: {
       url: 'https://zetachain-athens-evm.blockpi.network/v1/rpc/public',
       live: true,
@@ -111,6 +142,30 @@ const config: HardhatUserConfig = {
       gasPrice: 'auto', //
       tags: ['staging'],
       deploy: ['deploy/zetaChainAthens'],
+    },
+    lineaGoerli: {
+      url: 'https://rpc.goerli.linea.build',
+      live: true,
+      chainId: 59140,
+      accounts: accounts,
+      gasPrice: 'auto',
+      deploy: ['deploy/lineaGoerli'],
+    },
+    linea: {
+      url: 'https://rpc.linea.build',
+      live: true,
+      chainId: 59144,
+      accounts: [prodDeployerKey],
+      gasPrice: 'auto',
+      deploy: ['deploy/linea'],
+    },
+    bnbTest: {
+      url: 'https://bsc-testnet.publicnode.com',
+      live: true,
+      chainId: 97,
+      accounts: accounts,
+      gasPrice: 'auto',
+      deploy: ['deploy/bnbTest'],
     },
   },
   contractSizer: {
@@ -125,7 +180,11 @@ const config: HardhatUserConfig = {
   },
   namedAccounts: {
     deployer: {
-      pudge: addresses[0],
+      // default address provided by hardhat
+      hardhat: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+      lineaGoerli: deployer,
+      linea: deployer,
+      bnbTest: deployer,
       mumbai: deployer,
       butcher: deployer,
       bnb: deployer,
@@ -133,9 +192,7 @@ const config: HardhatUserConfig = {
       polygonFork: deployer,
       zetaChainAthens: deployer,
     },
-    owner: {
-      pudge: addresses[0],
-    },
+    owner: {},
   },
   paths: {
     sources: './src', // Use ./src rather than ./contracts as Hardhat expects
@@ -173,28 +230,6 @@ const config: HardhatUserConfig = {
       {
         artifacts: 'node_modules/@openzeppelin/upgrades-core/artifacts/@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol/',
       },
-      {
-        artifacts: 'node_modules/@uniswap/v3-core/artifacts/contracts/UniswapV3Factory.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-core/artifacts/contracts/UniswapV3Pool.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/SwapRouter.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/NonfungibleTokenPositionDescriptor.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/NonfungiblePositionManager.sol/',
-      },
-      {
-        artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/libraries/NFTDescriptor.sol/',
-      },
-      { artifacts: 'node_modules/@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol' },
-      {
-        artifacts: 'node_modules/canonical-weth/build/contracts/',
-      },
     ],
   },
   docgen: {
@@ -214,6 +249,9 @@ const config: HardhatUserConfig = {
       polygon: process.env.POLYSCAN_API_KEY!,
       bsc: process.env.BSCSCAN_API_KEY!,
       zetaChainAthens: 'zeta',
+      lineaGoerli: process.env.LINEASCAN_API_KEY!,
+      linea: process.env.LINEASCAN_API_KEY!,
+      bscTestnet: process.env.BSCSCAN_API_KEY!,
     },
     customChains: [
       {
@@ -222,6 +260,22 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://zetachain-athens-3.blockscout.com/api',
           browserURL: 'https://zetachain-athens-3.blockscout.com/',
+        },
+      },
+      {
+        network: 'lineaGoerli',
+        chainId: 59140,
+        urls: {
+          apiURL: 'https://api-testnet.lineascan.build/api',
+          browserURL: 'https://goerli.lineascan.build/',
+        },
+      },
+      {
+        network: 'linea',
+        chainId: 59144,
+        urls: {
+          apiURL: 'https://api.lineascan.build/api',
+          browserURL: 'https://lineascan.build/',
         },
       },
       {
