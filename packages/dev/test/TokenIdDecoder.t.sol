@@ -3,7 +3,7 @@ pragma solidity 0.8.19;
 
 import { console2 } from 'forge-std/console2.sol';
 import { Test } from 'forge-std/Test.sol';
-import { MockTokenIdDecoder } from 'src/mock/MockTokenIdDecoder.sol';
+import { MockTokenIdDecoder } from 'src/badge/mock/MockTokenIdDecoder.sol';
 
 contract TokenIdDecoderTest is Test {
   MockTokenIdDecoder public _decoder;

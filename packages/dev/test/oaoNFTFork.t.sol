@@ -3,7 +3,7 @@ pragma solidity 0.8.19;
 
 import "forge-std/Test.sol";
 
-import "src/oaoNFT.sol";
+import "src/badge/oaoNFT.sol";
 
 contract OaoNFTForkTest is Test {
     oaoNFT private _oaoNFT;

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 pragma solidity 0.8.19;
 
-import {IP12ArcanaDef} from "src/v2/interfaces/IP12Arcana.sol";
+import {IP12ArcanaDef} from "src/arcana/v2/interfaces/IP12Arcana.sol";
 
 abstract contract P12ArcanaStorage is IP12ArcanaDef {
     uint256 internal _proofNativeAmount;

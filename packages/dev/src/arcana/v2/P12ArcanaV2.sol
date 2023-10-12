@@ -7,7 +7,7 @@ import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/acces
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {P12ArcanaStorage} from "./P12ArcanaStorage.sol";
-import {IP12Arcana} from "src/v2/interfaces/IP12Arcana.sol";
+import {IP12Arcana} from "src/arcana/v2/interfaces/IP12Arcana.sol";
 
 contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P12ArcanaStorage {
     using AddressUpgradeable for address payable;

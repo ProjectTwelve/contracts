@@ -3,8 +3,8 @@ pragma solidity 0.8.19;
 
 import {ERC721} from "solady/tokens/ERC721.sol";
 import {Ownable} from "solady/auth/Ownable.sol";
-import {TokenIdDecoder} from "src/TokenIdDecoder.sol";
-import {IP12CommunityBadge} from "src/interfaces/IP12CommunityBadge.sol";
+import {TokenIdDecoder} from "src/badge/TokenIdDecoder.sol";
+import {IP12CommunityBadge} from "src/badge/interfaces/IP12CommunityBadge.sol";
 import {LibString} from "solady/utils/LibString.sol";
 
 /**

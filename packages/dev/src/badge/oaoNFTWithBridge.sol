@@ -7,7 +7,7 @@ import {Ownable} from "solady/auth/Ownable.sol";
 import {LibString} from "solady/utils/LibString.sol";
 import {EIP712} from "solady/utils/EIP712.sol";
 import {ECDSA} from "solady/utils/ECDSA.sol";
-import {IBridgeReceiver} from "src/interfaces/IBridgeReceiver.sol";
+import {IBridgeReceiver} from "src/badge/interfaces/IBridgeReceiver.sol";
 
 // one and only nft
 contract oaoNFTWithBridge is ERC721, Ownable, EIP712, IBridgeReceiver {

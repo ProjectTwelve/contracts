@@ -4,7 +4,7 @@ pragma solidity 0.8.19;
 import {Ownable} from "solady/auth/Ownable.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {IBridgeReceiver} from "src/interfaces/IBridgeReceiver.sol";
+import {IBridgeReceiver} from "src/bridge/interfaces/IBridgeReceiver.sol";
 
 contract OaoNFTReceiver is IBridgeReceiver, Ownable, IERC721Receiver {
     mapping(address => bool) public signers;
