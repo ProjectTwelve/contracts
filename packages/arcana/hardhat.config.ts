@@ -37,6 +37,8 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
 const deployer = process.env.DEPLOYER || '0x0000000000000000000000000000000000000000';
+const prodDeployer = process.env.PROD_DEPLOYER!;
+const prodDeployerKey = process.env.PRDO_DEPLOYER_KEY!;
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -77,9 +79,17 @@ const config: HardhatUserConfig = {
       url: 'https://rpc.linea.build',
       live: true,
       chainId: 59144,
-      accounts: accounts,
+      accounts: [prodDeployerKey],
       gasPrice: 'auto',
       deploy: ['deploy/linea'],
+    },
+    bnbTest: {
+      url: 'https://bsc-testnet.publicnode.com',
+      live: true,
+      chainId: 97,
+      accounts: accounts,
+      gasPrice: 'auto',
+      deploy: ['deploy/bnbTest'],
     },
   },
   contractSizer: {
@@ -98,6 +108,7 @@ const config: HardhatUserConfig = {
       hardhat: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
       lineaGoerli: deployer,
       linea: deployer,
+      bnbTest: deployer,
     },
     owner: {},
   },
@@ -157,6 +168,7 @@ const config: HardhatUserConfig = {
       bsc: process.env.BSCSCAN_API_KEY!,
       lineaGoerli: process.env.LINEASCAN_API_KEY!,
       linea: process.env.LINEASCAN_API_KEY!,
+      bscTestnet: process.env.BSCSCAN_API_KEY!,
     },
     customChains: [
       {

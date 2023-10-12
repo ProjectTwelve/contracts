@@ -7,7 +7,7 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
 import {Address} from "@openzeppelin/contracts/utils/Address.sol";
-import {IERC20Distributor} from "src/interfaces/IERC20Distributor.sol";
+import {IERC20Distributor} from "src/v1/interfaces/IERC20Distributor.sol";
 
 contract ERC20Distributor is IERC20Distributor, Ownable2Step {
     using BitMaps for BitMaps.BitMap;

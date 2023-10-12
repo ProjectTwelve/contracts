@@ -5,7 +5,7 @@ import {Ownable} from "solady/auth/Ownable.sol";
 
 import {Test} from "forge-std/Test.sol";
 
-import "src/P12ArcanaPublication.sol";
+import "src/v1/P12ArcanaPublication.sol";
 
 contract P12ArcanaPublicationTest is Test {
     P12ArcanaPublication _p12ArcanaPublication;
