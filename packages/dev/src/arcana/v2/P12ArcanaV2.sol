@@ -30,7 +30,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         qualDevs[msg.sender] = true;
     }
 
-    function publicGame(address token) public {
+    function publishGame(address token) public {
         uint256 amount = _publishTokenFee[token];
         if (amount == 0) {
             revert InvalidToken();
