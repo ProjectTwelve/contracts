@@ -73,4 +73,8 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
     function getProofAmount() public view returns (uint256) {
         return _proofAmount;
     }
+
+    function getPublicationTokenFee(address token) public view returns (uint256) {
+        return _publishTokenFee[token];
+    }
 }

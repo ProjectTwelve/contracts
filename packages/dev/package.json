@@ -8,7 +8,7 @@
   },
   "scripts": {
     "compile": "hardhat compile",
-    "deploy": "hardhat deploy --no-compile",
+    "deploy": "hardhat deploy",
     "verify": "hardhat verifyDeployment",
     "export": "hardhat run ./tools/export.ts",
     "doc:gen": "hardhat docgen",
