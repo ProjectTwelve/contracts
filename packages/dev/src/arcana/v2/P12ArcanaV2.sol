@@ -30,30 +30,30 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         qualDevs[msg.sender] = true;
     }
 
-    function proveToBeHuman() public payable {
-        if (msg.value < _proofNativeAmount) {
-            revert CannotBeProved();
-        }
-        _isProvedHuman[msg.sender] = true;
-    }
-
-    function proveToBeHuman(address token) public {
-        uint256 amount = _requireAmount[token];
+    function publicGame(address token) public {
+        uint256 amount = _publishTokenFee[token];
         if (amount == 0) {
             revert InvalidToken();
         }
 
         IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
 
+        qualDevs[msg.sender] = true;
+    }
+
+    function proveToBeHuman() public payable {
+        if (msg.value < _proofAmount) {
+            revert CannotBeProved();
+        }
         _isProvedHuman[msg.sender] = true;
     }
 
-    function setProofNativeAmount(uint256 amount) public onlyOwner {
-        _proofNativeAmount = amount;
+    function setProofAmount(uint256 amount) public onlyOwner {
+        _proofAmount = amount;
     }
 
-    function setProofTokenAndAmount(address token, uint256 amount) public onlyOwner {
-        _requireAmount[token] = amount;
+    function setPublicationTokenFee(address token, uint256 amount) public onlyOwner {
+        _publishTokenFee[token] = amount;
     }
 
     function setPublicationFee(uint256 fee) public onlyOwner {
@@ -70,11 +70,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         return _isProvedHuman[addr];
     }
 
-    function getProofNativeAmount() public view returns (uint256) {
-        return _proofNativeAmount;
-    }
-
-    function getProofTokenAmount(address token) public view returns (uint256) {
-        return _requireAmount[token];
+    function getProofAmount() public view returns (uint256) {
+        return _proofAmount;
     }
 }
