@@ -37,7 +37,7 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 
 const accounts = process.env.ACCOUNTS ? process.env.ACCOUNTS.split(',') : [];
 const deployer = process.env.DEPLOYER || '0x0000000000000000000000000000000000000000';
-// const prodDeployer = process.env.PROD_DEPLOYER || '0x0000000000000000000000000000000000000000';
+const prodDeployer = process.env.PROD_DEPLOYER || '0x0000000000000000000000000000000000000000';
 const prodDeployerKey = process.env.PROD_DEPLOYER_KEY || '0x0000000000000000000000000000000000000000000000000000000000000000';
 
 const config: HardhatUserConfig = {
@@ -183,16 +183,15 @@ const config: HardhatUserConfig = {
       // default address provided by hardhat
       hardhat: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
       lineaGoerli: deployer,
-      linea: deployer,
       bnbTest: deployer,
       mumbai: deployer,
       butcher: deployer,
-      bnb: deployer,
-      polygon: deployer,
       polygonFork: deployer,
       zetaChainAthens: deployer,
     },
-    owner: {},
+    prodDeployer: {
+      linea: prodDeployer,
+    },
   },
   paths: {
     sources: './src', // Use ./src rather than ./contracts as Hardhat expects
