@@ -20,6 +20,8 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         _transferOwnership(owner_);
     }
 
+    receive() external payable {}
+
     function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     function requestParticipant(bytes32 campaign) public {
@@ -99,6 +101,10 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         dst.sendValue(address(this).balance);
         (bool success,) = payable(address(dst)).call{value: (address(this)).balance}("");
         require(success, "withdraw fail");
+    }
+
+    function getClaimedReward(address user, address token) public view returns (uint256 amount) {
+        return _claimedAmount[user][token];
     }
 
     function checkIsProvedHuman(address addr) public view returns (bool) {
