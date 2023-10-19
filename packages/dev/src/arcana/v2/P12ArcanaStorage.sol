@@ -11,6 +11,10 @@ abstract contract P12ArcanaStorage is IP12ArcanaDef {
     mapping(address => bool) internal _isProvedHuman;
     mapping(address => bool) public qualDevs;
     mapping(address => uint256) internal _publishTokenFee;
+    mapping(address => bytes32) internal _tokenDisRoot;
+    // user => token => amount
+    mapping(address => mapping(address => uint256)) internal _claimedAmount;
+    mapping(address => bool) internal _signers;
 
-    uint256[44] private __gap;
+    uint256[41] private __gap;
 }

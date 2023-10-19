@@ -1,8 +1,8 @@
 import { DeployFunction } from 'hardhat-deploy/types';
-import { parseEther } from 'viem';
+import { keccak256, parseEther, stringToBytes } from 'viem';
 
 const func: DeployFunction = async function ({ deployments, getNamedAccounts }) {
-  const { deploy, execute } = deployments;
+  const { deploy, execute, get } = deployments;
 
   const { deployer } = await getNamedAccounts();
 
@@ -20,19 +20,22 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
         },
       },
     },
+    deterministicDeployment: keccak256(stringToBytes('P12Arcana')),
   });
 
-  await execute('P12ArcanaV2', { from: deployer, log: true }, 'setPublicationFee', parseEther('0.01'));
-  await execute('P12ArcanaV2', { from: deployer, log: true }, 'setProofAmount', parseEther('0.01'));
-  // use DAI for test, its decimal is 18
-  // https://testnet.bscscan.com/address/0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867
-  await execute(
-    'P12ArcanaV2',
-    { from: deployer, log: true },
-    'setPublicationTokenFee',
-    '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867',
-    parseEther('1'),
-  );
+  if ((await get('P12ArcanaV2')).numDeployments === 1) {
+    await execute('P12ArcanaV2', { from: deployer, log: true }, 'setPublicationFee', parseEther('0.01'));
+    await execute('P12ArcanaV2', { from: deployer, log: true }, 'setProofAmount', parseEther('0.01'));
+    // use DAI for test, its decimal is 18
+    // https://testnet.bscscan.com/address/0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867
+    await execute(
+      'P12ArcanaV2',
+      { from: deployer, log: true },
+      'setPublicationTokenFee',
+      '0xec5dcb5dbf4b114c9d0f65bccab49ec54f6a0867',
+      parseEther('1'),
+    );
+  }
 };
 
 func.tags = ['P12ArcanaV2'];

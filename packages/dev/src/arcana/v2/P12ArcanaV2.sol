@@ -6,6 +6,8 @@ import {AddressUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/Addr
 import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+
 import {P12ArcanaStorage} from "./P12ArcanaStorage.sol";
 import {IP12Arcana} from "src/arcana/v2/interfaces/IP12Arcana.sol";
 
@@ -46,6 +48,39 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
             revert CannotBeProved();
         }
         _isProvedHuman[msg.sender] = true;
+    }
+
+    function claimReward(address token, uint256 amount, bytes32[] calldata proof) public {
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amount))));
+
+        bool valid = MerkleProof.verify(proof, _tokenDisRoot[token], leaf);
+
+        if (!valid) {
+            revert InvalidProof();
+        }
+
+        /// @dev calculate remaining reward and set to 0
+        uint256 remaining = amount - _claimedAmount[msg.sender][token];
+        _claimedAmount[msg.sender][token] = 0;
+
+        if (token == address(0)) {
+            payable(msg.sender).sendValue(remaining);
+        } else {
+            IERC20(token).transferFrom(address(this), msg.sender, remaining);
+        }
+
+        emit ClaimReward(token, msg.sender, amount);
+    }
+
+    function setTokenDisRoot(address token, bytes32 root) public {
+        _tokenDisRoot[token] = root;
+
+        emit TokenDisRootSet(token, root);
+    }
+
+    function updateSigners(address signer, bool valid) public onlyOwner {
+        _signers[signer] = valid;
+        emit SignerUpdate(signer, valid);
     }
 
     function setProofAmount(uint256 amount) public onlyOwner {
