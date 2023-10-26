@@ -167,6 +167,14 @@ const config: HardhatUserConfig = {
       gasPrice: 'auto',
       deploy: ['deploy/bnbTest'],
     },
+    mantaTest: {
+      url: 'https://manta-testnet.calderachain.xyz/http',
+      live: true,
+      chainId: 3441005,
+      accounts: accounts,
+      gasPrice: 'auto',
+      deploy: ['deploy/mantaTest'],
+    },
   },
   contractSizer: {
     alphaSort: false,
@@ -188,6 +196,7 @@ const config: HardhatUserConfig = {
       butcher: deployer,
       polygonFork: deployer,
       zetaChainAthens: deployer,
+      mantaTest: deployer,
     },
     prodDeployer: {
       linea: prodDeployer,
