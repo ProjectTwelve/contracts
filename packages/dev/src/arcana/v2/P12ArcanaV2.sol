@@ -29,11 +29,17 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         emit RequestParticipant(msg.sender, campaign, Activeness.Active);
     }
 
+    /**
+     * @dev publish game with native token
+     */
     function publishGame() public payable {
         require(msg.value >= publicationFee, "fee not enough");
         qualDevs[msg.sender] = true;
     }
 
+    /**
+     * @dev publish game with specific erc20 token
+     */
     function publishGame(address token) public {
         uint256 amount = _publishTokenFee[token];
         if (amount == 0) {
@@ -45,6 +51,9 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         qualDevs[msg.sender] = true;
     }
 
+    /**
+     * @dev send native token to prove is human
+     */
     function proveToBeHuman() public payable {
         if (msg.value < _proofAmount) {
             revert CannotBeProved();
@@ -74,7 +83,10 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         emit ClaimReward(token, msg.sender, amount);
     }
 
-    function setTokenDisRoot(address token, bytes32 root) public {
+    /**
+     * @dev update token distribution merkle root
+     */
+    function setTokenDisRoot(address token, bytes32 root) public onlyOwner {
         _tokenDisRoot[token] = root;
 
         emit TokenDisRootSet(token, root);
@@ -85,36 +97,69 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         emit SignerUpdate(signer, valid);
     }
 
+    /**
+     * @dev set proof amount
+     * @param amount amount of native token
+     */
     function setProofAmount(uint256 amount) public onlyOwner {
         _proofAmount = amount;
     }
 
+    /**
+     * @dev set publication fee in erc20 token
+     * @param token address of erc20 token
+     * @param amount amount of erc20 token
+     */
     function setPublicationTokenFee(address token, uint256 amount) public onlyOwner {
         _publishTokenFee[token] = amount;
     }
 
+    /**
+     * @dev set publication fee in native token
+     * @param fee amount of native token
+     */
     function setPublicationFee(uint256 fee) public onlyOwner {
         publicationFee = fee;
     }
 
+    /**
+     * @dev withdraw native token
+     * @param dst recipient of the native token
+     */
     function withdrawFee(address payable dst) public onlyOwner {
         dst.sendValue(address(this).balance);
         (bool success,) = payable(address(dst)).call{value: (address(this)).balance}("");
         require(success, "withdraw fail");
     }
 
+    /**
+     * @dev see how many reward can be claimed
+     * @param user address of user
+     * @param token address of reward token
+     */
     function getClaimedReward(address user, address token) public view returns (uint256 amount) {
         return _claimedAmount[user][token];
     }
 
+    /**
+     * @dev return whether the address have paid for proof to be human
+     * @param addr address
+     */
     function checkIsProvedHuman(address addr) public view returns (bool) {
         return _isProvedHuman[addr];
     }
 
+    /**
+     * @dev get proof of human native token amount
+     */
     function getProofAmount() public view returns (uint256) {
         return _proofAmount;
     }
 
+    /**
+     * @dev get publication fee in specific erc20
+     * @param token erc token address
+     */
     function getPublicationTokenFee(address token) public view returns (uint256) {
         return _publishTokenFee[token];
     }

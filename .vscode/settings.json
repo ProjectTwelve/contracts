@@ -4,6 +4,5 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
   },
-  "solidity.compileUsingRemoteVersion": "v0.8.15+commit.e14f2714",
   "solidity.remappingsUnix": ["@openzeppelin/=node_modules/@openzeppelin/", "@uniswap/=node_modules/@uniswap"]
 }

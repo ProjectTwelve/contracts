@@ -81,7 +81,7 @@ const config: HardhatUserConfig = {
       deploy: ['deploy/polygon'],
     },
     bnb: {
-      accounts: accounts,
+      accounts: [prodDeployerKey],
       chainId: 56,
       url: 'https://bsc.publicnode.com',
       live: true,
@@ -191,6 +191,7 @@ const config: HardhatUserConfig = {
     },
     prodDeployer: {
       linea: prodDeployer,
+      bnb: prodDeployer,
     },
   },
   paths: {
