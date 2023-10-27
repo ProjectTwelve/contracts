@@ -77,7 +77,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         if (token == address(0)) {
             payable(msg.sender).sendValue(remaining);
         } else {
-            IERC20(token).transferFrom(address(this), msg.sender, remaining);
+            IERC20(token).safeTransfer(msg.sender, remaining);
         }
 
         emit ClaimReward(token, msg.sender, amount);
