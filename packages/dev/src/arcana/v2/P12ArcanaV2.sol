@@ -72,7 +72,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
 
         /// @dev calculate remaining reward and set to 0
         uint256 remaining = amount - _claimedAmount[msg.sender][token];
-        _claimedAmount[msg.sender][token] = 0;
+        _claimedAmount[msg.sender][token] = amount;
 
         if (token == address(0)) {
             payable(msg.sender).sendValue(remaining);
