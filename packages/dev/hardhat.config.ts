@@ -267,6 +267,8 @@ const config: HardhatUserConfig = {
       polygon: process.env.POLYSCAN_API_KEY!,
       bsc: process.env.BSCSCAN_API_KEY!,
       zetaChainAthens: 'zeta',
+      manta: 'manta',
+      mantaTest: 'mantaTest',
       lineaGoerli: process.env.LINEASCAN_API_KEY!,
       linea: process.env.LINEASCAN_API_KEY!,
       bscTestnet: process.env.BSCSCAN_API_KEY!,
@@ -278,6 +280,22 @@ const config: HardhatUserConfig = {
         urls: {
           apiURL: 'https://zetachain-athens-3.blockscout.com/api',
           browserURL: 'https://zetachain-athens-3.blockscout.com/',
+        },
+      },
+      {
+        network: 'manta',
+        chainId: 169,
+        urls: {
+          apiURL: 'https://pacific-explorer.manta.network/api',
+          browserURL: 'https://pacific-explorer.manta.network/',
+        },
+      },
+      {
+        network: 'mantaTest',
+        chainId: 3441005,
+        urls: {
+          apiURL: 'https://pacific-explorer.testnet.manta.network/api',
+          browserURL: 'https://pacific-explorer.testnet.manta.network/',
         },
       },
       {
