@@ -175,6 +175,14 @@ const config: HardhatUserConfig = {
       gasPrice: 'auto',
       deploy: ['deploy/mantaTest'],
     },
+    manta: {
+      url: 'https://pacific-rpc.manta.network/http',
+      live: true,
+      chainId: 169,
+      accounts: [prodDeployerKey],
+      gasPrice: 'auto',
+      deploy: ['deploy/manta'],
+    },
   },
   contractSizer: {
     alphaSort: false,
@@ -201,6 +209,7 @@ const config: HardhatUserConfig = {
     prodDeployer: {
       linea: prodDeployer,
       bnb: prodDeployer,
+      manta: prodDeployer,
     },
   },
   paths: {
