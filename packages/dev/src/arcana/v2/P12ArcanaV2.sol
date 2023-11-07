@@ -127,9 +127,24 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
      * @param dst recipient of the native token
      */
     function withdrawFee(address payable dst) public onlyOwner {
-        dst.sendValue(address(this).balance);
+        uint256 balance = address(this).balance;
+        dst.sendValue(balance);
         (bool success,) = payable(address(dst)).call{value: (address(this)).balance}("");
         require(success, "withdraw fail");
+
+        emit Withdrawn(address(0), dst, balance);
+    }
+
+    /**
+     * @dev withdraw erc20 token
+     * @param token address of erc20
+     * @param dst recipient of the erc20 token
+     */
+    function withdrawErc20(IERC20 token, address dst) public onlyOwner {
+        uint256 balance = token.balanceOf(address(this));
+        token.safeTransfer(dst, balance);
+
+        emit Withdrawn(address(token), dst, balance);
     }
 
     /**
