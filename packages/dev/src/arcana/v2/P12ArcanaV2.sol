@@ -15,7 +15,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
     using AddressUpgradeable for address payable;
     using SafeERC20 for IERC20;
 
-    function initialize(address owner_) public {
+    function initialize(address owner_) public initializer {
         // do not run `__Ownable2Step_init` since we transfer ownership directly
         _transferOwnership(owner_);
     }
