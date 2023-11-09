@@ -45,7 +45,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         qualGames[gameId] = true;
         qualDevs[msg.sender] = true;
 
-        emit PublishGame(gameId, true);
+        emit PublishGame(gameId, msg.sender);
     }
 
     /**
@@ -62,7 +62,7 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         qualGames[gameId] = true;
         qualDevs[msg.sender] = true;
 
-        emit PublishGame(gameId, true);
+        emit PublishGame(gameId, msg.sender);
     }
 
     /**
