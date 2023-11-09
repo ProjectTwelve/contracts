@@ -14,7 +14,7 @@ abstract contract P12ArcanaStorage is IP12ArcanaDef {
     mapping(address => bytes32) internal _tokenDisRoot;
     // user => token => amount
     mapping(address => mapping(address => uint256)) internal _claimedAmount;
-    mapping(address => bool) internal _signers;
+    mapping(uint256 => bool) public qualGames;
 
     uint256[41] private __gap;
 }

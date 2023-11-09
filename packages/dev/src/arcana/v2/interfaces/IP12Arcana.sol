@@ -16,6 +16,7 @@ interface IP12ArcanaDef {
     event TokenDisRootSet(address indexed token, bytes32 indexed root);
     event ClaimReward(address indexed token, address indexed user, uint256 amount);
     event Withdrawn(address indexed token, address indexed dst, uint256 amount);
+    event PublishGame(uint256 indexed gameId, bool qualified);
 }
 
 interface IP12Arcana is IP12ArcanaDef {}

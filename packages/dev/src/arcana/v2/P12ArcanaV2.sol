@@ -38,17 +38,31 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
     }
 
     /**
-     * @dev publish game with specific erc20 token
+     * @dev publish game with native token
      */
-    function publishGame(address token) public {
+    function publishGame(uint256 gameId) public payable {
+        require(msg.value >= publicationFee, "fee not enough");
+        qualGames[gameId] = true;
+        qualDevs[msg.sender] = true;
+
+        emit PublishGame(gameId, true);
+    }
+
+    /**
+     * @dev publish game with native token
+     */
+    function publishGame(uint256 gameId, address token) public {
         uint256 amount = _publishTokenFee[token];
+
         if (amount == 0) {
             revert InvalidToken();
         }
 
         IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
-
+        qualGames[gameId] = true;
         qualDevs[msg.sender] = true;
+
+        emit PublishGame(gameId, true);
     }
 
     /**
@@ -90,11 +104,6 @@ contract P12ArcanaV2 is IP12Arcana, UUPSUpgradeable, Ownable2StepUpgradeable, P1
         _tokenDisRoot[token] = root;
 
         emit TokenDisRootSet(token, root);
-    }
-
-    function updateSigners(address signer, bool valid) public onlyOwner {
-        _signers[signer] = valid;
-        emit SignerUpdate(signer, valid);
     }
 
     /**
