@@ -14,6 +14,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Download compile manually
+        id: download-solidity-compiler
+        run: mkdir -p /home/runner/.cache/hardhat-nodejs/compilers/linux-amd64/; wget https://github.com/ethereum/solidity/releases/download/v0.8.19/solc-static-linux -O /home/runner/.cache/hardhat-nodejs/compilers/linux-amd64/solc-linux-amd64-v0.8.19+commit.7dd6d404
+
       - uses: pnpm/action-setup@v2.2.4
         name: Install pnpm
         id: pnpm-install
