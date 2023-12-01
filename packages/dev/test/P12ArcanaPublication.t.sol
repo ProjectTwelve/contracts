@@ -21,6 +21,7 @@ contract P12ArcanaPublicationTest is Test {
     }
 
     function testPublishGame(address user) public {
+        vm.assume(user != address(_p12ArcanaPublication));
         assertEq(_p12ArcanaPublication.qualDevs(user), false);
         assertEq(address(_p12ArcanaPublication).balance, 0);
         mockPublishGame(user);
