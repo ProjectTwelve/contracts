@@ -5,7 +5,7 @@ import {GalxeBadgeReceiverV2Test} from "test/uint/shared/GalxeBadgeReceiverV2.t.
 import {IBadgeReceiverV2Def} from "src/bridge/interfaces/IBadgeReceiverV2.sol";
 import {Constant} from "src/libraries/Constant.sol";
 
-contract GBRV2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
+contract GBR_V2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
     function testUpdateValidNftAddr(address nftAddr, bool valid) public {
         changePrank(users.admin);
         assertEq(galxeBadgeReceiverV2.whitelistNFT(nftAddr), false);

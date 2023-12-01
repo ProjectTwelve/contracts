@@ -21,7 +21,7 @@ contract StarNFT is ERC721, IStarNFT {
     }
 
     function symbol() public pure override returns (string memory) {
-        return "SNFT";
+        return "S";
     }
 
     function tokenURI(uint256) public pure override returns (string memory) {
