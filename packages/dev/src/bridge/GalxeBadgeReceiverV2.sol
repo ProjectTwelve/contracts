@@ -103,7 +103,7 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
             revert DstChainIdIsNotAllowed();
         }
 
-        IERC721(nftAddr).transferFrom(msg.sender, address(this), tokenId);
+        IERC721(nftAddr).safeTransferFrom(msg.sender, address(this), tokenId);
 
         uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
@@ -112,7 +112,7 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
 
     function _burnNFT(address nftAddr, uint256 tokenId) internal onlyValidNftAddr(nftAddr) {
         // burn
-        IERC721(nftAddr).transferFrom(msg.sender, Constant.BLACK_HOLE_ADDRESS, tokenId);
+        IERC721(nftAddr).safeTransferFrom(msg.sender, Constant.BLACK_HOLE_ADDRESS, tokenId);
 
         uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
