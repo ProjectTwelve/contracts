@@ -16,14 +16,14 @@ contract GBR_OnlyOwner_Test is GalxeBadgeReceiverV2Test {
     }
 
     function testFuzz_onlyOwner_UpdateValidNftAddr(address eve) public onlyOwnerCanCall(eve) {
-        galaxeBadgeReceiverV2.updateValidNftAddr(makeAddr("NFT"), true);
+        galxeBadgeReceiverV2.updateValidNftAddr(makeAddr("NFT"), true);
     }
 
     function testFuzz_onlyOwner_UpdateSigner(address eve) public onlyOwnerCanCall(eve) {
-        galaxeBadgeReceiverV2.updateSigner(users.signer, true);
+        galxeBadgeReceiverV2.updateSigner(users.signer, true);
     }
 
     function testFuzz_onlyOwner_UpdateDstValidity(address eve) public onlyOwnerCanCall(eve) {
-        galaxeBadgeReceiverV2.updateDstValidity(1, true);
+        galxeBadgeReceiverV2.updateDstValidity(1, true);
     }
 }

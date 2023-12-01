@@ -50,6 +50,7 @@
         "linea",
         "LINEASCAN",
         "MAXTIME",
+        "MBOX",
         "Merkle",
         "mload",
         "mulmod",

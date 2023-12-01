@@ -6,7 +6,7 @@ import {ERC20MissingReturn} from "test/mocks/ERC20/ERC20MissingReturn.sol";
 import {Test} from "forge-std/Test.sol";
 
 struct Users {
-    // Default admin for all Sablier V2 contracts.
+    // Default admin
     address payable admin;
     // Impartial user.
     address payable alice;

@@ -9,7 +9,7 @@ import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Recei
 import {IStarNFT} from "src/bridge/interfaces/IStarNFT.sol";
 import {IBadgeReceiverV2} from "src/bridge/interfaces/IBadgeReceiverV2.sol";
 
-contract GalaxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
+contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
     using SafeERC20 for IERC20;
 
     address constant BLACK_HOLE_ADDRESS = address(1);

@@ -2,11 +2,11 @@
 pragma solidity ^0.8.0;
 
 import {BaseTest} from "test/Base.t.sol";
-import {GalaxeBadgeReceiverV2} from "src/bridge/GalaxeBadgeReceiverV2.sol";
+import {GalxeBadgeReceiverV2} from "src/bridge/GalxeBadgeReceiverV2.sol";
 import {Ownable} from "solady/auth/Ownable.sol";
 
 contract GalxeBadgeReceiverV2Test is BaseTest {
-    GalaxeBadgeReceiverV2 internal galaxeBadgeReceiverV2;
+    GalxeBadgeReceiverV2 internal galxeBadgeReceiverV2;
 
     function setUp() public override {
         super.setUp();
@@ -14,6 +14,6 @@ contract GalxeBadgeReceiverV2Test is BaseTest {
     }
 
     function deploy() internal {
-        galaxeBadgeReceiverV2 = new GalaxeBadgeReceiverV2(users.admin, address(usdt));
+        galxeBadgeReceiverV2 = new GalxeBadgeReceiverV2(users.admin, address(usdt));
     }
 }
