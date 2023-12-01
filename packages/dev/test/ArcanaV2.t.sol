@@ -26,7 +26,7 @@ contract ArcanaV2Test is Test, IP12ArcanaDef {
         deal(address(_mockErc20), address(_arcanaV2), 100 ether);
         assertEq(_mockErc20.balanceOf(address(_arcanaV2)), 100 ether);
 
-        vm.expectEmit();
+        vm.expectEmit(true, true, true, true);
         emit Withdrawn(address(_mockErc20), _owner, 100 ether);
 
         vm.prank(_owner);

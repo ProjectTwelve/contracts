@@ -8,11 +8,10 @@ import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {IStarNFT} from "src/bridge/interfaces/IStarNFT.sol";
 import {IBadgeReceiverV2} from "src/bridge/interfaces/IBadgeReceiverV2.sol";
+import {Constant} from "src/libraries/Constant.sol";
 
 contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
     using SafeERC20 for IERC20;
-
-    address constant BLACK_HOLE_ADDRESS = address(1);
 
     mapping(address => bool) public signers;
     mapping(uint256 => bool) public allowedDst;
@@ -38,8 +37,8 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
         }
     }
 
-    function sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address from, address receiver) external {
-        _sendNFT(nftAddr, dstChainId, tokenId, from, receiver);
+    function sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address receiver) external {
+        _sendNFT(nftAddr, dstChainId, tokenId, receiver);
     }
 
     function sendBatchNFT(address nftAddr, uint256[] calldata tokenIds) external {
@@ -76,23 +75,24 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
         return this.onERC721Received.selector;
     }
 
-    function _sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address from, address receiver)
+    function _sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address receiver)
         internal
         onlyValidNftAddr(nftAddr)
     {
         if (!allowedDst[dstChainId]) {
             revert DstChainIdIsNotAllowed();
         }
-        IERC721(nftAddr).transferFrom(from, address(this), tokenId);
+
+        IERC721(nftAddr).transferFrom(msg.sender, address(this), tokenId);
 
         uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
-        emit SendNFT(dstChainId, tokenId, cid, nftAddr, from, receiver);
+        emit SendNFT(dstChainId, tokenId, cid, nftAddr, msg.sender, receiver);
     }
 
     function _burnNFT(address nftAddr, uint256 tokenId) internal onlyValidNftAddr(nftAddr) {
         // burn
-        IERC721(nftAddr).transferFrom(msg.sender, BLACK_HOLE_ADDRESS, tokenId);
+        IERC721(nftAddr).transferFrom(msg.sender, Constant.BLACK_HOLE_ADDRESS, tokenId);
 
         uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
