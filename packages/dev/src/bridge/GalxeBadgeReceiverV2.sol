@@ -71,6 +71,26 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
         emit DstValidSet(dstChainId, valid);
     }
 
+    function updateUsdRefund(uint256[] calldata cids, uint256[] calldata usdAmounts) external onlyOwner {
+        for (uint256 i = 0; i < cids.length; i++) {
+            uint256 cid = cids[i];
+            uint256 usdAmount = usdAmounts[i];
+            usdRefund[cid] = usdAmount;
+        }
+
+        emit UsdRefundSet(cids, usdAmounts);
+    }
+
+    function updatePlUsdRefund(uint256[] calldata cids, uint256[] calldata pls) external onlyOwner {
+        for (uint256 i = 0; i < cids.length; i++) {
+            uint256 cid = cids[i];
+            uint256 pl = pls[i];
+            plRefund[cid] = pl;
+        }
+
+        emit PlRefundSet(cids, pls);
+    }
+
     function onERC721Received(address, address, uint256, bytes calldata) public pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }

@@ -33,6 +33,10 @@ interface IBadgeReceiverV2Def {
     event ValidNftAddrSet(address nftAddr, bool valid);
 
     event DstValidSet(uint256 chainId, bool valid);
+
+    event PlRefundSet(uint256[]  cids, uint256[] amounts);
+
+    event UsdRefundSet(uint256[]  cids, uint256[] amounts);
 }
 
 interface IBadgeReceiverV2 is IBadgeReceiverV2Def {}
