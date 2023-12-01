@@ -41,10 +41,12 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
         _sendNFT(nftAddr, dstChainId, tokenId, receiver);
     }
 
-    function sendBatchNFT(address nftAddr, uint256[] calldata tokenIds) external {
+    function sendBatchNFT(address nftAddr, uint256 dstChainId, uint256[] calldata tokenIds, address receiver)
+        external
+    {
         for (uint256 i = 0; i < tokenIds.length; i++) {
             uint256 tokenId = tokenIds[i];
-            _burnNFT(nftAddr, tokenId);
+            _sendNFT(nftAddr, dstChainId, tokenId, receiver);
         }
     }
 

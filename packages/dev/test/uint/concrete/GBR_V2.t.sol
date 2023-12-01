@@ -6,7 +6,7 @@ import {IBadgeReceiverV2Def} from "src/bridge/interfaces/IBadgeReceiverV2.sol";
 import {Constant} from "src/libraries/Constant.sol";
 
 contract GBR_V2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
-    function testUpdateValidNftAddr(address nftAddr, bool valid) public {
+    function test_UpdateValidNftAddr(address nftAddr, bool valid) public {
         changePrank(users.admin);
         assertEq(galxeBadgeReceiverV2.whitelistNFT(nftAddr), false);
         emit ValidNftAddrSet(nftAddr, valid);
@@ -14,7 +14,7 @@ contract GBR_V2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
         assertEq(galxeBadgeReceiverV2.whitelistNFT(nftAddr), valid);
     }
 
-    function testUpdateSigner(address signer, bool valid) public {
+    function test_UpdateSigner(address signer, bool valid) public {
         changePrank(users.admin);
         assertEq(galxeBadgeReceiverV2.signers(signer), false);
         emit SignerSet(signer, valid);
@@ -22,7 +22,7 @@ contract GBR_V2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
         assertEq(galxeBadgeReceiverV2.signers(signer), valid);
     }
 
-    function testUpdateDstValidity(uint256 chainId, bool valid) public {
+    function test_UpdateDstValidity(uint256 chainId, bool valid) public {
         changePrank(users.admin);
         assertEq(galxeBadgeReceiverV2.allowedDst(chainId), false);
         emit DstValidSet(chainId, valid);
@@ -64,6 +64,36 @@ contract GBR_V2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
 
         // check owner change
         assertEq(starNFT.ownerOf(1), address(galxeBadgeReceiverV2));
+    }
+
+    function test_SendBatchNFT_Successfully() public {
+        changePrank(users.admin);
+        galxeBadgeReceiverV2.updateValidNftAddr(address(starNFT), true);
+        galxeBadgeReceiverV2.updateDstValidity(1, true);
+
+        changePrank(users.alice);
+
+        assertEq(starNFT.ownerOf(2), users.alice);
+        assertEq(starNFT.ownerOf(3), users.alice);
+        assertEq(starNFT.ownerOf(4), users.alice);
+
+        // check event emit
+        vm.expectEmit(true, true, true, true);
+        emit SendNFT(1, 2, 2, address(starNFT), users.alice, users.alice);
+        emit SendNFT(1, 3, 2, address(starNFT), users.alice, users.alice);
+        emit SendNFT(1, 4, 3, address(starNFT), users.alice, users.alice);
+
+        uint256[] memory tokenIds = new uint256[](3);
+        tokenIds[0] = 2;
+        tokenIds[1] = 3;
+        tokenIds[2] = 4;
+
+        galxeBadgeReceiverV2.sendBatchNFT(address(starNFT), 1, tokenIds, users.alice);
+
+        // check owner change
+        assertEq(starNFT.ownerOf(2), address(galxeBadgeReceiverV2));
+        assertEq(starNFT.ownerOf(3), address(galxeBadgeReceiverV2));
+        assertEq(starNFT.ownerOf(4), address(galxeBadgeReceiverV2));
     }
 
     function test_BurnNFT_Revert_InvalidNFTAddr() public {
