@@ -20,11 +20,11 @@ contract GalaxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
     mapping(uint256 => uint256) public usdRefund;
     mapping(uint256 => uint256) public plRefund;
 
-    address public immutable USDToken;
+    address public immutable usdToken;
 
     constructor(address owner_, address usdToken_) {
         _setOwner(owner_);
-        USDToken = usdToken_;
+        usdToken = usdToken_;
     }
 
     function burnNFT(address nftAddr, uint256 tokenId) external {
@@ -100,7 +100,7 @@ contract GalaxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
         uint256 refundAmount = usdRefund[cid];
 
         // refund
-        IERC20(msg.sender).safeTransfer(msg.sender, refundAmount);
+        IERC20(usdToken).safeTransfer(msg.sender, refundAmount);
 
         emit BurnAndRefund(nftAddr, cid, tokenId, refundAmount, plRefund[cid]);
     }

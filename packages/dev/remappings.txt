@@ -8,3 +8,4 @@ foundry-upgrades/=lib/foundry-upgrades/src/
 base64-sol=node_modules/base64-sol/
 contracts/=contracts/
 src/=src/
+test/=test/
