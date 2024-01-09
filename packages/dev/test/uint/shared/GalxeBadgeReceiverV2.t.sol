@@ -15,7 +15,8 @@ abstract contract GalxeBadgeReceiverV2Test is BaseTest {
     }
 
     function deploy() internal {
-        galxeBadgeReceiverV2 = new GalxeBadgeReceiverV2(users.admin, address(usdt));
+        galxeBadgeReceiverV2 = new GalxeBadgeReceiverV2();
+        galxeBadgeReceiverV2.initialize(users.admin);
     }
 
     function approveNFT() internal {

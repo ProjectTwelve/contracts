@@ -96,59 +96,59 @@ contract GBR_V2_Test is GalxeBadgeReceiverV2Test, IBadgeReceiverV2Def {
         assertEq(starNFT.ownerOf(4), address(galxeBadgeReceiverV2));
     }
 
-    function test_BurnNFT_Revert_InvalidNFTAddr() public {
-        changePrank(users.alice);
+    // function test_BurnNFT_Revert_InvalidNFTAddr() public {
+    //     changePrank(users.alice);
 
-        vm.expectRevert(IBadgeReceiverV2Def.InvalidNFTAddr.selector);
-        galxeBadgeReceiverV2.burnNFT(address(starNFT), 1);
-    }
+    //     vm.expectRevert(IBadgeReceiverV2Def.InvalidNFTAddr.selector);
+    //     galxeBadgeReceiverV2.burnNFT(address(starNFT), 1);
+    // }
 
-    function test_BurnNFT_Successfully() public {
-        changePrank(users.admin);
-        galxeBadgeReceiverV2.updateValidNftAddr(address(starNFT), true);
-        galxeBadgeReceiverV2.updateDstValidity(1, true);
+    // function test_BurnNFT_Successfully() public {
+    //     changePrank(users.admin);
+    //     galxeBadgeReceiverV2.updateValidNftAddr(address(starNFT), true);
+    //     galxeBadgeReceiverV2.updateDstValidity(1, true);
 
-        changePrank(users.alice);
+    //     changePrank(users.alice);
 
-        assertEq(starNFT.ownerOf(1), users.alice);
+    //     assertEq(starNFT.ownerOf(1), users.alice);
 
-        // check event emit
-        // vm.expectEmit(true, true, true, true);
-        // emit BurnAndRefund(1, 1, 1, address(starNFT), users.alice, users.alice);
+    //     // check event emit
+    //     // vm.expectEmit(true, true, true, true);
+    //     // emit BurnAndRefund(1, 1, 1, address(starNFT), users.alice, users.alice);
 
-        galxeBadgeReceiverV2.burnNFT(address(starNFT), 1);
+    //     galxeBadgeReceiverV2.burnNFT(address(starNFT), 1);
 
-        // check owner change
-        assertEq(starNFT.ownerOf(1), Constant.BLACK_HOLE_ADDRESS);
-    }
+    //     // check owner change
+    //     assertEq(starNFT.ownerOf(1), Constant.BLACK_HOLE_ADDRESS);
+    // }
 
-    function test_BurnBatchNFT_Successfully() public {
-        changePrank(users.admin);
-        galxeBadgeReceiverV2.updateValidNftAddr(address(starNFT), true);
-        galxeBadgeReceiverV2.updateDstValidity(1, true);
+    // function test_BurnBatchNFT_Successfully() public {
+    //     changePrank(users.admin);
+    //     galxeBadgeReceiverV2.updateValidNftAddr(address(starNFT), true);
+    //     galxeBadgeReceiverV2.updateDstValidity(1, true);
 
-        changePrank(users.alice);
+    //     changePrank(users.alice);
 
-        assertEq(starNFT.ownerOf(2), users.alice);
-        assertEq(starNFT.ownerOf(3), users.alice);
-        assertEq(starNFT.ownerOf(4), users.alice);
+    //     assertEq(starNFT.ownerOf(2), users.alice);
+    //     assertEq(starNFT.ownerOf(3), users.alice);
+    //     assertEq(starNFT.ownerOf(4), users.alice);
 
-        // check event emit
-        // vm.expectEmit(true, true, true, true);
-        // emit BurnAndRefund(1, 1, 1, address(starNFT), users.alice, users.alice);
+    //     // check event emit
+    //     // vm.expectEmit(true, true, true, true);
+    //     // emit BurnAndRefund(1, 1, 1, address(starNFT), users.alice, users.alice);
 
-        uint256[] memory tokenIds = new uint256[](3);
-        tokenIds[0] = 2;
-        tokenIds[1] = 3;
-        tokenIds[2] = 4;
+    //     uint256[] memory tokenIds = new uint256[](3);
+    //     tokenIds[0] = 2;
+    //     tokenIds[1] = 3;
+    //     tokenIds[2] = 4;
 
-        galxeBadgeReceiverV2.burnBatchNFT(address(starNFT), tokenIds);
+    //     galxeBadgeReceiverV2.burnBatchNFT(address(starNFT), tokenIds);
 
-        // check owner change
-        assertEq(starNFT.ownerOf(2), Constant.BLACK_HOLE_ADDRESS);
-        assertEq(starNFT.ownerOf(2), Constant.BLACK_HOLE_ADDRESS);
-        assertEq(starNFT.ownerOf(2), Constant.BLACK_HOLE_ADDRESS);
+    //     // check owner change
+    //     assertEq(starNFT.ownerOf(2), Constant.BLACK_HOLE_ADDRESS);
+    //     assertEq(starNFT.ownerOf(2), Constant.BLACK_HOLE_ADDRESS);
+    //     assertEq(starNFT.ownerOf(2), Constant.BLACK_HOLE_ADDRESS);
 
-        // TODO: check usd balance;
-    }
+    //     // TODO: check usd balance;
+    // }
 }

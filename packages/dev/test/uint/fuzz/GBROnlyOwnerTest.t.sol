@@ -27,11 +27,11 @@ contract GBR_OnlyOwner_Test is GalxeBadgeReceiverV2Test {
         galxeBadgeReceiverV2.updateDstValidity(1, true);
     }
 
-    function testFuzz_onlyOwner_UpdateUsdRefund(address eve) public onlyOwnerCanCall(eve) {
-        galxeBadgeReceiverV2.updateUsdRefund(new uint256[](1), new uint256[](1));
-    }
+    // function testFuzz_onlyOwner_UpdateUsdRefund(address eve) public onlyOwnerCanCall(eve) {
+    //     galxeBadgeReceiverV2.updateUsdRefund(new uint256[](1), new uint256[](1));
+    // }
 
-    function testFuzz_onlyOwner_UpdatePlRefund(address eve) public onlyOwnerCanCall(eve) {
-        galxeBadgeReceiverV2.updatePlUsdRefund(new uint256[](1), new uint256[](1));
-    }
+    // function testFuzz_onlyOwner_UpdatePlRefund(address eve) public onlyOwnerCanCall(eve) {
+    //     galxeBadgeReceiverV2.updatePlUsdRefund(new uint256[](1), new uint256[](1));
+    // }
 }

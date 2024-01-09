@@ -1,41 +1,32 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import {Ownable} from "solady/auth/Ownable.sol";
-import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import {SafeERC20} from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import {Ownable2StepUpgradeable} from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import {IERC721Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
+import {IERC721ReceiverUpgradeable} from
+    "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol";
 import {IStarNFT} from "src/bridge/interfaces/IStarNFT.sol";
 import {IBadgeReceiverV2} from "src/bridge/interfaces/IBadgeReceiverV2.sol";
 import {Constant} from "src/libraries/Constant.sol";
+import {GalxeBadgeReceiverV2Storage} from "src/bridge/GalxeBadgeReceiverV2Storage.sol";
 
-contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
-    using SafeERC20 for IERC20;
-
-    mapping(address => bool) public signers;
-    mapping(uint256 => bool) public allowedDst;
-    mapping(address => bool) public whitelistNFT;
-    mapping(uint256 => uint256) public usdRefund;
-    mapping(uint256 => uint256) public plRefund;
-
-    address public immutable usdToken;
-
-    constructor(address owner_, address usdToken_) {
-        _setOwner(owner_);
-        usdToken = usdToken_;
+contract GalxeBadgeReceiverV2 is
+    GalxeBadgeReceiverV2Storage,
+    UUPSUpgradeable,
+    Ownable2StepUpgradeable,
+    IBadgeReceiverV2,
+    IERC721ReceiverUpgradeable
+{
+    constructor() {
+        _disableInitializers();
     }
 
-    function burnNFT(address nftAddr, uint256 tokenId) external {
-        _burnNFT(nftAddr, tokenId);
+    function initialize(address owner_) public initializer {
+        _transferOwnership(owner_);
     }
 
-    function burnBatchNFT(address nftAddr, uint256[] calldata tokenIds) external {
-        for (uint256 i = 0; i < tokenIds.length; i++) {
-            uint256 tokenId = tokenIds[i];
-            _burnNFT(nftAddr, tokenId);
-        }
-    }
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 
     function sendNFT(address nftAddr, uint256 dstChainId, uint256 tokenId, address receiver) external {
         _sendNFT(nftAddr, dstChainId, tokenId, receiver);
@@ -51,7 +42,7 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
     }
 
     function releaseNFT(address nftAddr, address user, uint256 tokenId) external onlySigner {
-        IERC721(nftAddr).transferFrom(address(this), user, tokenId);
+        IERC721Upgradeable(nftAddr).transferFrom(address(this), user, tokenId);
         emit ReleaseNFT(user, tokenId);
     }
 
@@ -73,26 +64,6 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
         emit DstValidSet(dstChainId, valid);
     }
 
-    function updateUsdRefund(uint256[] calldata cids, uint256[] calldata usdAmounts) external onlyOwner {
-        for (uint256 i = 0; i < cids.length; i++) {
-            uint256 cid = cids[i];
-            uint256 usdAmount = usdAmounts[i];
-            usdRefund[cid] = usdAmount;
-        }
-
-        emit UsdRefundSet(cids, usdAmounts);
-    }
-
-    function updatePlUsdRefund(uint256[] calldata cids, uint256[] calldata pls) external onlyOwner {
-        for (uint256 i = 0; i < cids.length; i++) {
-            uint256 cid = cids[i];
-            uint256 pl = pls[i];
-            plRefund[cid] = pl;
-        }
-
-        emit PlRefundSet(cids, pls);
-    }
-
     function onERC721Received(address, address, uint256, bytes calldata) public pure override returns (bytes4) {
         return this.onERC721Received.selector;
     }
@@ -105,26 +76,11 @@ contract GalxeBadgeReceiverV2 is IBadgeReceiverV2, Ownable, IERC721Receiver {
             revert DstChainIdIsNotAllowed();
         }
 
-        IERC721(nftAddr).safeTransferFrom(msg.sender, address(this), tokenId);
+        IERC721Upgradeable(nftAddr).safeTransferFrom(msg.sender, address(this), tokenId);
 
         uint256 cid = IStarNFT(nftAddr).cid(tokenId);
 
         emit SendNFT(dstChainId, tokenId, cid, nftAddr, msg.sender, receiver);
-    }
-
-    function _burnNFT(address nftAddr, uint256 tokenId) internal onlyValidNftAddr(nftAddr) {
-        // burn
-        IERC721(nftAddr).safeTransferFrom(msg.sender, Constant.BLACK_HOLE_ADDRESS, tokenId);
-
-        uint256 cid = IStarNFT(nftAddr).cid(tokenId);
-
-        // get refund USD
-        uint256 refundAmount = usdRefund[cid];
-
-        // refund
-        IERC20(usdToken).safeTransfer(msg.sender, refundAmount);
-
-        emit BurnAndRefund(nftAddr, cid, tokenId, refundAmount, plRefund[cid]);
     }
 
     function _checkSigner() internal view {
