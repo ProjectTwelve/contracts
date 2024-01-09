@@ -1,0 +1,565 @@
+{
+  "address": "0x54536786C30F6a7C2503d49fFf0A03f7853ABDe6",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "AccountBalanceOverflow",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "BalanceQueryForZeroAddress",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "NotOwnerNorApproved",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TokenAlreadyExists",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TokenDoesNotExist",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TransferFromIncorrectOwner",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TransferToNonERC721ReceiverImplementer",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "TransferToZeroAddress",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "Approval",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "isApproved",
+          "type": "bool"
+        }
+      ],
+      "name": "ApprovalForAll",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "Transfer",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "approve",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "name": "balanceOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "result",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "cid",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getApproved",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "result",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "owner",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "isApprovedForAll",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "cid_",
+          "type": "uint256"
+        }
+      ],
+      "name": "mint",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "result",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "data",
+          "type": "bytes"
+        }
+      ],
+      "name": "safeTransferFrom",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "isApproved",
+          "type": "bool"
+        }
+      ],
+      "name": "setApprovalForAll",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "symbol",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "tokenURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "from",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xd34b51d6cdc2b3b8a169a78d31cee5182436b7bc48ac33d6210d66dc459c3c7d",
+  "receipt": {
+    "to": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
+    "from": "0xe6CAB02B0CF13F9638083Fa2C144A3E463a7b16f",
+    "contractAddress": null,
+    "transactionIndex": 2,
+    "gasUsed": "700592",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xf93db7d063b5da5260b1526bbf2305c601532cb4604e538e096f09dd5d1ad84d",
+    "transactionHash": "0xd34b51d6cdc2b3b8a169a78d31cee5182436b7bc48ac33d6210d66dc459c3c7d",
+    "logs": [],
+    "blockNumber": 36698636,
+    "cumulativeGasUsed": "768742",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "661c202f319c8d5e0ea203225043c546",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"name\":\"AccountBalanceOverflow\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"BalanceQueryForZeroAddress\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"NotOwnerNorApproved\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TokenAlreadyExists\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TokenDoesNotExist\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TransferFromIncorrectOwner\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TransferToNonERC721ReceiverImplementer\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"TransferToZeroAddress\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"isApproved\",\"type\":\"bool\"}],\"name\":\"ApprovalForAll\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"result\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"cid\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"getApproved\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"result\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"isApprovedForAll\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"cid_\",\"type\":\"uint256\"}],\"name\":\"mint\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"name\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"ownerOf\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"result\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"data\",\"type\":\"bytes\"}],\"name\":\"safeTransferFrom\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"isApproved\",\"type\":\"bool\"}],\"name\":\"setApprovalForAll\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"symbol\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"name\":\"tokenURI\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"from\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"to\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"}],\"devdoc\":{\"errors\":{\"AccountBalanceOverflow()\":[{\"details\":\"The recipient's balance has overflowed.\"}],\"BalanceQueryForZeroAddress()\":[{\"details\":\"Cannot query the balance for the zero address.\"}],\"NotOwnerNorApproved()\":[{\"details\":\"Only the token owner or an approved account can manage the token.\"}],\"TokenAlreadyExists()\":[{\"details\":\"The token already exists.\"}],\"TokenDoesNotExist()\":[{\"details\":\"The token does not exist.\"}],\"TransferFromIncorrectOwner()\":[{\"details\":\"The token must be owned by `from`.\"}],\"TransferToNonERC721ReceiverImplementer()\":[{\"details\":\"Cannot safely transfer to a contract that does not implement the ERC721Receiver interface.\"}],\"TransferToZeroAddress()\":[{\"details\":\"Cannot mint or transfer to the zero address.\"}]},\"events\":{\"Approval(address,address,uint256)\":{\"details\":\"Emitted when `owner` enables `account` to manage the `id` token.\"},\"ApprovalForAll(address,address,bool)\":{\"details\":\"Emitted when `owner` enables or disables `operator` to manage all of their tokens.\"},\"Transfer(address,address,uint256)\":{\"details\":\"Emitted when token `id` is transferred from `from` to `to`.\"}},\"kind\":\"dev\",\"methods\":{\"approve(address,uint256)\":{\"details\":\"Sets `account` as the approved account to manage token `id`. Requirements: - Token `id` must exist. - The caller must be the owner of the token,   or an approved operator for the token owner. Emits an {Approval} event.\"},\"balanceOf(address)\":{\"details\":\"Returns the number of tokens owned by `owner`. Requirements: - `owner` must not be the zero address.\"},\"getApproved(uint256)\":{\"details\":\"Returns the account approved to manage token `id`. Requirements: - Token `id` must exist.\"},\"isApprovedForAll(address,address)\":{\"details\":\"Returns whether `operator` is approved to manage the tokens of `owner`.\"},\"name()\":{\"details\":\"Returns the token collection name.\"},\"ownerOf(uint256)\":{\"details\":\"Returns the owner of token `id`. Requirements: - Token `id` must exist.\"},\"safeTransferFrom(address,address,uint256)\":{\"details\":\"Equivalent to `safeTransferFrom(from, to, id, \\\"\\\")`.\"},\"safeTransferFrom(address,address,uint256,bytes)\":{\"details\":\"Transfers token `id` from `from` to `to`. Requirements: - Token `id` must exist. - `from` must be the owner of the token. - `to` cannot be the zero address. - The caller must be the owner of the token, or be approved to manage the token. - If `to` refers to a smart contract, it must implement   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer. Emits a {Transfer} event.\"},\"setApprovalForAll(address,bool)\":{\"details\":\"Sets whether `operator` is approved to manage the tokens of the caller. Emits an {ApprovalForAll} event.\"},\"supportsInterface(bytes4)\":{\"details\":\"Returns true if this contract implements the interface defined by `interfaceId`. See: https://eips.ethereum.org/EIPS/eip-165 This function call must use less than 30000 gas.\"},\"symbol()\":{\"details\":\"Returns the token collection symbol.\"},\"transferFrom(address,address,uint256)\":{\"details\":\"Transfers token `id` from `from` to `to`. Requirements: - Token `id` must exist. - `from` must be the owner of the token. - `to` cannot be the zero address. - The caller must be the owner of the token, or be approved to manage the token. Emits a {Transfer} event.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/mock/StarNFT.sol\":\"StarNFT\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"none\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":20000},\"remappings\":[]},\"sources\":{\"solady/tokens/ERC721.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.4;\\n\\n/// @notice Simple ERC721 implementation with storage hitchhiking.\\n/// @author Solady (https://github.com/vectorized/solady/blob/main/src/tokens/ERC721.sol)\\n/// @author Modified from Solmate (https://github.com/transmissions11/solmate/blob/main/src/tokens/ERC721.sol)\\n/// @author Modified from OpenZeppelin (https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721/ERC721.sol)\\n///\\n/// @dev Note:\\n/// - The ERC721 standard allows for self-approvals.\\n///   For performance, this implementation WILL NOT revert for such actions.\\n///   Please add any checks with overrides if desired.\\n/// - For performance, methods are made payable where permitted by the ERC721 standard.\\n/// - The `safeTransfer` functions use the identity precompile (0x4)\\n///   to copy memory internally.\\n///\\n/// If you are overriding:\\n/// - NEVER violate the ERC721 invariant:\\n///   the balance of an owner MUST be always be equal to their number of ownership slots.\\n///   The transfer functions do not have an underflow guard for user token balances.\\n/// - Make sure all variables written to storage are properly cleaned\\n//    (e.g. the bool value for `isApprovedForAll` MUST be either 1 or 0 under the hood).\\n/// - Check that the overridden function is actually used in the function you want to\\n///   change the behavior of. Much of the code has been manually inlined for performance.\\nabstract contract ERC721 {\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                         CONSTANTS                          */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev An account can hold up to 4294967295 tokens.\\n    uint256 internal constant _MAX_ACCOUNT_BALANCE = 0xffffffff;\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                       CUSTOM ERRORS                        */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Only the token owner or an approved account can manage the token.\\n    error NotOwnerNorApproved();\\n\\n    /// @dev The token does not exist.\\n    error TokenDoesNotExist();\\n\\n    /// @dev The token already exists.\\n    error TokenAlreadyExists();\\n\\n    /// @dev Cannot query the balance for the zero address.\\n    error BalanceQueryForZeroAddress();\\n\\n    /// @dev Cannot mint or transfer to the zero address.\\n    error TransferToZeroAddress();\\n\\n    /// @dev The token must be owned by `from`.\\n    error TransferFromIncorrectOwner();\\n\\n    /// @dev The recipient's balance has overflowed.\\n    error AccountBalanceOverflow();\\n\\n    /// @dev Cannot safely transfer to a contract that does not implement\\n    /// the ERC721Receiver interface.\\n    error TransferToNonERC721ReceiverImplementer();\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                           EVENTS                           */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Emitted when token `id` is transferred from `from` to `to`.\\n    event Transfer(address indexed from, address indexed to, uint256 indexed id);\\n\\n    /// @dev Emitted when `owner` enables `account` to manage the `id` token.\\n    event Approval(address indexed owner, address indexed account, uint256 indexed id);\\n\\n    /// @dev Emitted when `owner` enables or disables `operator` to manage all of their tokens.\\n    event ApprovalForAll(address indexed owner, address indexed operator, bool isApproved);\\n\\n    /// @dev `keccak256(bytes(\\\"Transfer(address,address,uint256)\\\"))`.\\n    uint256 private constant _TRANSFER_EVENT_SIGNATURE =\\n        0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef;\\n\\n    /// @dev `keccak256(bytes(\\\"Approval(address,address,uint256)\\\"))`.\\n    uint256 private constant _APPROVAL_EVENT_SIGNATURE =\\n        0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925;\\n\\n    /// @dev `keccak256(bytes(\\\"ApprovalForAll(address,address,bool)\\\"))`.\\n    uint256 private constant _APPROVAL_FOR_ALL_EVENT_SIGNATURE =\\n        0x17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c31;\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                          STORAGE                           */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev The ownership data slot of `id` is given by:\\n    /// ```\\n    ///     mstore(0x00, id)\\n    ///     mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n    ///     let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n    /// ```\\n    /// Bits Layout:\\n    /// - [0..159]   `addr`\\n    /// - [160..255] `extraData`\\n    ///\\n    /// The approved address slot is given by: `add(1, ownershipSlot)`.\\n    ///\\n    /// See: https://notes.ethereum.org/%40vbuterin/verkle_tree_eip\\n    ///\\n    /// The balance slot of `owner` is given by:\\n    /// ```\\n    ///     mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n    ///     mstore(0x00, owner)\\n    ///     let balanceSlot := keccak256(0x0c, 0x1c)\\n    /// ```\\n    /// Bits Layout:\\n    /// - [0..31]   `balance`\\n    /// - [32..255] `aux`\\n    ///\\n    /// The `operator` approval slot of `owner` is given by:\\n    /// ```\\n    ///     mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, operator))\\n    ///     mstore(0x00, owner)\\n    ///     let operatorApprovalSlot := keccak256(0x0c, 0x30)\\n    /// ```\\n    uint256 private constant _ERC721_MASTER_SLOT_SEED = 0x7d8825530a5a2e7a << 192;\\n\\n    /// @dev Pre-shifted and pre-masked constant.\\n    uint256 private constant _ERC721_MASTER_SLOT_SEED_MASKED = 0x0a5a2e7a00000000;\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                      ERC721 METADATA                       */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Returns the token collection name.\\n    function name() public view virtual returns (string memory);\\n\\n    /// @dev Returns the token collection symbol.\\n    function symbol() public view virtual returns (string memory);\\n\\n    /// @dev Returns the Uniform Resource Identifier (URI) for token `id`.\\n    function tokenURI(uint256 id) public view virtual returns (string memory);\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                           ERC721                           */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Returns the owner of token `id`.\\n    ///\\n    /// Requirements:\\n    /// - Token `id` must exist.\\n    function ownerOf(uint256 id) public view virtual returns (address result) {\\n        result = _ownerOf(id);\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            if iszero(result) {\\n                mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                revert(0x1c, 0x04)\\n            }\\n        }\\n    }\\n\\n    /// @dev Returns the number of tokens owned by `owner`.\\n    ///\\n    /// Requirements:\\n    /// - `owner` must not be the zero address.\\n    function balanceOf(address owner) public view virtual returns (uint256 result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Revert if the `owner` is the zero address.\\n            if iszero(owner) {\\n                mstore(0x00, 0x8f4eb604) // `BalanceQueryForZeroAddress()`.\\n                revert(0x1c, 0x04)\\n            }\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            mstore(0x00, owner)\\n            result := and(sload(keccak256(0x0c, 0x1c)), _MAX_ACCOUNT_BALANCE)\\n        }\\n    }\\n\\n    /// @dev Returns the account approved to manage token `id`.\\n    ///\\n    /// Requirements:\\n    /// - Token `id` must exist.\\n    function getApproved(uint256 id) public view virtual returns (address result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            if iszero(shl(96, sload(ownershipSlot))) {\\n                mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                revert(0x1c, 0x04)\\n            }\\n            result := sload(add(1, ownershipSlot))\\n        }\\n    }\\n\\n    /// @dev Sets `account` as the approved account to manage token `id`.\\n    ///\\n    /// Requirements:\\n    /// - Token `id` must exist.\\n    /// - The caller must be the owner of the token,\\n    ///   or an approved operator for the token owner.\\n    ///\\n    /// Emits an {Approval} event.\\n    function approve(address account, uint256 id) public payable virtual {\\n        _approve(msg.sender, account, id);\\n    }\\n\\n    /// @dev Returns whether `operator` is approved to manage the tokens of `owner`.\\n    function isApprovedForAll(address owner, address operator)\\n        public\\n        view\\n        virtual\\n        returns (bool result)\\n    {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x1c, operator)\\n            mstore(0x08, _ERC721_MASTER_SLOT_SEED_MASKED)\\n            mstore(0x00, owner)\\n            result := sload(keccak256(0x0c, 0x30))\\n        }\\n    }\\n\\n    /// @dev Sets whether `operator` is approved to manage the tokens of the caller.\\n    ///\\n    /// Emits an {ApprovalForAll} event.\\n    function setApprovalForAll(address operator, bool isApproved) public virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Convert to 0 or 1.\\n            isApproved := iszero(iszero(isApproved))\\n            // Update the `isApproved` for (`msg.sender`, `operator`).\\n            mstore(0x1c, operator)\\n            mstore(0x08, _ERC721_MASTER_SLOT_SEED_MASKED)\\n            mstore(0x00, caller())\\n            sstore(keccak256(0x0c, 0x30), isApproved)\\n            // Emit the {ApprovalForAll} event.\\n            mstore(0x00, isApproved)\\n            log3(\\n                0x00, 0x20, _APPROVAL_FOR_ALL_EVENT_SIGNATURE, caller(), shr(96, shl(96, operator))\\n            )\\n        }\\n    }\\n\\n    /// @dev Transfers token `id` from `from` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must exist.\\n    /// - `from` must be the owner of the token.\\n    /// - `to` cannot be the zero address.\\n    /// - The caller must be the owner of the token, or be approved to manage the token.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function transferFrom(address from, address to, uint256 id) public payable virtual {\\n        _beforeTokenTransfer(from, to, id);\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Clear the upper 96 bits.\\n            let bitmaskAddress := shr(96, not(0))\\n            from := and(bitmaskAddress, from)\\n            to := and(bitmaskAddress, to)\\n            // Load the ownership data.\\n            mstore(0x00, id)\\n            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, caller()))\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let ownershipPacked := sload(ownershipSlot)\\n            let owner := and(bitmaskAddress, ownershipPacked)\\n            // Revert if `from` is not the owner, or does not exist.\\n            if iszero(mul(owner, eq(owner, from))) {\\n                if iszero(owner) {\\n                    mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                    revert(0x1c, 0x04)\\n                }\\n                mstore(0x00, 0xa1148100) // `TransferFromIncorrectOwner()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Revert if `to` is the zero address.\\n            if iszero(to) {\\n                mstore(0x00, 0xea553b34) // `TransferToZeroAddress()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Load, check, and update the token approval.\\n            {\\n                mstore(0x00, from)\\n                let approvedAddress := sload(add(1, ownershipSlot))\\n                // Revert if the caller is not the owner, nor approved.\\n                if iszero(or(eq(caller(), from), eq(caller(), approvedAddress))) {\\n                    if iszero(sload(keccak256(0x0c, 0x30))) {\\n                        mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.\\n                        revert(0x1c, 0x04)\\n                    }\\n                }\\n                // Delete the approved address if any.\\n                if approvedAddress { sstore(add(1, ownershipSlot), 0) }\\n            }\\n            // Update with the new owner.\\n            sstore(ownershipSlot, xor(ownershipPacked, xor(from, to)))\\n            // Decrement the balance of `from`.\\n            {\\n                let fromBalanceSlot := keccak256(0x0c, 0x1c)\\n                sstore(fromBalanceSlot, sub(sload(fromBalanceSlot), 1))\\n            }\\n            // Increment the balance of `to`.\\n            {\\n                mstore(0x00, to)\\n                let toBalanceSlot := keccak256(0x0c, 0x1c)\\n                let toBalanceSlotPacked := add(sload(toBalanceSlot), 1)\\n                if iszero(and(toBalanceSlotPacked, _MAX_ACCOUNT_BALANCE)) {\\n                    mstore(0x00, 0x01336cea) // `AccountBalanceOverflow()`.\\n                    revert(0x1c, 0x04)\\n                }\\n                sstore(toBalanceSlot, toBalanceSlotPacked)\\n            }\\n            // Emit the {Transfer} event.\\n            log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, from, to, id)\\n        }\\n        _afterTokenTransfer(from, to, id);\\n    }\\n\\n    /// @dev Equivalent to `safeTransferFrom(from, to, id, \\\"\\\")`.\\n    function safeTransferFrom(address from, address to, uint256 id) public payable virtual {\\n        transferFrom(from, to, id);\\n        if (_hasCode(to)) _checkOnERC721Received(from, to, id, \\\"\\\");\\n    }\\n\\n    /// @dev Transfers token `id` from `from` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must exist.\\n    /// - `from` must be the owner of the token.\\n    /// - `to` cannot be the zero address.\\n    /// - The caller must be the owner of the token, or be approved to manage the token.\\n    /// - If `to` refers to a smart contract, it must implement\\n    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function safeTransferFrom(address from, address to, uint256 id, bytes calldata data)\\n        public\\n        payable\\n        virtual\\n    {\\n        transferFrom(from, to, id);\\n        if (_hasCode(to)) _checkOnERC721Received(from, to, id, data);\\n    }\\n\\n    /// @dev Returns true if this contract implements the interface defined by `interfaceId`.\\n    /// See: https://eips.ethereum.org/EIPS/eip-165\\n    /// This function call must use less than 30000 gas.\\n    function supportsInterface(bytes4 interfaceId) public view virtual returns (bool result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            let s := shr(224, interfaceId)\\n            // ERC165: 0x01ffc9a7, ERC721: 0x80ac58cd, ERC721Metadata: 0x5b5e139f.\\n            result := or(or(eq(s, 0x01ffc9a7), eq(s, 0x80ac58cd)), eq(s, 0x5b5e139f))\\n        }\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                  INTERNAL QUERY FUNCTIONS                  */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Returns if token `id` exists.\\n    function _exists(uint256 id) internal view virtual returns (bool result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            result := iszero(iszero(shl(96, sload(add(id, add(id, keccak256(0x00, 0x20)))))))\\n        }\\n    }\\n\\n    /// @dev Returns the owner of token `id`.\\n    /// Returns the zero address instead of reverting if the token does not exist.\\n    function _ownerOf(uint256 id) internal view virtual returns (address result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            result := shr(96, shl(96, sload(add(id, add(id, keccak256(0x00, 0x20))))))\\n        }\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*            INTERNAL DATA HITCHHIKING FUNCTIONS             */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    // For performance, no events are emitted for the hitchhiking setters.\\n    // Please emit your own events if required.\\n\\n    /// @dev Returns the auxiliary data for `owner`.\\n    /// Minting, transferring, burning the tokens of `owner` will not change the auxiliary data.\\n    /// Auxiliary data can be set for any address, even if it does not have any tokens.\\n    function _getAux(address owner) internal view virtual returns (uint224 result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            mstore(0x00, owner)\\n            result := shr(32, sload(keccak256(0x0c, 0x1c)))\\n        }\\n    }\\n\\n    /// @dev Set the auxiliary data for `owner` to `value`.\\n    /// Minting, transferring, burning the tokens of `owner` will not change the auxiliary data.\\n    /// Auxiliary data can be set for any address, even if it does not have any tokens.\\n    function _setAux(address owner, uint224 value) internal virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            mstore(0x00, owner)\\n            let balanceSlot := keccak256(0x0c, 0x1c)\\n            let packed := sload(balanceSlot)\\n            sstore(balanceSlot, xor(packed, shl(32, xor(value, shr(32, packed)))))\\n        }\\n    }\\n\\n    /// @dev Returns the extra data for token `id`.\\n    /// Minting, transferring, burning a token will not change the extra data.\\n    /// The extra data can be set on a non-existent token.\\n    function _getExtraData(uint256 id) internal view virtual returns (uint96 result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            result := shr(160, sload(add(id, add(id, keccak256(0x00, 0x20)))))\\n        }\\n    }\\n\\n    /// @dev Sets the extra data for token `id` to `value`.\\n    /// Minting, transferring, burning a token will not change the extra data.\\n    /// The extra data can be set on a non-existent token.\\n    function _setExtraData(uint256 id, uint96 value) internal virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let packed := sload(ownershipSlot)\\n            sstore(ownershipSlot, xor(packed, shl(160, xor(value, shr(160, packed)))))\\n        }\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                  INTERNAL MINT FUNCTIONS                   */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Mints token `id` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must not exist.\\n    /// - `to` cannot be the zero address.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _mint(address to, uint256 id) internal virtual {\\n        _beforeTokenTransfer(address(0), to, id);\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Clear the upper 96 bits.\\n            to := shr(96, shl(96, to))\\n            // Revert if `to` is the zero address.\\n            if iszero(to) {\\n                mstore(0x00, 0xea553b34) // `TransferToZeroAddress()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Load the ownership data.\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let ownershipPacked := sload(ownershipSlot)\\n            // Revert if the token already exists.\\n            if shl(96, ownershipPacked) {\\n                mstore(0x00, 0xc991cbb1) // `TokenAlreadyExists()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Update with the owner.\\n            sstore(ownershipSlot, or(ownershipPacked, to))\\n            // Increment the balance of the owner.\\n            {\\n                mstore(0x00, to)\\n                let balanceSlot := keccak256(0x0c, 0x1c)\\n                let balanceSlotPacked := add(sload(balanceSlot), 1)\\n                if iszero(and(balanceSlotPacked, _MAX_ACCOUNT_BALANCE)) {\\n                    mstore(0x00, 0x01336cea) // `AccountBalanceOverflow()`.\\n                    revert(0x1c, 0x04)\\n                }\\n                sstore(balanceSlot, balanceSlotPacked)\\n            }\\n            // Emit the {Transfer} event.\\n            log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, 0, to, id)\\n        }\\n        _afterTokenTransfer(address(0), to, id);\\n    }\\n\\n    /// @dev Equivalent to `_safeMint(to, id, \\\"\\\")`.\\n    function _safeMint(address to, uint256 id) internal virtual {\\n        _safeMint(to, id, \\\"\\\");\\n    }\\n\\n    /// @dev Mints token `id` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must not exist.\\n    /// - `to` cannot be the zero address.\\n    /// - If `to` refers to a smart contract, it must implement\\n    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _safeMint(address to, uint256 id, bytes memory data) internal virtual {\\n        _mint(to, id);\\n        if (_hasCode(to)) _checkOnERC721Received(address(0), to, id, data);\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                  INTERNAL BURN FUNCTIONS                   */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Equivalent to `_burn(address(0), id)`.\\n    function _burn(uint256 id) internal virtual {\\n        _burn(address(0), id);\\n    }\\n\\n    /// @dev Destroys token `id`, using `by`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must exist.\\n    /// - If `by` is not the zero address,\\n    ///   it must be the owner of the token, or be approved to manage the token.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _burn(address by, uint256 id) internal virtual {\\n        address owner = ownerOf(id);\\n        _beforeTokenTransfer(owner, address(0), id);\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Clear the upper 96 bits.\\n            by := shr(96, shl(96, by))\\n            // Load the ownership data.\\n            mstore(0x00, id)\\n            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, by))\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let ownershipPacked := sload(ownershipSlot)\\n            // Reload the owner in case it is changed in `_beforeTokenTransfer`.\\n            owner := shr(96, shl(96, ownershipPacked))\\n            // Revert if the token does not exist.\\n            if iszero(owner) {\\n                mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Load and check the token approval.\\n            {\\n                mstore(0x00, owner)\\n                let approvedAddress := sload(add(1, ownershipSlot))\\n                // If `by` is not the zero address, do the authorization check.\\n                // Revert if the `by` is not the owner, nor approved.\\n                if iszero(or(iszero(by), or(eq(by, owner), eq(by, approvedAddress)))) {\\n                    if iszero(sload(keccak256(0x0c, 0x30))) {\\n                        mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.\\n                        revert(0x1c, 0x04)\\n                    }\\n                }\\n                // Delete the approved address if any.\\n                if approvedAddress { sstore(add(1, ownershipSlot), 0) }\\n            }\\n            // Clear the owner.\\n            sstore(ownershipSlot, xor(ownershipPacked, owner))\\n            // Decrement the balance of `owner`.\\n            {\\n                let balanceSlot := keccak256(0x0c, 0x1c)\\n                sstore(balanceSlot, sub(sload(balanceSlot), 1))\\n            }\\n            // Emit the {Transfer} event.\\n            log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, owner, 0, id)\\n        }\\n        _afterTokenTransfer(owner, address(0), id);\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                INTERNAL APPROVAL FUNCTIONS                 */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Returns whether `account` is the owner of token `id`, or is approved to manage it.\\n    ///\\n    /// Requirements:\\n    /// - Token `id` must exist.\\n    function _isApprovedOrOwner(address account, uint256 id)\\n        internal\\n        view\\n        virtual\\n        returns (bool result)\\n    {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            result := 1\\n            // Clear the upper 96 bits.\\n            account := shr(96, shl(96, account))\\n            // Load the ownership data.\\n            mstore(0x00, id)\\n            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, account))\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let owner := shr(96, shl(96, sload(ownershipSlot)))\\n            // Revert if the token does not exist.\\n            if iszero(owner) {\\n                mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Check if `account` is the `owner`.\\n            if iszero(eq(account, owner)) {\\n                mstore(0x00, owner)\\n                // Check if `account` is approved to manage the token.\\n                if iszero(sload(keccak256(0x0c, 0x30))) {\\n                    result := eq(account, sload(add(1, ownershipSlot)))\\n                }\\n            }\\n        }\\n    }\\n\\n    /// @dev Returns the account approved to manage token `id`.\\n    /// Returns the zero address instead of reverting if the token does not exist.\\n    function _getApproved(uint256 id) internal view virtual returns (address result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            mstore(0x00, id)\\n            mstore(0x1c, _ERC721_MASTER_SLOT_SEED)\\n            result := sload(add(1, add(id, add(id, keccak256(0x00, 0x20)))))\\n        }\\n    }\\n\\n    /// @dev Equivalent to `_approve(address(0), account, id)`.\\n    function _approve(address account, uint256 id) internal virtual {\\n        _approve(address(0), account, id);\\n    }\\n\\n    /// @dev Sets `account` as the approved account to manage token `id`, using `by`.\\n    ///\\n    /// Requirements:\\n    /// - Token `id` must exist.\\n    /// - If `by` is not the zero address, `by` must be the owner\\n    ///   or an approved operator for the token owner.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _approve(address by, address account, uint256 id) internal virtual {\\n        assembly {\\n            // Clear the upper 96 bits.\\n            let bitmaskAddress := shr(96, not(0))\\n            account := and(bitmaskAddress, account)\\n            by := and(bitmaskAddress, by)\\n            // Load the owner of the token.\\n            mstore(0x00, id)\\n            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, by))\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let owner := and(bitmaskAddress, sload(ownershipSlot))\\n            // Revert if the token does not exist.\\n            if iszero(owner) {\\n                mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // If `by` is not the zero address, do the authorization check.\\n            // Revert if `by` is not the owner, nor approved.\\n            if iszero(or(iszero(by), eq(by, owner))) {\\n                mstore(0x00, owner)\\n                if iszero(sload(keccak256(0x0c, 0x30))) {\\n                    mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.\\n                    revert(0x1c, 0x04)\\n                }\\n            }\\n            // Sets `account` as the approved account to manage `id`.\\n            sstore(add(1, ownershipSlot), account)\\n            // Emit the {Approval} event.\\n            log4(0x00, 0x00, _APPROVAL_EVENT_SIGNATURE, owner, account, id)\\n        }\\n    }\\n\\n    /// @dev Approve or remove the `operator` as an operator for `by`,\\n    /// without authorization checks.\\n    ///\\n    /// Emits an {ApprovalForAll} event.\\n    function _setApprovalForAll(address by, address operator, bool isApproved) internal virtual {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Clear the upper 96 bits.\\n            by := shr(96, shl(96, by))\\n            operator := shr(96, shl(96, operator))\\n            // Convert to 0 or 1.\\n            isApproved := iszero(iszero(isApproved))\\n            // Update the `isApproved` for (`by`, `operator`).\\n            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, operator))\\n            mstore(0x00, by)\\n            sstore(keccak256(0x0c, 0x30), isApproved)\\n            // Emit the {ApprovalForAll} event.\\n            mstore(0x00, isApproved)\\n            log3(0x00, 0x20, _APPROVAL_FOR_ALL_EVENT_SIGNATURE, by, operator)\\n        }\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                INTERNAL TRANSFER FUNCTIONS                 */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Equivalent to `_transfer(address(0), from, to, id)`.\\n    function _transfer(address from, address to, uint256 id) internal virtual {\\n        _transfer(address(0), from, to, id);\\n    }\\n\\n    /// @dev Transfers token `id` from `from` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must exist.\\n    /// - `from` must be the owner of the token.\\n    /// - `to` cannot be the zero address.\\n    /// - If `by` is not the zero address,\\n    ///   it must be the owner of the token, or be approved to manage the token.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _transfer(address by, address from, address to, uint256 id) internal virtual {\\n        _beforeTokenTransfer(from, to, id);\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Clear the upper 96 bits.\\n            let bitmaskAddress := shr(96, not(0))\\n            from := and(bitmaskAddress, from)\\n            to := and(bitmaskAddress, to)\\n            by := and(bitmaskAddress, by)\\n            // Load the ownership data.\\n            mstore(0x00, id)\\n            mstore(0x1c, or(_ERC721_MASTER_SLOT_SEED, by))\\n            let ownershipSlot := add(id, add(id, keccak256(0x00, 0x20)))\\n            let ownershipPacked := sload(ownershipSlot)\\n            let owner := and(bitmaskAddress, ownershipPacked)\\n            // Revert if `from` is not the owner, or does not exist.\\n            if iszero(mul(owner, eq(owner, from))) {\\n                if iszero(owner) {\\n                    mstore(0x00, 0xceea21b6) // `TokenDoesNotExist()`.\\n                    revert(0x1c, 0x04)\\n                }\\n                mstore(0x00, 0xa1148100) // `TransferFromIncorrectOwner()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Revert if `to` is the zero address.\\n            if iszero(to) {\\n                mstore(0x00, 0xea553b34) // `TransferToZeroAddress()`.\\n                revert(0x1c, 0x04)\\n            }\\n            // Load, check, and update the token approval.\\n            {\\n                mstore(0x00, from)\\n                let approvedAddress := sload(add(1, ownershipSlot))\\n                // If `by` is not the zero address, do the authorization check.\\n                // Revert if the `by` is not the owner, nor approved.\\n                if iszero(or(iszero(by), or(eq(by, from), eq(by, approvedAddress)))) {\\n                    if iszero(sload(keccak256(0x0c, 0x30))) {\\n                        mstore(0x00, 0x4b6e7f18) // `NotOwnerNorApproved()`.\\n                        revert(0x1c, 0x04)\\n                    }\\n                }\\n                // Delete the approved address if any.\\n                if approvedAddress { sstore(add(1, ownershipSlot), 0) }\\n            }\\n            // Update with the new owner.\\n            sstore(ownershipSlot, xor(ownershipPacked, xor(from, to)))\\n            // Decrement the balance of `from`.\\n            {\\n                let fromBalanceSlot := keccak256(0x0c, 0x1c)\\n                sstore(fromBalanceSlot, sub(sload(fromBalanceSlot), 1))\\n            }\\n            // Increment the balance of `to`.\\n            {\\n                mstore(0x00, to)\\n                let toBalanceSlot := keccak256(0x0c, 0x1c)\\n                let toBalanceSlotPacked := add(sload(toBalanceSlot), 1)\\n                if iszero(and(toBalanceSlotPacked, _MAX_ACCOUNT_BALANCE)) {\\n                    mstore(0x00, 0x01336cea) // `AccountBalanceOverflow()`.\\n                    revert(0x1c, 0x04)\\n                }\\n                sstore(toBalanceSlot, toBalanceSlotPacked)\\n            }\\n            // Emit the {Transfer} event.\\n            log4(0x00, 0x00, _TRANSFER_EVENT_SIGNATURE, from, to, id)\\n        }\\n        _afterTokenTransfer(from, to, id);\\n    }\\n\\n    /// @dev Equivalent to `_safeTransfer(from, to, id, \\\"\\\")`.\\n    function _safeTransfer(address from, address to, uint256 id) internal virtual {\\n        _safeTransfer(from, to, id, \\\"\\\");\\n    }\\n\\n    /// @dev Transfers token `id` from `from` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must exist.\\n    /// - `from` must be the owner of the token.\\n    /// - `to` cannot be the zero address.\\n    /// - The caller must be the owner of the token, or be approved to manage the token.\\n    /// - If `to` refers to a smart contract, it must implement\\n    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _safeTransfer(address from, address to, uint256 id, bytes memory data)\\n        internal\\n        virtual\\n    {\\n        _transfer(address(0), from, to, id);\\n        if (_hasCode(to)) _checkOnERC721Received(from, to, id, data);\\n    }\\n\\n    /// @dev Equivalent to `_safeTransfer(by, from, to, id, \\\"\\\")`.\\n    function _safeTransfer(address by, address from, address to, uint256 id) internal virtual {\\n        _safeTransfer(by, from, to, id, \\\"\\\");\\n    }\\n\\n    /// @dev Transfers token `id` from `from` to `to`.\\n    ///\\n    /// Requirements:\\n    ///\\n    /// - Token `id` must exist.\\n    /// - `from` must be the owner of the token.\\n    /// - `to` cannot be the zero address.\\n    /// - If `by` is not the zero address,\\n    ///   it must be the owner of the token, or be approved to manage the token.\\n    /// - If `to` refers to a smart contract, it must implement\\n    ///   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer.\\n    ///\\n    /// Emits a {Transfer} event.\\n    function _safeTransfer(address by, address from, address to, uint256 id, bytes memory data)\\n        internal\\n        virtual\\n    {\\n        _transfer(by, from, to, id);\\n        if (_hasCode(to)) _checkOnERC721Received(from, to, id, data);\\n    }\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                    HOOKS FOR OVERRIDING                    */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Hook that is called before any token transfers, including minting and burning.\\n    function _beforeTokenTransfer(address from, address to, uint256 id) internal virtual {}\\n\\n    /// @dev Hook that is called after any token transfers, including minting and burning.\\n    function _afterTokenTransfer(address from, address to, uint256 id) internal virtual {}\\n\\n    /*\\u00b4:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0\\u2022.*\\u2022\\u00b4.*:\\u02da.\\u00b0*.\\u02da\\u2022\\u00b4.\\u00b0:\\u00b0\\u2022.\\u00b0+.*\\u2022\\u00b4.*:*/\\n    /*                      PRIVATE HELPERS                       */\\n    /*.\\u2022\\u00b0:\\u00b0.\\u00b4+\\u02da.*\\u00b0.\\u02da:*.\\u00b4\\u2022*.+\\u00b0.\\u2022\\u00b0:\\u00b4*.\\u00b4\\u2022*.\\u2022\\u00b0.\\u2022\\u00b0:\\u00b0.\\u00b4:\\u2022\\u02da\\u00b0.*\\u00b0.\\u02da:*.\\u00b4+\\u00b0.\\u2022*/\\n\\n    /// @dev Returns if `a` has bytecode of non-zero length.\\n    function _hasCode(address a) private view returns (bool result) {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            result := extcodesize(a) // Can handle dirty upper bits.\\n        }\\n    }\\n\\n    /// @dev Perform a call to invoke {IERC721Receiver-onERC721Received} on `to`.\\n    /// Reverts if the target does not support the function correctly.\\n    function _checkOnERC721Received(address from, address to, uint256 id, bytes memory data)\\n        private\\n    {\\n        /// @solidity memory-safe-assembly\\n        assembly {\\n            // Prepare the calldata.\\n            let m := mload(0x40)\\n            let onERC721ReceivedSelector := 0x150b7a02\\n            mstore(m, onERC721ReceivedSelector)\\n            mstore(add(m, 0x20), caller()) // The `operator`, which is always `msg.sender`.\\n            mstore(add(m, 0x40), shr(96, shl(96, from)))\\n            mstore(add(m, 0x60), id)\\n            mstore(add(m, 0x80), 0x80)\\n            let n := mload(data)\\n            mstore(add(m, 0xa0), n)\\n            if n { pop(staticcall(gas(), 4, add(data, 0x20), n, add(m, 0xc0), n)) }\\n            // Revert if the call reverts.\\n            if iszero(call(gas(), to, 0, add(m, 0x1c), add(n, 0xa4), m, 0x20)) {\\n                if returndatasize() {\\n                    // Bubble up the revert if the call reverts.\\n                    returndatacopy(0x00, 0x00, returndatasize())\\n                    revert(0x00, returndatasize())\\n                }\\n            }\\n            // Load the returndata and compare it.\\n            if iszero(eq(mload(m), shl(224, onERC721ReceivedSelector))) {\\n                mstore(0x00, 0xd1a57ed6) // `TransferToNonERC721ReceiverImplementer()`.\\n                revert(0x1c, 0x04)\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0xa394d42eaf30e1ce8eac61f3679a9996e43778f7659bc1a285721e6013b7e374\",\"license\":\"MIT\"},\"src/bridge/interfaces/IStarNFT.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0\\npragma solidity 0.8.19;\\n\\ninterface IStarNFT {\\n    function cid(uint256 tokenId) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x4e94e9e145c9d1e392b4117d15d5ddc44718456b54faa9ddda56232ed7a11a56\",\"license\":\"GPL-3.0\"},\"src/mock/StarNFT.sol\":{\"content\":\"// SPDX-License-Identifier: GPL-3.0-or-later\\npragma solidity >=0.8.19;\\n\\nimport {ERC721} from \\\"solady/tokens/ERC721.sol\\\";\\nimport {IStarNFT} from \\\"src/bridge/interfaces/IStarNFT.sol\\\";\\n\\ncontract StarNFT is ERC721, IStarNFT {\\n    mapping(uint256 => uint256) internal _cid;\\n\\n    function mint(address user, uint256 tokenId, uint256 cid_) public {\\n        _mint(user, tokenId);\\n        _cid[tokenId] = cid_;\\n    }\\n\\n    function cid(uint256 tokenId) public view override returns (uint256) {\\n        return _cid[tokenId];\\n    }\\n\\n    function name() public pure override returns (string memory) {\\n        return \\\"Star NFT\\\";\\n    }\\n\\n    function symbol() public pure override returns (string memory) {\\n        return \\\"S\\\";\\n    }\\n\\n    function tokenURI(uint256) public pure override returns (string memory) {\\n        return \\\"\\\";\\n    }\\n}\\n\",\"keccak256\":\"0x110fbbf7bfcff070621602cc49859e08a21eedb793a3b81f56db57c6ad40bb95\",\"license\":\"GPL-3.0-or-later\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610bbb806100206000396000f3fe6080604052600436106100e85760003560e01c80636352211e1161008a578063b0c479a511610059578063b0c479a5146102e2578063b88d4fde1461030f578063c87b56dd14610322578063e985e9c51461035057600080fd5b80636352211e1461022e57806370a082311461024e57806395d89b411461027c578063a22cb465146102c257600080fd5b8063095ea7b3116100c6578063095ea7b3146101d3578063156e29f6146101e857806323b872dd1461020857806342842e0e1461021b57600080fd5b806301ffc9a7146100ed57806306fdde031461013f578063081812fc1461018e575b600080fd5b3480156100f957600080fd5b5061012a6101083660046108fe565b6301ffc9a760e09190911c9081146380ac58cd821417635b5e139f9091141790565b60405190151581526020015b60405180910390f35b34801561014b57600080fd5b5060408051808201909152600881527f53746172204e465400000000000000000000000000000000000000000000000060208201525b6040516101369190610947565b34801561019a57600080fd5b506101ae6101a93660046109b3565b610386565b60405173ffffffffffffffffffffffffffffffffffffffff9091168152602001610136565b6101e66101e13660046109f0565b6103da565b005b3480156101f457600080fd5b506101e6610203366004610a1a565b6103e9565b6101e6610216366004610a4d565b610406565b6101e6610229366004610a4d565b61055d565b34801561023a57600080fd5b506101ae6102493660046109b3565b61058a565b34801561025a57600080fd5b5061026e610269366004610a89565b6105ea565b604051908152602001610136565b34801561028857600080fd5b5060408051808201909152600181527f53000000000000000000000000000000000000000000000000000000000000006020820152610181565b3480156102ce57600080fd5b506101e66102dd366004610aa4565b61063a565b3480156102ee57600080fd5b5061026e6102fd3660046109b3565b60009081526020819052604090205490565b6101e661031d366004610ae0565b610690565b34801561032e57600080fd5b5061018161033d3660046109b3565b5060408051602081019091526000815290565b34801561035c57600080fd5b5061012a61036b366004610b7b565b601c52670a5a2e7a000000006008526000526030600c205490565b6000816000527f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c52602060002082018201805460601b6103d05763ceea21b66000526004601cfd5b6001015492915050565b6103e53383836106eb565b5050565b6103f383836107a1565b6000918252602082905260409091205550565b60008181527f7d8825530a5a2e7a0000000000000000000000000000000000000000000000003317601c526020902081018101805473ffffffffffffffffffffffffffffffffffffffff948516949384169381169190828614830261048657826104785763ceea21b66000526004601cfd5b63a11481006000526004601cfd5b846104995763ea553b346000526004601cfd5b8560005281600101549250823314863314176104c7576030600c20546104c757634b6e7f186000526004601cfd5b82156104d557600082600101555b85851818905550601c600c81812080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff019055600084905220805460010163ffffffff811661052d576301336cea6000526004601cfd5b90558082847fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef600080a45b505050565b610568838383610406565b813b156105585761055883838360405180602001604052806000815250610871565b60008181527f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c5260209020810181015473ffffffffffffffffffffffffffffffffffffffff16806105e55763ceea21b66000526004601cfd5b919050565b6000816105ff57638f4eb6046000526004601cfd5b7f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c528160005263ffffffff601c600c2054169050919050565b801515905081601c52670a5a2e7a0000000060085233600052806030600c2055806000528160601b60601c337f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c3160206000a35050565b61069b858585610406565b833b156106e4576106e485858585858080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525061087192505050565b5050505050565b60001960601c8281169250838116935081600052837f7d8825530a5a2e7a00000000000000000000000000000000000000000000000017601c52602060002082018201805482169150816107475763ceea21b66000526004601cfd5b81851485151761076d57816000526030600c205461076d57634b6e7f186000526004601cfd5b6001018390558183827f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925600080a450505050565b73ffffffffffffffffffffffffffffffffffffffff90911690816107cd5763ea553b346000526004601cfd5b806000527f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c5260206000208101810180548060601b156108175763c991cbb16000526004601cfd5b831790556000829052601c600c20805460010163ffffffff8116610843576301336cea6000526004601cfd5b9055808260007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8180a45050565b60405163150b7a028082523360208301528560601b60601c604083015283606083015260808083015282518060a084015280156108b8578060c08401826020870160045afa505b60208360a48301601c860160008a5af16108dc573d156108dc573d6000803e3d6000fd5b508060e01b8251146108f65763d1a57ed66000526004601cfd5b505050505050565b60006020828403121561091057600080fd5b81357fffffffff000000000000000000000000000000000000000000000000000000008116811461094057600080fd5b9392505050565b600060208083528351808285015260005b8181101561097457858101830151858201604001528201610958565b5060006040828601015260407fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8301168501019250505092915050565b6000602082840312156109c557600080fd5b5035919050565b803573ffffffffffffffffffffffffffffffffffffffff811681146105e557600080fd5b60008060408385031215610a0357600080fd5b610a0c836109cc565b946020939093013593505050565b600080600060608486031215610a2f57600080fd5b610a38846109cc565b95602085013595506040909401359392505050565b600080600060608486031215610a6257600080fd5b610a6b846109cc565b9250610a79602085016109cc565b9150604084013590509250925092565b600060208284031215610a9b57600080fd5b610940826109cc565b60008060408385031215610ab757600080fd5b610ac0836109cc565b915060208301358015158114610ad557600080fd5b809150509250929050565b600080600080600060808688031215610af857600080fd5b610b01866109cc565b9450610b0f602087016109cc565b935060408601359250606086013567ffffffffffffffff80821115610b3357600080fd5b818801915088601f830112610b4757600080fd5b813581811115610b5657600080fd5b896020828501011115610b6857600080fd5b9699959850939650602001949392505050565b60008060408385031215610b8e57600080fd5b610b97836109cc565b9150610ba5602084016109cc565b9050925092905056fea164736f6c6343000813000a",
+  "deployedBytecode": "0x6080604052600436106100e85760003560e01c80636352211e1161008a578063b0c479a511610059578063b0c479a5146102e2578063b88d4fde1461030f578063c87b56dd14610322578063e985e9c51461035057600080fd5b80636352211e1461022e57806370a082311461024e57806395d89b411461027c578063a22cb465146102c257600080fd5b8063095ea7b3116100c6578063095ea7b3146101d3578063156e29f6146101e857806323b872dd1461020857806342842e0e1461021b57600080fd5b806301ffc9a7146100ed57806306fdde031461013f578063081812fc1461018e575b600080fd5b3480156100f957600080fd5b5061012a6101083660046108fe565b6301ffc9a760e09190911c9081146380ac58cd821417635b5e139f9091141790565b60405190151581526020015b60405180910390f35b34801561014b57600080fd5b5060408051808201909152600881527f53746172204e465400000000000000000000000000000000000000000000000060208201525b6040516101369190610947565b34801561019a57600080fd5b506101ae6101a93660046109b3565b610386565b60405173ffffffffffffffffffffffffffffffffffffffff9091168152602001610136565b6101e66101e13660046109f0565b6103da565b005b3480156101f457600080fd5b506101e6610203366004610a1a565b6103e9565b6101e6610216366004610a4d565b610406565b6101e6610229366004610a4d565b61055d565b34801561023a57600080fd5b506101ae6102493660046109b3565b61058a565b34801561025a57600080fd5b5061026e610269366004610a89565b6105ea565b604051908152602001610136565b34801561028857600080fd5b5060408051808201909152600181527f53000000000000000000000000000000000000000000000000000000000000006020820152610181565b3480156102ce57600080fd5b506101e66102dd366004610aa4565b61063a565b3480156102ee57600080fd5b5061026e6102fd3660046109b3565b60009081526020819052604090205490565b6101e661031d366004610ae0565b610690565b34801561032e57600080fd5b5061018161033d3660046109b3565b5060408051602081019091526000815290565b34801561035c57600080fd5b5061012a61036b366004610b7b565b601c52670a5a2e7a000000006008526000526030600c205490565b6000816000527f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c52602060002082018201805460601b6103d05763ceea21b66000526004601cfd5b6001015492915050565b6103e53383836106eb565b5050565b6103f383836107a1565b6000918252602082905260409091205550565b60008181527f7d8825530a5a2e7a0000000000000000000000000000000000000000000000003317601c526020902081018101805473ffffffffffffffffffffffffffffffffffffffff948516949384169381169190828614830261048657826104785763ceea21b66000526004601cfd5b63a11481006000526004601cfd5b846104995763ea553b346000526004601cfd5b8560005281600101549250823314863314176104c7576030600c20546104c757634b6e7f186000526004601cfd5b82156104d557600082600101555b85851818905550601c600c81812080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff019055600084905220805460010163ffffffff811661052d576301336cea6000526004601cfd5b90558082847fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef600080a45b505050565b610568838383610406565b813b156105585761055883838360405180602001604052806000815250610871565b60008181527f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c5260209020810181015473ffffffffffffffffffffffffffffffffffffffff16806105e55763ceea21b66000526004601cfd5b919050565b6000816105ff57638f4eb6046000526004601cfd5b7f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c528160005263ffffffff601c600c2054169050919050565b801515905081601c52670a5a2e7a0000000060085233600052806030600c2055806000528160601b60601c337f17307eab39ab6107e8899845ad3d59bd9653f200f220920489ca2b5937696c3160206000a35050565b61069b858585610406565b833b156106e4576106e485858585858080601f01602080910402602001604051908101604052809392919081815260200183838082843760009201919091525061087192505050565b5050505050565b60001960601c8281169250838116935081600052837f7d8825530a5a2e7a00000000000000000000000000000000000000000000000017601c52602060002082018201805482169150816107475763ceea21b66000526004601cfd5b81851485151761076d57816000526030600c205461076d57634b6e7f186000526004601cfd5b6001018390558183827f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925600080a450505050565b73ffffffffffffffffffffffffffffffffffffffff90911690816107cd5763ea553b346000526004601cfd5b806000527f7d8825530a5a2e7a000000000000000000000000000000000000000000000000601c5260206000208101810180548060601b156108175763c991cbb16000526004601cfd5b831790556000829052601c600c20805460010163ffffffff8116610843576301336cea6000526004601cfd5b9055808260007fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef8180a45050565b60405163150b7a028082523360208301528560601b60601c604083015283606083015260808083015282518060a084015280156108b8578060c08401826020870160045afa505b60208360a48301601c860160008a5af16108dc573d156108dc573d6000803e3d6000fd5b508060e01b8251146108f65763d1a57ed66000526004601cfd5b505050505050565b60006020828403121561091057600080fd5b81357fffffffff000000000000000000000000000000000000000000000000000000008116811461094057600080fd5b9392505050565b600060208083528351808285015260005b8181101561097457858101830151858201604001528201610958565b5060006040828601015260407fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0601f8301168501019250505092915050565b6000602082840312156109c557600080fd5b5035919050565b803573ffffffffffffffffffffffffffffffffffffffff811681146105e557600080fd5b60008060408385031215610a0357600080fd5b610a0c836109cc565b946020939093013593505050565b600080600060608486031215610a2f57600080fd5b610a38846109cc565b95602085013595506040909401359392505050565b600080600060608486031215610a6257600080fd5b610a6b846109cc565b9250610a79602085016109cc565b9150604084013590509250925092565b600060208284031215610a9b57600080fd5b610940826109cc565b60008060408385031215610ab757600080fd5b610ac0836109cc565b915060208301358015158114610ad557600080fd5b809150509250929050565b600080600080600060808688031215610af857600080fd5b610b01866109cc565b9450610b0f602087016109cc565b935060408601359250606086013567ffffffffffffffff80821115610b3357600080fd5b818801915088601f830112610b4757600080fd5b813581811115610b5657600080fd5b896020828501011115610b6857600080fd5b9699959850939650602001949392505050565b60008060408385031215610b8e57600080fd5b610b97836109cc565b9150610ba5602084016109cc565b9050925092905056fea164736f6c6343000813000a",
+  "devdoc": {
+    "errors": {
+      "AccountBalanceOverflow()": [
+        {
+          "details": "The recipient's balance has overflowed."
+        }
+      ],
+      "BalanceQueryForZeroAddress()": [
+        {
+          "details": "Cannot query the balance for the zero address."
+        }
+      ],
+      "NotOwnerNorApproved()": [
+        {
+          "details": "Only the token owner or an approved account can manage the token."
+        }
+      ],
+      "TokenAlreadyExists()": [
+        {
+          "details": "The token already exists."
+        }
+      ],
+      "TokenDoesNotExist()": [
+        {
+          "details": "The token does not exist."
+        }
+      ],
+      "TransferFromIncorrectOwner()": [
+        {
+          "details": "The token must be owned by `from`."
+        }
+      ],
+      "TransferToNonERC721ReceiverImplementer()": [
+        {
+          "details": "Cannot safely transfer to a contract that does not implement the ERC721Receiver interface."
+        }
+      ],
+      "TransferToZeroAddress()": [
+        {
+          "details": "Cannot mint or transfer to the zero address."
+        }
+      ]
+    },
+    "events": {
+      "Approval(address,address,uint256)": {
+        "details": "Emitted when `owner` enables `account` to manage the `id` token."
+      },
+      "ApprovalForAll(address,address,bool)": {
+        "details": "Emitted when `owner` enables or disables `operator` to manage all of their tokens."
+      },
+      "Transfer(address,address,uint256)": {
+        "details": "Emitted when token `id` is transferred from `from` to `to`."
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "approve(address,uint256)": {
+        "details": "Sets `account` as the approved account to manage token `id`. Requirements: - Token `id` must exist. - The caller must be the owner of the token,   or an approved operator for the token owner. Emits an {Approval} event."
+      },
+      "balanceOf(address)": {
+        "details": "Returns the number of tokens owned by `owner`. Requirements: - `owner` must not be the zero address."
+      },
+      "getApproved(uint256)": {
+        "details": "Returns the account approved to manage token `id`. Requirements: - Token `id` must exist."
+      },
+      "isApprovedForAll(address,address)": {
+        "details": "Returns whether `operator` is approved to manage the tokens of `owner`."
+      },
+      "name()": {
+        "details": "Returns the token collection name."
+      },
+      "ownerOf(uint256)": {
+        "details": "Returns the owner of token `id`. Requirements: - Token `id` must exist."
+      },
+      "safeTransferFrom(address,address,uint256)": {
+        "details": "Equivalent to `safeTransferFrom(from, to, id, \"\")`."
+      },
+      "safeTransferFrom(address,address,uint256,bytes)": {
+        "details": "Transfers token `id` from `from` to `to`. Requirements: - Token `id` must exist. - `from` must be the owner of the token. - `to` cannot be the zero address. - The caller must be the owner of the token, or be approved to manage the token. - If `to` refers to a smart contract, it must implement   {IERC721Receiver-onERC721Received}, which is called upon a safe transfer. Emits a {Transfer} event."
+      },
+      "setApprovalForAll(address,bool)": {
+        "details": "Sets whether `operator` is approved to manage the tokens of the caller. Emits an {ApprovalForAll} event."
+      },
+      "supportsInterface(bytes4)": {
+        "details": "Returns true if this contract implements the interface defined by `interfaceId`. See: https://eips.ethereum.org/EIPS/eip-165 This function call must use less than 30000 gas."
+      },
+      "symbol()": {
+        "details": "Returns the token collection symbol."
+      },
+      "transferFrom(address,address,uint256)": {
+        "details": "Transfers token `id` from `from` to `to`. Requirements: - Token `id` must exist. - `from` must be the owner of the token. - `to` cannot be the zero address. - The caller must be the owner of the token, or be approved to manage the token. Emits a {Transfer} event."
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 735,
+        "contract": "src/mock/StarNFT.sol:StarNFT",
+        "label": "_cid",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_uint256,t_uint256)"
+      }
+    ],
+    "types": {
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

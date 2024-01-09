@@ -4,7 +4,7 @@ pragma solidity >=0.8.19 <0.9.0;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20MissingReturn} from "test/mocks/ERC20/ERC20MissingReturn.sol";
 import {Test} from "forge-std/Test.sol";
-import {StarNFT} from "test/mocks/StarNFT.sol";
+import {StarNFT} from "src/mock/StarNFT.sol";
 
 struct Users {
     // Default admin
