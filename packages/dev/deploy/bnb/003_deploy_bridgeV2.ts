@@ -20,7 +20,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
         },
       },
     },
-    deterministicDeployment: keccak256(stringToBytes('GalxeBadgeReceiverV2_PROD')),
+    deterministicDeployment: keccak256(stringToBytes('GalxeBadgeReceiverV2_Prod')),
   });
 
   await execute('GalxeBadgeReceiverV2', { from: prodDeployer, log: true }, 'updateDstValidity', 20736, true);
@@ -29,7 +29,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
     'GalxeBadgeReceiverV2',
     { from: prodDeployer, log: true },
     'updateValidNftAddr',
-    '0xC18Eeac03F52ac67F956C3Fb7526a119475778dd',
+    '0x9F471abCddc810E561873b35b8aad7d78e21a48e',
     true,
   );
 
@@ -37,7 +37,7 @@ const func: DeployFunction = async function ({ deployments, getNamedAccounts }) 
     'GalxeBadgeReceiverV2',
     { from: prodDeployer, log: true },
     'updateValidNftAddr',
-    '0x1871464F087dB27823Cff66Aa88599AA4815aE95',
+    '0xADc466855ebe8d1402C5F7e6706Fccc3AEdB44a0',
     true,
   );
 };

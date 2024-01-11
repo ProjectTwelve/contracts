@@ -74,8 +74,9 @@ const config: HardhatUserConfig = {
       deploy: ['deploy/polygon'],
     },
     polygon: {
-      accounts: accounts,
+      accounts: [prodDeployerKey],
       chainId: 137,
+      gasPrice: 100000000000, // 100 gwei
       url: 'https://polygon-bor.publicnode.com',
       live: true,
       deploy: ['deploy/polygon'],
@@ -209,6 +210,7 @@ const config: HardhatUserConfig = {
     prodDeployer: {
       linea: prodDeployer,
       bnb: prodDeployer,
+      polygon: prodDeployer,
       manta: prodDeployer,
     },
   },
